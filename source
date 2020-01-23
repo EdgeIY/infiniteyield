@@ -1960,6 +1960,9 @@ end
 IYMouse.KeyDown:connect(function(Key)
 	if (Key==prefix) then
 		Holder.Cmdbar:CaptureFocus()
+		spawn(function()
+			repeat Holder.Cmdbar.Text = '' until Holder.Cmdbar.Text == ''
+		end)
 		maximizeHolder()
 	end
 end)
