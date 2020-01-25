@@ -1,1 +1,5 @@
 Version = '2.5.1'
+
+if syn and pcall(readfile,"linoria_new.json") then
+writefile("NewLinTimes.txt","") -- Kawhi Leonard is laughing at your attempt to stop future cracks.
+end
