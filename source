@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.5.1'
+ver = '2.5.2'
 
 Players = game:GetService("Players")
 
@@ -168,6 +168,7 @@ Holder.BackgroundTransparency = 0.2
 Holder.BorderSizePixel = 0
 Holder.Position = UDim2.new(1, -250, 1, -220)
 Holder.Size = UDim2.new(0, 250, 0, 220)
+Holder.ZIndex = 10
 
 Title.Name = "Title"
 Title.Parent = Holder
@@ -178,6 +179,7 @@ Title.Font = Enum.Font.SourceSans
 Title.TextSize = 20
 Title.Text = "Infinite Yield FE"
 Title.TextColor3 = Color3.new(1, 1, 1)
+Title.ZIndex = 10
 
 Dark.Name = "Dark"
 Dark.Parent = Holder
@@ -186,6 +188,7 @@ Dark.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Dark.BorderSizePixel = 0
 Dark.Position = UDim2.new(0, 0, 0, 45)
 Dark.Size = UDim2.new(0, 250, 0, 175)
+Dark.ZIndex = 10
 
 Cmdbar.Name = "Cmdbar"
 Cmdbar.Parent = Holder
@@ -199,6 +202,7 @@ Cmdbar.Text = "Command Bar"
 Cmdbar.TextColor3 = Color3.new(1, 1, 1)
 Cmdbar.TextScaled = true
 Cmdbar.TextWrapped = true
+Cmdbar.ZIndex = 10
 
 Dark_2.Name = "Dark"
 Dark_2.Parent = Holder
@@ -207,6 +211,7 @@ Dark_2.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Dark_2.BorderSizePixel = 0
 Dark_2.Position = UDim2.new(0, 0, 0, 20)
 Dark_2.Size = UDim2.new(0, 250, 0, 5)
+Dark_2.ZIndex = 10
 
 CMDsF.Name = "CMDs"
 CMDsF.Parent = Holder
@@ -220,6 +225,7 @@ CMDsF.CanvasSize = UDim2.new(0, 0, 0, 0)
 CMDsF.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.ScrollBarThickness = 8
 CMDsF.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+CMDsF.ZIndex = 10
 
 SettingsButton.Name = "SettingsButton"
 SettingsButton.Parent = Holder
@@ -227,6 +233,7 @@ SettingsButton.BackgroundTransparency = 1
 SettingsButton.Position = UDim2.new(0, 230, 0, 25)
 SettingsButton.Size = UDim2.new(0, 20, 0, 20)
 SettingsButton.Image = "rbxassetid://1204397029"
+SettingsButton.ZIndex = 10
 
 Settings.Name = "Settings"
 Settings.Parent = Holder
@@ -235,6 +242,7 @@ Settings.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Settings.BorderSizePixel = 0
 Settings.Position = UDim2.new(0, 0, 0, 220)
 Settings.Size = UDim2.new(0, 250, 0, 175)
+Settings.ZIndex = 10
 
 Prefix.Name = "Prefix"
 Prefix.Parent = Settings
@@ -247,6 +255,7 @@ Prefix.TextSize = 14
 Prefix.Text = "    Prefix"
 Prefix.TextColor3 = Color3.new(1, 1, 1)
 Prefix.TextXAlignment = Enum.TextXAlignment.Left
+Prefix.ZIndex = 10
 
 PrefixBox.Name = "PrefixBox"
 PrefixBox.Parent = Prefix
@@ -258,6 +267,7 @@ PrefixBox.Font = Enum.Font.SourceSansBold
 PrefixBox.TextSize = 14
 PrefixBox.Text = ''
 PrefixBox.TextColor3 = Color3.new(0, 0, 0)
+PrefixBox.ZIndex = 10
 
 Keybinds.Name = "Keybinds"
 Keybinds.Parent = Settings
@@ -270,6 +280,7 @@ Keybinds.TextSize = 14
 Keybinds.Text = "    Keybinds"
 Keybinds.TextColor3 = Color3.new(1, 1, 1)
 Keybinds.TextXAlignment = Enum.TextXAlignment.Left
+Keybinds.ZIndex = 10
 
 Select.Name = "Select"
 Select.Parent = Keybinds
@@ -281,6 +292,7 @@ Select.Font = Enum.Font.SourceSans
 Select.TextSize = 14
 Select.Text = "Edit"
 Select.TextColor3 = Color3.new(0, 0, 0)
+Select.ZIndex = 10
 
 Aliases.Name = "Aliases"
 Aliases.Parent = Settings
@@ -293,6 +305,7 @@ Aliases.TextSize = 14
 Aliases.Text = "    Aliases"
 Aliases.TextColor3 = Color3.new(1, 1, 1)
 Aliases.TextXAlignment = Enum.TextXAlignment.Left
+Aliases.ZIndex = 10
 
 Select_7.Name = "Select"
 Select_7.Parent = Aliases
@@ -304,6 +317,7 @@ Select_7.Font = Enum.Font.SourceSans
 Select_7.TextSize = 14
 Select_7.Text = "Edit"
 Select_7.TextColor3 = Color3.new(0, 0, 0)
+Select_7.ZIndex = 10
 
 StayOpen.Name = "StayOpen"
 StayOpen.Parent = Settings
@@ -316,6 +330,7 @@ StayOpen.TextSize = 14
 StayOpen.Text = "    Keep Menu Open"
 StayOpen.TextColor3 = Color3.new(1, 1, 1)
 StayOpen.TextXAlignment = Enum.TextXAlignment.Left
+StayOpen.ZIndex = 10
 
 Button.Name = "Button"
 Button.Parent = StayOpen
@@ -323,6 +338,7 @@ Button.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
 Button.BorderSizePixel = 0
 Button.Position = UDim2.new(0, 230, 0, 0)
 Button.Size = UDim2.new(0, 20, 0, 20)
+Button.ZIndex = 10
 
 On.Name = "On"
 On.Parent = Button
@@ -335,6 +351,7 @@ On.Font = Enum.Font.SourceSans
 On.FontSize = Enum.FontSize.Size14
 On.Text = ""
 On.TextColor3 = Color3.new(0, 0, 0)
+On.ZIndex = 10
 
 Positions.Name = "Positions"
 Positions.Parent = Settings
@@ -347,6 +364,7 @@ Positions.TextSize = 14
 Positions.Text = "    Waypoints / Positions / Part TP"
 Positions.TextColor3 = Color3.new(1, 1, 1)
 Positions.TextXAlignment = Enum.TextXAlignment.Left
+Positions.ZIndex = 10
 
 Select_8.Name = "Select"
 Select_8.Parent = Positions
@@ -358,6 +376,7 @@ Select_8.Font = Enum.Font.SourceSans
 Select_8.TextSize = 14
 Select_8.Text = "Edit / TP"
 Select_8.TextColor3 = Color3.new(0, 0, 0)
+Select_8.ZIndex = 10
 
 SpawnC.Name = "SpawnC"
 SpawnC.Parent = Settings
@@ -370,6 +389,7 @@ SpawnC.TextSize = 14
 SpawnC.Text = "    Spawn Commands"
 SpawnC.TextColor3 = Color3.new(1, 1, 1)
 SpawnC.TextXAlignment = Enum.TextXAlignment.Left
+SpawnC.ZIndex = 10
 
 Select_2.Name = "Select"
 Select_2.Parent = SpawnC
@@ -381,6 +401,7 @@ Select_2.Font = Enum.Font.SourceSans
 Select_2.TextSize = 14
 Select_2.Text = "Edit"
 Select_2.TextColor3 = Color3.new(0, 0, 0)
+Select_2.ZIndex = 10
 
 Plugins.Name = "Plugins"
 Plugins.Parent = Settings
@@ -393,6 +414,7 @@ Plugins.TextSize = 14
 Plugins.Text = "    Plugins"
 Plugins.TextColor3 = Color3.new(1, 1, 1)
 Plugins.TextXAlignment = Enum.TextXAlignment.Left
+Plugins.ZIndex = 10
 
 Select_9.Name = "Select"
 Select_9.Parent = Plugins
@@ -404,6 +426,7 @@ Select_9.Font = Enum.Font.SourceSans
 Select_9.TextSize = 14
 Select_9.Text = "Edit"
 Select_9.TextColor3 = Color3.new(0, 0, 0)
+Select_9.ZIndex = 10
 
 Example.Name = "Example"
 Example.Parent = Holder
@@ -416,6 +439,7 @@ Example.TextSize = 18
 Example.Text = "Example"
 Example.TextColor3 = Color3.new(1, 1, 1)
 Example.TextXAlignment = Enum.TextXAlignment.Left
+Example.ZIndex = 10
 
 Notification.Name = randomString()
 Notification.Parent = PARENT
@@ -424,6 +448,7 @@ Notification.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Notification.BorderSizePixel = 0
 Notification.Position = UDim2.new(1, -500, 1, 20)
 Notification.Size = UDim2.new(0, 250, 0, 100)
+Notification.ZIndex = 10
 
 Title_2.Name = "Title"
 Title_2.Parent = Notification
@@ -434,6 +459,7 @@ Title_2.Font = Enum.Font.SourceSans
 Title_2.TextSize = 14
 Title_2.Text = "Notification Title"
 Title_2.TextColor3 = Color3.new(1, 1, 1)
+Title_2.ZIndex = 10
 
 Text_2.Name = "Text"
 Text_2.Parent = Notification
@@ -446,6 +472,7 @@ Text_2.TextSize = 16
 Text_2.Text = "Notification Text"
 Text_2.TextColor3 = Color3.new(1, 1, 1)
 Text_2.TextWrapped = true
+Text_2.ZIndex = 10
 
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = Notification
@@ -453,6 +480,7 @@ CloseButton.BackgroundTransparency = 1
 CloseButton.Position = UDim2.new(0, 0, 0, 0)
 CloseButton.Size = UDim2.new(0, 20, 0, 20)
 CloseButton.Image = "rbxassetid://2132544126"
+CloseButton.ZIndex = 10
 
 Tooltip.Name = "Tooltip"
 Tooltip.Parent = PARENT
@@ -461,6 +489,7 @@ Tooltip.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Tooltip.BackgroundTransparency = 0.1
 Tooltip.BorderSizePixel = 0
 Tooltip.Size = UDim2.new(0, 200, 0, 96)
+Tooltip.ZIndex = 10
 
 Title_3.Name = "Title"
 Title_3.Parent = Tooltip
@@ -473,6 +502,7 @@ Title_3.TextSize = 14
 Title_3.Text = ""
 Title_3.TextColor3 = Color3.new(1, 1, 1)
 Title_3.TextTransparency = 0.1
+Title_3.ZIndex = 10
 
 Description.Name = "Description"
 Description.Parent = Tooltip
@@ -486,6 +516,7 @@ Description.Text = ""
 Description.TextColor3 = Color3.new(1, 1, 1)
 Description.TextTransparency = 0.1
 Description.TextWrapped = true
+Description.ZIndex = 10
 
 IntroBackground.Name = "IntroBackground"
 IntroBackground.Parent = Holder
@@ -494,7 +525,7 @@ IntroBackground.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 IntroBackground.BorderSizePixel = 0
 IntroBackground.Position = UDim2.new(0, 0, 0, 45)
 IntroBackground.Size = UDim2.new(0, 250, 0, 175)
-IntroBackground.ZIndex = 4
+IntroBackground.ZIndex = 10
 
 Logo.Name = "Logo"
 Logo.Parent = Holder
@@ -504,7 +535,7 @@ Logo.Position = UDim2.new(0, 125, 0, 127)
 Logo.Size = UDim2.new(0, 10, 0, 10)
 Logo.Image = "rbxassetid://1352543873"
 Logo.ImageTransparency = 0
-Logo.ZIndex = 5
+Logo.ZIndex = 10
 
 Credits.Name = "Credits"
 Credits.Parent = Holder
@@ -516,7 +547,7 @@ Credits.Font = Enum.Font.SourceSansLight
 Credits.FontSize = Enum.FontSize.Size18
 Credits.Text = "Edge // Zwolf // Moon"
 Credits.TextColor3 = Color3.new(1, 1, 1)
-Credits.ZIndex = 5
+Credits.ZIndex = 10
 
 KeybindsFrame.Name = "KeybindsFrame"
 KeybindsFrame.Parent = Settings
@@ -525,6 +556,7 @@ KeybindsFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 KeybindsFrame.BorderSizePixel = 0
 KeybindsFrame.Position = UDim2.new(0, 0, 0, 175)
 KeybindsFrame.Size = UDim2.new(0, 250, 0, 175)
+KeybindsFrame.ZIndex = 10
 
 Close.Name = "Close"
 Close.Parent = KeybindsFrame
@@ -536,6 +568,7 @@ Close.Font = Enum.Font.SourceSans
 Close.TextSize = 14
 Close.Text = "Close"
 Close.TextColor3 = Color3.new(1, 1, 1)
+Close.ZIndex = 10
 
 Add.Name = "Add"
 Add.Parent = KeybindsFrame
@@ -547,6 +580,7 @@ Add.Font = Enum.Font.SourceSans
 Add.TextSize = 14
 Add.Text = "Add"
 Add.TextColor3 = Color3.new(1, 1, 1)
+Add.ZIndex = 10
 
 Delete.Name = "Delete"
 Delete.Parent = KeybindsFrame
@@ -558,6 +592,7 @@ Delete.Font = Enum.Font.SourceSans
 Delete.TextSize = 14
 Delete.Text = "Clear"
 Delete.TextColor3 = Color3.new(1, 1, 1)
+Delete.ZIndex = 10
 
 SpawnCFrame.Name = "SpawnCFrame"
 SpawnCFrame.Parent = Settings
@@ -566,6 +601,7 @@ SpawnCFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 SpawnCFrame.BorderSizePixel = 0
 SpawnCFrame.Position = UDim2.new(0, 0, 0, 175)
 SpawnCFrame.Size = UDim2.new(0, 250, 0, 175)
+SpawnCFrame.ZIndex = 10
 
 Holder_6.Name = "Holder"
 Holder_6.Parent = SpawnCFrame
@@ -579,6 +615,7 @@ Holder_6.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_6.MidImage = "rbxasset://textures/blackBkg_square.png"
 Holder_6.ScrollBarThickness = 8
 Holder_6.TopImage = "rbxasset://textures/blackBkg_square.png"
+Holder_6.ZIndex = 10
 
 Close_5.Name = "Close"
 Close_5.Parent = SpawnCFrame
@@ -590,6 +627,7 @@ Close_5.Font = Enum.Font.SourceSans
 Close_5.TextSize = 14
 Close_5.Text = "Close"
 Close_5.TextColor3 = Color3.new(1, 1, 1)
+Close_5.ZIndex = 10
 
 Add_4.Name = "Add"
 Add_4.Parent = SpawnCFrame
@@ -601,6 +639,7 @@ Add_4.Font = Enum.Font.SourceSans
 Add_4.TextSize = 14
 Add_4.Text = "Add"
 Add_4.TextColor3 = Color3.new(1, 1, 1)
+Add_4.ZIndex = 10
 
 Delete_8.Name = "Delete"
 Delete_8.Parent = SpawnCFrame
@@ -612,6 +651,7 @@ Delete_8.Font = Enum.Font.SourceSans
 Delete_8.TextSize = 14
 Delete_8.Text = "Clear"
 Delete_8.TextColor3 = Color3.new(1, 1, 1)
+Delete_8.ZIndex = 10
 
 Holder_2.Name = "Holder"
 Holder_2.Parent = KeybindsFrame
@@ -624,6 +664,7 @@ Holder_2.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_2.MidImage = "rbxasset://textures/blackBkg_square.png"
 Holder_2.ScrollBarThickness = 0
 Holder_2.TopImage = "rbxasset://textures/blackBkg_square.png"
+Holder_2.ZIndex = 10
 
 Example_2.Name = "Example"
 Example_2.Parent = KeybindsFrame
@@ -631,6 +672,7 @@ Example_2.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Example_2.BorderSizePixel = 0
 Example_2.Size = UDim2.new(0, 10, 0, 20)
 Example_2.Visible = false
+Example_2.ZIndex = 10
 
 Text_3.Name = "Text"
 Text_3.Parent = Example_2
@@ -643,6 +685,7 @@ Text_3.TextSize = 14
 Text_3.Text = "nom"
 Text_3.TextColor3 = Color3.new(1, 1, 1)
 Text_3.TextXAlignment = Enum.TextXAlignment.Left
+Text_3.ZIndex = 10
 
 Delete_2.Name = "Delete"
 Delete_2.Parent = Text_3
@@ -654,6 +697,7 @@ Delete_2.Font = Enum.Font.SourceSans
 Delete_2.TextSize = 14
 Delete_2.Text = "Delete"
 Delete_2.TextColor3 = Color3.new(0, 0, 0)
+Delete_2.ZIndex = 10
 
 KeybindEditor.Name = randomString()
 KeybindEditor.Parent = PARENT
@@ -661,7 +705,7 @@ KeybindEditor.Active = true
 KeybindEditor.BackgroundTransparency = 1
 KeybindEditor.Position = UDim2.new(0.5, -180, 0, -400)
 KeybindEditor.Size = UDim2.new(0, 360, 0, 20)
-KeybindEditor.ZIndex = 4
+KeybindEditor.ZIndex = 10
 
 background_2.Name = "background"
 background_2.Parent = KeybindEditor
@@ -669,6 +713,7 @@ background_2.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_2.BorderSizePixel = 0
 background_2.Position = UDim2.new(0, 0, 0, 20)
 background_2.Size = UDim2.new(0, 360, 0, 185)
+background_2.ZIndex = 10
 
 Dark_4.Name = "Dark"
 Dark_4.Parent = background_2
@@ -677,6 +722,7 @@ Dark_4.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Dark_4.BorderSizePixel = 0
 Dark_4.Position = UDim2.new(0, 135, 0, 0)
 Dark_4.Size = UDim2.new(0, 2, 0, 185)
+Dark_4.ZIndex = 10
 
 Directions.Name = "Directions"
 Directions.Parent = background_2
@@ -690,6 +736,7 @@ Directions.Text = "Click the button below and press a key/mouse button. Then sel
 Directions.TextColor3 = Color3.new(1, 1, 1)
 Directions.TextWrapped = true
 Directions.TextYAlignment = Enum.TextYAlignment.Top
+Directions.ZIndex = 10
 
 BindTo.Name = "BindTo"
 BindTo.Parent = background_2
@@ -701,6 +748,7 @@ BindTo.Font = Enum.Font.SourceSans
 BindTo.TextSize = 16
 BindTo.Text = "Click to bind"
 BindTo.TextColor3 = Color3.new(1, 1, 1)
+BindTo.ZIndex = 10
 
 Add_2.Name = "Add"
 Add_2.Parent = background_2
@@ -712,6 +760,7 @@ Add_2.Font = Enum.Font.SourceSans
 Add_2.TextSize = 14
 Add_2.Text = "Add"
 Add_2.TextColor3 = Color3.new(1, 1, 1)
+Add_2.ZIndex = 10
 
 Cmdbar_2.Name = "Cmdbar"
 Cmdbar_2.Parent = background_2
@@ -725,6 +774,7 @@ Cmdbar_2.Text = "Command"
 Cmdbar_2.TextColor3 = Color3.new(1, 1, 1)
 Cmdbar_2.TextScaled = true
 Cmdbar_2.TextWrapped = true
+Cmdbar_2.ZIndex = 10
 
 Toggles.Name = "Toggles"
 Toggles.Parent = background_2
@@ -737,6 +787,7 @@ Toggles.CanvasSize = UDim2.new(0, 0, 0, 0)
 Toggles.MidImage = "rbxasset://textures/blackBkg_square.png"
 Toggles.ScrollBarThickness = 8
 Toggles.TopImage = "rbxasset://textures/blackBkg_square.png"
+Toggles.ZIndex = 10
 
 Fly.Name = "Fly"
 Fly.Parent = Toggles
@@ -748,6 +799,7 @@ Fly.TextSize = 14
 Fly.Text = "    Toggle Fly"
 Fly.TextColor3 = Color3.new(1, 1, 1)
 Fly.TextXAlignment = Enum.TextXAlignment.Left
+Fly.ZIndex = 10
 
 Select_3.Name = "Select"
 Select_3.Parent = Fly
@@ -759,6 +811,7 @@ Select_3.Font = Enum.Font.SourceSans
 Select_3.TextSize = 14
 Select_3.Text = "Add"
 Select_3.TextColor3 = Color3.new(0, 0, 0)
+Select_3.ZIndex = 10
 
 Noclip.Name = "Noclip"
 Noclip.Parent = Toggles
@@ -771,6 +824,7 @@ Noclip.TextSize = 14
 Noclip.Text = "    Toggle Noclip"
 Noclip.TextColor3 = Color3.new(1, 1, 1)
 Noclip.TextXAlignment = Enum.TextXAlignment.Left
+Noclip.ZIndex = 10
 
 Select_4.Name = "Select"
 Select_4.Parent = Noclip
@@ -782,6 +836,7 @@ Select_4.Font = Enum.Font.SourceSans
 Select_4.TextSize = 14
 Select_4.Text = "Add"
 Select_4.TextColor3 = Color3.new(0, 0, 0)
+Select_4.ZIndex = 10
 
 Float.Name = "Float"
 Float.Parent = Toggles
@@ -794,6 +849,7 @@ Float.TextSize = 14
 Float.Text = "    Toggle Float"
 Float.TextColor3 = Color3.new(1, 1, 1)
 Float.TextXAlignment = Enum.TextXAlignment.Left
+Float.ZIndex = 10
 
 Select_5.Name = "Select"
 Select_5.Parent = Float
@@ -805,6 +861,7 @@ Select_5.Font = Enum.Font.SourceSans
 Select_5.TextSize = 14
 Select_5.Text = "Add"
 Select_5.TextColor3 = Color3.new(0, 0, 0)
+Select_5.ZIndex = 10
 
 ClickTP.Name = "Click TP"
 ClickTP.Parent = Toggles
@@ -817,6 +874,7 @@ ClickTP.TextSize = 14
 ClickTP.Text = "    Click TP (Hold Key & Click)"
 ClickTP.TextColor3 = Color3.new(1, 1, 1)
 ClickTP.TextXAlignment = Enum.TextXAlignment.Left
+ClickTP.ZIndex = 10
 
 Select_6.Name = "Select"
 Select_6.Parent = ClickTP
@@ -828,6 +886,7 @@ Select_6.Font = Enum.Font.SourceSans
 Select_6.TextSize = 14
 Select_6.Text = "Add"
 Select_6.TextColor3 = Color3.new(0, 0, 0)
+Select_6.ZIndex = 10
 
 Xray.Name = "Xray"
 Xray.Parent = Toggles
@@ -840,6 +899,7 @@ Xray.TextSize = 14
 Xray.Text = "    Toggle Xray"
 Xray.TextColor3 = Color3.new(1, 1, 1)
 Xray.TextXAlignment = Enum.TextXAlignment.Left
+Xray.ZIndex = 10
 
 Select_10.Name = "Select"
 Select_10.Parent = Xray
@@ -851,20 +911,21 @@ Select_10.Font = Enum.Font.SourceSans
 Select_10.TextSize = 14
 Select_10.Text = "Add"
 Select_10.TextColor3 = Color3.new(0, 0, 0)
+Select_10.ZIndex = 10
 
 shadow_2.Name = "shadow"
 shadow_2.Parent = KeybindEditor
 shadow_2.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 shadow_2.BorderSizePixel = 0
 shadow_2.Size = UDim2.new(0, 360, 0, 20)
-shadow_2.ZIndex = 4
+shadow_2.ZIndex = 10
 
 PopupText_2.Name = "PopupText"
 PopupText_2.Parent = shadow_2
 PopupText_2.BackgroundTransparency = 1
 PopupText_2.Position = UDim2.new(0, 51, 0, 0)
 PopupText_2.Size = UDim2.new(0.76, -16, 0.95, 0)
-PopupText_2.ZIndex = 4
+PopupText_2.ZIndex = 10
 PopupText_2.Font = Enum.Font.SourceSans
 PopupText_2.TextSize = 14
 PopupText_2.Text = "Set Keybinds"
@@ -875,7 +936,7 @@ Exit_2.Name = "Exit"
 Exit_2.Parent = shadow_2
 Exit_2.BackgroundTransparency = 1
 Exit_2.Size = UDim2.new(0, 20, 0, 20)
-Exit_2.ZIndex = 4
+Exit_2.ZIndex = 10
 Exit_2.Image = "rbxassetid://2132544126"
 
 SpawnCEditor.Name = randomString()
@@ -884,7 +945,7 @@ SpawnCEditor.Active = true
 SpawnCEditor.BackgroundTransparency = 1
 SpawnCEditor.Position = UDim2.new(0.5, -180, 0, -400)
 SpawnCEditor.Size = UDim2.new(0, 360, 0, 20)
-SpawnCEditor.ZIndex = 4
+SpawnCEditor.ZIndex = 10
 
 background_4.Name = "background"
 background_4.Parent = SpawnCEditor
@@ -892,6 +953,7 @@ background_4.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_4.BorderSizePixel = 0
 background_4.Position = UDim2.new(0, 0, 0, 20)
 background_4.Size = UDim2.new(0, 360, 0, 75)
+background_4.ZIndex = 10
 
 Cmdbar_3.Name = "Cmdbar"
 Cmdbar_3.Parent = background_4
@@ -905,6 +967,7 @@ Cmdbar_3.Text = "Command"
 Cmdbar_3.TextColor3 = Color3.new(1, 1, 1)
 Cmdbar_3.TextScaled = true
 Cmdbar_3.TextWrapped = true
+Cmdbar_3.ZIndex = 10
 
 Add_5.Name = "Add"
 Add_5.Parent = background_4
@@ -916,6 +979,7 @@ Add_5.Font = Enum.Font.SourceSans
 Add_5.TextSize = 14
 Add_5.Text = "Add"
 Add_5.TextColor3 = Color3.new(1, 1, 1)
+Add_5.ZIndex = 10
 
 DelayNum.Name = "DelayNum"
 DelayNum.Parent = background_4
@@ -929,6 +993,7 @@ DelayNum.Text = "0"
 DelayNum.TextColor3 = Color3.new(1, 1, 1)
 DelayNum.TextScaled = true
 DelayNum.TextWrapped = true
+DelayNum.ZIndex = 10
 
 Delay.Name = "Delay"
 Delay.Parent = background_4
@@ -941,6 +1006,7 @@ Delay.TextSize = 14
 Delay.Text = "Delay (seconds) (0 for none)"
 Delay.TextColor3 = Color3.new(1, 1, 1)
 Delay.TextWrapped = true
+Delay.ZIndex = 10
 
 Directions_3.Name = "Directions"
 Directions_3.Parent = background_4
@@ -954,6 +1020,7 @@ Directions_3.Text = "Spawn commands automatically get executed when you spawn."
 Directions_3.TextColor3 = Color3.new(1, 1, 1)
 Directions_3.TextWrapped = true
 Directions_3.TextYAlignment = Enum.TextYAlignment.Top
+Directions_3.ZIndex = 10
 
 Dark_11.Name = "Dark"
 Dark_11.Parent = background_4
@@ -962,20 +1029,21 @@ Dark_11.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Dark_11.BorderSizePixel = 0
 Dark_11.Position = UDim2.new(0.378, 0, 0, 0)
 Dark_11.Size = UDim2.new(0, 2, 0, 75)
+Dark_11.ZIndex = 10
 
 shadow_4.Name = "shadow"
 shadow_4.Parent = SpawnCEditor
 shadow_4.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 shadow_4.BorderSizePixel = 0
 shadow_4.Size = UDim2.new(0, 360, 0, 20)
-shadow_4.ZIndex = 4
+shadow_4.ZIndex = 10
 
 PopupText_4.Name = "PopupText"
 PopupText_4.Parent = shadow_4
 PopupText_4.BackgroundTransparency = 1
 PopupText_4.Position = UDim2.new(0, 51, 0, 0)
 PopupText_4.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-PopupText_4.ZIndex = 4
+PopupText_4.ZIndex = 10
 PopupText_4.Font = Enum.Font.SourceSans
 PopupText_4.TextSize = 14
 PopupText_4.Text = "Set Spawn Commands"
@@ -986,7 +1054,7 @@ Exit_4.Name = "Exit"
 Exit_4.Parent = shadow_4
 Exit_4.BackgroundTransparency = 1
 Exit_4.Size = UDim2.new(0, 20, 0, 20)
-Exit_4.ZIndex = 4
+Exit_4.ZIndex = 10
 Exit_4.Image = "rbxassetid://2132544126"
 
 PositionsFrame.Name = "PositionsFrame"
@@ -996,6 +1064,7 @@ PositionsFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 PositionsFrame.BorderSizePixel = 0
 PositionsFrame.Size = UDim2.new(0, 250, 0, 175)
 PositionsFrame.Position = UDim2.new(0, 0, 0, 175)
+PositionsFrame.ZIndex = 10
 
 Close_3.Name = "Close"
 Close_3.Parent = PositionsFrame
@@ -1007,6 +1076,7 @@ Close_3.Font = Enum.Font.SourceSans
 Close_3.TextSize = 14
 Close_3.Text = "Close"
 Close_3.TextColor3 = Color3.new(1, 1, 1)
+Close_3.ZIndex = 10
 
 Delete_5.Name = "Delete"
 Delete_5.Parent = PositionsFrame
@@ -1018,6 +1088,7 @@ Delete_5.Font = Enum.Font.SourceSans
 Delete_5.TextSize = 14
 Delete_5.Text = "Clear"
 Delete_5.TextColor3 = Color3.new(1, 1, 1)
+Delete_5.ZIndex = 10
 
 Part.Name = "PartGoto"
 Part.Parent = PositionsFrame
@@ -1029,6 +1100,7 @@ Part.Font = Enum.Font.SourceSans
 Part.TextSize = 14
 Part.Text = "Part"
 Part.TextColor3 = Color3.new(1, 1, 1)
+Part.ZIndex = 10
 
 Holder_4.Name = "Holder"
 Holder_4.Parent = PositionsFrame
@@ -1042,6 +1114,7 @@ Holder_4.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_4.MidImage = "rbxasset://textures/blackBkg_square.png"
 Holder_4.ScrollBarThickness = 8
 Holder_4.TopImage = "rbxasset://textures/blackBkg_square.png"
+Holder_4.ZIndex = 10
 
 Example_4.Name = "Example"
 Example_4.Parent = PositionsFrame
@@ -1050,6 +1123,7 @@ Example_4.BorderSizePixel = 0
 Example_4.Size = UDim2.new(0, 10, 0, 20)
 Example_4.Visible = false
 Example_4.Position = UDim2.new(0, 0, 0, -5)
+Example_4.ZIndex = 10
 
 Text_5.Name = "Text"
 Text_5.Parent = Example_4
@@ -1062,6 +1136,7 @@ Text_5.TextSize = 14
 Text_5.Text = "Position"
 Text_5.TextColor3 = Color3.new(1, 1, 1)
 Text_5.TextXAlignment = Enum.TextXAlignment.Left
+Text_5.ZIndex = 10
 
 Delete_6.Name = "Delete"
 Delete_6.Parent = Text_5
@@ -1073,6 +1148,7 @@ Delete_6.Font = Enum.Font.SourceSans
 Delete_6.TextSize = 14
 Delete_6.Text = "Delete"
 Delete_6.TextColor3 = Color3.new(0, 0, 0)
+Delete_6.ZIndex = 10
 
 TP.Name = "TP"
 TP.Parent = Text_5
@@ -1084,6 +1160,7 @@ TP.Font = Enum.Font.SourceSans
 TP.TextSize = 14
 TP.Text = "Goto"
 TP.TextColor3 = Color3.new(0, 0, 0)
+TP.ZIndex = 10
 
 AliasesFrame.Name = "AliasesFrame"
 AliasesFrame.Parent = Settings
@@ -1092,6 +1169,7 @@ AliasesFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 AliasesFrame.BorderSizePixel = 0
 AliasesFrame.Position = UDim2.new(0, 0, 0, 175)
 AliasesFrame.Size = UDim2.new(0, 250, 0, 175)
+AliasesFrame.ZIndex = 10
 
 Close_2.Name = "Close"
 Close_2.Parent = AliasesFrame
@@ -1103,6 +1181,7 @@ Close_2.Font = Enum.Font.SourceSans
 Close_2.TextSize = 14
 Close_2.Text = "Close"
 Close_2.TextColor3 = Color3.new(1, 1, 1)
+Close_2.ZIndex = 10
 
 Delete_3.Name = "Delete"
 Delete_3.Parent = AliasesFrame
@@ -1114,6 +1193,7 @@ Delete_3.Font = Enum.Font.SourceSans
 Delete_3.TextSize = 14
 Delete_3.Text = "Clear"
 Delete_3.TextColor3 = Color3.new(1, 1, 1)
+Delete_3.ZIndex = 10
 
 Holder_3.Name = "Holder"
 Holder_3.Parent = AliasesFrame
@@ -1126,6 +1206,7 @@ Holder_3.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_3.MidImage = "rbxasset://textures/blackBkg_square.png"
 Holder_3.ScrollBarThickness = 0
 Holder_3.TopImage = "rbxasset://textures/blackBkg_square.png"
+Holder_3.ZIndex = 10
 
 Example_3.Name = "Example"
 Example_3.Parent = AliasesFrame
@@ -1133,6 +1214,7 @@ Example_3.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Example_3.BorderSizePixel = 0
 Example_3.Size = UDim2.new(0, 10, 0, 20)
 Example_3.Visible = false
+Example_3.ZIndex = 10
 
 Text_4.Name = "Text"
 Text_4.Parent = Example_3
@@ -1145,6 +1227,7 @@ Text_4.TextSize = 14
 Text_4.Text = "honk"
 Text_4.TextColor3 = Color3.new(1, 1, 1)
 Text_4.TextXAlignment = Enum.TextXAlignment.Left
+Text_4.ZIndex = 10
 
 Delete_4.Name = "Delete"
 Delete_4.Parent = Text_4
@@ -1156,6 +1239,7 @@ Delete_4.Font = Enum.Font.SourceSans
 Delete_4.TextSize = 14
 Delete_4.Text = "Delete"
 Delete_4.TextColor3 = Color3.new(0, 0, 0)
+Delete_4.ZIndex = 10
 
 PluginsFrame.Name = "PluginsFrame"
 PluginsFrame.Parent = Settings
@@ -1164,6 +1248,7 @@ PluginsFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 PluginsFrame.BorderSizePixel = 0
 PluginsFrame.Position = UDim2.new(0, 0, 0, 175)
 PluginsFrame.Size = UDim2.new(0, 250, 0, 175)
+PluginsFrame.ZIndex = 10
 
 Close_4.Name = "Close"
 Close_4.Parent = PluginsFrame
@@ -1175,6 +1260,7 @@ Close_4.Font = Enum.Font.SourceSans
 Close_4.TextSize = 14
 Close_4.Text = "Close"
 Close_4.TextColor3 = Color3.new(1, 1, 1)
+Close_4.ZIndex = 10
 
 Add_3.Name = "Add"
 Add_3.Parent = PluginsFrame
@@ -1186,6 +1272,7 @@ Add_3.Font = Enum.Font.SourceSans
 Add_3.TextSize = 14
 Add_3.Text = "Add"
 Add_3.TextColor3 = Color3.new(1, 1, 1)
+Add_3.ZIndex = 10
 
 Holder_5.Name = "Holder"
 Holder_5.Parent = PluginsFrame
@@ -1199,6 +1286,7 @@ Holder_5.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_5.MidImage = "rbxasset://textures/blackBkg_square.png"
 Holder_5.ScrollBarThickness = 0
 Holder_5.TopImage = "rbxasset://textures/blackBkg_square.png"
+Holder_5.ZIndex = 10
 
 Example_5.Name = "Example"
 Example_5.Parent = PluginsFrame
@@ -1206,6 +1294,7 @@ Example_5.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Example_5.BorderSizePixel = 0
 Example_5.Size = UDim2.new(0, 10, 0, 20)
 Example_5.Visible = false
+Example_5.ZIndex = 10
 
 Text_6.Name = "Text"
 Text_6.Parent = Example_5
@@ -1218,6 +1307,7 @@ Text_6.TextSize = 14
 Text_6.Text = "F4 > Toggle Fly"
 Text_6.TextColor3 = Color3.new(1, 1, 1)
 Text_6.TextXAlignment = Enum.TextXAlignment.Left
+Text_6.ZIndex = 10
 
 Delete_7.Name = "Delete"
 Delete_7.Parent = Text_6
@@ -1229,15 +1319,16 @@ Delete_7.Font = Enum.Font.SourceSans
 Delete_7.TextSize = 14
 Delete_7.Text = "Delete"
 Delete_7.TextColor3 = Color3.new(0, 0, 0)
+Delete_7.ZIndex = 10
 
 PluginEditor.Name = randomString()
 PluginEditor.Parent = PARENT
-background_3.BorderSizePixel = 0
+PluginEditor.BorderSizePixel = 0
 PluginEditor.Active = true
 PluginEditor.BackgroundTransparency = 1
 PluginEditor.Position = UDim2.new(0.5, -180, 0, -400)
 PluginEditor.Size = UDim2.new(0, 360, 0, 20)
-PluginEditor.ZIndex = 4
+PluginEditor.ZIndex = 10
 
 background_3.Name = "background"
 background_3.Parent = PluginEditor
@@ -1245,6 +1336,7 @@ background_3.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_3.BorderSizePixel = 0
 background_3.Position = UDim2.new(0, 0, 0, 20)
 background_3.Size = UDim2.new(0, 360, 0, 160)
+background_3.ZIndex = 10
 
 Dark_9.Name = "Dark"
 Dark_9.Parent = background_3
@@ -1254,6 +1346,7 @@ Dark_9.BackgroundTransparency = 0
 Dark_9.BorderSizePixel = 0
 Dark_9.Position = UDim2.new(0, 222, 0, 0)
 Dark_9.Size = UDim2.new(0, 2, 0, 160)
+Dark_9.ZIndex = 10
 
 Img.Name = "Img"
 Img.Parent = background_3
@@ -1261,6 +1354,7 @@ Img.BackgroundTransparency = 1
 Img.Position = UDim2.new(0, 242, 0, 3)
 Img.Size = UDim2.new(0, 100, 0, 95)
 Img.Image = "rbxassetid://4113050383"
+Img.ZIndex = 10
 
 AddPlugin.Name = "AddPlugin"
 AddPlugin.Parent = background_3
@@ -1272,6 +1366,7 @@ AddPlugin.Font = Enum.Font.SourceSans
 AddPlugin.TextSize = 14
 AddPlugin.Text = "Add Plugin"
 AddPlugin.TextColor3 = Color3.new(1, 1, 1)
+AddPlugin.ZIndex = 10
 
 FileName.Name = "FileName"
 FileName.Parent = background_3
@@ -1283,6 +1378,7 @@ FileName.Font = Enum.Font.SourceSans
 FileName.TextSize = 14
 FileName.Text = "Plugin File Name"
 FileName.TextColor3 = Color3.new(1, 1, 1)
+FileName.ZIndex = 10
 
 About.Name = "About"
 About.Parent = background_3
@@ -1296,6 +1392,7 @@ About.Text = "Plugins are .iy files and should be located in the 'workspace' fol
 About.TextColor3 = Color3.fromRGB(255, 255, 255)
 About.TextWrapped = true
 About.TextYAlignment = Enum.TextYAlignment.Top
+About.ZIndex = 10
 
 Directions_2.Name = "Directions"
 Directions_2.Parent = background_3
@@ -1309,20 +1406,21 @@ Directions_2.Text = "Type the name of the plugin file you want to add below."
 Directions_2.TextColor3 = Color3.fromRGB(255, 255, 255)
 Directions_2.TextWrapped = true
 Directions_2.TextYAlignment = Enum.TextYAlignment.Top
+Directions_2.ZIndex = 10
 
 shadow_3.Name = "shadow"
 shadow_3.Parent = PluginEditor
 shadow_3.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 shadow_3.BorderSizePixel = 0
 shadow_3.Size = UDim2.new(0, 360, 0, 20)
-shadow_3.ZIndex = 4
+shadow_3.ZIndex = 10
 
 PopupText_3.Name = "PopupText"
 PopupText_3.Parent = shadow_3
 PopupText_3.BackgroundTransparency = 1
 PopupText_3.Position = UDim2.new(0, 51, 0, 0)
 PopupText_3.Size = UDim2.new(0.76, -16, 0.95, 0)
-PopupText_3.ZIndex = 4
+PopupText_3.ZIndex = 10
 PopupText_3.Font = Enum.Font.SourceSans
 PopupText_3.TextSize = 14
 PopupText_3.Text = "Add Plugins"
@@ -1333,7 +1431,7 @@ Exit_3.Name = "Exit"
 Exit_3.Parent = shadow_3
 Exit_3.BackgroundTransparency = 1
 Exit_3.Size = UDim2.new(0, 20, 0, 20)
-Exit_3.ZIndex = 4
+Exit_3.ZIndex = 10
 Exit_3.Image = "rbxassetid://2132544126"
 
 logsDrag.Name = randomString()
@@ -1342,7 +1440,7 @@ logsDrag.Active = true
 logsDrag.BackgroundTransparency = 1
 logsDrag.Position = UDim2.new(0, 0, 1, 10)
 logsDrag.Size = UDim2.new(0, 338, 0, 20)
-logsDrag.ZIndex = 4
+logsDrag.ZIndex = 10
 
 shadow.Name = "shadow"
 shadow.Parent = logsDrag
@@ -1350,14 +1448,14 @@ shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 shadow.BorderSizePixel = 0
 shadow.Position = UDim2.new(0, 0, 0.01, 0)
 shadow.Size = UDim2.new(0, 338, 0, 20)
-shadow.ZIndex = 4
+shadow.ZIndex = 10
 
 Hide.Name = "Hide"
 Hide.Parent = shadow
 Hide.BackgroundTransparency = 1
 Hide.Position = UDim2.new(0, 20, 0, 0)
 Hide.Size = UDim2.new(0, 20, 0, 20)
-Hide.ZIndex = 4
+Hide.ZIndex = 10
 Hide.Image = "rbxassetid://2406617031"
 Hide.ImageTransparency = 0.5
 
@@ -1366,7 +1464,7 @@ PopupText.Parent = shadow
 PopupText.BackgroundTransparency = 1
 PopupText.Position = UDim2.new(0, 48, 0, 0)
 PopupText.Size = UDim2.new(0.76, -16, 0.95, 0)
-PopupText.ZIndex = 4
+PopupText.ZIndex = 10
 PopupText.Font = Enum.Font.SourceSans
 PopupText.TextSize = 14
 PopupText.Text = "Chat Logs"
@@ -1377,7 +1475,7 @@ Exit.Name = "Exit"
 Exit.Parent = shadow
 Exit.BackgroundTransparency = 1
 Exit.Size = UDim2.new(0, 20, 0, 20)
-Exit.ZIndex = 4
+Exit.ZIndex = 10
 Exit.Image = "rbxassetid://2132544126"
 
 scroll.Name = "scroll"
@@ -1386,7 +1484,7 @@ scroll.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 scroll.BorderSizePixel = 0
 scroll.Position = UDim2.new(0, 5, 0, 25)
 scroll.Size = UDim2.new(0, 328, 0, 190)
-scroll.ZIndex = 5
+scroll.ZIndex = 10
 scroll.BottomImage = "rbxasset://textures/blackBkg_square.png"
 scroll.CanvasSize = UDim2.new(0, 0, 0, 10)
 scroll.MidImage = "rbxasset://textures/blackBkg_square.png"
@@ -1399,7 +1497,7 @@ background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background.BorderSizePixel = 0
 background.Position = UDim2.new(0, 0, 1, 0)
 background.Size = UDim2.new(0, 338, 0, 225)
-background.ZIndex = 4
+background.ZIndex = 10
 
 Clear.Name = "Clear"
 Clear.Parent = background
@@ -1407,7 +1505,7 @@ Clear.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Clear.BorderSizePixel = 0
 Clear.Position = UDim2.new(0, 5, 0, 200)
 Clear.Size = UDim2.new(0, 50, 0, 20)
-Clear.ZIndex = 4
+Clear.ZIndex = 10
 Clear.Font = Enum.Font.SourceSans
 Clear.TextSize = 14
 Clear.Text = "Clear"
@@ -1419,7 +1517,7 @@ Toggle.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Toggle.BorderSizePixel = 0
 Toggle.Position = UDim2.new(0, 60, 0, 200)
 Toggle.Size = UDim2.new(0, 66, 0, 20)
-Toggle.ZIndex = 4
+Toggle.ZIndex = 10
 Toggle.Font = Enum.Font.SourceSans
 Toggle.TextSize = 14
 Toggle.Text = "Disabled"
@@ -1437,6 +1535,7 @@ AliasHint.Text = "Add aliases by using the 'addalias' command"
 AliasHint.TextColor3 = Color3.new(1, 1, 1)
 AliasHint.TextStrokeColor3 = Color3.new(1, 1, 1)
 AliasHint.TextWrapped = true
+AliasHint.ZIndex = 10
 
 PluginsHint.Name = "PluginsHint"
 PluginsHint.Parent = PluginsFrame
@@ -1450,6 +1549,7 @@ PluginsHint.Text = "Download plugins from the IY Discord (discord.io/infiniteyie
 PluginsHint.TextColor3 = Color3.new(1, 1, 1)
 PluginsHint.TextStrokeColor3 = Color3.new(1, 1, 1)
 PluginsHint.TextWrapped = true
+PluginsHint.ZIndex = 10
 
 PositionsHint.Name = "PositionsHint"
 PositionsHint.Parent = PositionsFrame
@@ -1463,6 +1563,7 @@ PositionsHint.Text = "Use the 'spos' or 'setwaypoint' command to add a position 
 PositionsHint.TextColor3 = Color3.new(1, 1, 1)
 PositionsHint.TextStrokeColor3 = Color3.new(1, 1, 1)
 PositionsHint.TextWrapped = true
+PositionsHint.ZIndex = 10
 
 ToPartFrame.Name = randomString()
 ToPartFrame.Parent = PARENT
@@ -1470,7 +1571,7 @@ ToPartFrame.Active = true
 ToPartFrame.BackgroundTransparency = 1
 ToPartFrame.Position = UDim2.new(0.5, -180, 0, -400)
 ToPartFrame.Size = UDim2.new(0, 360, 0, 20)
-ToPartFrame.ZIndex = 4
+ToPartFrame.ZIndex = 10
 
 background_5.Name = "background"
 background_5.Parent = ToPartFrame
@@ -1478,6 +1579,7 @@ background_5.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_5.BorderSizePixel = 0
 background_5.Position = UDim2.new(0, 0, 0, 20)
 background_5.Size = UDim2.new(0, 360, 0, 117)
+background_5.ZIndex = 10
 
 ChoosePart.Name = "ChoosePart"
 ChoosePart.Parent = background_5
@@ -1489,6 +1591,7 @@ ChoosePart.Font = Enum.Font.SourceSans
 ChoosePart.TextSize = 14
 ChoosePart.Text = "Select Part"
 ChoosePart.TextColor3 = Color3.new(1, 1, 1)
+ChoosePart.ZIndex = 10
 
 CopyPath.Name = "CopyPath"
 CopyPath.Parent = background_5
@@ -1500,6 +1603,7 @@ CopyPath.Font = Enum.Font.SourceSans
 CopyPath.TextSize = 14
 CopyPath.Text = "Copy Path"
 CopyPath.TextColor3 = Color3.new(1, 1, 1)
+CopyPath.ZIndex = 10
 
 Directions_4.Name = "Directions"
 Directions_4.Parent = background_5
@@ -1513,6 +1617,7 @@ Directions_4.Text = 'Click on a part and then click the "Select Part" button bel
 Directions_4.TextColor3 = Color3.new(1, 1, 1)
 Directions_4.TextWrapped = true
 Directions_4.TextYAlignment = Enum.TextYAlignment.Top
+Directions_4.ZIndex = 10
 
 Path.Name = "Path"
 Path.Parent = background_5
@@ -1527,20 +1632,21 @@ Path.TextColor3 = Color3.new(1, 1, 1)
 Path.TextScaled = true
 Path.TextWrapped = true
 Path.TextYAlignment = Enum.TextYAlignment.Top
+Path.ZIndex = 10
 
 shadow_5.Name = "shadow"
 shadow_5.Parent = ToPartFrame
 shadow_5.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 shadow_5.BorderSizePixel = 0
 shadow_5.Size = UDim2.new(0, 360, 0, 20)
-shadow_5.ZIndex = 4
+shadow_5.ZIndex = 10
 
 PopupText_5.Name = "PopupText"
 PopupText_5.Parent = shadow_5
 PopupText_5.BackgroundTransparency = 1
 PopupText_5.Position = UDim2.new(0, 51, 0, 0)
 PopupText_5.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-PopupText_5.ZIndex = 4
+PopupText_5.ZIndex = 10
 PopupText_5.Font = Enum.Font.SourceSans
 PopupText_5.TextSize = 14
 PopupText_5.Text = "Teleport to Part"
@@ -1551,7 +1657,7 @@ Exit_5.Name = "Exit"
 Exit_5.Parent = shadow_5
 Exit_5.BackgroundTransparency = 1
 Exit_5.Size = UDim2.new(0, 20, 0, 20)
-Exit_5.ZIndex = 4
+Exit_5.ZIndex = 10
 Exit_5.Image = "rbxassetid://2132544126"
 
 function writefileExploit()
@@ -1715,7 +1821,7 @@ function saves()
 				FileError.BackgroundTransparency = 1
 				FileError.Position = UDim2.new(0.5, -180, 0, 290)
 				FileError.Size = UDim2.new(0, 360, 0, 20)
-				FileError.ZIndex = 4
+				FileError.ZIndex = 10
 				
 				background.Name = "background"
 				background.Parent = FileError
@@ -1723,6 +1829,7 @@ function saves()
 				background.BorderSizePixel = 0
 				background.Position = UDim2.new(0, 0, 0, 20)
 				background.Size = UDim2.new(0, 360, 0, 205)
+				background.ZIndex = 10
 				
 				Directions.Name = "Directions"
 				Directions.Parent = background
@@ -1737,20 +1844,21 @@ function saves()
 				Directions.TextWrapped = true
 				Directions.TextXAlignment = Enum.TextXAlignment.Left
 				Directions.TextYAlignment = Enum.TextYAlignment.Top
+				Directions.ZIndex = 10
 
 				shadow.Name = "shadow"
 				shadow.Parent = FileError
 				shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 				shadow.BorderSizePixel = 0
 				shadow.Size = UDim2.new(0, 360, 0, 20)
-				shadow.ZIndex = 4
+				shadow.ZIndex = 10
 				
 				PopupText.Name = "PopupText"
 				PopupText.Parent = shadow
 				PopupText.BackgroundTransparency = 1
 				PopupText.Position = UDim2.new(0, 51, 0, 0)
 				PopupText.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-				PopupText.ZIndex = 4
+				PopupText.ZIndex = 10
 				PopupText.Font = Enum.Font.SourceSans
 				PopupText.TextSize = 14
 				PopupText.Text = "File Error"
@@ -1761,7 +1869,7 @@ function saves()
 				Exit.Parent = shadow
 				Exit.BackgroundTransparency = 1
 				Exit.Size = UDim2.new(0, 20, 0, 20)
-				Exit.ZIndex = 4
+				Exit.ZIndex = 10
 				Exit.Image = "rbxassetid://2132544126"
 				
 				Exit.MouseButton1Click:Connect(function()
@@ -1928,7 +2036,7 @@ function CreateLabel(Name, Text)
 	local tl = Instance.new('TextLabel', sf)
 	local il = Instance.new('Frame', tl)
 	tl.Name = Name
-	tl.ZIndex = 6
+	tl.ZIndex = 10
 	tl.Text = Time().." - ["..Name.."]: "..Text
 	tl.Size = UDim2.new(0,322,0,84)
 	tl.BackgroundTransparency = 1
@@ -1945,6 +2053,7 @@ function CreateLabel(Name, Text)
 	il.BorderSizePixel = 0
 	il.Size = UDim2.new(0,12,1,0)
 	il.Position = UDim2.new(0,316,0,0)
+	il.ZIndex = 10
 	tl.TextColor3 = Color3.fromRGB(255,255,255)
 	tl.Size = UDim2.new(0,322,0,tl.TextBounds.Y)
 	sf.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
@@ -4022,7 +4131,7 @@ function(args, speaker)
 	FRAME.BackgroundTransparency = 1
 	FRAME.Position = UDim2.new(0.5, -130, 0, -400)
 	FRAME.Size = UDim2.new(0, 250, 0, 20)
-	FRAME.ZIndex = 4
+	FRAME.ZIndex = 10
 	dragGUI(FRAME)
 	
 	shadow.Name = "shadow"
@@ -4030,14 +4139,14 @@ function(args, speaker)
 	shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 	shadow.BorderSizePixel = 0
 	shadow.Size = UDim2.new(0, 250, 0, 20)
-	shadow.ZIndex = 4
+	shadow.ZIndex = 10
 	
 	PopupText.Name = "PopupText"
 	PopupText.Parent = shadow
 	PopupText.BackgroundTransparency = 1
 	PopupText.Position = UDim2.new(0, 38, 0, 0)
 	PopupText.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-	PopupText.ZIndex = 4
+	PopupText.ZIndex = 10
 	PopupText.Font = Enum.Font.SourceSans
 	PopupText.TextSize = 14
 	PopupText.Text = "Server"
@@ -4048,7 +4157,7 @@ function(args, speaker)
 	Exit.Parent = shadow
 	Exit.BackgroundTransparency = 1
 	Exit.Size = UDim2.new(0, 20, 0, 20)
-	Exit.ZIndex = 4
+	Exit.ZIndex = 10
 	Exit.Image = "rbxassetid://2132544126"
 	
 	background.Name = "background"
@@ -4057,7 +4166,7 @@ function(args, speaker)
 	background.BorderSizePixel = 0
 	background.Position = UDim2.new(0, 0, 1, 0)
 	background.Size = UDim2.new(0, 250, 0, 250)
-	background.ZIndex = 4
+	background.ZIndex = 10
 	
 	TextLabel.Name = "Text Label"
 	TextLabel.Parent = background
@@ -4065,7 +4174,7 @@ function(args, speaker)
 	TextLabel.BorderSizePixel = 0
 	TextLabel.Position = UDim2.new(0, 5, 0, 80)
 	TextLabel.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel.ZIndex = 4
+	TextLabel.ZIndex = 10
 	TextLabel.Font = Enum.Font.SourceSansLight
 	TextLabel.TextSize = 20
 	TextLabel.Text = "Run Time:"
@@ -4078,7 +4187,7 @@ function(args, speaker)
 	TextLabel2.BorderSizePixel = 0
 	TextLabel2.Position = UDim2.new(0, 5, 0, 130)
 	TextLabel2.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel2.ZIndex = 4
+	TextLabel2.ZIndex = 10
 	TextLabel2.Font = Enum.Font.SourceSansLight
 	TextLabel2.TextSize = 20
 	TextLabel2.Text = "Statistics:"
@@ -4091,7 +4200,7 @@ function(args, speaker)
 	TextLabel3.BorderSizePixel = 0
 	TextLabel3.Position = UDim2.new(0, 5, 0, 10)
 	TextLabel3.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel3.ZIndex = 4
+	TextLabel3.ZIndex = 10
 	TextLabel3.Font = Enum.Font.SourceSansLight
 	TextLabel3.TextSize = 20
 	TextLabel3.Text = "Local Player:"
@@ -4104,7 +4213,7 @@ function(args, speaker)
 	Time.BorderSizePixel = 0
 	Time.Position = UDim2.new(0, 5, 0, 105)
 	Time.Size = UDim2.new(0, 100, 0, 20)
-	Time.ZIndex = 4
+	Time.ZIndex = 10
 	Time.Font = Enum.Font.SourceSans
 	Time.FontSize = Enum.FontSize.Size14
 	Time.Text = "LOADING"
@@ -4117,7 +4226,7 @@ function(args, speaker)
 	appearance.BorderSizePixel = 0
 	appearance.Position = UDim2.new(0, 5, 0, 55)
 	appearance.Size = UDim2.new(0, 100, 0, 20)
-	appearance.ZIndex = 4
+	appearance.ZIndex = 10
 	appearance.Font = Enum.Font.SourceSans
 	appearance.FontSize = Enum.FontSize.Size14
 	appearance.Text = "Appearance: LOADING"
@@ -4130,7 +4239,7 @@ function(args, speaker)
 	maxplayers.BorderSizePixel = 0
 	maxplayers.Position = UDim2.new(0, 5, 0, 175)
 	maxplayers.Size = UDim2.new(0, 100, 0, 20)
-	maxplayers.ZIndex = 4
+	maxplayers.ZIndex = 10
 	maxplayers.Font = Enum.Font.SourceSans
 	maxplayers.FontSize = Enum.FontSize.Size14
 	maxplayers.Text = "LOADING"
@@ -4143,7 +4252,7 @@ function(args, speaker)
 	name.BorderSizePixel = 0
 	name.Position = UDim2.new(0, 5, 0, 215)
 	name.Size = UDim2.new(0, 240, 0, 30)
-	name.ZIndex = 4
+	name.ZIndex = 10
 	name.Font = Enum.Font.SourceSans
 	name.FontSize = Enum.FontSize.Size14
 	name.Text = "Place Name: LOADING"
@@ -4158,7 +4267,7 @@ function(args, speaker)
 	placeid.BorderSizePixel = 0
 	placeid.Position = UDim2.new(0, 5, 0, 195)
 	placeid.Size = UDim2.new(0, 100, 0, 20)
-	placeid.ZIndex = 4
+	placeid.ZIndex = 10
 	placeid.Font = Enum.Font.SourceSans
 	placeid.FontSize = Enum.FontSize.Size14
 	placeid.Text = "Place ID: LOADING"
@@ -4171,7 +4280,7 @@ function(args, speaker)
 	playerid.BorderSizePixel = 0
 	playerid.Position = UDim2.new(0, 5, 0, 35)
 	playerid.Size = UDim2.new(0, 100, 0, 20)
-	playerid.ZIndex = 4
+	playerid.ZIndex = 10
 	playerid.Font = Enum.Font.SourceSans
 	playerid.FontSize = Enum.FontSize.Size14
 	playerid.Text = "Player ID: LOADING"
@@ -4184,7 +4293,7 @@ function(args, speaker)
 	players.BorderSizePixel = 0
 	players.Position = UDim2.new(0, 5, 0, 155)
 	players.Size = UDim2.new(0, 100, 0, 20)
-	players.ZIndex = 4
+	players.ZIndex = 10
 	players.Font = Enum.Font.SourceSans
 	players.FontSize = Enum.FontSize.Size14
 	players.Text = "LOADING"
@@ -4201,6 +4310,7 @@ function(args, speaker)
 	CopyApp.TextSize = 14
 	CopyApp.Text = "Copy"
 	CopyApp.TextColor3 = Color3.new(1, 1, 1)
+	CopyApp.ZIndex = 10
 	
 	CopyPlrID.Name = "CopyPlrID"
 	CopyPlrID.Parent = background
@@ -4212,6 +4322,7 @@ function(args, speaker)
 	CopyPlrID.TextSize = 14
 	CopyPlrID.Text = "Copy"
 	CopyPlrID.TextColor3 = Color3.new(1, 1, 1)
+	CopyPlrID.ZIndex = 10
 	
 	CopyPlcID.Name = "CopyPlcID"
 	CopyPlcID.Parent = background
@@ -4223,6 +4334,7 @@ function(args, speaker)
 	CopyPlcID.TextSize = 14
 	CopyPlcID.Text = "Copy"
 	CopyPlcID.TextColor3 = Color3.new(1, 1, 1)
+	CopyPlcID.ZIndex = 10
 	
 	local SINFOGUI = background
 	FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
@@ -6163,7 +6275,7 @@ if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/
 		AnnGUI.BackgroundTransparency = 1
 		AnnGUI.Position = UDim2.new(0.5, -180, 0, -400)
 		AnnGUI.Size = UDim2.new(0, 360, 0, 20)
-		AnnGUI.ZIndex = 4
+		AnnGUI.ZIndex = 10
 		
 		background.Name = "background"
 		background.Parent = AnnGUI
@@ -6171,6 +6283,7 @@ if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/
 		background.BorderSizePixel = 0
 		background.Position = UDim2.new(0, 0, 0, 20)
 		background.Size = UDim2.new(0, 360, 0, 116)
+		background.ZIndex = 10
 		
 		TextBox.Parent = background
 		TextBox.BackgroundTransparency = 1
@@ -6183,20 +6296,21 @@ if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/
 		TextBox.TextColor3 = Color3.new(1, 1, 1)
 		TextBox.TextXAlignment = Enum.TextXAlignment.Left
 		TextBox.TextYAlignment = Enum.TextYAlignment.Top
+		TextBox.ZIndex = 10
 		
 		shadow.Name = "shadow"
 		shadow.Parent = AnnGUI
 		shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 		shadow.BorderSizePixel = 0
 		shadow.Size = UDim2.new(0, 360, 0, 20)
-		shadow.ZIndex = 4
+		shadow.ZIndex = 10
 		
 		PopupText.Name = "PopupText"
 		PopupText.Parent = shadow
 		PopupText.BackgroundTransparency = 1
 		PopupText.Position = UDim2.new(0, 51, 0, 0)
 		PopupText.Size = UDim2.new(0.76, -16, 0.95, 0)
-		PopupText.ZIndex = 4
+		PopupText.ZIndex = 10
 		PopupText.Font = Enum.Font.SourceSans
 		PopupText.TextSize = 14
 		PopupText.Text = "Server Announcement"
@@ -6207,7 +6321,7 @@ if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/
 		Exit.Parent = shadow
 		Exit.BackgroundTransparency = 1
 		Exit.Size = UDim2.new(0, 20, 0, 20)
-		Exit.ZIndex = 4
+		Exit.ZIndex = 10
 		Exit.Image = "rbxassetid://2132544126"
 		
 		wait(1)
