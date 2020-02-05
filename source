@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.5.2'
+ver = '2.6'
 
 Players = game:GetService("Players")
 
@@ -130,6 +130,7 @@ local Exit = Instance.new("ImageButton")
 local background = Instance.new("Frame")
 local Clear = Instance.new("TextButton")
 local Toggle = Instance.new("TextButton")
+local SaveChatlogs = Instance.new("TextButton")
 local scroll = Instance.new("ScrollingFrame")
 local AliasHint = Instance.new("TextLabel")
 local PluginsHint = Instance.new("TextLabel")
@@ -144,7 +145,7 @@ local shadow_5 = Instance.new("Frame")
 local PopupText_5 = Instance.new("TextLabel")
 local Exit_5 = Instance.new("ImageButton")
 
-local PARENT
+PARENT = nil
 if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 	PARENT = game:GetService("CoreGui").RobloxGui
 else
@@ -1510,6 +1511,18 @@ Toggle.TextSize = 14
 Toggle.Text = "Disabled"
 Toggle.TextColor3 = Color3.new(1, 1, 1)
 
+SaveChatlogs.Name = "SaveChatlogs"
+SaveChatlogs.Parent = background
+SaveChatlogs.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+SaveChatlogs.BorderSizePixel = 0
+SaveChatlogs.Position = UDim2.new(0, 258, 0, 200)
+SaveChatlogs.Size = UDim2.new(0, 75, 0, 20)
+SaveChatlogs.ZIndex = 10
+SaveChatlogs.Font = Enum.Font.SourceSans
+SaveChatlogs.TextSize = 14
+SaveChatlogs.Text = "Save To .txt"
+SaveChatlogs.TextColor3 = Color3.new(1, 1, 1)
+
 scroll.Name = "scroll"
 scroll.Parent = logsDrag
 scroll.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
@@ -2020,12 +2033,11 @@ function notify(text,text2,length)
 end
 
 function CreateLabel(Name, Text)
-	local sf = scroll
-	if #sf:GetChildren() >= 2546 then
-		sf:ClearAllChildren()
+	if #scroll:GetChildren() >= 2546 then
+		scroll:ClearAllChildren()
 	end
 	local alls = 0
-	for i,v in pairs(sf:GetChildren()) do
+	for i,v in pairs(scroll:GetChildren()) do
 		if v then
 			alls = v.Size.Y.Offset + alls
 		end
@@ -2033,7 +2045,7 @@ function CreateLabel(Name, Text)
 			alls = 0
 		end
 	end
-	local tl = Instance.new('TextLabel', sf)
+	local tl = Instance.new('TextLabel', scroll)
 	local il = Instance.new('Frame', tl)
 	tl.Name = Name
 	tl.ZIndex = 10
@@ -2056,9 +2068,9 @@ function CreateLabel(Name, Text)
 	il.ZIndex = 10
 	tl.TextColor3 = Color3.fromRGB(255,255,255)
 	tl.Size = UDim2.new(0,322,0,tl.TextBounds.Y)
-	sf.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
-	sf.CanvasPosition = Vector2.new(0,sf.CanvasPosition.Y+tl.TextBounds.Y)
-	local size2 = sf.CanvasSize.Y.Offset
+	scroll.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
+	scroll.CanvasPosition = Vector2.new(0,scroll.CanvasPosition.Y+tl.TextBounds.Y)
+	local size2 = scroll.CanvasSize.Y.Offset
 	tl:TweenPosition(UDim2.new(0,3,0,alls), 'In', 'Quint', 0.5)
 	for i = 0,50 do wait(0.05)
 		tl.TextTransparency = tl.TextTransparency - 0.05
@@ -2135,6 +2147,34 @@ ChatLog = function(plr)
 		end
 	end)
 end
+
+SaveChatlogs.MouseButton1Down:connect(function()
+	if writefileExploit() then
+		if #scroll:GetChildren() > 0 then
+			local placeName = game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name
+			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
+			for _, child in pairs(scroll:GetChildren()) do
+				writelogs = writelogs..'\n'..child.Text
+			end
+			local writelogsFile = tostring(writelogs)
+			local fileext = 0
+			local function nameFile()
+				local file
+				pcall(function() file = readfile(placeName..' Chat Logs ('..fileext..').txt') end)
+				if file then
+					fileext = fileext+1
+					nameFile()
+				else
+					writefileCooldown(placeName..' Chat Logs ('..fileext..').txt', writelogsFile)
+				end
+			end
+			nameFile()
+			notify('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
+		end
+	else
+		notify('Chat Logs','Your exploit does not support write file. You cannot save chat logs.')
+	end
+end)
 
 for _, plr in pairs(Players:GetChildren()) do
 	if plr.ClassName == "Player" then
@@ -2667,6 +2707,8 @@ CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = "Shows a player's platform"}
 CMDs[#CMDs + 1] = {NAME = 'bang [plr]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang [plr]', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
+CMDs[#CMDs + 1] = {NAME = 'walkto [plr]', DESC = 'Follow a player'}
+CMDs[#CMDs + 1] = {NAME = 'unwalkto', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'kill [plr]', DESC = 'Kills a player'}
 CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
@@ -2706,6 +2748,8 @@ CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinat
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
 CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
 CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where you last died'}
+CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
+CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character preform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
@@ -4041,7 +4085,7 @@ PluginsFrame.Close.MouseButton1Click:Connect(function()
 end)
 
 addcmd('addalias',{},
-function(args,speaker)
+	function(args, speaker)
 	if #args < 2 then return end
 	local cmd = string.lower(args[1])
 	local alias = string.lower(args[2])
@@ -4058,7 +4102,7 @@ function(args,speaker)
 end)
 
 addcmd('loadsavedaliases',{},
-function(args,speaker)
+	function(args, speaker)
     if #args < 2 then return end
     local cmd = string.lower(args[1])
     local alias = string.lower(args[2])
@@ -4078,7 +4122,7 @@ if aliases then
 end
 
 addcmd('removealias',{},
-function(args,speaker)
+	function(args, speaker)
 	if #args < 1 then return end
 	local alias = string.lower(args[1])
 	if customAlias[alias] then
@@ -4096,7 +4140,7 @@ function(args,speaker)
 end)
 
 addcmd('clraliases',{},
-function(args,speaker)
+	function(args, speaker)
 	customAlias = {}
 	aliases = {}
 	notify('Aliases Modified','Removed all aliases')
@@ -4105,7 +4149,7 @@ function(args,speaker)
 end)
 
 addcmd('serverinfo',{'info','sinfo'},
-function(args, speaker)
+	function(args, speaker)
 	local FRAME = Instance.new("Frame")
 	local shadow = Instance.new("Frame")
 	local PopupText = Instance.new("TextLabel")
@@ -4381,23 +4425,23 @@ function(args, speaker)
 end)
 
 addcmd('breakloops',{'break'},
-function(args, speaker)
+	function(args, speaker)
 	lastBreakTime = tick()
 end)
 
 addcmd('rejoin',{'rj'},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService('TeleportService'):Teleport(game.PlaceId)
 end)
 
 addcmd('exit',{},
-function(args, speaker)
+	function(args, speaker)
 	game:shutdown() 
 end)
 
 local Noclipping = nil
 addcmd('noclip',{},
-function(args, speaker)
+	function(args, speaker)
 	Clip = false
 	wait(0.1)
 	local function NoclipLoop()
@@ -4415,7 +4459,7 @@ function(args, speaker)
 end)
 
 addcmd('clip',{'unnoclip'},
-function(args, speaker)
+	function(args, speaker)
 	if Noclipping then
 		Noclipping:Disconnect()
 	end
@@ -4425,7 +4469,7 @@ function(args, speaker)
 end)
 
 addcmd('togglenoclip',{},
-function(args, speaker)
+	function(args, speaker)
 	if Clip then
 		execCmd('noclip',Players.LocalPlayer,true)
 	else
@@ -4545,40 +4589,40 @@ function NOFLY()
 end
 
 addcmd('fly',{},
-function(args, speaker)
+	function(args, speaker)
 	NOFLY()
 	wait()
 	sFLY()
 end)
 
 addcmd('flyspeed',{'flysp'},
-function(args, speaker)
+	function(args, speaker)
 	if isNumber(args[1]) then
 		iyflyspeed = args[1]
 	end
 end)
 
 addcmd('unfly',{'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},
-function(args, speaker)
+	function(args, speaker)
 	NOFLY()
 end)
 
 addcmd('vfly',{'vehiclefly'},
-function(args, speaker)
+	function(args, speaker)
 	NOFLY()
 	wait()
 	sFLY(true)
 end)
 
 addcmd('vflyspeed',{'vflysp','vehicleflyspeed','vehicleflysp'},
-function(args, speaker)
+	function(args, speaker)
 	if isNumber(args[1]) then
 		vehicleflyspeed = args[1]
 	end
 end)
 
 addcmd('togglefly',{},
-function(args, speaker)
+	function(args, speaker)
 	if FLYING then
 		NOFLY()
 	else
@@ -4588,7 +4632,7 @@ end)
 
 Floating = false
 addcmd('float', {'platform'},
-function(args,speaker)
+	function(args, speaker)
 	Floating = true
 	local pchar = Players.LocalPlayer.Character
 	if pchar and not pchar:FindFirstChild("Float") then
@@ -4613,7 +4657,7 @@ function(args,speaker)
 end)
 
 addcmd('unfloat',{'nofloat','unplatform','noplatform'},
-function(args, speaker)
+	function(args, speaker)
 	Floating = false
 	local pchar = Players.LocalPlayer.Character
 	notify('Float','Float Disabled')
@@ -4624,7 +4668,7 @@ function(args, speaker)
 end)
 
 addcmd('togglefloat',{},
-function(args, speaker)
+	function(args, speaker)
 	if Floating then
 		execCmd('unfloat',Players.LocalPlayer,true)
 	else
@@ -4633,7 +4677,7 @@ function(args, speaker)
 end)
 
 addcmd('savepos',{'spos','saveposition'},
-function(args, speaker)
+	function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if speaker.Character:findFirstChild("HumanoidRootPart") then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
@@ -4648,7 +4692,7 @@ function(args, speaker)
 end)
 
 addcmd('setwaypointpos',{'setwaypointposition','setpos','setwaypoint'},
-function(args, speaker)
+	function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if speaker.Character:findFirstChild("HumanoidRootPart") then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
@@ -4662,7 +4706,7 @@ function(args, speaker)
 end)
 
 addcmd('deletepos',{'dpos','deleteposition','deletewaypoint'},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(WayPoints) do
 		if v.NAME:lower() == tostring(getstring(1)):lower() then
 			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
@@ -4689,7 +4733,7 @@ function(args, speaker)
 end)
 
 addcmd('clearpos',{'clrpositions','clearpositions','cpos','clrpos'},
-function(args, speaker)
+	function(args, speaker)
 	WayPoints = {}
 	pWayPoints = {}
 	refreshwaypoints()
@@ -4699,7 +4743,7 @@ function(args, speaker)
 end)
 
 addcmd('loadpos',{'lpos','loadposition','waypoint'},
-function(args, speaker)
+	function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if Players.LocalPlayer.Character then
 		for i,_ in pairs(WayPoints) do
@@ -4719,7 +4763,7 @@ function(args, speaker)
 end)
 
 addcmd('enable',{},
-function(args, speaker)
+	function(args, speaker)
 	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled('Backpack', true)
 	elseif args[1]:lower() == 'playerlist' then
@@ -4732,7 +4776,7 @@ function(args, speaker)
 end)
 
 addcmd('disable',{},
-function(args, speaker)
+	function(args, speaker)
 	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled('Backpack', false)
 	elseif args[1]:lower() == 'playerlist' then
@@ -4745,7 +4789,7 @@ function(args, speaker)
 end)
 
 addcmd('esp',{},
-function(args, speaker)
+	function(args, speaker)
 	if not CHMSenabled then
 		ESPenabled = true
 		for i,v in pairs(Players:GetChildren()) do
@@ -4759,7 +4803,7 @@ function(args, speaker)
 end)
 
 addcmd('noesp',{'unesp'},
-function(args, speaker)
+	function(args, speaker)
 	ESPenabled = false
 	for i,v in pairs(Players:GetChildren()) do
 		local espplr = v
@@ -4772,7 +4816,7 @@ function(args, speaker)
 end)
 
 addcmd('chams',{},
-function(args, speaker)
+	function(args, speaker)
 	if not ESPenabled then
 		CHMSenabled = true
 		for i,v in pairs(Players:GetChildren()) do
@@ -4786,7 +4830,7 @@ function(args, speaker)
 end)
 
 addcmd('nochams',{'unchams'},
-function(args, speaker)
+	function(args, speaker)
 	CHMSenabled = false
 	for i,v in pairs(Players:GetChildren()) do
 		local chmsplr = v
@@ -4799,7 +4843,7 @@ function(args, speaker)
 end)
 
 addcmd('locate',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		Locate(Players[v])
@@ -4807,7 +4851,7 @@ function(args, speaker)
 end)
 
 addcmd('nolocate',{'unlocate'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		for i,c in pairs(PARENT:GetChildren()) do
@@ -4819,7 +4863,7 @@ function(args, speaker)
 end)
 
 addcmd('view',{'spectate'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		if viewHumanoid then
@@ -4836,7 +4880,7 @@ function(args, speaker)
 end)
 
 addcmd('unview',{'unspectate'},
-function(args, speaker)
+	function(args, speaker)
 	workspace.CurrentCamera.CameraSubject = Players.LocalPlayer.Character
 	if viewHumanoid then
 		viewHumanoid:Disconnect()
@@ -4962,12 +5006,12 @@ function UFC()
 end
 
 addcmd('freecam',{'fc'},
-function(args, speaker)
+	function(args, speaker)
 	FC()
 end)
 
 addcmd('fctp',{'freecamtp','freecamteleport'},
-function(args, speaker)
+	function(args, speaker)
 	if not Players.LocalPlayer.Character:FindFirstChild('xFC') then
 		notify('Freecam TP','Freecam must be enabled to teleport to it')
 	else
@@ -4978,7 +5022,7 @@ function(args, speaker)
 end)
 
 addcmd('fov',{},
-function(args, speaker)
+	function(args, speaker)
 	if isNumber(args[1]) then
 		workspace.CurrentCamera.FieldOfView = args[1]
 	elseif not args[1] then
@@ -4987,7 +5031,7 @@ function(args, speaker)
 end)
 
 addcmd('fixcam',{},
-function(args, speaker)
+	function(args, speaker)
 	UFC()
 	workspace.CurrentCamera:remove()
 	wait(.1)
@@ -5000,34 +5044,34 @@ function(args, speaker)
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
-function(args, speaker)
+	function(args, speaker)
 	UFC()
 end)
 
 addcmd('freecamspeed',{'fcspeed'},
-function(args, speaker)
+	function(args, speaker)
 	if isNumber(args[1]) then
 		cs = args[1]
 	end
 end)
 
 addcmd('firstp',{},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.CameraMode = "LockFirstPerson"
 end)
 
 addcmd('thirdp',{},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.CameraMode = "Classic"
 end)
 
 addcmd('maxzoom',{},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.CameraMaxZoomDistance = args[1]
 end)
 
 addcmd('unlockws',{'unlockworkspace'},
-function(args, speaker)
+	function(args, speaker)
 	notify('Workspace Modified','Workspace unlocked')
 	wait(1)
     local function unlock(instance) 
@@ -5042,7 +5086,7 @@ function(args, speaker)
 end)
 
 addcmd('lockws',{'lockworkspace'},
-function(args, speaker)
+	function(args, speaker)
 	notify('Workspace Modified','Workspace locked')
 	wait(1)
     local function lock(instance) 
@@ -5057,7 +5101,7 @@ function(args, speaker)
 end)
 
 addcmd('delete',{'remove'},
-function(args, speaker)
+	function(args, speaker)
 	part = getstring(1)
     local function dels(instance)
         for i,v in pairs(instance:GetChildren())do
@@ -5070,7 +5114,7 @@ notify('Item(s) Deleted','Deleted ' ..getstring(1))
 end)
 
 addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},
-function(args, speaker)
+	function(args, speaker)
 	part = getstring(1)
     local function dels(instance)
         for i,v in pairs(instance:GetChildren())do
@@ -5083,7 +5127,7 @@ notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
 addcmd('btools',{},
-function(args, speaker)
+	function(args, speaker)
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 1
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 2
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 3
@@ -5091,12 +5135,12 @@ function(args, speaker)
 end)
 
 addcmd('f3x',{'fex'},
-function(args, speaker)
+	function(args, speaker)
 	loadstring(game:GetObjects("rbxassetid://1059691823")[1].Source)()
 end)
 
 addcmd('age',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		local players = getPlayer(args[1], speaker)
@@ -5110,7 +5154,7 @@ function(args, speaker)
 end)
 
 addcmd('os',{'platform', 'device'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local platforms = {}
 	for i,v in pairs(players) do
@@ -5121,7 +5165,7 @@ function(args, speaker)
 end)
 
 addcmd('goto',{'to'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
@@ -5134,7 +5178,7 @@ function(args, speaker)
 end)
 
 addcmd('clientbring',{'cbring'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
@@ -5148,7 +5192,7 @@ end)
 
 bringT = {}
 addcmd('loopbring',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		spawn(function()
@@ -5179,7 +5223,7 @@ function(args, speaker)
 end)
 
 addcmd('unloopbring',{'noloopbring'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		spawn(function()
@@ -5188,8 +5232,30 @@ function(args, speaker)
 	end
 end)
 
+local walkto
+addcmd('walkto',{},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		if Players[v].Character ~= nil then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
+			end
+			walkto = true
+			repeat wait()
+				speaker.Character.Humanoid:MoveTo(Players[v].Character.HumanoidRootPart.Position)
+			until Players[v].Character == nil or not Players[v].Character:FindFirstChild('HumanoidRootPart') or walkto == false
+		end
+	end
+end)
+
+addcmd('unwalkto',{'nowalkto'},
+	function(args, speaker)
+	walkto = false
+end)
+
 addcmd('freeze',{'fr'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i, v in pairs(players) do
@@ -5205,7 +5271,7 @@ function(args, speaker)
 end)
 
 addcmd('thaw',{'unfreeze','unfr'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i, v in pairs(players) do
@@ -5222,7 +5288,7 @@ end)
 
 oofing = false
 addcmd('loopoof',{},
-function(args, speaker)
+	function(args, speaker)
 	oofing = true
 	repeat wait(0.1)
 		for i,v in pairs(Players:GetPlayers()) do
@@ -5236,22 +5302,22 @@ function(args, speaker)
 end)
 
 addcmd('unloopoof',{},
-function(args, speaker)
+	function(args, speaker)
 	oofing = false
 end)
 
 addcmd('respawn',{},
-function(args, speaker)
+	function(args, speaker)
 	respawn(Players.LocalPlayer)
 end)
 
 addcmd('refresh',{'re'},
-function(args, speaker)
+	function(args, speaker)
 	refresh(Players.LocalPlayer)
 end)
 
 addcmd('invisible',{'invis'},
-function(args, speaker)
+	function(args, speaker)
 -- Full credit to Elite1337#9377 & Timeless#4044 @Discord
 local function CheckRig()
 	if Players.LocalPlayer.Character then
@@ -5289,7 +5355,7 @@ InitiateInvis()
 end)
 
 addcmd('strengthen',{},
-function(args, speaker)
+	function(args, speaker)
 	for _, child in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if child.ClassName == "Part" then
 			if args[1] then
@@ -5302,7 +5368,7 @@ function(args, speaker)
 end)
 
 addcmd('weaken',{},
-function(args, speaker)
+	function(args, speaker)
 	for _, child in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if child.ClassName == "Part" then
 			if args[1] then
@@ -5315,7 +5381,7 @@ function(args, speaker)
 end)
 
 addcmd('unweaken',{'unstrengthen'},
-function(args, speaker)
+	function(args, speaker)
 	for _, child in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if child.ClassName == "Part" then
 			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
@@ -5324,22 +5390,22 @@ function(args, speaker)
 end)
 
 addcmd('jpower',{'jumppower','jp'},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').JumpPower=tonumber(args[1])
 end)
 
 addcmd('gravity',{'grav'},
-function(args, speaker)
+	function(args, speaker)
 	workspace.Gravity = (args[1])
 end)
 
 addcmd('hipheight',{'hheight'},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').HipHeight = args[1]
 end)
 
 addcmd('dance',{},
-function(args, speaker)
+	function(args, speaker)
 	if not r15(Players.LocalPlayer) then
 		local pchar=Players.LocalPlayer.Character
 			local anim = nil		
@@ -5375,13 +5441,13 @@ function(args, speaker)
 end)
 
 addcmd('undance',{'nodance'},
-function(args, speaker)
+	function(args, speaker)
 	animTrack:Stop()
 	animTrack:Destroy()
 end)
 
 addcmd('nolimbs',{'rlimbs'},
-function(args, speaker)
+	function(args, speaker)
 	if r15(Players.LocalPlayer) then
 		for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -5406,7 +5472,7 @@ function(args, speaker)
 end)
 
 addcmd('noarms',{'rarms'},
-function(args, speaker)
+	function(args, speaker)
 	if r15(Players.LocalPlayer) then
 		for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -5427,7 +5493,7 @@ function(args, speaker)
 end)
 
 addcmd('nolegs',{'rlegs'},
-function(args, speaker)
+	function(args, speaker)
 	if r15(Players.LocalPlayer) then
 		for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -5448,17 +5514,17 @@ function(args, speaker)
 end)
 
 addcmd('sit',{},
-function(args, speaker)
+	function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid").Sit = true
 end)
 
 addcmd('jump',{},
-function(args, speaker)
+	function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
 end)
 
 addcmd('team',{},
-function(args, speaker)
+	function(args, speaker)
 	local teamname = nil
 	for a,b in pairs(game:GetService("Teams"):GetChildren()) do
 		local L_name = b.Name:lower()
@@ -5471,7 +5537,7 @@ function(args, speaker)
 end)
 
 addcmd('spasm',{},
-function(args, speaker)
+	function(args, speaker)
 	if not r15(Players.LocalPlayer) then
 		local pchar=Players.LocalPlayer.Character
 		local AnimationId = "33796059"
@@ -5486,13 +5552,13 @@ function(args, speaker)
 end)
 
 addcmd('unspasm',{'nospasm'},
-function(args, speaker)
+	function(args, speaker)
 	Spasm:Stop()
 	SpasmAnim:Destroy()
 end)
 
 addcmd('headthrow',{},
-function(args, speaker)
+	function(args, speaker)
 	if not r15(Players.LocalPlayer) then
 		local AnimationId = "35154961"
 		local Anim = Instance.new("Animation")
@@ -5506,7 +5572,7 @@ function(args, speaker)
 end)
 
 addcmd('animation',{'anim'},
-function(args, speaker)
+	function(args, speaker)
 	if not r15(Players.LocalPlayer) then
 		local pchar=Players.LocalPlayer.Character
 		local AnimationId = tostring(args[1])
@@ -5523,7 +5589,7 @@ function(args, speaker)
 end)
 
 addcmd('tpposition',{'tppos'},
-function(args,speaker)
+	function(args, speaker)
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = Players.LocalPlayer.Character
@@ -5533,7 +5599,7 @@ function(args,speaker)
 end)
 
 addcmd('offset',{},
-function(args,speaker)
+	function(args, speaker)
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = Players.LocalPlayer.Character
@@ -5543,7 +5609,7 @@ function(args,speaker)
 end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},
-function(args,speaker)
+	function(args, speaker)
 	local char = Players.LocalPlayer.Character
 	if char and char:FindFirstChild("HumanoidRootPart") then
 		local pos = tostring(char.HumanoidRootPart.Position)
@@ -5552,7 +5618,7 @@ function(args,speaker)
 end)
 
 addcmd('copyposition',{'copypos'},
-function(args,speaker)
+	function(args, speaker)
 	local char = Players.LocalPlayer.Character
 	if char and char:FindFirstChild("HumanoidRootPart") then
 		local pos = tostring(char.HumanoidRootPart.Position)
@@ -5561,7 +5627,7 @@ function(args,speaker)
 end)
 
 addcmd('speed',{'ws'},
-function(args, speaker)
+	function(args, speaker)
 	if args[2] then
 		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').WalkSpeed=tonumber(args[2])
 	else
@@ -5570,7 +5636,7 @@ function(args, speaker)
 end)
 
 addcmd('tools',{'gears'},
-function(args, speaker)
+	function(args, speaker)
 	local function copy(instance)
 		for i,c in pairs(instance:GetChildren())do
 			if c:IsA('Tool') or c:IsA('HopperBin') then
@@ -5593,7 +5659,7 @@ function(args, speaker)
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools'},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Backpack:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:destroy()
@@ -5608,13 +5674,13 @@ function(args, speaker)
 end)
 
 addcmd('explorer',{'dex'},
-function(args, speaker)
+	function(args, speaker)
 	loadstring(game:GetObjects("rbxassetid://418957341")[1].Source)()
 end)
 
 loopgoto = nil
 addcmd('loopgoto',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		loopgoto = nil
@@ -5639,13 +5705,13 @@ function(args, speaker)
 end)
 
 addcmd('unloopgoto',{'noloopgoto'},
-function(args, speaker)
+	function(args, speaker)
 	loopgoto = nil
 end)
 
 headsitting = false
 addcmd('headsit',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		headsitting = true
@@ -5665,7 +5731,7 @@ end)
 spamming = false
 spamspeed = 1
 addcmd('spam',{},
-function(args, speaker)
+	function(args, speaker)
 	spamming = true
 	local spamstring = getstring(1)
 	repeat wait(spamspeed)
@@ -5674,13 +5740,13 @@ function(args, speaker)
 end)
 
 addcmd('nospam',{'unspam'},
-function(args, speaker)
+	function(args, speaker)
 	spamming = false
 end)
 
 pmspamming = {}
 addcmd('pmspam',{},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		spawn(function()
@@ -5695,7 +5761,7 @@ function(args, speaker)
 end)
 
 addcmd('nopmspam',{'unpmspam'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		spawn(function()
@@ -5709,17 +5775,17 @@ function(args, speaker)
 end)
 
 addcmd('spamspeed',{},
-function(args, speaker)
+	function(args, speaker)
 	spamspeed = args[1]
 end)
 
 addcmd('blockhead',{},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.Character.Head.Mesh:Destroy()
 end)
 
 addcmd('blockhats',{},
-function(args, speaker)
+	function(args, speaker)
 	for _,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
 		if (v:IsA("Accessory")) then
 			v.Handle.Mesh:remove()
@@ -5728,7 +5794,7 @@ function(args, speaker)
 end)
 
 addcmd('creeper',{},
-function(args, speaker)
+	function(args, speaker)
 	if r15(Players.LocalPlayer) then
 		local lol = Players.LocalPlayer
 		lol.Character["Head"].Mesh:Destroy()
@@ -5755,7 +5821,7 @@ end)
 bangplr = nil
 
 addcmd('bang',{'rape'},
-function(args, speaker)
+	function(args, speaker)
 	if not r15(Players.LocalPlayer) then
 		local players = getPlayer(args[1], speaker)
 		for i,v in pairs(players)do
@@ -5772,14 +5838,14 @@ function(args, speaker)
 end)
 
 addcmd('unbang',{'unrape'},
-function(args, speaker)
+	function(args, speaker)
 	bangplr = nil
 	bang:Stop()
 	bangAnim:Destroy()
 end)
 
 addcmd('bringpart',{},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			v.CFrame = speaker.Character.HumanoidRootPart.CFrame
@@ -5788,7 +5854,7 @@ function(args, speaker)
 end)
 
 addcmd('gotopart',{},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
@@ -5799,7 +5865,7 @@ end)
 
 gtools = false
 addcmd('grabtools',{},
-function(args, speaker)
+	function(args, speaker)
 	workspace.ChildAdded:connect(function(part)
 		if gtools then
 			if part:IsA("Tool") then
@@ -5810,12 +5876,12 @@ function(args, speaker)
 end)
 
 addcmd('nograbtools',{'ungrabtools'},
-function(args, speaker)
+	function(args, speaker)
 	gtools = false
 end)
 
 addcmd('light',{},
-function(args, speaker)
+	function(args, speaker)
 	local light = Instance.new("PointLight", speaker.Character.HumanoidRootPart)
 	light.Range = 30
 	if args[1] then
@@ -5826,7 +5892,7 @@ function(args, speaker)
 end)
 
 addcmd('unlight',{'nolight'},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v.ClassName == "PointLight" then
 			v:Destroy()
@@ -5835,7 +5901,7 @@ function(args, speaker)
 end)
 
 addcmd('copytools',{'clonetools'},
-function(args, speaker)
+	function(args, speaker)
     local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		spawn(function()
@@ -5849,7 +5915,7 @@ function(args, speaker)
 end)
 
 addcmd('naked',{},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if v:IsA("Clothing") then
 			v:Destroy()
@@ -5858,20 +5924,20 @@ function(args, speaker)
 end)
 
 addcmd('spawnpoint',{'spawn'},
-function(args, speaker)
+	function(args, speaker)
 	spawnpos = Players.LocalPlayer.Character.HumanoidRootPart.CFrame
 	spawnpoint = true
 	notify('Spawn Point','Spawn point created at '..tostring(spawnpos))
 end)
 
 addcmd('nospawnpoint',{'nospawn','removespawnpoint'},
-function(args, speaker)
+	function(args, speaker)
 	spawnpoint = false
 	notify('Spawn Point','Removed spawn point')
 end)
 
 addcmd('flashback',{'diedtp'},
-function(args, speaker)
+	function(args, speaker)
 	if lastDeath ~= nil then
 		if speaker.Character:FindFirstChild("Humanoid") then
 			speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
@@ -5881,7 +5947,7 @@ function(args, speaker)
 end)
 
 addcmd('hatspin',{'spinhats'},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if v:IsA("Accessory") or v:IsA("Hat") then
 			local keep = Instance.new("BodyPosition") keep.Parent = v.Handle keep.Name = "no"
@@ -5905,7 +5971,7 @@ function(args, speaker)
 end)
 
 addcmd('unhatspin',{'unspinhats'},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if v:IsA("Accessory") or v:IsA("Hat") then
 			pcall(function()
@@ -5924,45 +5990,45 @@ function(args, speaker)
 end)
 
 addcmd('ambient',{},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService("Lighting").Ambient = Color3.new(args[1],args[2],args[3])
 	game:GetService("Lighting").OutdoorAmbient = Color3.new(args[1],args[2],args[3])
 end)
 
 addcmd('day',{},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService("Lighting").ClockTime = 14
 end)
 
 addcmd('night',{},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService("Lighting").ClockTime = 0
 end)
 
 addcmd('nofog',{},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService("Lighting").FogEnd = 100000
 end)
 
 addcmd('brightness',{},
-function(args, speaker)
+	function(args, speaker)
 	game:GetService("Lighting").Brightness = args[1]
 end)
 
 addcmd('globalshadows',{'gshadows'},
-function(args, speaker)
+	function(args, speaker)
     game:GetService("Lighting").GlobalShadows = true
 end)
 
 addcmd('unglobalshadows',{'nogshadows','ungshadows','noglobalshadows'},
-function(args, speaker)
+	function(args, speaker)
     game:GetService("Lighting").GlobalShadows = false
 end)
 
 origsettings = {abt = game:GetService("Lighting").Ambient, oabt = game:GetService("Lighting").OutdoorAmbient, brt = game:GetService("Lighting").Brightness, time = game:GetService("Lighting").ClockTime, fe = game:GetService("Lighting").FogEnd, fs = game:GetService("Lighting").FogStart, gs = game:GetService("Lighting").GlobalShadows}
 
 addcmd('restorelighting',{'rlighting'},
-function(args,speaker)
+	function(args, speaker)
 	game:GetService("Lighting").Ambient = origsettings.abt
 	game:GetService("Lighting").OutdoorAmbient = origsettings.oabt
 	game:GetService("Lighting").Brightness = origsettings.brt
@@ -5973,17 +6039,17 @@ function(args,speaker)
 end)
 
 addcmd('stun',{'platformstand'},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 end)
 
 addcmd('unstun',{'nostun','unplatformstand','noplatformstand'},
-function(args, speaker)
+	function(args, speaker)
 	Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
 end)
 
 addcmd('drophats',{'drophat'},
-function(args, speaker)
+	function(args, speaker)
 	if speaker.Character then
 		for _,obj in pairs(speaker.Character:GetChildren()) do
 			if obj:IsA("Accessory") then
@@ -5994,7 +6060,7 @@ function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},
-function(args, speaker)
+	function(args, speaker)
 	if speaker.Character then
 		for _,obj in pairs(speaker.Character:GetChildren()) do
 			if obj:IsA("Tool") then
@@ -6012,12 +6078,12 @@ function(args, speaker)
 end)
 
 addcmd('logs',{'chatlogs'},
-function(args, speaker)
+	function(args, speaker)
 	logsDrag:TweenPosition(UDim2.new(0, 0, 1, -245), "InOut", "Quart", 0.3, true, nil)
 end)
 
 addcmd('fling',{},
-function(args, speaker)
+	function(args, speaker)
 	for _, child in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 		if child:IsA("BasePart") then
 			child.CustomPhysicalProperties = PhysicalProperties.new(2, 0.3, 0.5)
@@ -6052,7 +6118,7 @@ function(args, speaker)
 end)
 
 addcmd('unfling',{'nofling'},
-function(args, speaker)
+	function(args, speaker)
 	execCmd('clip nonotify',Players.LocalPlayer,true)
 	if TouchingFloor then
 		TouchingFloor:Disconnect()
@@ -6071,7 +6137,7 @@ function(args, speaker)
 end)
 
 addcmd('kill',{'fekill'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		-- Full credit to CyclicaIIy @V3rmillion
@@ -6108,7 +6174,7 @@ function(args, speaker)
 end)
 
 addcmd('bring',{'febring'},
-function(args, speaker)
+	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if tools(Players.LocalPlayer) then
 		for i,v in pairs(players)do
@@ -6183,7 +6249,7 @@ function(args, speaker)
 end)
 
 addcmd('spin',{},
-function(args, speaker)
+	function(args, speaker)
 	local spinSpeed = 20
 	if args[1] and isNumber(args[1]) then
 		spinSpeed = args[1]
@@ -6195,7 +6261,7 @@ function(args, speaker)
 end)
 
 addcmd('unspin',{},
-function(args, speaker)
+	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Character.HumanoidRootPart:GetChildren()) do
 		if v.Name == "Spinning" then
 			v:Destroy()
@@ -6221,35 +6287,65 @@ function x(v)
 end
 
 addcmd('xray',{},
-function(args, speaker)
+	function(args, speaker)
 	transparent = true
 	x(transparent)
 end)
 
 addcmd('unxray',{'noxray'},
-function(args, speaker)
+	function(args, speaker)
 	transparent = false
 	x(transparent)
 end)
 
 addcmd('togglexray',{},
-function(args, speaker)
+	function(args, speaker)
 	transparent=not transparent
 	x(transparent)
 end)
 
+local walltpTouch = nil
+addcmd('walltp',{},
+	function(args, speaker)
+	local torso
+	if r15(speaker) then
+		torso = speaker.Character.UpperTorso
+	else
+		torso = speaker.Character.Torso
+	end
+	local function touchedFunc(hit)
+		local Root = speaker.Character.HumanoidRootPart
+		if hit:IsA("BasePart") and hit.Position.Y > Root.Position.Y - speaker.Character.Humanoid.HipHeight then
+			local hitP = hit.Parent:FindFirstChild("HumanoidRootPart")
+			if hitP ~= nil then
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hitP.Size.Z/2 + speaker.Character.Humanoid.HipHeight,Root.CFrame.lookVector.Z)
+			elseif hitP == nil then
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hit.Size.Y/2 + speaker.Character.Humanoid.HipHeight,Root.CFrame.lookVector.Z)
+			end
+		end
+	end
+	walltpTouch = torso.Touched:Connect(touchedFunc)
+end)
+
+addcmd('unwalltp',{'nowalltp'},
+	function(args, speaker)
+	if walltpTouch then
+		walltpTouch:Disconnect()
+	end
+end)
+
 addcmd('addplugin',{'plugin'},
-function(args, speaker)
+	function(args, speaker)
 	addPlugin(args[1])
 end)
 
 addcmd('removeplugin',{'deleteplugin'},
-function(args, speaker)
+	function(args, speaker)
 	deletePlugin(args[1])
 end)
 
 addcmd('removecmd',{'deletecmd'},
-function(args, speaker)
+	function(args, speaker)
 	removecmd(args[1])
 end)
 
