@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.6'
+ver = '2.6.1'
 
 Players = game:GetService("Players")
 
@@ -6173,75 +6173,84 @@ addcmd('kill',{'fekill'},
 	end
 end)
 
+function FEGodmode()
+	local changeview = false
+	if workspace.CurrentCamera.CameraSubject == Players.LocalPlayer.Character.Humanoid or workspace.CurrentCamera.CameraSubject == Players.LocalPlayer.Character then
+		changeview = true
+	end
+	Players.LocalPlayer.Character.Humanoid.Name = 1
+	local l = Players.LocalPlayer.Character["1"]:Clone()
+	l.Parent = Players.LocalPlayer.Character
+	l.Name = "Humanoid"
+	wait(0.1)
+	Players.LocalPlayer.Character["1"]:Destroy()
+	if changeview then
+		game:GetService("Workspace").CurrentCamera.CameraSubject = Players.LocalPlayer.Character
+	end
+	Players.LocalPlayer.Character.Animate.Disabled = true
+	wait(0.1)
+	Players.LocalPlayer.Character.Animate.Disabled = false
+	Players.LocalPlayer.Character.Humanoid.DisplayDistanceType = "None"
+end
+
 addcmd('bring',{'febring'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if tools(Players.LocalPlayer) then
-		for i,v in pairs(players)do
-			-- Full credit to CyclicaIIy @V3rmillion
-			local LocalPlayer = Players.LocalPlayer
-			local ran1 = false
-			local equipped = false
-			local savepos = LocalPlayer.Character.HumanoidRootPart.CFrame
-			local target = Players[v]
-			if #LocalPlayer.Backpack:GetChildren() < 2 then
-			    repeat
-			        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
-			            if tool:IsA("Tool") then
-			                tool.Parent = LocalPlayer
-			            end
-			        end
-			        LocalPlayer.Character:ClearAllChildren()
-			        local char = Instance.new("Model", workspace)
-			        char.Name = "character"
-			        Instance.new("Part", char).Name = "Torso";
-			        Instance.new("Part", char).Name = "Head";
-			        Instance.new("Humanoid", char).Name = "Humanoid";
-			        LocalPlayer.Character = char
-			        repeat wait() until LocalPlayer.Character
-			    until #LocalPlayer:GetChildren() - 4 >= 2
-			    for _, char in pairs(workspace:GetChildren()) do
-			        if char.Name == "character" and char:IsA("Model") then
-			            char:Destroy()
-			        end
-			    end
-			    repeat wait() until LocalPlayer.Character.HumanoidRootPart ~= nil
-			    for _, tool in pairs(LocalPlayer:GetChildren()) do
-			        if tool:IsA("Tool") then
-			            tool.Parent = LocalPlayer.Backpack
-			        end
-			    end
-			    LocalPlayer.Character.HumanoidRootPart.CFrame = savepos
-			end
-			LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
-			LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
-			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-			tool.Parent = workspace
-			local attacher = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-			attacher.Parent = workspace
-			LocalPlayer.Character.Humanoid:EquipTool(tool)
-			repeat wait() until LocalPlayer.Character:FindFirstChildOfClass("Tool") ~= nil
-			LocalPlayer.Character.Humanoid:UnequipTools()
-			attacher.AncestryChanged:connect(function()
-			    if ran1 == false then
-			        ran1 = true
-			        equipped = true
-			    end
-			end)
-			local anim = Instance.new("Animation")
-			anim.AnimationId = "rbxassetid://188632011"
-			local loadanim = LocalPlayer.Character.Humanoid:LoadAnimation(anim)
-			loadanim.Looped = true
-			loadanim:Play()
-			repeat
-			    target.Character.HumanoidRootPart.CFrame = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position + LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 2 + LocalPlayer.Character.HumanoidRootPart.CFrame.rightVector * 2)
-			    wait()
-			until equipped == true
-			loadanim:Stop()
-			anim:Destroy()
-			LocalPlayer.Character.Humanoid:EquipTool(tool)
+		if args[1] then
+			refresh(Players.LocalPlayer)
 			wait()
-			LocalPlayer.Character.Humanoid:UnequipTools()
+			repeat wait() until Players.LocalPlayer.Character ~= nil and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+			wait(0.3)
+			local changeview = false
+			if workspace.CurrentCamera.CameraSubject == Players.LocalPlayer.Character.Humanoid or workspace.CurrentCamera.CameraSubject == Players.LocalPlayer.Character then
+				changeview = true
+			end
+			Players.LocalPlayer.Character.Humanoid.Name = 1
+			local l = Players.LocalPlayer.Character["1"]:Clone()
+			l.Parent = Players.LocalPlayer.Character
+			l.Name = "Humanoid"
+			wait(0.1)
+			Players.LocalPlayer.Character["1"]:Destroy()
+			if changeview then
+				game:GetService("Workspace").CurrentCamera.CameraSubject = Players.LocalPlayer.Character
+			end
+			Players.LocalPlayer.Character.Animate.Disabled = true
+			wait(0.1)
+			Players.LocalPlayer.Character.Animate.Disabled = false
+			Players.LocalPlayer.Character.Humanoid.DisplayDistanceType = "None"
+			for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren())do
+				Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+			end
+			for i,v in pairs(players)do
+				if v ~= Players.LocalPlayer then
+					local target = Players[v]
+					local NOW = Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+					local function tp(player,player2)
+					local char1,char2=player.Character,player2.Character
+					if char1 and char2 then
+					char1.HumanoidRootPart.CFrame = char2.HumanoidRootPart.CFrame
+					end
+					end
+					local function getout(player,player2)
+					local char1,char2=player.Character,player2.Character
+					if char1 and char2 then
+					char1:MoveTo(char2.Head.Position)
+					end
+					end
+					tp(target, Players.LocalPlayer)
+					wait(0.2)
+					tp(target, Players.LocalPlayer)
+					wait(0.5)
+					Players.LocalPlayer.Character.HumanoidRootPart.CFrame = NOW
+					wait(0.5)
+					getout(Players.LocalPlayer, target)
+					wait(0.3)
+					Players.LocalPlayer.Character.HumanoidRootPart.CFrame = NOW
+					wait(0.3)
+					refresh(Players.LocalPlayer)
+				end
+			end
 		end
 	else
 		notify('Tool Required','You need to have a tool to use this command')
