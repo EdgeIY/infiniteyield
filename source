@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.6.1'
+ver = '2.6.2'
 
 Players = game:GetService("Players")
 
@@ -5675,7 +5675,53 @@ end)
 
 addcmd('explorer',{'dex'},
 	function(args, speaker)
-	loadstring(game:GetObjects("rbxassetid://418957341")[1].Source)()
+	if PARENT:FindFirstChild'Dex' then
+		PARENT.Dex:Destroy();
+	end
+	
+	local Dex = game:GetObjects("rbxassetid://3567096419")[1]
+	Dex.Name = 'Dex'
+	Dex.Parent = PARENT
+	
+	local function Load(Obj, Url)
+		local function GiveOwnGlobals(Func, Script)
+			local Fenv = {}
+			local RealFenv = {script = Script}
+			local FenvMt = {}
+			FenvMt.__index = function(a,b)
+				if RealFenv[b] == nil then
+					return getfenv()[b]
+				else
+					return RealFenv[b]
+				end
+			end
+			FenvMt.__newindex = function(a, b, c)
+				if RealFenv[b] == nil then
+					getfenv()[b] = c
+				else
+					RealFenv[b] = c
+				end
+			end
+			setmetatable(Fenv, FenvMt)
+			setfenv(Func, Fenv)
+		return Func
+	end
+	
+	local function LoadScripts(Script)
+		if Script.ClassName == "Script" or Script.ClassName == "LocalScript" then
+			spawn(function()
+				GiveOwnGlobals(loadstring(Script.Source, "=" .. Script:GetFullName()), Script)()
+			end)
+		end
+	    for i,v in pairs(Script:GetChildren()) do
+			LoadScripts(v)
+		end
+	end
+	
+	LoadScripts(Obj)
+	end
+	
+	Load(Dex)
 end)
 
 loopgoto = nil
@@ -5781,14 +5827,14 @@ end)
 
 addcmd('blockhead',{},
 	function(args, speaker)
-	Players.LocalPlayer.Character.Head.Mesh:Destroy()
+	Players.LocalPlayer.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 end)
 
 addcmd('blockhats',{},
 	function(args, speaker)
 	for _,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
 		if (v:IsA("Accessory")) then
-			v.Handle.Mesh:remove()
+			v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
 		end
 	end
 end)
@@ -5796,20 +5842,18 @@ end)
 addcmd('creeper',{},
 	function(args, speaker)
 	if r15(Players.LocalPlayer) then
-		local lol = Players.LocalPlayer
-		lol.Character["Head"].Mesh:Destroy()
-		lol.Character["LeftUpperArm"]:Destroy()
-		lol.Character["RightUpperArm"]:Destroy()
+		Players.LocalPlayer.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
+		Players.LocalPlayer.Character.LeftUpperArm:Destroy()
+		Players.LocalPlayer.Character.RightUpperArm:Destroy()
 		for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 			if v:IsA'Hat' or v:IsA'Accessory' then
 				v.Parent = workspace
 			end
 		end
 	else
-		local lol = Players.LocalPlayer
-		lol.Character["Head"].Mesh:Destroy()
-		lol.Character["Left Arm"]:Destroy()
-		lol.Character["Right Arm"]:Destroy()
+		Players.LocalPlayer.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
+		Players.LocalPlayer.Character["Left Arm"]:Destroy()
+		Players.LocalPlayer.Character["Right Arm"]:Destroy()
 		for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
 			if v:IsA'Hat' or v:IsA'Accessory' then
 				v.Parent = workspace
