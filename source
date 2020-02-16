@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.6.2'
+ver = '2.7'
 
 Players = game:GetService("Players")
 
@@ -178,7 +178,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 20
-Title.Text = "♥️ Infinite Yield FE  ♥️"
+Title.Text = "Infinite Yield FE"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 
@@ -2078,6 +2078,7 @@ function CreateLabel(Name, Text)
 	tl.TextTransparency = 0
 end
 
+local infJump = false
 IYMouse.KeyDown:connect(function(Key)
 	if (Key==prefix) then
 		Holder.Cmdbar:CaptureFocus()
@@ -2085,6 +2086,8 @@ IYMouse.KeyDown:connect(function(Key)
 			repeat Holder.Cmdbar.Text = '' until Holder.Cmdbar.Text == ''
 		end)
 		maximizeHolder()
+	elseif infJump == true and Key == " " then
+		game.Players.LocalPlayer.Character.Humanoid:ChangeState(3)
 	end
 end)
 
@@ -2683,9 +2686,10 @@ CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is
 CMDs[#CMDs + 1] = {NAME = 'fixcam', DESC = 'Fixes camera'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
-CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Loads f3x tools'}
-CMDs[#CMDs + 1] = {NAME = 'delete [part name] (CLIENT)', DESC = 'Removes any part with a certain name from the workspace (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'delete [instance name] (CLIENT)', DESC = 'Removes any part with a certain name from the workspace (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Removes any part with a certain classname from the workspace (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
+CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
@@ -2729,6 +2733,8 @@ CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower [num]', DESC = 'Change a players j
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num]', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
+CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
+CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
 CMDs[#CMDs + 1] = {NAME = 'stun / platformstand', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unstun / unplatformstand', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
@@ -2743,6 +2749,7 @@ CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'clicktp', DESC = 'Go to settings>Keybinds>Add for clicktp'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos', DESC = 'Notifies you the coordinates of your character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinates of your character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
@@ -2761,21 +2768,27 @@ CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
 CMDs[#CMDs + 1] = {NAME = 'naked', DESC = 'Removes your clothing'}
+CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
 CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
 CMDs[#CMDs + 1] = {NAME = 'blockhats', DESC = 'Turns your hats into blocks'}
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
-CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
+CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats', DESC = 'Deletes your hats'}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
-CMDs[#CMDs + 1] = {NAME = 'spinhats', DESC = 'Spins your characters accessorys'}
-CMDs[#CMDs + 1] = {NAME = 'unspinhats', DESC = 'Undoes spinhats'}
+CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
+CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
-CMDs[#CMDs + 1] = {NAME = 'notools/removetools', DESC = 'Removes tools from character and backpack'}
+CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
 CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are dropped'}
 CMDs[#CMDs + 1] = {NAME = 'ungrabtools', DESC = 'Disables grabtools'}
 CMDs[#CMDs + 1] = {NAME = 'copytools [plr]', DESC = 'Copies a players tools'}
+CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
+CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
+CMDs[#CMDs + 1] = {NAME = 'equiphats / hattool', DESC = 'Allows you to hold your hats like a tool'}
+CMDs[#CMDs + 1] = {NAME = 'reach on [num]', DESC = 'Increases the hitbox of your held tool'}
+CMDs[#CMDs + 1] = {NAME = 'reach off', DESC = 'turns off reach'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
@@ -5104,7 +5117,7 @@ addcmd('delete',{'remove'},
 	function(args, speaker)
 	part = getstring(1)
     local function dels(instance)
-        for i,v in pairs(instance:GetChildren())do
+        for i,v in pairs(instance:GetDescendants())do
             if v.Name:lower() == part:lower() then v:Destroy() end
             dels(v)
         end
@@ -5117,12 +5130,38 @@ addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},
 	function(args, speaker)
 	part = getstring(1)
     local function dels(instance)
-        for i,v in pairs(instance:GetChildren())do
+        for i,v in pairs(instance:GetDescendants())do
             if v.ClassName:lower() == part:lower() then v:Destroy() end
             dels(v)
         end
     end
     dels(workspace)
+notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
+end)
+
+addcmd('chardelete',{'charremove','cd'},
+	function(args, speaker)
+	part = getstring(1)
+    local function dels(instance)
+        for i,v in pairs(instance:GetDescendants())do
+            if v.Name:lower() == part:lower() then v:Destroy() end
+            dels(v)
+        end
+    end
+    dels(Players.LocalPlayer.Character)
+notify('Item(s) Deleted','Deleted ' ..getstring(1))
+end)
+
+addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremoveclassname','cdc'},
+	function(args, speaker)
+	part = getstring(1)
+    local function dels(instance)
+        for i,v in pairs(instance:GetDescendants())do
+            if v.ClassName:lower() == part:lower() then v:Destroy() end
+            dels(v)
+        end
+    end
+    dels(Players.LocalPlayer.Character)
 notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
@@ -5132,11 +5171,6 @@ addcmd('btools',{},
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 2
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 3
 	Instance.new("HopperBin", Players.LocalPlayer.Backpack).BinType = 4
-end)
-
-addcmd('f3x',{'fex'},
-	function(args, speaker)
-	loadstring(game:GetObjects("rbxassetid://1059691823")[1].Source)()
 end)
 
 addcmd('age',{},
@@ -5523,6 +5557,16 @@ addcmd('jump',{},
 	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
 end)
 
+addcmd('infjump',{'infinitejump'},
+	function(args, speaker)
+	infJump = true
+end)
+
+addcmd('uninfjump',{'uninfinitejump','noinfjump','noinfinitejump'},
+	function(args, speaker)
+	infJump = false
+end)
+
 addcmd('team',{},
 	function(args, speaker)
 	local teamname = nil
@@ -5608,6 +5652,11 @@ addcmd('offset',{},
 	end
 end)
 
+addcmd('clicktp',{},
+	function(args, speaker)
+	notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
+end)
+
 addcmd('getposition',{'getpos','notifypos','notifyposition'},
 	function(args, speaker)
 	local char = Players.LocalPlayer.Character
@@ -5658,7 +5707,7 @@ addcmd('tools',{'gears'},
 	notify('Tools','Copied tools from ReplicatedStorage and Lighting')
 end)
 
-addcmd('notools',{'rtools','clrtools','removetools'},
+addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},
 	function(args, speaker)
 	for i,v in pairs(Players.LocalPlayer.Backpack:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
@@ -5832,10 +5881,8 @@ end)
 
 addcmd('blockhats',{},
 	function(args, speaker)
-	for _,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
-		if (v:IsA("Accessory")) then
-			v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
-		end
+	for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+		v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
 	end
 end)
 
@@ -5845,19 +5892,15 @@ addcmd('creeper',{},
 		Players.LocalPlayer.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 		Players.LocalPlayer.Character.LeftUpperArm:Destroy()
 		Players.LocalPlayer.Character.RightUpperArm:Destroy()
-		for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
-			if v:IsA'Hat' or v:IsA'Accessory' then
-				v.Parent = workspace
-			end
+		for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+			v:Destroy()
 		end
 	else
 		Players.LocalPlayer.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 		Players.LocalPlayer.Character["Left Arm"]:Destroy()
 		Players.LocalPlayer.Character["Right Arm"]:Destroy()
-		for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
-			if v:IsA'Hat' or v:IsA'Accessory' then
-				v.Parent = workspace
-			end
+		for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+			v:Destroy()
 		end
 	end
 end)
@@ -5967,6 +6010,15 @@ addcmd('naked',{},
 	end
 end)
 
+addcmd('noface',{'removeface'},
+	function(args, speaker)
+	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
+		if v:IsA("Decal") and v.Name == 'face' then
+			v:Destroy()
+		end
+	end
+end)
+
 addcmd('spawnpoint',{'spawn'},
 	function(args, speaker)
 	spawnpos = Players.LocalPlayer.Character.HumanoidRootPart.CFrame
@@ -5992,43 +6044,43 @@ end)
 
 addcmd('hatspin',{'spinhats'},
 	function(args, speaker)
-	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
-		if v:IsA("Accessory") or v:IsA("Hat") then
-			local keep = Instance.new("BodyPosition") keep.Parent = v.Handle keep.Name = "no"
-			local spin = Instance.new("BodyAngularVelocity") spin.Parent = v.Handle spin.Name = "ha"
-			if v.Handle.AccessoryWeld then
-				v.Handle.AccessoryWeld:Destroy()
-			end
-			if args[1] then
-				spin.AngularVelocity = Vector3.new(0, args[1], 0)
-				spin.MaxTorque = Vector3.new(0, args[1] * 2, 0)
-			else
-				spin.AngularVelocity = Vector3.new(0, 100, 0)
-				spin.MaxTorque = Vector3.new(0, 200, 0)
-			end
-			keep.P = 30000
-			keep.D = 50
-			spinning = keep
-			spinenabled = true
+	for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+		local keep = Instance.new("BodyPosition") keep.Parent = v.Handle keep.Name = "no"
+		local spin = Instance.new("BodyAngularVelocity") spin.Parent = v.Handle spin.Name = "ha"
+		v.Handle:FindFirstChildOfClass("Weld"):Destroy()
+		if args[1] then
+			spin.AngularVelocity = Vector3.new(0, args[1], 0)
+			spin.MaxTorque = Vector3.new(0, args[1] * 2, 0)
+		else
+			spin.AngularVelocity = Vector3.new(0, 100, 0)
+			spin.MaxTorque = Vector3.new(0, 200, 0)
 		end
+		keep.P = 30000
+		keep.D = 50
+		spinning = keep
+		spinenabled = true
 	end
 end)
 
 addcmd('unhatspin',{'unspinhats'},
 	function(args, speaker)
-	for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
-		if v:IsA("Accessory") or v:IsA("Hat") then
-			pcall(function()
-				if v:IsA("Accessory") or v:IsA("Hat") then
-					v.Parent = workspace
-				end
-				wait(0.5)
-				v.Handle.no:Destroy()
-				v.Handle.ha:Destroy()
-				if v:IsA("Accessory") or v:IsA("Hat") then
-					v.Parent = Players.LocalPlayer.Character
-				end
-			end)
+	for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+		v.Parent = workspace
+		wait(0.5)
+		v.Handle.no:Destroy()
+		v.Handle.ha:Destroy()
+		v.Parent = Players.LocalPlayer.Character
+	end
+end)
+
+addcmd('hattool',{'equiphats','hattools'},
+	function(args, speaker)
+	for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+		if v.Handle then
+			local tool = Instance.new("Tool", Players.LocalPlayer.Backpack)
+			tool.Name = v.Name
+			v.Handle:FindFirstChildOfClass("Weld"):Destroy()
+			v.Handle.Parent = tool
 		end
 	end
 end)
@@ -6095,10 +6147,17 @@ end)
 addcmd('drophats',{'drophat'},
 	function(args, speaker)
 	if speaker.Character then
-		for _,obj in pairs(speaker.Character:GetChildren()) do
-			if obj:IsA("Accessory") then
-				obj.Parent = workspace
-			end
+		for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+			v.Parent = workspace
+		end
+	end
+end)
+
+addcmd('deletehats',{'nohats'},
+	function(args, speaker)
+	if speaker.Character then
+		for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+			v:Destroy()
 		end
 	end
 end)
@@ -6121,6 +6180,62 @@ addcmd('droptools',{'droptool'},
 	end
 end)
 
+addcmd('droppabletools',{},
+	function(args, speaker)
+	if speaker.Character then
+		for _,obj in pairs(speaker.Character:GetChildren()) do
+			if obj:IsA("Tool") then
+				obj.CanBeDropped = true
+			end
+		end
+	end
+	if speaker:FindFirstChild("Backpack") then
+		for _,obj in pairs(speaker.Backpack:GetChildren()) do
+			if obj:IsA("Tool") then
+				obj.CanBeDropped = true
+			end
+		end
+	end
+end)
+
+currentToolSize = ""
+currentGripPos = ""
+addcmd('reach',{},
+	function(args, speaker)
+	if args[1] then
+		for i,v in pairs(Players.LocalPlayer.Character:GetDescendants()) do
+			if v:IsA("Tool") then
+				if string.lower(tostring(args[1])) == "off" then
+					v.Handle.Size = currentToolSize
+					v.GripPos = currentGripPos
+					v.Handle.SelectionBoxCreated:Destroy()
+					Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+				elseif string.lower(tostring(args[1])) == "on" then
+					if args[2] then
+						currentToolSize = v.Handle.Size
+						currentGripPos = v.GripPos
+						local a = Instance.new("SelectionBox",v.Handle)
+						a.Name = "SelectionBoxCreated"
+						a.Adornee = v.Handle
+						v.Handle.Size = Vector3.new(0.5,0.5,args[2])
+						v.GripPos = Vector3.new(0,0,0)
+						Players.LocalPlayer.Character.Humanoid:UnequipTools()
+					else
+						currentToolSize = v.Handle.Size
+						currentGripPos = v.GripPos
+						local a = Instance.new("SelectionBox",v.Handle)
+						a.Name = "SelectionBoxCreated"
+						a.Adornee = v.Handle
+						v.Handle.Size = Vector3.new(0.5,0.5,60)
+						v.GripPos = Vector3.new(0,0,0)
+						Players.LocalPlayer.Character.Humanoid:UnequipTools()
+					end
+				end
+			end
+		end
+	end
+end)
+
 addcmd('logs',{'chatlogs'},
 	function(args, speaker)
 	logsDrag:TweenPosition(UDim2.new(0, 0, 1, -245), "InOut", "Quart", 0.3, true, nil)
@@ -6133,12 +6248,10 @@ addcmd('fling',{},
 			child.CustomPhysicalProperties = PhysicalProperties.new(2, 0.3, 0.5)
 		end
 	end
-	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
-		if v:IsA('Accessory') or v:IsA('Hat') then
-			for e,c in pairs(v:GetDescendants()) do
-				if c:IsA('Part') or c:IsA('MeshPart') then
-					c.CustomPhysicalProperties = PhysicalProperties.new(0, 0.3, 0.5)
-				end
+	for _,v in pairs(Players.LocalPlayer.Character.Humanoid:GetAccessories()) do
+		for e,c in pairs(v:GetDescendants()) do
+			if c:IsA('BasePart') then
+				c.CustomPhysicalProperties = PhysicalProperties.new(0, 0.3, 0.5)
 			end
 		end
 	end
