@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.7'
+ver = '2.7.1'
 
 Players = game:GetService("Players")
 
@@ -173,6 +173,7 @@ Holder.ZIndex = 10
 
 Title.Name = "Title"
 Title.Parent = Holder
+Title.Active = true
 Title.BackgroundTransparency = 1
 Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
@@ -444,7 +445,6 @@ Example.ZIndex = 10
 
 Notification.Name = randomString()
 Notification.Parent = PARENT
-Notification.Active = true
 Notification.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Notification.BorderSizePixel = 0
 Notification.Position = UDim2.new(1, -500, 1, 20)
@@ -710,6 +710,7 @@ KeybindEditor.ZIndex = 10
 
 background_2.Name = "background"
 background_2.Parent = KeybindEditor
+background_2.Active = true
 background_2.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_2.BorderSizePixel = 0
 background_2.Position = UDim2.new(0, 0, 0, 20)
@@ -950,6 +951,7 @@ SpawnCEditor.ZIndex = 10
 
 background_4.Name = "background"
 background_4.Parent = SpawnCEditor
+background_4.Active = true
 background_4.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_4.BorderSizePixel = 0
 background_4.Position = UDim2.new(0, 0, 0, 20)
@@ -1333,6 +1335,7 @@ PluginEditor.ZIndex = 10
 
 background_3.Name = "background"
 background_3.Parent = PluginEditor
+background_3.Active = true
 background_3.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_3.BorderSizePixel = 0
 background_3.Position = UDim2.new(0, 0, 0, 20)
@@ -1481,6 +1484,7 @@ Exit.Image = "rbxassetid://2132544126"
 
 background.Name = "background"
 background.Parent = logsDrag
+background.Active = true
 background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background.BorderSizePixel = 0
 background.Position = UDim2.new(0, 0, 1, 0)
@@ -1588,6 +1592,7 @@ ToPartFrame.ZIndex = 10
 
 background_5.Name = "background"
 background_5.Parent = ToPartFrame
+background_5.Active = true
 background_5.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 background_5.BorderSizePixel = 0
 background_5.Position = UDim2.new(0, 0, 0, 20)
@@ -1838,6 +1843,7 @@ function saves()
 				
 				background.Name = "background"
 				background.Parent = FileError
+				background.Active = true
 				background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 				background.BorderSizePixel = 0
 				background.Position = UDim2.new(0, 0, 0, 20)
@@ -4219,6 +4225,7 @@ addcmd('serverinfo',{'info','sinfo'},
 	
 	background.Name = "background"
 	background.Parent = FRAME
+	background.Active = true
 	background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 	background.BorderSizePixel = 0
 	background.Position = UDim2.new(0, 0, 1, 0)
@@ -6543,6 +6550,7 @@ if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/
 		
 		background.Name = "background"
 		background.Parent = AnnGUI
+		background.Active = true
 		background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 		background.BorderSizePixel = 0
 		background.Position = UDim2.new(0, 0, 0, 20)
