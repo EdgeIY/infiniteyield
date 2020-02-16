@@ -2749,7 +2749,7 @@ CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
-CMDs[#CMDs + 1] = {NAME = 'clicktp', DESC = 'Go to settings>Keybinds>Add for clicktp'}
+CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for clicktp'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos', DESC = 'Notifies you the coordinates of your character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinates of your character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
@@ -5652,9 +5652,11 @@ addcmd('offset',{},
 	end
 end)
 
-addcmd('clicktp',{},
+addcmd('clickteleport',{},
 	function(args, speaker)
-	notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
+	if speaker == Players.LocalPlayer then
+		notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
+	end
 end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},
