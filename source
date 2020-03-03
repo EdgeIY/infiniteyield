@@ -6615,6 +6615,7 @@ end)
 addcmd('vr',{},
 	function(args, speaker)
 	loadstring(game:HttpGet(('https://pastebin.com/raw/shBZc5tT'),true))()
+	notify('Controls','[R2] Sprint, [L2] Crouch, [Y] Reset, [B] Laser Beam, [X] Toggle Chat HUD (Left hand)')
 end)
 
 if PluginsTable ~= nil or PluginsTable ~= {} then
