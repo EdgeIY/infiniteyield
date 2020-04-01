@@ -1,1 +1,118 @@
 Version = '2.8'
+
+local okzoomer = Instance.new("Frame")
+local background = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local ImageLabel = Instance.new("ImageLabel")
+local yes = Instance.new("TextButton")
+local no = Instance.new("TextButton")
+local TextLabel_2 = Instance.new("TextLabel")
+local shadow = Instance.new("Frame")
+local PopupText = Instance.new("TextLabel")
+
+okzoomer.Name = "ok zoomer"
+okzoomer.Parent = PARENT
+okzoomer.Active = true
+okzoomer.BackgroundTransparency = 1
+okzoomer.Position = UDim2.new(0.5, -180, 0, -500)
+okzoomer.Size = UDim2.new(0, 360, 0, 20)
+okzoomer.ZIndex = 10
+
+background.Name = "background"
+background.Parent = okzoomer
+background.Active = true
+background.BackgroundColor3 = Color3.new(0.141176, 0.141176, 0.145098)
+background.BorderSizePixel = 0
+background.Position = UDim2.new(0, 0, 0, 20)
+background.Size = UDim2.new(0, 360, 0, 420)
+background.ZIndex = 10
+
+TextLabel.Parent = background
+TextLabel.BackgroundTransparency = 1
+TextLabel.Position = UDim2.new(0.0170000009, 0, 0, 5)
+TextLabel.Size = UDim2.new(0, 348, 0, 25)
+TextLabel.ZIndex = 10
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.FontSize = Enum.FontSize.Size24
+TextLabel.Text = "INFINITE YIELD IS NOW SPONSORED BY"
+TextLabel.TextColor3 = Color3.new(1, 1, 1)
+TextLabel.TextWrapped = true
+TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+
+ImageLabel.Parent = background
+ImageLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+ImageLabel.BorderSizePixel = 0
+ImageLabel.Position = UDim2.new(0, 20, 0, 35)
+ImageLabel.Size = UDim2.new(0, 320, 0, 295)
+ImageLabel.Image = "http://www.roblox.com/asset/?id=4838391120"
+ImageLabel.ZIndex = 10
+
+yes.Name = "yes"
+yes.Parent = background
+yes.BackgroundColor3 = Color3.new(0, 0.666667, 0)
+yes.BorderSizePixel = 0
+yes.Position = UDim2.new(0, 0, 0, 390)
+yes.Size = UDim2.new(0, 100, 0, 30)
+yes.ZIndex = 10
+yes.Font = Enum.Font.SourceSans
+yes.FontSize = Enum.FontSize.Size14
+yes.Text = "Go to app store"
+yes.TextColor3 = Color3.new(0, 0, 0)
+
+no.Name = "no"
+no.Parent = background
+no.BackgroundColor3 = Color3.new(1, 0, 0)
+no.BorderSizePixel = 0
+no.Position = UDim2.new(0, 260, 0, 390)
+no.Size = UDim2.new(0, 100, 0, 30)
+no.ZIndex = 10
+no.Font = Enum.Font.SourceSans
+no.FontSize = Enum.FontSize.Size14
+no.Text = "Go to app store"
+no.TextColor3 = Color3.new(0, 0, 0)
+
+TextLabel_2.Parent = background
+TextLabel_2.BackgroundTransparency = 1
+TextLabel_2.Position = UDim2.new(0.0170000009, 0, 0, 333)
+TextLabel_2.Size = UDim2.new(0, 348, 0, 60)
+TextLabel_2.ZIndex = 10
+TextLabel_2.Font = Enum.Font.SourceSans
+TextLabel_2.FontSize = Enum.FontSize.Size11
+TextLabel_2.Text = "Raid is one of the biggest mobile role-playing games of 2020 and it's totally free! Raid has an almost perfect score on the Play Store and it's one of the most impressive games in its class with detailed models, environments and smooth 60 frames per second animations!! What are you waiting for? Click below and use special code \"infinite\" to get 50,000 silver and a free epic champion!"
+TextLabel_2.TextColor3 = Color3.new(1, 1, 1)
+TextLabel_2.TextWrapped = true
+TextLabel_2.TextYAlignment = Enum.TextYAlignment.Top
+
+shadow.Name = "shadow"
+shadow.Parent = okzoomer
+shadow.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.184314)
+shadow.BorderSizePixel = 0
+shadow.Size = UDim2.new(0, 360, 0, 20)
+shadow.ZIndex = 10
+
+PopupText.Name = "PopupText"
+PopupText.Parent = shadow
+PopupText.BackgroundTransparency = 1
+PopupText.Position = UDim2.new(0, 51, 0, 0)
+PopupText.Size = UDim2.new(0.75999999, -16, 0.949999988, 0)
+PopupText.ZIndex = 10
+PopupText.Font = Enum.Font.SourceSans
+PopupText.FontSize = Enum.FontSize.Size14
+PopupText.Text = "SPONSOR"
+PopupText.TextColor3 = Color3.new(1, 1, 1)
+PopupText.TextWrapped = true
+
+wait(1)
+okzoomer:TweenPosition(UDim2.new(0.5, -180, 0, 50), "InOut", "Quart", 0.5, true, nil)
+
+yes.MouseButton1Click:Connect(function()
+	okzoomer:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
+	wait(0.6)
+	okzoomer:Destroy()
+end)
+
+no.MouseButton1Click:Connect(function()
+	okzoomer:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
+	wait(0.6)
+	okzoomer:Destroy()
+end)
