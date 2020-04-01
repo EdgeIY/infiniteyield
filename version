@@ -1,5 +1,6 @@
 Version = '2.8'
 
+--THIS IS A JOKE
 local okzoomer = Instance.new("Frame")
 local background = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
