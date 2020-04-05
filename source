@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.8'
+ver = '2.9'
 
 Players = game:GetService("Players")
 
@@ -2799,11 +2799,14 @@ CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'kill [plr]', DESC = 'Kills a player'}
+CMDs[#CMDs + 1] = {NAME = 'hugkill', DESC = 'Flings/kills a player when you run into them'}
 CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'bring2 [plr] (TOOL)', DESC = 'Brings a player using an alternate method (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
+CMDs[#CMDs + 1] = {NAME = 'hitbox [size])', DESC = 'Expands the hitbox for players heads (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
@@ -2824,7 +2827,7 @@ CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump
 CMDs[#CMDs + 1] = {NAME = 'stun / platformstand', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unstun / unplatformstand', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
-CMDs[#CMDs + 1] = {NAME = 'nobgui / nobillboardgui', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
+CMDs[#CMDs + 1] = {NAME = 'nobgui / nobillboardgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
@@ -2860,7 +2863,7 @@ CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
 CMDs[#CMDs + 1] = {NAME = 'blockhats', DESC = 'Turns your hats into blocks'}
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
-CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats', DESC = 'Deletes your hats'}
+CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
@@ -2871,6 +2874,7 @@ CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes
 CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are dropped'}
 CMDs[#CMDs + 1] = {NAME = 'ungrabtools', DESC = 'Disables grabtools'}
 CMDs[#CMDs + 1] = {NAME = 'copytools [plr]', DESC = 'Copies a players tools'}
+CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools', DESC = 'Duplicates your inventory tools'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
 CMDs[#CMDs + 1] = {NAME = 'equiphats / hattool', DESC = 'Allows you to hold your hats like a tool'}
@@ -2983,17 +2987,12 @@ function GetInTable(Table, Name)
 end
 
 function respawn(plr)
-	if r15(plr) then
-		plr.Character:FindFirstChildOfClass('Humanoid').Health = 0
-		wait(0.1)
-		plr.Character.Head.CFrame = CFrame.new(1000000,0,1000000)
-		plr.Character.HumanoidRootPart:Destroy()
-	else		
-		plr.Character:Destroy()
-		local M = Instance.new('Model', workspace) M.Name = 'respawn_iy'
-		local H = Instance.new('Humanoid', M)
-		local T = Instance.new('Part', M) T.Name = 'Torso' T.CanCollide = false T.Transparency = 1
-		plr.Character = M
+	plr.Character:FindFirstChildOfClass('Humanoid').Health = 0
+	plr.Character:BreakJoints()
+	for _,v in pairs(plr.Character:GetChildren()) do
+		if v:IsA("BasePart") then
+			v:Destroy()
+		end
 	end
 end
 
@@ -3352,6 +3351,22 @@ local SpecialPlayerCases = {
 			end
 		end
 		return NearestPlayer
+	end,
+	["farthest"] = function(speaker,args)
+		local speakerChar = speaker.Character
+		if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
+		local highest = math.huge
+		local FarthestPlayer = nil
+		for _,plr in pairs(Players:GetPlayers()) do
+			if plr and plr ~= speaker and plr.Character then
+				local distance = plr:DistanceFromCharacter(speakerChar:FindFirstChild("HumanoidRootPart").Position)
+				if distance > highest then
+					highest = distance
+					FarthestPlayer = {plr}
+				end
+			end
+		end
+		return FarthestPlayer
 	end,
 	["rad(%d+)"] = function(speaker,args)
 		local returns = {}
@@ -5806,7 +5821,7 @@ addcmd('team',{},
 	speaker.Team = teamname
 end)
 
-addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui'},
+addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname'},
 	function(args, speaker)
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
@@ -6231,7 +6246,7 @@ addcmd('unlight',{'nolight'},
 	end
 end)
 
-addcmd('copytools',{'clonetools'},
+addcmd('copytools',{},
 	function(args, speaker)
     local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
@@ -6324,6 +6339,25 @@ addcmd('equiptools',{},
 	end
 end)
 
+addcmd('dupetools',{'clonetools'},
+	function(args, speaker)
+	for i,v in pairs(speaker.Backpack:GetChildren()) do
+		if v:IsA("Tool") or v:IsA("HopperBin") then
+			v.Parent = speaker
+		end
+	end
+	wait()
+	refresh(speaker)
+	wait()
+	repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+	wait(0.5)
+	for i,v in pairs(speaker:GetChildren()) do
+		if v:IsA("Tool") or v:IsA("HopperBin") then
+			v.Parent = speaker.Backpack
+		end
+	end    
+end)
+
 addcmd('hattool',{'equiphats','hattools'},
 	function(args, speaker)
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
@@ -6413,7 +6447,7 @@ addcmd('drophats',{'drophat'},
 	end
 end)
 
-addcmd('deletehats',{'nohats'},
+addcmd('deletehats',{'nohats','rhats'},
 	function(args, speaker)
 	if speaker.Character then
 		for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
@@ -6617,6 +6651,27 @@ addcmd('kill',{'fekill'},
 	end
 end)
 
+addcmd('hugkill',{},
+	function(args, speaker)
+	-- Full credit to CyclicaIIy @V3rmillion
+	local LocalPlayer = speaker
+	local torsoname = "Torso"
+	if LocalPlayer.Character:FindFirstChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
+	    torsoname = "UpperTorso"
+	end
+	LocalPlayer.Character:FindFirstChild("Animate").toolnone.ToolNoneAnim.AnimationId = math.huge
+	LocalPlayer.Character:FindFirstChild(torsoname).Anchored = true
+	local tool = Instance.new("Tool", LocalPlayer.Backpack)
+	LocalPlayer.Character:FindFirstChildOfClass("Accessory").Handle.Parent = tool
+	tool.Handle.Massless = true
+	tool.GripPos = Vector3.new(0, math.huge, 0)
+	tool.Parent = LocalPlayer.Character
+	wait()
+	tool.Grip = CFrame.new(Vector3.new(0, 0, 0))
+	LocalPlayer.Character:FindFirstChild(torsoname).Anchored = false
+	notify('Hug Kill','Select the tool and run into a player to fling / kill them')
+end)
+
 addcmd('bring',{'febring'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -6674,6 +6729,83 @@ addcmd('bring',{'febring'},
 					wait(0.3)
 					refresh(speaker)
 				end
+			end
+		end
+	else
+		notify('Tool Required','You need to have a tool to use this command')
+	end
+end)
+
+addcmd('bring2',{'febring2'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	if tools(speaker) then
+		if args[1] then
+			for i,v in pairs(players)do
+				-- Full credit to CyclicaIIy @V3rmillion
+				local LocalPlayer = speaker.Character
+				local ran1 = false
+				local equipped = false
+				local savepos = LocalPlayer.Character.HumanoidRootPart.CFrame
+				local target = Players[v]
+				if #LocalPlayer.Backpack:GetChildren() < 2 then
+				    repeat
+				        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+				            if tool:IsA("Tool") then
+				                tool.Parent = LocalPlayer
+				            end
+				        end
+				        LocalPlayer.Character:ClearAllChildren()
+				        local char = Instance.new("Model", workspace)
+				        char.Name = "character"
+				        Instance.new("Part", char).Name = "Torso";
+				        Instance.new("Part", char).Name = "Head";
+				        Instance.new("Humanoid", char).Name = "Humanoid";
+				        LocalPlayer.Character = char
+				        repeat wait() until LocalPlayer.Character
+				    until #LocalPlayer:GetChildren() - 4 >= 2
+				    for _, char in pairs(workspace:GetChildren()) do
+				        if char.Name == "character" and char:IsA("Model") then
+				            char:Destroy()
+				        end
+				    end
+				    repeat wait() until LocalPlayer.Character.HumanoidRootPart ~= nil
+				    for _, tool in pairs(LocalPlayer:GetChildren()) do
+				        if tool:IsA("Tool") then
+				            tool.Parent = LocalPlayer.Backpack
+				        end
+				    end
+				    LocalPlayer.Character.HumanoidRootPart.CFrame = savepos
+				end
+				LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
+				LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
+				local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+				tool.Parent = workspace
+				local attacher = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+				attacher.Parent = workspace
+				LocalPlayer.Character.Humanoid:EquipTool(tool)
+				repeat wait() until LocalPlayer.Character:FindFirstChildOfClass("Tool") ~= nil
+				LocalPlayer.Character.Humanoid:UnequipTools()
+				attacher.AncestryChanged:connect(function()
+				    if ran1 == false then
+				        ran1 = true
+				        equipped = true
+				    end
+				end)
+				local anim = Instance.new("Animation")
+				anim.AnimationId = "rbxassetid://188632011"
+				local loadanim = LocalPlayer.Character.Humanoid:LoadAnimation(anim)
+				loadanim.Looped = true
+				loadanim:Play()
+				repeat
+				    target.Character.HumanoidRootPart.CFrame = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position + LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 2 + LocalPlayer.Character.HumanoidRootPart.CFrame.rightVector * 2)
+				    wait()
+				until equipped == true
+				loadanim:Stop()
+				anim:Destroy()
+				LocalPlayer.Character.Humanoid:EquipTool(tool)
+				wait()
+				LocalPlayer.Character.Humanoid:UnequipTools()
 			end
 		end
 	else
@@ -6769,6 +6901,24 @@ addcmd('unwalltp',{'nowalltp'},
 	function(args, speaker)
 	if walltpTouch then
 		walltpTouch:Disconnect()
+	end
+end)
+
+addcmd('hitbox',{},
+	function(args, speaker)
+	for k,v in next, Players:GetPlayers() do
+		if v.Character:FindFirstChild('Head') then
+			local sizeArg = tonumber(args[1])
+			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
+			local Head = v.Character:FindFirstChild('Head')
+			if sizeArg == 1 then
+				Head.Size = Vector3.new(2,1,1)
+			else
+				Head.Size = Vector3.new(2,1,1)
+				Head.Size = Size
+				game.Players.LocalPlayer.Character.Head.Size = Vector3.new(2,1,1)
+			end
+		end
 	end
 end)
 
