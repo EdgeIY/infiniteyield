@@ -6797,7 +6797,7 @@ if PluginsTable ~= nil or PluginsTable ~= {} then
 	FindPlugins(PluginsTable)
 end
 
-if pcall(function() loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'),true))() end) then
+if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
 	if ver ~= Version then
 		notify('Outdated','Get the new version at infyield.yolasite.com')
 	end
