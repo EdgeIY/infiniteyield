@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '2.9'
+ver = '3.0'
 
 Players = game:GetService("Players")
 
@@ -2705,6 +2705,7 @@ end
 local CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
+CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
 CMDs[#CMDs + 1] = {NAME = 'gametp / gameteleport [ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
@@ -2713,7 +2714,6 @@ CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the 
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
 CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'For use with a virtual reality headset and 6 hats (WILL BE PATCHED SOON)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
 CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
@@ -2748,6 +2748,8 @@ CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (defau
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
+CMDs[#CMDs + 1] = {NAME = 'partesp [part name]', DESC = 'Highlights a part'}
+CMDs[#CMDs + 1] = {NAME = 'unpartesp / nopartesp', DESC = 'removes partesp'}
 CMDs[#CMDs + 1] = {NAME = 'chams', DESC = 'ESP but without text in the way'}
 CMDs[#CMDs + 1] = {NAME = 'nochams / unchams', DESC = 'Removes chams'}
 CMDs[#CMDs + 1] = {NAME = 'locate [plr]', DESC = 'View a single player and their status'}
@@ -2777,6 +2779,7 @@ CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole work
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
+CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
@@ -2793,15 +2796,15 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = "Shows a player's platform"}
+CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = "Copies a players full username to your clipboard"}
+CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = "Copies a players user ID to your clipboard"}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = "Copies a players appearance ID to your clipboard"}
 CMDs[#CMDs + 1] = {NAME = 'bang [plr]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang [plr]', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
-CMDs[#CMDs + 1] = {NAME = 'kill [plr]', DESC = 'Kills a player'}
-CMDs[#CMDs + 1] = {NAME = 'hugkill', DESC = 'Flings/kills a player when you run into them'}
 CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
-CMDs[#CMDs + 1] = {NAME = 'bring2 [plr] (TOOL)', DESC = 'Brings a player using an alternate method (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
@@ -2812,6 +2815,7 @@ CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
+CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
 CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
 CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
@@ -2877,7 +2881,6 @@ CMDs[#CMDs + 1] = {NAME = 'copytools [plr]', DESC = 'Copies a players tools'}
 CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools', DESC = 'Duplicates your inventory tools'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
-CMDs[#CMDs + 1] = {NAME = 'equiphats / hattool', DESC = 'Allows you to hold your hats like a tool'}
 CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
 CMDs[#CMDs + 1] = {NAME = 'reach on [num]', DESC = 'Increases the hitbox of your held tool'}
 CMDs[#CMDs + 1] = {NAME = 'reach off', DESC = 'turns off reach'}
@@ -3342,7 +3345,7 @@ local SpecialPlayerCases = {
 		local lowest = math.huge
 		local NearestPlayer = nil
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr and plr ~= speaker and plr.Character then
+			if plr ~= speaker and plr.Character then
 				local distance = plr:DistanceFromCharacter(speakerChar:FindFirstChild("HumanoidRootPart").Position)
 				if distance < lowest then
 					lowest = distance
@@ -3358,7 +3361,7 @@ local SpecialPlayerCases = {
 		local highest = math.huge
 		local FarthestPlayer = nil
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr and plr ~= speaker and plr.Character then
+			if plr ~= speaker and plr.Character then
 				local distance = plr:DistanceFromCharacter(speakerChar:FindFirstChild("HumanoidRootPart").Position)
 				if distance > highest then
 					highest = distance
@@ -3367,6 +3370,16 @@ local SpecialPlayerCases = {
 			end
 		end
 		return FarthestPlayer
+	end,
+	["group(%d+)"] = function(speaker,args)
+		local returns = {}
+		local groupID = tonumber(args[1])
+		for _,plr in pairs(Players:GetPlayers()) do
+			if plr:IsInGroup(groupID) then  
+				table.insert(returns,plr)
+			end
+		end
+		return returns
 	end,
 	["rad(%d+)"] = function(speaker,args)
 		local returns = {}
@@ -4592,6 +4605,33 @@ addcmd('rejoin',{'rj'},
 	game:GetService('TeleportService'):Teleport(game.PlaceId)
 end)
 
+addcmd('serverhop',{'shop'},
+	function(args, speaker)
+	local PlaceId = game.PlaceId
+	local URL = ("https://www.roblox.com/games/getgameinstancesjson?placeId=%s&startindex="):format(PlaceId)
+	
+	local List = {}
+	
+	for page = 0, 30 do
+		local Query = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL..page))
+	
+		for i,v in next, Query.Collection do 
+			List[v.Guid] = v.Ping
+		end
+	end
+	
+	local ChosenServer = game.JobId
+	
+	for i,v in pairs(List) do
+		if i ~= game.JobId then
+			ChosenServer = i
+			break
+		end
+	end
+	
+	game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, ChosenServer, game.Players.LocalPlayer)
+	end)
+
 addcmd('exit',{},
 	function(args, speaker)
 	game:shutdown() 
@@ -5035,6 +5075,49 @@ addcmd('noesp',{'unesp'},
 	end
 end)
 
+local partEspName
+addcmd('partesp',{},
+	function(args, speaker)
+	execCmd('unpartesp')
+	wait(0.5)
+	for i,v in pairs(workspace:GetDescendants()) do
+	partEspName = args[1]:lower()
+		if v:IsA("BasePart") and v.Name:lower() == partEspName then
+			local a = Instance.new("BoxHandleAdornment", v)
+			a.Name = partEspName.."_PESP"
+			a.Adornee = v
+			a.AlwaysOnTop = true
+			a.ZIndex = 0
+			a.Size = v.Size
+			a.Transparency = 0.3
+			a.Color = BrickColor.new("Lime green")
+		end
+	end
+	local function partAdded(part)
+		if part.Name:lower() == partEspName then
+			local a = Instance.new("BoxHandleAdornment", part)
+			a.Name = partEspName.."_PESP"
+			a.Adornee = part
+			a.AlwaysOnTop = true
+			a.ZIndex = 0
+			a.Size = part.Size
+			a.Transparency = 0.3
+			a.Color = BrickColor.new("Lime green")
+		end
+	end
+	partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
+end)
+
+addcmd('unpartesp',{'nopartesp'},
+	function(args, speaker)
+	if partEspTrigger then partEspTrigger:Disconnect() end
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BoxHandleAdornment") and v.Name == partEspName..'_PESP' then
+			v:Destroy()
+		end
+	end
+end)
+
 addcmd('chams',{},
 	function(args, speaker)
 	if not ESPenabled then
@@ -5255,7 +5338,8 @@ addcmd('fixcam',{},
 	UFC()
 	workspace.CurrentCamera:remove()
 	wait(.1)
-	workspace.CurrentCamera.CameraSubject = speaker.Character.Humanoid
+	repeat wait() until speaker.Character ~= nil
+	workspace.CurrentCamera.CameraSubject = speaker.Character:FindFirstChildWhichIsA('Humanoid')
 	workspace.CurrentCamera.CameraType = "Custom"
 	speaker.CameraMinZoomDistance = 0.5
 	speaker.CameraMaxZoomDistance = 400
@@ -5434,6 +5518,33 @@ addcmd('os',{'platform', 'device'},
 	notify('OS',table.concat(platforms, ',\n'))
 end)
 
+addcmd('copyname',{'copyuser'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local name = tostring(Players[v].Name)
+		toClipboard(name)
+	end
+end)
+
+addcmd('copyid',{},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local id = tostring(Players[v].UserId)
+		toClipboard(id)
+	end
+end)
+
+addcmd('copyappearanceid',{},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local aid = tostring(Players[v].CharacterAppearanceId)
+		toClipboard(aid)
+	end
+end)
+
 addcmd('goto',{'to'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -5593,40 +5704,121 @@ end)
 
 addcmd('invisible',{'invis'},
 	function(args, speaker)
--- Full credit to Elite1337#9377 & Timeless#4044 @Discord
-local function CheckRig()
-	if speaker.Character then
-		local Humanoid = speaker.Character:WaitForChild('Humanoid')
-		if Humanoid.RigType == Enum.HumanoidRigType.R15 then
-			return 'R15'
-		else
-			return 'R6'
-		end
-	end
-end
-local function InitiateInvis()
-	local Character = speaker.Character
-	local StoredCF = Character.PrimaryPart.CFrame
-	local Part = Instance.new('Part',workspace)
-	Part.Size = Vector3.new(5,0,5)
-	Part.Anchored = true
-	Part.CFrame = CFrame.new(Vector3.new(9999,9999,9999))
-	Character.PrimaryPart.CFrame = Part.CFrame*CFrame.new(0,3,0)
-	spawn(function()
-		wait(3)
-		Part:Destroy()
+	-- Full credit to AmokahFox @V3rmillion
+	local Player = game:GetService("Players").LocalPlayer
+	repeat wait(.1) until Player.Character
+	local Character = Player.Character
+	Character.Archivable = true
+	local IsInvis = false
+	local IsRunning = true
+	local InvisibleCharacter = Character:Clone()
+	InvisibleCharacter.Parent = game:GetService'Lighting'
+	local Void = workspace.FallenPartsDestroyHeight
+	InvisibleCharacter.Name = ""
+	local CF
+	
+	local invisFix = game:GetService("RunService").Stepped:Connect(function()
+	    pcall(function()
+	        local IsInteger
+	        if tostring(Void):find'-' then
+	            IsInteger = true
+	        else
+	            IsInteger = false
+	        end
+	        local Pos = Player.Character.HumanoidRootPart.Position
+	        local Pos_String = tostring(Pos)
+	        local Pos_Seperate = Pos_String:split(', ')
+	        local X = tonumber(Pos_Seperate[1])
+	        local Y = tonumber(Pos_Seperate[2])
+	        local Z = tonumber(Pos_Seperate[3])
+	        if IsInteger == true then
+	            if Y <= Void then
+	                Respawn()
+	            end
+	        elseif IsInteger == false then
+	            if Y >= Void then
+	                Respawn()
+	            end
+	        end
+	    end)
 	end)
-	if CheckRig() == 'R6' then
-		local Clone = Character.HumanoidRootPart:Clone()
-		Character.HumanoidRootPart:Destroy()
-		Clone.Parent = Character
-	else
-	local Clone = Character.LowerTorso.Root:Clone()
-	Character.LowerTorso.Root:Destroy()
-	Clone.Parent = Character.LowerTorso
+	
+	for i,v in pairs(InvisibleCharacter:GetDescendants())do
+	    if v:IsA("BasePart") then
+	        if v.Name == "HumanoidRootPart" then
+	            v.Transparency = 1
+	        else
+	            v.Transparency = .5
+	        end
+	    end
 	end
-end
-InitiateInvis()
+	
+	function Respawn()
+	    IsRunning = false
+	    if IsInvis == true then
+	        pcall(function()
+	            Player.Character = Character
+	            wait()
+	            Character.Parent = workspace
+	            Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+	            IsInvis = false
+	            InvisibleCharacter.Parent = nil
+	        end)
+	    elseif IsInvis == false then
+	        pcall(function()
+	            Player.Character = Character
+	            wait()
+	            Character.Parent = workspace
+	            Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+	            TurnVisible()
+	        end)
+	    end
+	end
+	
+	local invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+	    Respawn()
+	end)
+	
+	
+	if IsInvis == true then return end
+	IsInvis = true
+	CF = workspace.CurrentCamera.CFrame
+	local CF_1 = Player.Character.HumanoidRootPart.CFrame
+	Character:MoveTo(Vector3.new(0,math.pi*1000000,0))
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+	wait(.2)
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+	InvisibleCharacter = InvisibleCharacter
+	Character.Parent = game:GetService'Lighting'
+	InvisibleCharacter.Parent = workspace
+	InvisibleCharacter.HumanoidRootPart.CFrame = CF_1
+	Player.Character = InvisibleCharacter
+	execCmd('fixcam')
+	Player.Character.Animate.Disabled = true
+	Player.Character.Animate.Disabled = false
+	
+	function TurnVisible()
+	    if IsInvis == false then return end
+		invisFix:Disconnect()
+		invisDied:Disconnect()
+	    CF = workspace.CurrentCamera.CFrame
+	    Character = Character
+	    local CF_1 = Player.Character.HumanoidRootPart.CFrame
+	    Character.HumanoidRootPart.CFrame = CF_1
+	    InvisibleCharacter:Destroy()
+	    Player.Character = Character
+	    Character.Parent = workspace
+	    IsInvis = false
+	    execCmd('fixcam')
+	    Player.Character.Animate.Disabled = true
+	    Player.Character.Animate.Disabled = false
+	end
+	notify('Invisible','You now appear invisible to other players')
+end)
+
+addcmd('visible',{'vis'},
+	function(args, speaker)
+	TurnVisible()
 end)
 
 addcmd('strengthen',{},
@@ -6209,6 +6401,15 @@ addcmd('gotopart',{},
 	end
 end)
 
+addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("ClickDetector") then
+			v.MaxActivationDistance = math.huge
+		end
+	end
+end)
+
 gtools = false
 addcmd('grabtools',{},
 	function(args, speaker)
@@ -6356,18 +6557,6 @@ addcmd('dupetools',{'clonetools'},
 			v.Parent = speaker.Backpack
 		end
 	end    
-end)
-
-addcmd('hattool',{'equiphats','hattools'},
-	function(args, speaker)
-	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-		if v.Handle then
-			local tool = Instance.new("Tool", speaker.Backpack)
-			tool.Name = v.Name
-			v.Handle:FindFirstChildOfClass("Weld"):Destroy()
-			v.Handle.Parent = tool
-		end
-	end
 end)
 
 addcmd('fullbright',{'fb','fullbrightness'},
@@ -6614,64 +6803,6 @@ addcmd('togglefling',{},
 	end
 end)
 
-addcmd('kill',{'fekill'},
-	function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		-- Full credit to CyclicaIIy @V3rmillion
-		local LocalPlayer = speaker
-		local target = Players[v]
-		local torsoname = "Torso"
-		if LocalPlayer.Character:FindFirstChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
-		    torsoname = "UpperTorso"
-		end
-		if target.Character ~= nil then
-	   	 local savepos = LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
-		    LocalPlayer.Character:FindFirstChild(torsoname).Anchored = true
-		    local tool = Instance.new("Tool", LocalPlayer.Backpack)
-		    local hat = LocalPlayer.Character:FindFirstChildOfClass("Accessory")
-		    local hathandle = hat.Handle
-		    hathandle.Parent = tool
-		    hathandle.Massless = true
-		    tool.GripPos = Vector3.new(0, 9e99, 0)
-		    tool.Parent = LocalPlayer.Character
-		    repeat wait() until LocalPlayer.Character:FindFirstChildOfClass("Tool") ~= nil
-		    tool.Grip = CFrame.new(Vector3.new(0, 0, 0))
-		    LocalPlayer.Character:FindFirstChild(torsoname).Anchored = false
-		    repeat
-		        LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = target.Character:FindFirstChild("HumanoidRootPart").CFrame
-		        wait()
-		    until target.Character == nil or target.Character:FindFirstChild("Humanoid").Health <= 0 or LocalPlayer.Character == nil or LocalPlayer.Character:FindFirstChild("Humanoid").Health <= 0 or (target.Character:FindFirstChild("HumanoidRootPart").Velocity.magnitude - target.Character:FindFirstChild("Humanoid").WalkSpeed) > (target.Character:FindFirstChild("Humanoid").WalkSpeed + 20)
-		    LocalPlayer.Character:FindFirstChild("Humanoid"):UnequipTools()
-		    hathandle.Parent = hat
-		    hathandle.Massless = false
-		    tool:Destroy()
-		    LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = savepos
-		end
-	end
-end)
-
-addcmd('hugkill',{},
-	function(args, speaker)
-	-- Full credit to CyclicaIIy @V3rmillion
-	local LocalPlayer = speaker
-	local torsoname = "Torso"
-	if LocalPlayer.Character:FindFirstChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
-	    torsoname = "UpperTorso"
-	end
-	LocalPlayer.Character:FindFirstChild("Animate").toolnone.ToolNoneAnim.AnimationId = math.huge
-	LocalPlayer.Character:FindFirstChild(torsoname).Anchored = true
-	local tool = Instance.new("Tool", LocalPlayer.Backpack)
-	LocalPlayer.Character:FindFirstChildOfClass("Accessory").Handle.Parent = tool
-	tool.Handle.Massless = true
-	tool.GripPos = Vector3.new(0, math.huge, 0)
-	tool.Parent = LocalPlayer.Character
-	wait()
-	tool.Grip = CFrame.new(Vector3.new(0, 0, 0))
-	LocalPlayer.Character:FindFirstChild(torsoname).Anchored = false
-	notify('Hug Kill','Select the tool and run into a player to fling / kill them')
-end)
-
 addcmd('bring',{'febring'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -6729,83 +6860,6 @@ addcmd('bring',{'febring'},
 					wait(0.3)
 					refresh(speaker)
 				end
-			end
-		end
-	else
-		notify('Tool Required','You need to have a tool to use this command')
-	end
-end)
-
-addcmd('bring2',{'febring2'},
-	function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	if tools(speaker) then
-		if args[1] then
-			for i,v in pairs(players)do
-				-- Full credit to CyclicaIIy @V3rmillion
-				local LocalPlayer = speaker.Character
-				local ran1 = false
-				local equipped = false
-				local savepos = LocalPlayer.Character.HumanoidRootPart.CFrame
-				local target = Players[v]
-				if #LocalPlayer.Backpack:GetChildren() < 2 then
-				    repeat
-				        for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
-				            if tool:IsA("Tool") then
-				                tool.Parent = LocalPlayer
-				            end
-				        end
-				        LocalPlayer.Character:ClearAllChildren()
-				        local char = Instance.new("Model", workspace)
-				        char.Name = "character"
-				        Instance.new("Part", char).Name = "Torso";
-				        Instance.new("Part", char).Name = "Head";
-				        Instance.new("Humanoid", char).Name = "Humanoid";
-				        LocalPlayer.Character = char
-				        repeat wait() until LocalPlayer.Character
-				    until #LocalPlayer:GetChildren() - 4 >= 2
-				    for _, char in pairs(workspace:GetChildren()) do
-				        if char.Name == "character" and char:IsA("Model") then
-				            char:Destroy()
-				        end
-				    end
-				    repeat wait() until LocalPlayer.Character.HumanoidRootPart ~= nil
-				    for _, tool in pairs(LocalPlayer:GetChildren()) do
-				        if tool:IsA("Tool") then
-				            tool.Parent = LocalPlayer.Backpack
-				        end
-				    end
-				    LocalPlayer.Character.HumanoidRootPart.CFrame = savepos
-				end
-				LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
-				LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = LocalPlayer.Character
-				local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-				tool.Parent = workspace
-				local attacher = LocalPlayer.Character:FindFirstChildOfClass("Tool")
-				attacher.Parent = workspace
-				LocalPlayer.Character.Humanoid:EquipTool(tool)
-				repeat wait() until LocalPlayer.Character:FindFirstChildOfClass("Tool") ~= nil
-				LocalPlayer.Character.Humanoid:UnequipTools()
-				attacher.AncestryChanged:connect(function()
-				    if ran1 == false then
-				        ran1 = true
-				        equipped = true
-				    end
-				end)
-				local anim = Instance.new("Animation")
-				anim.AnimationId = "rbxassetid://188632011"
-				local loadanim = LocalPlayer.Character.Humanoid:LoadAnimation(anim)
-				loadanim.Looped = true
-				loadanim:Play()
-				repeat
-				    target.Character.HumanoidRootPart.CFrame = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position + LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * 2 + LocalPlayer.Character.HumanoidRootPart.CFrame.rightVector * 2)
-				    wait()
-				until equipped == true
-				loadanim:Stop()
-				anim:Destroy()
-				LocalPlayer.Character.Humanoid:EquipTool(tool)
-				wait()
-				LocalPlayer.Character.Humanoid:UnequipTools()
 			end
 		end
 	else
@@ -6935,12 +6989,6 @@ end)
 addcmd('removecmd',{'deletecmd'},
 	function(args, speaker)
 	removecmd(args[1])
-end)
-
-addcmd('vr',{},
-	function(args, speaker)
-	loadstring(game:HttpGet(('https://pastebin.com/raw/shBZc5tT'),true))()
-	notify('Controls','[R2] Sprint, [L2] Crouch, [Y] Reset, [B] Laser Beam, [X] Toggle Chat HUD (Left hand)')
 end)
 
 if PluginsTable ~= nil or PluginsTable ~= {} then
