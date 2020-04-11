@@ -2796,9 +2796,9 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = "Shows a player's platform"}
-CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = "Copies a players full username to your clipboard"}
-CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = "Copies a players user ID to your clipboard"}
-CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = "Copies a players appearance ID to your clipboard"}
+CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'bang [plr]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang [plr]', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
