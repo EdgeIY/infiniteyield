@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.0'
+ver = '3.0.1'
 
 Players = game:GetService("Players")
 
@@ -183,7 +183,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 20
-Title.Text = "🥚 Infinite Yield FE 🥚"
+Title.Text = "🥚 Infinite Yield FE  🥚"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 
@@ -1829,7 +1829,7 @@ local function getHierarchy(obj)
 	end
 end
 
-local AllWaypoints = nil
+local AllWaypoints = {}
 
 local cooldown = false
 function writefileCooldown(name,data)
@@ -1872,7 +1872,7 @@ function saves()
 				if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
 				if json.binds ~= nil then binds = json.binds else binds = {} end
 				if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds else spawnCmds = {} end
-				if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} end
+				if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
 				if json.PluginsTable ~= nil then PluginsTable = json.PluginsTable else PluginsTable = {} end
 			else
 				writefileCooldown("IY_FE.iy", defaults)
@@ -1966,13 +1966,13 @@ function saves()
 			end
 		end
 	else
-		prefix = ';'
-		StayOpen = false
-		logsEnabled = false
-		aliases = {}
-		binds = {}
-		spawnCmds = {}
-		WayPoints = {}
+		prefix = ';';
+		StayOpen = false;
+		logsEnabled = false;
+		aliases = {};
+		binds = {};
+		spawnCmds = {};
+		WayPoints = {};
 		PluginsTable = {}
 	end
 end
@@ -1998,7 +1998,7 @@ end
 pWayPoints = {}
 WayPoints = {}
 
-if AllWaypoints ~= nil then
+if #AllWaypoints > 0 then
 	for i = 1, #AllWaypoints do
 		if not AllWaypoints[i].GAME or AllWaypoints[i].GAME == game.PlaceId then
 			WayPoints[#WayPoints + 1] = {NAME = AllWaypoints[i].NAME, COORD = {AllWaypoints[i].COORD[1], AllWaypoints[i].COORD[2], AllWaypoints[i].COORD[3]}, GAME = AllWaypoints[i].GAME}
@@ -4973,7 +4973,7 @@ addcmd('deletepos',{'dpos','deleteposition','deletewaypoint'},
 			table.remove(WayPoints, i)
 		end
 	end
-	if AllWaypoints ~= nil then
+	if AllWaypoints ~= nil and #AllWaypoints > 0 then
 		for i,v in pairs(AllWaypoints) do
 			if v.NAME:lower() == tostring(getstring(1)):lower() then
 				if not v.GAME or v.GAME == game.PlaceId then
@@ -4998,7 +4998,7 @@ addcmd('clearpos',{'clrpositions','clearpositions','cpos','clrpos'},
 	pWayPoints = {}
 	refreshwaypoints()
 	updatesaves()
-	AllWaypoints = nil
+	AllWaypoints = {}
 	notify('Modified Waypoints','Removed all waypoints')
 end)
 
