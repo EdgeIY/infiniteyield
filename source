@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.1.1'
+ver = '3.1.2'
 
 Players = game:GetService("Players")
 
@@ -3200,20 +3200,28 @@ function dragMain(dragpoint,gui)
 			local pos = -250
 		    local delta = input.Position - dragStart
 			if startPos.X.Offset + delta.X <= -500 then
-				Notification:TweenPosition(UDim2.new(1, -250, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+				local Position = UDim2.new(1, -250, Notification.Position.Y.Scale, Notification.Position.Y.Offset)
+				game:GetService("TweenService"):Create(Notification, TweenInfo.new(.20), {Position = Position}):Play()
 				pos = 250
 			else
-				Notification:TweenPosition(UDim2.new(1, -500, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+				local Position = UDim2.new(1, -500, Notification.Position.Y.Scale, Notification.Position.Y.Offset)
+				game:GetService("TweenService"):Create(Notification, TweenInfo.new(.20), {Position = Position}):Play()
 				pos = -250
 			end
 			if startPos.X.Offset + delta.X <= -250 and -CamViewport() <= startPos.X.Offset + delta.X then
-				gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, gui.Position.Y.Scale, gui.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
-				Notification:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X + pos, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, gui.Position.Y.Scale, gui.Position.Y.Offset)
+				game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
+				local Position2 = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X + pos, Notification.Position.Y.Scale, Notification.Position.Y.Offset)
+				game:GetService("TweenService"):Create(Notification, TweenInfo.new(.20), {Position = Position2}):Play()
 			elseif startPos.X.Offset + delta.X > -500 then
-				gui:TweenPosition(UDim2.new(1, -250, gui.Position.Y.Scale, gui.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+				local Position = UDim2.new(1, -250, gui.Position.Y.Scale, gui.Position.Y.Offset)
+				game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
 			elseif -CamViewport() > startPos.X.Offset + delta.X then
 				gui:TweenPosition(UDim2.new(1, -CamViewport(), gui.Position.Y.Scale, gui.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
-				Notification:TweenPosition(UDim2.new(1, -CamViewport() + 250, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+				local Position = UDim2.new(1, -CamViewport(), gui.Position.Y.Scale, gui.Position.Y.Offset)
+				game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
+				local Position2 = UDim2.new(1, -CamViewport() + 250, Notification.Position.Y.Scale, Notification.Position.Y.Offset)
+				game:GetService("TweenService"):Create(Notification, TweenInfo.new(.20), {Position = Position2}):Play()
 			end
 		end
 		dragpoint.InputBegan:Connect(function(input)
@@ -3252,7 +3260,8 @@ function dragGUI(gui)
 		local startPos
 		local function update(input)
 		    local delta = input.Position - dragStart
-			gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), "InOut", "Quart", 0.04, true, nil) 
+			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
 		end
 		gui.InputBegan:Connect(function(input)
 		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
