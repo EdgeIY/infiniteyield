@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.1'
+ver = '3.1.1'
 
 Players = game:GetService("Players")
 
@@ -7604,11 +7604,9 @@ addcmd('kill',{'fekill'},
 				workspace.CurrentCamera.CameraSubject = char
 				newHum.DisplayDistanceType = "None"
 				wait(0.1)
-				for i, v in pairs(speaker.Backpack:GetChildren()) do
-					v.Parent = char
-					hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
-					wait()
-				end
+				local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
+				tool.Parent = char
+				hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
 				local n = 0
 				repeat
 					wait(.1)
@@ -7649,11 +7647,9 @@ addcmd('bring',{'febring'},
 				workspace.CurrentCamera.CameraSubject = char
 				newHum.DisplayDistanceType = "None"
 				wait(0.1)
-				for i, v in pairs(speaker.Backpack:GetChildren()) do
-					v.Parent = char
-					hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
-					wait()
-				end
+				local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
+				tool.Parent = char
+				hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
 				local n = 0
 				repeat
 					wait(.1)
