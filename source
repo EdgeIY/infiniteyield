@@ -2829,6 +2829,8 @@ ColorsButton.MouseButton1Click:Connect(function()
 			end
 		end
 		
+		picker:TweenPosition(UDim2.new(0.5, -219, 0, 100), "InOut", "Quart", 0.5, true, nil)
+		
 		local Npicker = ColorPicker.new()
 		Npicker.Confirm = function(self,color,ctype) updateColors(color,ctype) wait() updatesaves() end
 		Npicker.Cancel = function(self)
