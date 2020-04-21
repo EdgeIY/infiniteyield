@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.1.2'
+ver = '3.1.3'
 
 Players = game:GetService("Players")
 
@@ -572,8 +572,8 @@ Description.Name = "Description"
 Description.Parent = Tooltip
 Description.BackgroundTransparency = 1
 Description.BorderSizePixel = 0
-Description.Position = UDim2.new(0, 2, 0, 22)
-Description.Size = UDim2.new(0, 198, 0, 73)
+Description.Size = UDim2.new(0,180,0,72)
+Description.Position = UDim2.new(0,10,0,18)
 Description.Font = Enum.Font.SourceSans
 Description.TextSize = 16
 Description.Text = ""
@@ -3611,12 +3611,12 @@ function getText(object)
 	return nil
 end
 
-function check()
+function checkTT()
 	local t
 	local guisAtPosition = game:GetService("CoreGui"):GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 	
 	for _, gui in pairs(guisAtPosition) do
-		if gui.Parent == Holder.CMDs then
+		if gui.Parent == CMDsF then
 			t = gui
 		end
 	end
@@ -3642,12 +3642,8 @@ function check()
 			Tooltip.Description.Text = gt[1]
 			if gt[2] ~= nil then
 				Tooltip.Title.Text = gt[2].Value
-				Tooltip.Description.Size = UDim2.new(0,180,0,72)
-				Tooltip.Description.Position = UDim2.new(0,10,0,18)
 			else
 				Tooltip.Title.Text = ''
-				Tooltip.Description.Size = UDim2.new(0,180,0,84)
-				Tooltip.Description.Position = UDim2.new(0,10,0,6)
 			end
 			Tooltip.Visible = true
 		else
@@ -3657,12 +3653,6 @@ function check()
 		Tooltip.Visible = false
 	end
 end
-
-function moved() check() end
-
-IYMouse.Move:connect(moved)
-
-game:GetService("RunService").RenderStepped:Connect(check)
 
 function FindInTable(Table, Name)
 	for i,v in pairs(Table) do
@@ -7812,6 +7802,8 @@ updateColors(currentScroll,scroll)
 if PluginsTable ~= nil or PluginsTable ~= {} then
 	FindPlugins(PluginsTable)
 end
+
+game:GetService("RunService").RenderStepped:Connect(checkTT)
 
 if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
 	if ver ~= Version then
