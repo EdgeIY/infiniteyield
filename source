@@ -6192,6 +6192,7 @@ end)
 addcmd('enableshiftlock',{'enablesl','shiftlock'},
 	function(args, speaker)
 	speaker.DevEnableMouseLock = true
+	notify('Shiftlock','Shift lock is now available')
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
