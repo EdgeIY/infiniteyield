@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.1.3'
+ver = '3.2'
 
 Players = game:GetService("Players")
 
@@ -2290,11 +2290,23 @@ function disablebuttons()
 end
 
 notifyCount = 0
+pinNotification = nil
 function notify(text,text2,length)
 	spawn(function()
 		local LnotifyCount = notifyCount+1
+		local notificationPinned = false
 		notifyCount = notifyCount+1
-		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -0), "InOut", "Quart", 0.5, true, nil)
+		if pinNotification then pinNotification:Disconnect() end
+		pinNotification = Notification.MouseEnter:Connect(function()
+			spawn(function()
+				pinNotification:Disconnect()
+				notificationPinned = true
+				Notification.Title.BackgroundTransparency = 1
+				wait(0.5)
+				Notification.Title.BackgroundTransparency = 0
+			end)
+		end)
+		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 		wait(0.6)
 		local closepressed = false
 		if text2 then
@@ -2306,8 +2318,9 @@ function notify(text,text2,length)
 		end
 		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -100), "InOut", "Quart", 0.5, true, nil)
 		Notification.CloseButton.MouseButton1Click:Connect(function()
-			Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -0), "InOut", "Quart", 0.5, true, nil)
+			Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			closepressed = true
+			pinNotification:Disconnect()
 		end)
 		if length and isNumber(length) then
 			wait(length)
@@ -2315,8 +2328,9 @@ function notify(text,text2,length)
 			wait(10)
 		end
 		if LnotifyCount == notifyCount then
-			if closepressed == false then
-				Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -0), "InOut", "Quart", 0.5, true, nil)
+			if closepressed == false and notificationPinned == false then
+				pinNotification:Disconnect()
+				Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			end
 			notifyCount = 0
 		end
@@ -3304,6 +3318,7 @@ end
 
 canvasPos = nil
 canvasTop = false
+topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
 	if str == '' or str == ' ' or str == prefix then
 		if canvasTop == false then
@@ -3315,6 +3330,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	end
 	local Index,SizeY = 0,0
 	local indexnum = 0
+	topCommand = nil
 	for i,v in next, frame:GetChildren() do
 		if bool then
 			if Match(v.Text,str) then
@@ -3324,6 +3340,9 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 				v:TweenPosition(UDim2.new(0,10,0,Index*v.AbsoluteSize.Y-v.AbsoluteSize.Y), "InOut", "Quart", 0.2, true, nil)
 				SizeY = SizeY + v.AbsoluteSize.Y
 				frame.CanvasSize = UDim2.new(0,0,0,SizeY)
+				if topCommand == nil then
+					topCommand = v.Text
+				end
 			else
 				v.Visible = false
 			end
@@ -3331,6 +3350,9 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 			v.Visible = true
 			SizeY = SizeY + v.AbsoluteSize.Y
 			frame.CanvasSize = UDim2.new(0,0,0,SizeY)
+			if topCommand == nil then
+				topCommand = v.Text
+			end
 		end
 	end
 	if not Ianim then
@@ -3393,17 +3415,15 @@ else
 end
 
 CMDs = {}
-CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
+CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
+CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
-CMDs[#CMDs + 1] = {NAME = 'gametp / gameteleport [ID]', DESC = 'Joins a game by ID'}
+CMDs[#CMDs + 1] = {NAME = 'joinplayer / joinp [username / ID] [place ID]', DESC = 'Joins a specific players server'}
+CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
+CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
+CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
-CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
-CMDs[#CMDs + 1] = {NAME = 'antiafk / antiidle', DESC = 'Prevents the game from kicking you for being idle/afk'}
-CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
-CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
-CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
 CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
@@ -3422,11 +3442,11 @@ CMDs[#CMDs + 1] = {NAME = 'unfloat / noplatform', DESC = 'Removes the platform'}
 CMDs[#CMDs + 1] = {NAME = 'swim', DESC = 'Allows you to swim in the air'}
 CMDs[#CMDs + 1] = {NAME = 'unswim / noswim', DESC = 'Stops you from swimming everywhere'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
-CMDs[#CMDs + 1] = {NAME = 'spos / setwaypoint [name]', DESC = 'Sets a waypoint at your position'}
+CMDs[#CMDs + 1] = {NAME = 'setwaypoint / spos [name]', DESC = 'Sets a waypoint at your position'}
 CMDs[#CMDs + 1] = {NAME = 'setwaypointpos [name] [X Y Z]', DESC = 'Sets a waypoint with specified coordinates'}
-CMDs[#CMDs + 1] = {NAME = 'dpos / deletewaypoint [name]', DESC = 'Deletes a waypoint'}
-CMDs[#CMDs + 1] = {NAME = 'lpos / waypoint [name]', DESC = 'Teleports player to a waypoint'}
-CMDs[#CMDs + 1] = {NAME = 'clearpos / cpos / clearwaypoints', DESC = 'Clears all waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dpos [name]', DESC = 'Deletes a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'waypoint / lpos [name]', DESC = 'Teleports player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / clearpos / cpos', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / logs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'chat [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
@@ -3452,13 +3472,14 @@ CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
 CMDs[#CMDs + 1] = {NAME = 'freecam / fc', DESC = 'Allows you to freely move camera around the game'}
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
 CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed'}
-CMDs[#CMDs + 1] = {NAME = 'fctp / freecamtp', DESC = 'Teleports you to the location of freecam'}
+CMDs[#CMDs + 1] = {NAME = 'freecamtp / fctp', DESC = 'Teleports you to the location of freecam'}
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is 70)'}
 CMDs[#CMDs + 1] = {NAME = 'fixcam / restorecam', DESC = 'Fixes camera'}
+CMDs[#CMDs + 1] = {NAME = 'enableshiftlock / enablesl', DESC = 'Enables the shift lock option'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
@@ -3470,6 +3491,8 @@ CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole work
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
+CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
@@ -3486,7 +3509,7 @@ CMDs[#CMDs + 1] = {NAME = 'nolight / unlight', DESC = 'Removes dynamic light fro
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
-CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = "Shows a player's platform"}
+CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = 'Shows a players platform'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -3520,10 +3543,12 @@ CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
 CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
 CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
-CMDs[#CMDs + 1] = {NAME = 'stun / platformstand', DESC = 'Enables PlatformStand'}
-CMDs[#CMDs + 1] = {NAME = 'unstun / unplatformstand', DESC = 'Disables PlatformStand'}
+CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
+CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
-CMDs[#CMDs + 1] = {NAME = 'nobgui / nobillboardgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
+CMDs[#CMDs + 1] = {NAME = 'nobillboardgui / nobgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
@@ -3579,6 +3604,8 @@ CMDs[#CMDs + 1] = {NAME = 'reach off', DESC = 'turns off reach'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
+CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
+CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
 wait()
 
 for i = 1, #CMDs do
@@ -4194,6 +4221,7 @@ Holder.Cmdbar:GetPropertyChangedSignal("Text"):connect(function()
 	end
 end)
 
+tabComplete = nil
 Holder.Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
 		execCmd(Holder.Cmdbar.Text,Players.LocalPlayer)
@@ -4204,6 +4232,7 @@ Holder.Cmdbar.FocusLost:connect(function(enterpressed)
 		CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
 		canvasTop = false
 	end
+	if tabComplete then tabComplete:Disconnect() end
 	if SettingsOpen == true then
 		wait(0.2)
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
@@ -4211,7 +4240,33 @@ Holder.Cmdbar.FocusLost:connect(function(enterpressed)
 	end
 end)
 
-Holder.Cmdbar.Focused:Connect(function() historyCount = 0 end)
+Holder.Cmdbar.Focused:Connect(function()
+	historyCount = 0 
+	if SettingsOpen == true then
+		wait(0.2)
+		Holder.CMDs.Visible = true
+		Holder.Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+	end
+	tabComplete = game:GetService('UserInputService').InputBegan:Connect(function(input,gameProcessed)
+		if input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
+			local str = topCommand
+			local endingChar = {"[", "/", "(", " "}
+			local stop = 0
+			for i=1,#str do
+				local c = str:sub(i,i)
+				if table.find(endingChar, c) then
+					stop = i
+					break
+				end
+			end
+			Holder.Cmdbar.Text = str:sub(1, stop - 1)..' '
+			wait()
+			Holder.Cmdbar.Text = Holder.Cmdbar.Text:gsub( '\t', '' )
+			Holder.Cmdbar.CursorPosition = 1020
+		end
+	end)
+end)
+
 UserInputService.InputBegan:Connect(function(input)
     if not Holder.Cmdbar:IsFocused() then return end
     if input.KeyCode == Enum.KeyCode.Up then
@@ -4223,11 +4278,6 @@ UserInputService.InputBegan:Connect(function(input)
         if historyCount < 1 then historyCount = 1 end
         Holder.Cmdbar.Text = cmdHistory[historyCount] or ""
     end
-	if SettingsOpen == true then
-		wait(0.2)
-		Holder.CMDs.Visible = true
-		Holder.Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
-	end
 end)
 
 ESPenabled = false
@@ -5361,7 +5411,62 @@ addcmd('serverhop',{'shop'},
 	end
 	
 	game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, ChosenServer, game.Players.LocalPlayer)
-	end)
+end)
+
+addcmd('joinplayer',{'joinp'},
+	function(args, speaker)
+	local retries = 0
+	function ToServer(User,PlaceId)	
+		if not pcall(function()
+			local FoundUser, UserId = pcall(function()
+				if tonumber(User) then
+					return tonumber(User)
+				end
+				
+				return game:GetService("Players"):GetUserIdFromNameAsync(User)
+			end)
+			if not FoundUser then
+				notify('Join Error','Username/UserID does not exist')
+			else
+				notify('Join Player','Loading servers. Hold on a second.')
+				local res = game:HttpGet("https://www.roblox.com/headshot-thumbnail/json?userId="..UserId.."&width=48&height=48")
+				local HttpURL = game:GetService("HttpService"):JSONDecode(res)
+				local ThumbGrab = HttpURL["Url"]
+				local Thumb = ThumbGrab
+				local URL2 = ("https://www.roblox.com/games/getgameinstancesjson?placeId="..PlaceId.."&startindex=")
+				local Http = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL2.."0"))
+				local GUID
+				for i = 0,Http.TotalCollectionSize do
+					local Http = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL2..i))
+					for x,n in pairs(Http.Collection) do
+						for _,v in pairs(n.CurrentPlayers) do
+							if v.Thumbnail.Url == Thumb then
+								GUID = n.Guid
+							end
+						end
+					end
+				end
+				if GUID ~= nil then
+					notify('Join Player','Joining '..User)
+					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,game.Players.LocalPlayer)
+				else
+					notify('Join Error','Unable to join user.')
+				end
+			end
+		end)
+		then
+			if retries < 3 then
+				retries = retries + 1
+				print('ERROR retrying '..retries..'/3')
+				notify('Join Error','Error while trying to join. Retrying '..retries..'/3.')
+				ToServer(User,PlaceId)
+			else
+				notify('Join Error','Error while trying to join.')
+			end
+		end
+	end
+	ToServer(args[1],args[2])
+end)
 
 addcmd('exit',{},
 	function(args, speaker)
@@ -5779,6 +5884,11 @@ addcmd('disable',{},
 	end
 end)
 
+addcmd('clearerror',{'clearerrors'},
+	function(args, speaker)
+	game:GetService("GuiService"):ClearError()
+end)
+
 addcmd('esp',{},
 	function(args, speaker)
 	if not CHMSenabled then
@@ -6076,6 +6186,11 @@ addcmd('fixcam',{'restorecam'},
 	speaker.CameraMaxZoomDistance = 400
 	speaker.CameraMode = "Classic"
 	speaker.Character.Head.Anchored = false
+end)
+
+addcmd('enableshiftlock',{'enablesl','shiftlock'},
+	function(args, speaker)
+	speaker.DevEnableMouseLock = true
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
@@ -7138,6 +7253,25 @@ addcmd('gotopart',{},
 	end
 end)
 
+addcmd('bringpartclass',{'bpc'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.ClassName:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			v.CFrame = speaker.Character.HumanoidRootPart.CFrame
+		end
+	end
+end)
+
+addcmd('gotopartclass',{'gpc'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.ClassName:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+			wait(0.1)
+		end
+	end
+end)
+
 addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
@@ -7779,12 +7913,12 @@ end)
 
 addcmd('addplugin',{'plugin'},
 	function(args, speaker)
-	addPlugin(args[1])
+	addPlugin(getstring(1))
 end)
 
 addcmd('removeplugin',{'deleteplugin'},
 	function(args, speaker)
-	deletePlugin(args[1])
+	deletePlugin(getstring(1))
 end)
 
 addcmd('removecmd',{'deletecmd'},
