@@ -5415,6 +5415,7 @@ end)
 
 addcmd('joinplayer',{'joinp'},
 	function(args, speaker)
+	if not args[2] then return end
 	local retries = 0
 	function ToServer(User,PlaceId)	
 		if not pcall(function()
