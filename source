@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.2.1'
+ver = '3.3'
 
 Players = game:GetService("Players")
 
@@ -3487,6 +3487,7 @@ CMDs[#CMDs + 1] = {NAME = 'delete [instance name] (CLIENT)', DESC = 'Removes any
 CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Removes any part with a certain classname from the workspace (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
 CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
+CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity instances in your character'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
@@ -3494,6 +3495,7 @@ CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part
 CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
+CMDs[#CMDs + 1] = {NAME = 'simulationradius / simradius', DESC = 'Sets your SimulationRadius to math.huge'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
@@ -3510,6 +3512,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = 'Shows a players platform'}
+CMDs[#CMDs + 1] = {NAME = 'setos [text]', DESC = 'Sets yout os to whatever you input'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -3524,7 +3527,7 @@ CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
-CMDs[#CMDs + 1] = {NAME = 'hitbox [size]', DESC = 'Expands the hitbox for players heads (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players heads (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
@@ -5677,15 +5680,52 @@ addcmd('float', {'platform'},
 			Float.Transparency = 1
 			Float.Size = Vector3.new(6,1,6)
 			Float.Anchored = true
-			Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,-3.5,0)
-			notify('Float','Float Enabled')
+			local FloatValue = -3.5
+			if r15(speaker) then FloatValue = -3.65 end
+			Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,FloatValue,0)
+			notify('Float','Float Enabled (Q = down & E = up)')
+			qUp = IYMouse.KeyUp:connect(function(KEY)
+				if KEY == 'q' then
+					FloatValue = FloatValue + 0.5
+				end
+			end)
+			eUp = IYMouse.KeyUp:connect(function(KEY)
+				if KEY == 'e' then
+					FloatValue = FloatValue - 0.5
+				end
+			end)
+			qDown = IYMouse.KeyDown:connect(function(KEY)
+				if KEY == 'q' then
+					FloatValue = FloatValue - 0.5
+				end
+			end)
+			eDown = IYMouse.KeyDown:connect(function(KEY)
+				if KEY == 'e' then
+					FloatValue = FloatValue + 0.5
+				end
+			end)
+			floatDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+				FloatingFunc:Disconnect()
+				Float:Destroy()
+				qUp:Disconnect()
+				eUp:Disconnect()
+				qDown:Disconnect()
+				eDown:Disconnect()
+				floatDied:Disconnect()
+			end)
 			local function FloatPadLoop()
-				if pchar:FindFirstChild("Float") then
-					Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,-3.5,0)
+				if pchar:FindFirstChild("Float") and pchar:FindFirstChild("HumanoidRootPart") then
+					Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,FloatValue,0)
 				else
 					FloatingFunc:Disconnect()
+					Float:Destroy()
+					qUp:Disconnect()
+					eUp:Disconnect()
+					qDown:Disconnect()
+					eDown:Disconnect()
+					floatDied:Disconnect()
 				end
-			end
+			end			
 			FloatingFunc = game:GetService('RunService').RenderStepped:connect(FloatPadLoop)
 		end)
 	end
@@ -5699,7 +5739,14 @@ addcmd('unfloat',{'nofloat','unplatform','noplatform'},
 	if pchar:FindFirstChild("Float") then
 		pchar.Float:Destroy()
 	end
-	FloatingFunc:Disconnect()
+	if floatDied then
+		FloatingFunc:Disconnect()
+		qUp:Disconnect()
+		eUp:Disconnect()
+		qDown:Disconnect()
+		eDown:Disconnect()
+		floatDied:Disconnect()
+	end
 end)
 
 addcmd('togglefloat',{},
@@ -6311,6 +6358,15 @@ addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremovecla
 	notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
+addcmd('deletevelocity',{'dv','removevelocity','removeforces'},
+	function(args, speaker)
+	for i,v in pairs(speaker.Character:GetDescendants())do
+		if v:IsA("BodyVelocity") or v:IsA("BodyGyro") or v:IsA("RocketPropulsion") or v:IsA("BodyThrust") or v:IsA("BodyAngularVelocity") or v:IsA("AngularVelocity") or v:IsA("BodyForce") or v:IsA("VectorForce") or v:IsA("LineForce") then
+			v:Destroy()
+		end
+	end
+end)
+
 addcmd('btools',{},
 	function(args, speaker)
 	Instance.new("HopperBin", speaker.Backpack).BinType = 1
@@ -6371,6 +6427,12 @@ addcmd('os',{'platform', 'device'},
 		table.insert(platforms,p.Name.."'s platform is: "..p.OsPlatform)
 	end
 	notify('OS',table.concat(platforms, ',\n'))
+end)
+
+addcmd('setos',{'spoofos', 'osspoof'},
+	function(args, speaker)
+	speaker.OsPlatform = getstring(1)
+	notify('OS','Your os is now set to '..getstring(1))
 end)
 
 addcmd('copyname',{'copyuser'},
@@ -7102,22 +7164,20 @@ addcmd('unloopgoto',{'noloopgoto'},
 	loopgoto = nil
 end)
 
-headsitting = false
 addcmd('headsit',{},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
-		headsitting = true
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		repeat wait()
+		headSit = game:GetService("RunService").RenderStepped:Connect(function()
 			if Players[v].Character and Players[v].Character:FindFirstChild('HumanoidRootPart') and speaker.Character:FindFirstChild('HumanoidRootPart') then
 				if Players:FindFirstChild(Players[v].Name) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
 					speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
 				else
-					headsitting = false
+					headSit:Disconnect()
 				end
 			end
-		until headsitting == false
+		end)
 	end
 end)
 
@@ -7126,7 +7186,6 @@ addcmd('chat',{},
 	local cString = getstring(1)
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
 end)
-
 
 spamming = false
 spamspeed = 1
@@ -7281,6 +7340,11 @@ addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},
 			v.MaxActivationDistance = math.huge
 		end
 	end
+end)
+
+addcmd('simulationradius',{'simradius'},
+	function(args, speaker)
+	speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
 end)
 
 addcmd('grabtools',{},
@@ -7897,17 +7961,21 @@ end)
 
 addcmd('hitbox',{},
 	function(args, speaker)
-	for k,v in next, Players:GetPlayers() do
-		if v.Character:FindFirstChild('Head') then
-			local sizeArg = tonumber(args[1])
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		if Players[v].Character:FindFirstChild('Head') then
+			local sizeArg = tonumber(args[2])
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
-			local Head = v.Character:FindFirstChild('Head')
-			if sizeArg == 1 then
-				Head.Size = Vector3.new(2,1,1)
-			else
-				Head.Size = Vector3.new(2,1,1)
-				Head.Size = Size
-				game.Players.LocalPlayer.Character.Head.Size = Vector3.new(2,1,1)
+			local Head = Players[v].Character:FindFirstChild('Head')
+			if Head:IsA("BasePart") then
+				if not args[2] or sizeArg == 1 then
+					Head.Size = Vector3.new(2,1,1)
+					Head.CanCollide = true
+				else
+					Head.Size = Vector3.new(2,1,1)
+					Head.Size = Size
+					Head.CanCollide = false
+				end
 			end
 		end
 	end
