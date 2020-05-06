@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.4'
+ver = '3.5'
 
 Players = game:GetService("Players")
 
@@ -2490,7 +2490,6 @@ ColorsButton.MouseButton1Click:Connect(function()
 				local greenInput = pickerFrame.Green.Input
 				local blueInput = pickerFrame.Blue.Input
 		
-				local user = game:GetService("UserInputService")
 				local mouse = game:GetService("Players").LocalPlayer:GetMouse()
 		
 				local hue,sat,val = 0,0,1
@@ -2570,7 +2569,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 					
 							if not startNum then return end
 					
-							releaseEvent = user.InputEnded:Connect(function(input)
+							releaseEvent = UserInputService.InputEnded:Connect(function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -2606,7 +2605,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 					
 							if not startNum then return end
 					
-							releaseEvent = user.InputEnded:Connect(function(input)
+							releaseEvent = UserInputService.InputEnded:Connect(function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -2635,13 +2634,13 @@ ColorsButton.MouseButton1Click:Connect(function()
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 				
-						releaseEvent = user.InputEnded:Connect(function(input)
+						releaseEvent = UserInputService.InputEnded:Connect(function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 		            		releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 				
-						mouseEvent = user.InputChanged:Connect(function(input)
+						mouseEvent = UserInputService.InputChanged:Connect(function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorSpaceInput()
 							end
@@ -2655,13 +2654,13 @@ ColorsButton.MouseButton1Click:Connect(function()
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 				
-						releaseEvent = user.InputEnded:Connect(function(input)
+						releaseEvent = UserInputService.InputEnded:Connect(function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 		        		    releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 				
-						mouseEvent = user.InputChanged:Connect(function(input)
+						mouseEvent = UserInputService.InputChanged:Connect(function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorStripInput()
 							end
@@ -3422,6 +3421,8 @@ CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a differe
 CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
+CMDs[#CMDs + 1] = {NAME = 'nopurchasepromts / nopromts', DESC = 'Prevents the game from showing you purchase promts'}
+CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -3575,6 +3576,12 @@ CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where y
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
+CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
+CMDs[#CMDs + 1] = {NAME = 'hovername', DESC = 'Shows a players username when your mouse is hovered over them'}
+CMDs[#CMDs + 1] = {NAME = 'unhovername / nohovername', DESC = 'Turns off hovername'}
+CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mouse sensitivity (affects first person and right click drag) (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
 CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
@@ -3588,6 +3595,7 @@ CMDs[#CMDs + 1] = {NAME = 'naked', DESC = 'Removes your clothing'}
 CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
 CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
 CMDs[#CMDs + 1] = {NAME = 'blockhats', DESC = 'Turns your hats into blocks'}
+CMDs[#CMDs + 1] = {NAME = 'blocktool', DESC = 'Turns the currently selected tool into a block'}
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
 CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
@@ -3595,6 +3603,7 @@ CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
+CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
 CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
@@ -4253,7 +4262,7 @@ Holder.Cmdbar.Focused:Connect(function()
 		Holder.CMDs.Visible = true
 		Holder.Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 	end
-	tabComplete = game:GetService('UserInputService').InputBegan:Connect(function(input,gameProcessed)
+	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
 		if input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
 			local str = topCommand
 			local endingChar = {"[", "/", "(", " "}
@@ -6415,6 +6424,16 @@ addcmd('antiafk',{'antiidle'},
 	end
 end)
 
+addcmd('nopurchasepromts',{'nopromts'},
+	function(args, speaker)
+	game:GetService("CoreGui").PurchasePromptApp.PurchasePromptUI.Visible = false
+end)
+
+addcmd('showpurchaseprompts',{'showprompts'},
+	function(args, speaker)
+	game:GetService("CoreGui").PurchasePromptApp.PurchasePromptUI.Visible = true
+end)
+
 addcmd('age',{},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -7103,7 +7122,6 @@ addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},
 			v:destroy()
 		end
 	end
-	notify('Tools','Removed tools')
 end)
 
 addcmd('explorer',{'dex'},
@@ -7274,6 +7292,17 @@ addcmd('blockhats',{},
 	end
 end)
 
+addcmd('blocktool',{},
+	function(args, speaker)
+	for i,v in pairs(speaker.Character:GetChildren()) do
+		if v:IsA("Tool") or v:IsA("HopperBin") and v:FindFirstChild("Handle") then
+			if v.Handle:FindFirstChildOfClass('SpecialMesh') then
+				v.Handle:FindFirstChildOfClass('SpecialMesh'):Destroy()
+			end
+		end
+	end
+end)
+
 addcmd('creeper',{},
 	function(args, speaker)
 	if r15(speaker) then
@@ -7400,7 +7429,7 @@ addcmd('grabtools',{},
 			end
 		end
 	end)
-		notify('Grabtools','Will pick up any dropped tools')
+		notify('Grabtools','Picking up any dropped tools')
 end)
 
 addcmd('nograbtools',{'ungrabtools'},
@@ -7513,6 +7542,12 @@ addcmd('unhatspin',{'unspinhats'},
 		v.Handle.ha:Destroy()
 		v.Parent = speaker.Character
 	end
+end)
+
+addcmd('vr',{},
+	function(args, speaker)
+	-- Full credit to Abacaxl @V3rmillion
+	loadstring(game:HttpGet('https://ghostbin.co/paste/8xw4a/raw'))()
 end)
 
 addcmd('equiptools',{},
@@ -7981,6 +8016,115 @@ addcmd('unwalltp',{'nowalltp'},
 	function(args, speaker)
 	if walltpTouch then
 		walltpTouch:Disconnect()
+	end
+end)
+
+autoclicking = false
+addcmd('autoclick',{},
+	function(args, speaker)
+	if mouse1press and mouse1release then
+		execCmd('unautoclick')
+		wait()
+		local clickDelay = 0.1
+		local releaseDelay = 0.1
+		if args[1] and isNumber(args[1]) then clickDelay = tonumber(args[1]) end
+		if args[2] and isNumber(args[2]) then releaseDelay = tonumber(args[2]) end
+		autoclicking = true
+		cancelAutoClick = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+			if not gameProcessedEvent then
+				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
+					autoclicking = false
+					cancelAutoClick:Disconnect()
+				end
+			end
+		end)
+		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+		repeat wait(clickDelay)
+			mouse1press()
+			wait(releaseDelay)
+			mouse1release()
+		until autoclicking == false
+	else
+		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+	end
+end)
+
+addcmd('unautoclick',{'noautoclick'},
+	function(args, speaker)
+	autoclicking = false
+	if cancelAutoClick then cancelAutoClick:Disconnect() end
+end)
+
+addcmd('mousesensitivity',{'ms'},
+	function(args, speaker)
+	UserInputService.MouseDeltaSensitivity = args[1]
+end)
+
+nameBox = nil
+nbSelection = nil
+addcmd('hovername',{},
+	function(args, speaker)
+	execCmd('unhovername')
+	wait()
+	nameBox = Instance.new("TextLabel")
+	nameBox.Name = randomString()
+	nameBox.Parent = PARENT
+	nameBox.BackgroundTransparency = 1
+	nameBox.Size = UDim2.new(0,200,0,30)
+	nameBox.Font = Enum.Font.Code
+	nameBox.TextSize = 16
+	nameBox.Text = ""
+	nameBox.TextColor3 = Color3.new(1, 1, 1)
+	nameBox.TextStrokeTransparency = 0
+	nameBox.TextXAlignment = Enum.TextXAlignment.Left
+	nameBox.ZIndex = 10
+	nbSelection = Instance.new('SelectionBox')
+	nbSelection.Name = randomString()
+	nbSelection.LineThickness = 0.03
+	nbSelection.Color3 = Color3.new(1, 1, 1)
+	local function updateNameBox()
+		local t
+		local target = IYMouse.Target
+		
+		if target then
+			local humanoid = target.Parent:FindFirstChild('Humanoid') or target.Parent.Parent:FindFirstChild('Humanoid')
+			if humanoid then
+				t = humanoid.Parent
+			end
+		end
+		
+		if t ~= nil then
+			local x = IYMouse.X
+			local y = IYMouse.Y
+			local xP
+			local yP
+			if IYMouse.X > 200 then
+				xP = x - 205
+				nameBox.TextXAlignment = Enum.TextXAlignment.Right
+			else
+				xP = x + 25
+				nameBox.TextXAlignment = Enum.TextXAlignment.Left
+			end
+			nameBox.Position = UDim2.new(0, xP, 0, y)
+			nameBox.Text = t.Name
+			nameBox.Visible = true
+			nbSelection.Parent = t
+			nbSelection.Adornee = t
+		else
+			nameBox.Visible = false
+			nbSelection.Parent = nil
+			nbSelection.Adornee = nil
+		end
+	end
+	nbUpdateFunc = IYMouse.Move:connect(updateNameBox)
+end)
+
+addcmd('unhovername',{'nohovername'},
+	function(args, speaker)
+	if nbUpdateFunc then
+		nbUpdateFunc:Disconnect()
+		nameBox:Destroy()
+		nbSelection:Destroy()
 	end
 end)
 
