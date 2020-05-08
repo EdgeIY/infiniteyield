@@ -7129,7 +7129,23 @@ addcmd('console',{},
 	function(args, speaker)
 	-- Thanks wally!!
 	notify("Loading",'Hold on a second')
-	loadstring(game:HttpGet('https://pastebin.com/raw/i35eCznS'))()
+	local _, str = pcall(function()
+	   return game:HttpGet("https://pastebin.com/raw/i35eCznS", true)
+	end)
+
+	local s, e = loadstring(str)
+	if typeof(s) ~= "function" then
+	   return
+	end
+
+	local success, message = pcall(s)
+	if (not success) then
+	   if printconsole then
+		   printconsole(message)
+	   elseif printoutput then
+		   printoutput(message)
+	   end
+	end
 	wait(1)
 	notify('Console','Press F9 to open the console')
 end)
