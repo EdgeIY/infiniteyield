@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.5'
+ver = '3.5.1'
 
 Players = game:GetService("Players")
 
@@ -3414,6 +3414,7 @@ else
 end
 
 CMDs = {}
+CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
@@ -7122,6 +7123,15 @@ addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},
 			v:destroy()
 		end
 	end
+end)
+
+addcmd('console',{},
+	function(args, speaker)
+	-- Thanks wally!!
+	notify("Loading",'Hold on a second')
+	loadstring(game:HttpGet('https://pastebin.com/raw/i35eCznS'))()
+	wait(1)
+	notify('Console','Press F9 to open the console')
 end)
 
 addcmd('explorer',{'dex'},
