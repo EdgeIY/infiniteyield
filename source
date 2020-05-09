@@ -68,6 +68,8 @@ Select_4 = Instance.new("TextButton")
 Float = Instance.new("TextLabel")
 Select_5 = Instance.new("TextButton")
 ClickTP = Instance.new("TextLabel")
+ClickDelete = Instance.new("TextLabel")
+Select_13 = Instance.new("TextButton") 
 Select_6 = Instance.new("TextButton")
 Xray = Instance.new("TextLabel")
 Select_10 = Instance.new("TextButton")
@@ -922,6 +924,35 @@ ClickTP.TextXAlignment = Enum.TextXAlignment.Left
 ClickTP.ZIndex = 10
 table.insert(shade2,ClickTP)
 table.insert(text1,ClickTP)
+
+ClickDelete.Name = "Click Delete"
+ClickDelete.Parent = Toggles
+ClickDelete.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+ClickDelete.BorderSizePixel = 0
+ClickDelete.Position = UDim2.new(0, 0, 0, 75)
+ClickDelete.Size = UDim2.new(0, 192, 0, 20)
+ClickDelete.Font = Enum.Font.SourceSans
+ClickDelete.TextSize = 14
+ClickDelete.Text = "    Toggle Click Delete"
+ClickDelete.TextColor3 = Color3.new(1, 1, 1)
+ClickDelete.TextXAlignment = Enum.TextXAlignment.Left
+ClickDelete.ZIndex = 10
+table.insert(shade2,ClickDelete)
+table.insert(text1,ClickDelete)
+
+Select_13.Name = "Select"
+Select_13.Parent = ClickDelete
+Select_13.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
+Select_13.BorderSizePixel = 0
+Select_13.Position = UDim2.new(0, 152, 0, 0)
+Select_13.Size = UDim2.new(0, 40, 0, 20)
+Select_13.Font = Enum.Font.SourceSans
+Select_13.TextSize = 14
+Select_13.Text = "Add"
+Select_13.TextColor3 = Color3.new(0, 0, 0)
+Select_13.ZIndex = 10
+table.insert(shade3,Select_13)
+table.insert(text2,Select_13) 
 
 Select_6.Name = "Select"
 Select_6.Parent = ClickTP
@@ -3569,6 +3600,7 @@ CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a play
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for clicktp'}
+CMDs[#CMDs + 1] = {NAME = 'clickdel', DESC = 'Go to settings>Keybinds>Add for clickdel'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos', DESC = 'Notifies you the coordinates of your character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinates of your character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
@@ -4781,6 +4813,19 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 	end
 end)
 
+ClickDelete.Select.MouseButton1Click:Connect(function()
+	if keySelected then
+		addbind('clickdel',keyPressed)
+		refreshbinds()
+		updatesaves()
+		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
+			notify('Keybinds Updated','Binded '..keyPressed..' to click delete')
+		else
+			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
+		end
+	end
+end)
+
 Xray.Select.MouseButton1Click:Connect(function()
 	if keySelected then
 		addbind('togglexray',keyPressed)
@@ -5830,6 +5875,25 @@ addcmd('toggleswim',{},
 		execCmd('unswim')
 	else
 		execCmd('swim')
+	end
+end)
+
+deleting = false
+addcmd('clickdel', {},
+	function(args, speaker)
+	deleting = not deleting
+	if deleting then
+		notify("Click Delete", "Click Delete Enabled")
+	else
+		notify("Click Delete", "Click Delete Disabled")
+	end
+end)
+
+IYMouse.Button1Down:connect(function()
+	if deleting then
+		if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+			pcall(function() IYMouse.Target:Destroy() end)
+		end
 	end
 end)
 
