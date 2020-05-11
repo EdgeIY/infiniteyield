@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.5.1'
+ver = '3.6'
 
 Players = game:GetService("Players")
 
@@ -69,6 +69,8 @@ Float = Instance.new("TextLabel")
 Select_5 = Instance.new("TextButton")
 ClickTP = Instance.new("TextLabel")
 Select_6 = Instance.new("TextButton")
+ClickDelete = Instance.new("TextLabel")
+Select_13 = Instance.new("TextButton") 
 Xray = Instance.new("TextLabel")
 Select_10 = Instance.new("TextButton")
 Swim = Instance.new("TextLabel")
@@ -550,6 +552,7 @@ Tooltip.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
 Tooltip.BackgroundTransparency = 0.1
 Tooltip.BorderSizePixel = 0
 Tooltip.Size = UDim2.new(0, 200, 0, 96)
+Tooltip.Visible = false
 Tooltip.ZIndex = 10
 table.insert(shade1,Tooltip)
 
@@ -814,7 +817,7 @@ Toggles.Position = UDim2.new(0, 150, 0, 50)
 Toggles.Size = UDim2.new(0, 200, 0, 125)
 Toggles.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
 Toggles.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Toggles.CanvasSize = UDim2.new(0, 0, 0, 170)
+Toggles.CanvasSize = UDim2.new(0, 0, 0, 195)
 Toggles.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Toggles.ScrollBarThickness = 8
 Toggles.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
@@ -937,11 +940,40 @@ Select_6.ZIndex = 10
 table.insert(shade3,Select_6)
 table.insert(text2,Select_6)
 
+ClickDelete.Name = "Click Delete"
+ClickDelete.Parent = Toggles
+ClickDelete.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+ClickDelete.BorderSizePixel = 0
+ClickDelete.Position = UDim2.new(0, 0, 0, 100)
+ClickDelete.Size = UDim2.new(0, 192, 0, 20)
+ClickDelete.Font = Enum.Font.SourceSans
+ClickDelete.TextSize = 14
+ClickDelete.Text = "    Click Delete (Hold Key & Click)"
+ClickDelete.TextColor3 = Color3.new(1, 1, 1)
+ClickDelete.TextXAlignment = Enum.TextXAlignment.Left
+ClickDelete.ZIndex = 10
+table.insert(shade2,ClickDelete)
+table.insert(text1,ClickDelete)
+
+Select_13.Name = "Select"
+Select_13.Parent = ClickDelete
+Select_13.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
+Select_13.BorderSizePixel = 0
+Select_13.Position = UDim2.new(0, 152, 0, 0)
+Select_13.Size = UDim2.new(0, 40, 0, 20)
+Select_13.Font = Enum.Font.SourceSans
+Select_13.TextSize = 14
+Select_13.Text = "Add"
+Select_13.TextColor3 = Color3.new(0, 0, 0)
+Select_13.ZIndex = 10
+table.insert(shade3,Select_13)
+table.insert(text2,Select_13) 
+
 Xray.Name = "Xray"
 Xray.Parent = Toggles
 Xray.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Xray.BorderSizePixel = 0
-Xray.Position = UDim2.new(0, 0, 0, 100)
+Xray.Position = UDim2.new(0, 0, 0, 125)
 Xray.Size = UDim2.new(0, 192, 0, 20)
 Xray.Font = Enum.Font.SourceSans
 Xray.TextSize = 14
@@ -970,7 +1002,7 @@ Swim.Name = "Swim"
 Swim.Parent = Toggles
 Swim.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Swim.BorderSizePixel = 0
-Swim.Position = UDim2.new(0, 0, 0, 125)
+Swim.Position = UDim2.new(0, 0, 0, 150)
 Swim.Size = UDim2.new(0, 192, 0, 20)
 Swim.Font = Enum.Font.SourceSans
 Swim.TextSize = 14
@@ -999,7 +1031,7 @@ Fling.Name = "Fling"
 Fling.Parent = Toggles
 Fling.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Fling.BorderSizePixel = 0
-Fling.Position = UDim2.new(0, 0, 0, 150)
+Fling.Position = UDim2.new(0, 0, 0, 175)
 Fling.Size = UDim2.new(0, 192, 0, 20)
 Fling.Font = Enum.Font.SourceSans
 Fling.TextSize = 14
@@ -2393,7 +2425,7 @@ IYMouse.KeyDown:connect(function(Key)
 		end)
 		maximizeHolder()
 	elseif infJump == true and Key == " " then
-		game.Players.LocalPlayer.Character.Humanoid:ChangeState(3)
+		Players.LocalPlayer.Character.Humanoid:ChangeState(3)
 	end
 end)
 
@@ -3110,7 +3142,7 @@ Part.MouseButton1Click:Connect(function()
 			Path.Text = getHierarchy(Players.LocalPlayer:GetMouse().Target)
 		end
 	end
-	ClickSelect = game.Players.LocalPlayer:GetMouse().Button1Down:connect(SelectPart)
+	ClickSelect = IYMouse.Button1Down:connect(SelectPart)
 end)
 
 Exit_5.MouseButton1Click:Connect(function()
@@ -3371,7 +3403,7 @@ end
 
 PlayerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
 local chatbox
-if pcall(function() chatbox = Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end) then	
+if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end) then	
 	local function Index()
 		if chatbox.Text:lower():sub(1,1) == prefix then
 			if SettingsOpen == true then
@@ -3402,10 +3434,10 @@ if pcall(function() chatbox = Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarPa
 		minimizeHolder()
 	end)
 	
-	Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
+	Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
 		wait()
 		if newbar:FindFirstChild('BoxFrame') then
-			chatbox = Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+			chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
 			chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
 		end
 	end)
@@ -3424,6 +3456,13 @@ CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a ga
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
 CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
+CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
+CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
+CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
+CMDs[#CMDs + 1] = {NAME = 'savegame', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -3501,6 +3540,7 @@ CMDs[#CMDs + 1] = {NAME = 'simulationradius / simradius', DESC = 'Sets your Simu
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
+CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to settings>Keybinds>Add for clicktp'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
@@ -3555,8 +3595,6 @@ CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
 CMDs[#CMDs + 1] = {NAME = 'nobillboardgui / nobgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
-CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
@@ -3568,7 +3606,7 @@ CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
-CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for clicktp'}
+CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for click tp'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos', DESC = 'Notifies you the coordinates of your character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinates of your character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
@@ -3605,6 +3643,7 @@ CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
+CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
 CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
@@ -4781,6 +4820,19 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 	end
 end)
 
+ClickDelete.Select.MouseButton1Click:Connect(function()
+	if keySelected then
+		addbind('clickdel',keyPressed)
+		refreshbinds()
+		updatesaves()
+		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
+			notify('Keybinds Updated','Binded '..keyPressed..' to click delete')
+		else
+			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
+		end
+	end
+end)
+
 Xray.Select.MouseButton1Click:Connect(function()
 	if keySelected then
 		addbind('togglexray',keyPressed)
@@ -4825,11 +4877,20 @@ IYMouse.Button1Down:connect(function()
 		if v.COMMAND == 'clicktp' then
 			local input = v.KEY
 			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) and Players.LocalPlayer.Character then
-				Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0)
+				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
 			elseif input == 'LeftClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and Players.LocalPlayer.Character then
-				Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0)
+				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
 			elseif UserInputService:IsKeyDown(Enum.KeyCode[input:sub(14)]) and Players.LocalPlayer.Character then
-				Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0)
+				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
+			end
+		elseif v.COMMAND == 'clickdel' then
+			local input = v.KEY
+			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+				pcall(function() IYMouse.Target:Destroy() end)
+			elseif input == 'LeftClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+				pcall(function() IYMouse.Target:Destroy() end)
+			elseif UserInputService:IsKeyDown(Enum.KeyCode[input:sub(14)]) then
+				pcall(function() IYMouse.Target:Destroy() end)
 			end
 		end
 	end
@@ -5426,7 +5487,7 @@ addcmd('serverhop',{'shop'},
 		end
 	end
 	
-	game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, ChosenServer, game.Players.LocalPlayer)
+	game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,ChosenServer,speaker)
 end)
 
 addcmd('joinplayer',{'joinp'},
@@ -5465,7 +5526,7 @@ addcmd('joinplayer',{'joinp'},
 				end
 				if GUID ~= nil then
 					notify('Join Player','Joining '..User)
-					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,game.Players.LocalPlayer)
+					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,speaker)
 				else
 					notify('Join Error','Unable to join user.')
 				end
@@ -5945,6 +6006,60 @@ addcmd('disable',{},
 	end
 end)
 
+invisGUIS = {}
+addcmd('showguis',{},
+	function(args, speaker)
+	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
+		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and not v.Visible then
+			v.Visible = true
+			if not FindInTable(invisGUIS,v) then
+				table.insert(invisGUIS,v)
+			end
+		end
+	end
+end)
+
+addcmd('unshowguis',{},
+	function(args, speaker)
+	for i,v in pairs(invisGUIS) do
+		v.Visible = false
+	end
+	invisGUIS = {}
+end)
+
+hiddenGUIS = {}
+addcmd('hideguis',{},
+	function(args, speaker)
+	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
+		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and not v.Visible then
+			v.Visible = false
+			if not FindInTable(hiddenGUIS,v) then
+				table.insert(hiddenGUIS,v)
+				print('a')
+			end
+		end
+	end
+end)
+
+addcmd('unhideguis',{},
+	function(args, speaker)
+	for i,v in pairs(hiddenGUIS) do
+		v.Visible = true
+	end
+	hiddenGUIS = {}
+end)
+
+addcmd('savegame',{},
+	function(args, speaker)
+		if saveinstance then
+		notify("Loading",'This may take a while')
+		saveinstance()
+		notify('Game Saved','Saved games to the workspace folder within your exploit folder.')
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command')
+	end
+end)
+
 addcmd('clearerror',{'clearerrors'},
 	function(args, speaker)
 	game:GetService("GuiService"):ClearError()
@@ -6416,7 +6531,7 @@ end)
 addcmd('antiafk',{'antiidle'},
 	function(args, speaker)
 	if getconnections then
-		for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do 
+		for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do 
   		  v:Disable()
 		end
 		notify('Anti Idle','Anti idle is enabled')
@@ -6666,7 +6781,7 @@ end)
 addcmd('invisible',{'invis'},
 	function(args, speaker)
 	-- Full credit to AmokahFox @V3rmillion
-	local Player = game:GetService("Players").LocalPlayer
+	local Player = speaker
 	repeat wait(.1) until Player.Character
 	local Character = Player.Character
 	Character.Archivable = true
@@ -7058,6 +7173,13 @@ addcmd('clickteleport',{},
 	function(args, speaker)
 	if speaker == Players.LocalPlayer then
 		notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
+	end
+end)
+
+addcmd('clickdelete',{},
+	function(args, speaker)
+	if speaker == Players.LocalPlayer then
+		notify('Click Delete','Go to Settings>Keybinds>Add to set up click delete')
 	end
 end)
 
@@ -7574,6 +7696,15 @@ addcmd('vr',{},
 	function(args, speaker)
 	-- Full credit to Abacaxl @V3rmillion
 	loadstring(game:HttpGet('https://ghostbin.co/paste/8xw4a/raw'))()
+end)
+
+addcmd('split',{},
+	function(args, speaker)
+	if r15(speaker) then
+		speaker.Character.UpperTorso.Waist:Destroy()
+	else
+		notify('R15 Required','This command requires the r15 rig type')
+	end
 end)
 
 addcmd('equiptools',{},
@@ -8179,7 +8310,7 @@ end)
 addcmd('freezeunanchored',{'freezeua'},
 	function(args, speaker)
 	for _,part in pairs(workspace:GetDescendants()) do
-		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and part:IsDescendantOf(game.Players.LocalPlayer.Character) == false and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
 			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
 			speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
 			local bodyPos = Instance.new("BodyPosition")
@@ -8194,7 +8325,7 @@ end)
 addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 	function(args, speaker)
 	for _,part in pairs(workspace:GetDescendants()) do
-		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and part:IsDescendantOf(game.Players.LocalPlayer.Character) == false and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
 			if part:FindFirstChild("BodyPosition") then
 				speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
 				speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
@@ -8214,7 +8345,7 @@ addcmd('tpunanchored',{'tpua'},
 	for i,v in pairs(players) do
 		local Forces = {}
 		for _,part in pairs(workspace:GetDescendants()) do
-			if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and part:IsDescendantOf(game.Players.LocalPlayer.Character) == false and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+			if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
 				if part:FindFirstChildOfClass("BodyPosition") then part.BodyPosition:Destroy() end
 				local ForceInstance = Instance.new("BodyPosition", part)
 				ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
