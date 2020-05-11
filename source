@@ -3422,7 +3422,7 @@ CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a differe
 CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
-CMDs[#CMDs + 1] = {NAME = 'nopurchasepromts / nopromts', DESC = 'Prevents the game from showing you purchase promts'}
+CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
@@ -6425,7 +6425,7 @@ addcmd('antiafk',{'antiidle'},
 	end
 end)
 
-addcmd('nopurchasepromts',{'nopromts'},
+addcmd('nopurchaseprompts',{'noprompts'},
 	function(args, speaker)
 	game:GetService("CoreGui").PurchasePromptApp.PurchasePromptUI.Visible = false
 end)
