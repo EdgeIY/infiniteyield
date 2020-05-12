@@ -7448,7 +7448,9 @@ end)
 addcmd('blockhats',{},
 	function(args, speaker)
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-		v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
+		if v:FindFirstChild('Handle') and v.Handle:FindFirstChildOfClass('SpecialMesh') then
+			v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
+		end
 	end
 end)
 
