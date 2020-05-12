@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.6'
+ver = '3.6.4'
 
 Players = game:GetService("Players")
 
@@ -3462,7 +3462,7 @@ CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
 CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
 CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
-CMDs[#CMDs + 1] = {NAME = 'savegame', DESC = 'Uses saveinstance to save the game'}
+CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -3568,6 +3568,8 @@ CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'kill [plr] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastkill [plr] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastbring [plr] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
@@ -3654,8 +3656,8 @@ CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools', DESC = 'Duplicates your inve
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
 CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
-CMDs[#CMDs + 1] = {NAME = 'reach on [num]', DESC = 'Increases the hitbox of your held tool'}
-CMDs[#CMDs + 1] = {NAME = 'reach off', DESC = 'turns off reach'}
+CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
+CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
@@ -6049,16 +6051,26 @@ addcmd('unhideguis',{},
 	hiddenGUIS = {}
 end)
 
-addcmd('savegame',{},
+addcmd('savegame',{'saveplace'},
 	function(args, speaker)
-		if saveinstance then
-		notify("Loading",'This may take a while')
+	if syn_checkcaller then
+		notify("Loading","Fetching Moon's SaveInstance")
+		loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/saveinstance/master/source'))()
+		repeat wait() until saveplace
+		notify("Loading","Downloading game. This will take a while")
+		local placeName = tostring(game.PlaceId).." Map"
+		saveplace(tostring(game.PlaceId).." Map")
+		wait(1)
+		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
+	elseif saveinstance then
+		notify("Loading","Downloading game. This will take a while")
 		saveinstance()
-		notify('Game Saved','Saved games to the workspace folder within your exploit folder.')
+		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command')
 	end
 end)
+
 
 addcmd('clearerror',{'clearerrors'},
 	function(args, speaker)
@@ -7879,33 +7891,37 @@ addcmd('reach',{},
 	if args[1] then
 		for i,v in pairs(speaker.Character:GetDescendants()) do
 			if v:IsA("Tool") then
-				if string.lower(tostring(args[1])) == "off" then
-					v.Handle.Size = currentToolSize
-					v.GripPos = currentGripPos
-					v.Handle.SelectionBoxCreated:Destroy()
-					speaker.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
-				elseif string.lower(tostring(args[1])) == "on" then
-					if args[2] then
-						currentToolSize = v.Handle.Size
-						currentGripPos = v.GripPos
-						local a = Instance.new("SelectionBox",v.Handle)
-						a.Name = "SelectionBoxCreated"
-						a.Adornee = v.Handle
-						v.Handle.Size = Vector3.new(0.5,0.5,args[2])
-						v.GripPos = Vector3.new(0,0,0)
-						speaker.Character.Humanoid:UnequipTools()
-					else
-						currentToolSize = v.Handle.Size
-						currentGripPos = v.GripPos
-						local a = Instance.new("SelectionBox",v.Handle)
-						a.Name = "SelectionBoxCreated"
-						a.Adornee = v.Handle
-						v.Handle.Size = Vector3.new(0.5,0.5,60)
-						v.GripPos = Vector3.new(0,0,0)
-						speaker.Character.Humanoid:UnequipTools()
-					end
+				if args[1] then
+					currentToolSize = v.Handle.Size
+					currentGripPos = v.GripPos
+					local a = Instance.new("SelectionBox",v.Handle)
+					a.Name = "SelectionBoxCreated"
+					a.Adornee = v.Handle
+					v.Handle.Size = Vector3.new(0.5,0.5,args[1])
+					v.GripPos = Vector3.new(0,0,0)
+					speaker.Character.Humanoid:UnequipTools()
+				else
+					currentToolSize = v.Handle.Size
+					currentGripPos = v.GripPos
+					local a = Instance.new("SelectionBox",v.Handle)
+					a.Name = "SelectionBoxCreated"
+					a.Adornee = v.Handle
+					v.Handle.Size = Vector3.new(0.5,0.5,60)
+					v.GripPos = Vector3.new(0,0,0)
+					speaker.Character.Humanoid:UnequipTools()
 				end
 			end
+		end
+	end
+end)
+
+addcmd('unreach',{'noreach'},
+	function(args, speaker)
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") then
+			v.Handle.Size = currentToolSize
+			v.GripPos = currentGripPos
+			v.Handle.SelectionBoxCreated:Destroy()
 		end
 	end
 end)
@@ -7994,94 +8010,136 @@ addcmd('togglefling',{},
 	end
 end)
 
-addcmd('kill',{'fekill'},
-	function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		local target = Players[v]
-		if tools(speaker) then
-			if target ~= nil then
+function kill(speaker,target,fast)
+	if tools(speaker) then
+		if target ~= nil then
+			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			if not fast then
 				refresh(speaker)
 				wait()
 				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
 				wait(0.3)
-				local NormPos = speaker.Character.HumanoidRootPart.CFrame
-				local char = speaker.Character
-				local tchar = target.Character
-				local hum = speaker.Character.Humanoid
-				local hrp = speaker.Character.HumanoidRootPart
-				local hrp2 = target.Character.HumanoidRootPart
-				hum.Name = "1"
-				local newHum = hum:Clone()
-				newHum.Parent = char
-				newHum.Name = "Humanoid"
-				wait(0.1)
-				hum:Destroy()
-				workspace.CurrentCamera.CameraSubject = char
-				newHum.DisplayDistanceType = "None"
-				wait(0.1)
-				local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
-				tool.Parent = char
-				hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
-				local n = 0
-				repeat
-					wait(.1)
-					n = n + 1
-					hrp.CFrame = hrp2.CFrame
-				until n == 5
-				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
 			end
-		else
-			notify('Tool Required','You need to have a tool to use this command')
+			local char = speaker.Character
+			local tchar = target.Character
+			local hum = speaker.Character.Humanoid
+			local hrp = speaker.Character.HumanoidRootPart
+			local hrp2 = target.Character.HumanoidRootPart
+			hum.Name = "1"
+			local newHum = hum:Clone()
+			newHum.Parent = char
+			newHum.Name = "Humanoid"
+			wait(0.1)
+			hum:Destroy()
+			workspace.CurrentCamera.CameraSubject = char
+			newHum.DisplayDistanceType = "None"
+			wait(0.1)
+			local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
+			tool.Parent = char
+			hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
+			local n = 0
+			repeat
+				wait(.2)
+				n = n + 1
+				hrp.CFrame = hrp2.CFrame
+			until n == 4
+			repeat wait(0.1)
+				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
+			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
+			local goBack
+			goBack = speaker.CharacterAdded:Connect(function()
+				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				wait(0.3)
+				speaker.Character.HumanoidRootPart.CFrame = NormPos
+				goBack:Disconnect()
+			end)
 		end
+	else
+		notify('Tool Required','You need to have a tool to use this command')
+	end
+end
+
+
+
+addcmd('kill',{'fekill'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		kill(speaker,Players[v])
 	end
 end)
+
+addcmd('fastkill',{'fastfekill'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		kill(speaker,Players[v],true)
+	end
+end)
+
+function bring(speaker,target,fast)
+	if tools(speaker) then
+		if target ~= nil then
+			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			if not fast then
+				refresh(speaker)
+				wait()
+				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				wait(0.3)
+			end
+			local char = speaker.Character
+			local tchar = target.Character
+			local hum = speaker.Character.Humanoid
+			local hrp = speaker.Character.HumanoidRootPart
+			local hrp2 = target.Character.HumanoidRootPart
+			hum.Name = "1"
+			local newHum = hum:Clone()
+			newHum.Parent = char
+			newHum.Name = "Humanoid"
+			wait(0.1)
+			hum:Destroy()
+			workspace.CurrentCamera.CameraSubject = char
+			newHum.DisplayDistanceType = "None"
+			wait(0.1)
+			local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
+			tool.Parent = char
+			hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
+			local n = 0
+			repeat
+				wait(.2)
+				n = n + 1
+				hrp.CFrame = hrp2.CFrame
+			until n == 4
+			workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+			repeat wait(0.1)
+				hrp.CFrame = NormPos
+			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
+			local goBack
+			goBack = speaker.CharacterAdded:Connect(function()
+				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				wait(0.3)
+				speaker.Character.HumanoidRootPart.CFrame = NormPos
+				goBack:Disconnect()
+			end)
+		end
+	else
+		notify('Tool Required','You need to have a tool to use this command')
+	end
+end
 
 addcmd('bring',{'febring'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
-		local target = Players[v]
-		if tools(speaker) then
-			if target ~= nil then
-				refresh(speaker)
-				wait()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
-				wait(0.3)
-				local NormPos = speaker.Character.HumanoidRootPart.CFrame
-				local char = speaker.Character
-				local tchar = target.Character
-				local hum = speaker.Character.Humanoid
-				local hrp = speaker.Character.HumanoidRootPart
-				local hrp2 = target.Character.HumanoidRootPart
-				hum.Name = "1"
-				local newHum = hum:Clone()
-				newHum.Parent = char
-				newHum.Name = "Humanoid"
-				wait(0.1)
-				hum:Destroy()
-				workspace.CurrentCamera.CameraSubject = char
-				newHum.DisplayDistanceType = "None"
-				wait(0.1)
-				local tool = speaker.Backpack:FindFirstChildOfClass("Tool")
-				tool.Parent = char
-				hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-50, 50)/200,math.random(-50, 50)/200,math.random(-50, 50)/200)
-				local n = 0
-				repeat
-					wait(.1)
-					n = n + 1
-					hrp.CFrame = hrp2.CFrame
-				until n == 5
-				hrp.CFrame = NormPos
-				workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-				wait(4)
-				speaker.Character.HumanoidRootPart.CFrame = NormPos
-			end
-			wait(.5)
-			refresh(speaker)
-		else
-			notify('Tool Required','You need to have a tool to use this command')
-		end
+		bring(speaker,Players[v])
+	end
+end)
+
+addcmd('fastbring',{'fastfebring'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		bring(speaker,Players[v],true)
 	end
 end)
 
@@ -8289,54 +8347,94 @@ addcmd('hitbox',{},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
-		if Players[v].Character:FindFirstChild('Head') then
+		if Players[v]~= speaker and Players[v].Character:FindFirstChild('Head') then
 			local sizeArg = tonumber(args[2])
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
 			local Head = Players[v].Character:FindFirstChild('Head')
 			if Head:IsA("BasePart") then
 				if not args[2] or sizeArg == 1 then
 					Head.Size = Vector3.new(2,1,1)
-					Head.CanCollide = true
 				else
-					Head.Size = Vector3.new(2,1,1)
 					Head.Size = Size
-					Head.CanCollide = false
 				end
 			end
 		end
 	end
 end)
 
+freezingua = nil
+frozenParts = {}
 addcmd('freezeunanchored',{'freezeua'},
 	function(args, speaker)
-	for _,part in pairs(workspace:GetDescendants()) do
-		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			local bodyPos = Instance.new("BodyPosition")
-			bodyPos.Position = part.Position
-			bodyPos.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-			bodyPos.P = 1e6
-			bodyPos.Parent = part
+	local badnames = {
+		"Head",
+		"UpperTorso",
+		"LowerTorso",
+		"RightUpperArm",
+		"LeftUpperArm",
+		"RightLowerArm",
+		"LeftLowerArm",
+		"RightHand",
+		"LeftHand",
+		"RightUpperLeg",
+		"LeftUpperLeg",
+		"RightLowerLeg",
+		"LeftLowerLeg",
+		"RightFoot",
+		"LeftFoot",
+		"Torso",
+		"Right Arm",
+		"Left Arm",
+		"Right Leg",
+		"Left Leg",
+		"HumanoidRootPart"
+	}
+	local function FREEZENOOB(v)
+		if v:IsA("BasePart" or "UnionOperation") and v.Anchored == false then
+			local BADD = false
+			for i = 1,#badnames do
+				if v.Name == badnames[i] then
+					BADD = true
+				end
+			end
+			if speaker.Character and v:IsDescendantOf(speaker.Character) then
+				BADD = true
+			end
+			if BADD == false then
+				local hUge = math.huge
+				speaker.MaximumSimulationRadius = math.pow(hUge,hUge)*hUge
+				speaker.SimulationRadius = math.pow(hUge,hUge)*hUge
+				local bodypos = Instance.new("BodyPosition",v)
+				bodypos.Position = v.Position
+				bodypos.MaxForce = Vector3.new(hUge,hUge,hUge)
+				local bodygyro = Instance.new("BodyGyro",v)
+				bodygyro.CFrame = v.CFrame
+				bodygyro.MaxTorque = Vector3.new(hUge,hUge,hUge)
+				table.insert(frozenParts,v)
+			end
 		end
 	end
+	for i,v in pairs(workspace:GetDescendants()) do
+		FREEZENOOB(v)
+	end
+	freezingua = workspace.DescendantAdded:Connect(FREEZENOOB)
 end)
 
 addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 	function(args, speaker)
-	for _,part in pairs(workspace:GetDescendants()) do
-		if part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-			if part:FindFirstChild("BodyPosition") then
-				speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-				speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
-				for i,v in pairs(part:GetChildren()) do
-					if v.Name == "BodyPosition" then
-						v:Destroy()
-					end
-				end
+	if freezingua then
+		freezingua:Disconnect()
+	end
+	speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
+	speaker.SimulationRadius = math.pow(math.huge,math.huge)*math.huge
+	for i,v in pairs(frozenParts) do
+		for i,c in pairs(v:GetChildren()) do
+			if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+				c:Destroy()
 			end
 		end
 	end
+	frozenParts = {}
 end)
 
 addcmd('tpunanchored',{'tpua'},
