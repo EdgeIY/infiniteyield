@@ -5,7 +5,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.6.4'
+ver = '3.6.5'
 
 Players = game:GetService("Players")
 
@@ -6127,19 +6127,19 @@ espParts = {}
 addcmd('partesp',{},
 	function(args, speaker)
 	local partEspName = getstring(1):lower()
-	if not FindInTable(espParts,partEspName) then
+	if not FindInTable(espParts,partEspName) then print('Added to table!!')
 		table.insert(espParts,partEspName)
-	end
-	for i,v in pairs(workspace:GetDescendants()) do
-		if v:IsA("BasePart") and v.Name:lower() == partEspName then
-			local a = Instance.new("BoxHandleAdornment", v)
-			a.Name = partEspName.."_PESP"
-			a.Adornee = v
-			a.AlwaysOnTop = true
-			a.ZIndex = 0
-			a.Size = v.Size
-			a.Transparency = 0.3
-			a.Color = BrickColor.new("Lime green")
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("BasePart") and v.Name:lower() == partEspName then
+				local a = Instance.new("BoxHandleAdornment", v)
+				a.Name = partEspName.."_PESP"
+				a.Adornee = v
+				a.AlwaysOnTop = true
+				a.ZIndex = 0
+				a.Size = v.Size
+				a.Transparency = 0.3
+				a.Color = BrickColor.new("Lime green")
+			end
 		end
 	end
 	if partEspTrigger == nil then
@@ -8401,6 +8401,11 @@ addcmd('freezeunanchored',{'freezeua'},
 				BADD = true
 			end
 			if BADD == false then
+				for i,c in pairs(v:GetChildren()) do
+					if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+						c:Destroy()
+					end
+				end
 				local hUge = math.huge
 				speaker.MaximumSimulationRadius = math.pow(hUge,hUge)*hUge
 				speaker.SimulationRadius = math.pow(hUge,hUge)*hUge
@@ -8410,7 +8415,9 @@ addcmd('freezeunanchored',{'freezeua'},
 				local bodygyro = Instance.new("BodyGyro",v)
 				bodygyro.CFrame = v.CFrame
 				bodygyro.MaxTorque = Vector3.new(hUge,hUge,hUge)
-				table.insert(frozenParts,v)
+				if not table.find(frozenParts,v) then print('added')
+					table.insert(frozenParts,v)
+				end
 			end
 		end
 	end
@@ -8444,10 +8451,17 @@ addcmd('tpunanchored',{'tpua'},
 		local Forces = {}
 		for _,part in pairs(workspace:GetDescendants()) do
 			if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-				if part:FindFirstChildOfClass("BodyPosition") then part.BodyPosition:Destroy() end
+				for i,c in pairs(part:GetChildren()) do
+					if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+						c:Destroy()
+					end
+				end
 				local ForceInstance = Instance.new("BodyPosition", part)
 				ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 				table.insert(Forces, ForceInstance)
+				if not table.find(frozenParts,part) then
+					table.insert(frozenParts,part)
+				end
 			end
 		end
 		speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
