@@ -4,9 +4,17 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 	notLoaded:Destroy()
 end
-_G.IS_EXECUTED = true
-assert(_G.IS_EXECUTED,"You can't execute infinite yield twice as another instance of infinite yield is already running.")
+
+
+
 ver = '3.7'
+
+if IS_IY_LOADED then
+	error("You can't execute infinite yield twice as another instance of infinite yield is already running.",0)
+	return
+end
+
+pcall(function() getgenv().IS_IY_LOADED  = true end)
 
 Players = game:GetService("Players")
 
@@ -3677,6 +3685,7 @@ CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
+CMDs[#CMDs + 1] = {NAME = 'exitiy / killiy / stop', DESC = 'Exit infinite yield'}
 wait()
 
 for i = 1, #CMDs do
