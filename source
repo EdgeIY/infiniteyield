@@ -161,12 +161,7 @@ shadow_5 = Instance.new("Frame")
 PopupText_5 = Instance.new("TextLabel")
 Exit_5 = Instance.new("ImageButton")
 
-PARENT = nil
-if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
-	PARENT = game:GetService("CoreGui").RobloxGui
-else
-	PARENT = game:GetService("CoreGui")
-end
+PARENT = Instance.new("ScreenGui",game:GetService("CoreGui"))
 
 function randomString()
 	local length = math.random(10,20)
