@@ -1,3 +1,8 @@
+__TEST_MODE = true
+if __TEST_MODE and Sirhurt then
+	getgenv().Sirhurt = false
+end
+
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message",workspace)
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
@@ -5,6 +10,10 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
+if Sirhurt then
+	executescript(downloadUrl('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))
+	return
+end
 ver = '3.7.1'
 
 if IS_IY_LOADED then
@@ -3674,7 +3683,7 @@ CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'
 CMDs[#CMDs + 1] = {NAME = 'clraliases', DESC = 'Removes all custom aliases'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
-CMDs[#CMDs + 1] = {NAME = 'bulkaddplugin / bulkadd [name]', DESC = 'bulk add plugin from a folder'}
+CMDs[#CMDs + 1] = {NAME = 'bulkaddplugin / bulkadd [folder]', DESC = 'bulk add plugin from a folder'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
