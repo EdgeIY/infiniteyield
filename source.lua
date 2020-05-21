@@ -3465,7 +3465,7 @@ CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a ga
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
 CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
-CMDs[#CMDs + 1] = {NAME = 'togglepurchaseprompts / toggleprompts', DESC = 'Toggle on or off the game purchase prompts.'}
+CMDs[#CMDs + 1] = {NAME = 'togglepurchaseprompts / toggleprompts', DESC = 'Toggle on or off the game purchase prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
@@ -3493,7 +3493,7 @@ CMDs[#CMDs + 1] = {NAME = 'setwaypoint / swp [name]', DESC = 'Sets a waypoint at
 CMDs[#CMDs + 1] = {NAME = 'waypointpos / wpp [name] [X Y Z]', DESC = 'Sets a waypoint with specified coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'waypoint / wp [name]', DESC = 'Teleports player to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
-CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all wayp`oints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [plr]', DESC = 'Go to a player while in a vehicle'}
