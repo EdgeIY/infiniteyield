@@ -1,5 +1,5 @@
 __TEST_MODE = false
-if __TEST_MODE and Sirhurt then
+if __TEST_MODE then
 	getgenv().Sirhurt = false
 end
 
@@ -10,8 +10,10 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-if Sirhurt then
-	executescript(downloadUrl('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))
+if Sirhurt == 4 then
+	print(debug.traceback())
+	writefile("infinite_yield.lua",downloadUrl("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))
+	executescript(readfile("infinite_yield.lua"))
 	return
 end
 ver = '3.7.1'
