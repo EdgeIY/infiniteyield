@@ -11,7 +11,6 @@ if not game:IsLoaded() then
 end
 
 if Sirhurt == 4 then
-	print(debug.traceback())
 	writefile("infinite_yield.lua",downloadUrl("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))
 	executescript(readfile("infinite_yield.lua"))
 	return
