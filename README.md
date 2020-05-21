@@ -13,7 +13,7 @@ Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
 
 ### Developer: Moon
 ### Developer: Zwolf
-
+### Contributor: Vini Dalvino
 
 ## Usage
 You can learn how to use all the features of this script in the wiki!
