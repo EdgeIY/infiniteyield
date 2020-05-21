@@ -6576,6 +6576,8 @@ addcmd('antiafk',{'antiidle'},
   		  v:Disable()
 		end
 		notify('Anti Idle','Anti idle is enabled')
+	elseif PROTOSMASHER_LOADED then
+		disconnect_all(Players.LocalPlayer.Idled)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command')
 	end
