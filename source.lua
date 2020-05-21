@@ -3674,6 +3674,7 @@ CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'
 CMDs[#CMDs + 1] = {NAME = 'clraliases', DESC = 'Removes all custom aliases'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
+CMDs[#CMDs + 1] = {NAME = 'bulkaddplugin / bulkadd [name]', DESC = 'bulk add plugin from a folder'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -8573,6 +8574,18 @@ addcmd('addplugin',{'plugin'},
 	function(args, speaker)
 	addPlugin(getstring(1))
 end)
+
+addcmd('bulkaddplugin',{'bulkadd'},
+	function(args,speaker)
+		if listfiles then 
+			for i,v in pairs(listfiles(args[1])) do
+				v = string.gsub(v,".iy","")
+				addPlugin(v)
+			end
+		else
+			notify("Your exploit do not support the command bulkaddplugin")
+		end
+	end)
 
 addcmd('removeplugin',{'deleteplugin'},
 	function(args, speaker)
