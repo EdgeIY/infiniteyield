@@ -1,4 +1,4 @@
-__TEST_MODE = true
+__TEST_MODE = false
 if __TEST_MODE and Sirhurt then
 	getgenv().Sirhurt = false
 end
