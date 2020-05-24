@@ -1,3 +1,10 @@
+if IY_LOADED then
+	error("Infinite Yield is already running!",0)
+	return
+end
+
+pcall(function() getgenv().IY_LOADED  = true end)
+
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message",workspace)
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
@@ -5,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.7.1'
+ver = '3.8'
 
 Players = game:GetService("Players")
 
@@ -2369,50 +2376,61 @@ function notify(text,text2,length)
 	end)
 end
 
+lastMessage = nil
+lastLabel = nil
+dupeCount = 1
 function CreateLabel(Name, Text)
-	if #scrollCL:GetChildren() >= 2546 then
-		scrollCL:ClearAllChildren()
-	end
-	local alls = 0
-	for i,v in pairs(scrollCL:GetChildren()) do
-		if v then
-			alls = v.Size.Y.Offset + alls
+	if lastMessage == Text then
+		dupeCount = dupeCount+1
+		lastLabel.Text = Time()..' - ['..Name..']: '..Text..' (x'..dupeCount..')'
+	else
+		if dupeCount > 1 then dupeCount = 1 end
+		if #scrollCL:GetChildren() >= 2546 then
+			scrollCL:ClearAllChildren()
 		end
-		if not v then
-			alls = 0
+		local alls = 0
+		for i,v in pairs(scrollCL:GetChildren()) do
+			if v then
+				alls = v.Size.Y.Offset + alls
+			end
+			if not v then
+				alls = 0
+			end
 		end
+		local tl = Instance.new('TextLabel', scrollCL)
+		local il = Instance.new('Frame', tl)
+		lastMessage = Text
+		lastLabel = tl
+		tl.Name = Name
+		tl.ZIndex = 10
+		tl.Text = Time().." - ["..Name.."]: "..Text
+		tl.Size = UDim2.new(0,322,0,84)
+		tl.BackgroundTransparency = 1
+		tl.BorderSizePixel = 0
+		tl.Font = "SourceSans"
+		tl.Position = UDim2.new(-1,0,0,alls)
+		tl.TextTransparency = 1
+		tl.TextScaled = false
+		tl.TextSize = 14
+		tl.TextWrapped = true
+		tl.TextXAlignment = "Left"
+		tl.TextYAlignment = "Top"
+		il.BackgroundTransparency = 1
+		il.BorderSizePixel = 0
+		il.Size = UDim2.new(0,12,1,0)
+		il.Position = UDim2.new(0,316,0,0)
+		il.ZIndex = 10
+		tl.TextColor3 = currentText1
+		tl.Size = UDim2.new(0,322,0,tl.TextBounds.Y)
+		table.insert(text1,tl)
+		scrollCL.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
+		scrollCL.CanvasPosition = Vector2.new(0,scrollCL.CanvasPosition.Y+tl.TextBounds.Y)
+		tl:TweenPosition(UDim2.new(0,3,0,alls), 'In', 'Quint', 0.5)
+		for i = 0,50 do wait(0.05)
+			tl.TextTransparency = tl.TextTransparency - 0.05
+		end
+		tl.TextTransparency = 0
 	end
-	local tl = Instance.new('TextLabel', scrollCL)
-	local il = Instance.new('Frame', tl)
-	tl.Name = Name
-	tl.ZIndex = 10
-	tl.Text = Time().." - ["..Name.."]: "..Text
-	tl.Size = UDim2.new(0,322,0,84)
-	tl.BackgroundTransparency = 1
-	tl.BorderSizePixel = 0
-	tl.Font = "SourceSans"
-	tl.Position = UDim2.new(-1,0,0,alls)
-	tl.TextTransparency = 1
-	tl.TextScaled = false
-	tl.TextSize = 14
-	tl.TextWrapped = true
-	tl.TextXAlignment = "Left"
-	tl.TextYAlignment = "Top"
-	il.BackgroundTransparency = 1
-	il.BorderSizePixel = 0
-	il.Size = UDim2.new(0,12,1,0)
-	il.Position = UDim2.new(0,316,0,0)
-	il.ZIndex = 10
-	tl.TextColor3 = currentText1
-	tl.Size = UDim2.new(0,322,0,tl.TextBounds.Y)
-	table.insert(text1,tl)
-	scrollCL.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
-	scrollCL.CanvasPosition = Vector2.new(0,scrollCL.CanvasPosition.Y+tl.TextBounds.Y)
-	tl:TweenPosition(UDim2.new(0,3,0,alls), 'In', 'Quint', 0.5)
-	for i = 0,50 do wait(0.05)
-		tl.TextTransparency = tl.TextTransparency - 0.05
-	end
-	tl.TextTransparency = 0
 end
 
 infJump = false
@@ -3452,6 +3470,22 @@ else
 	print('Custom chat detected. Will not provide suggestions for commands typed in the chat.')
 end
 
+function autoComplete(str)
+	local endingChar = {"[", "/", "(", " "}
+	local stop = 0
+	for i=1,#str do
+		local c = str:sub(i,i)
+		if table.find(endingChar, c) then
+			stop = i
+			break
+		end
+	end
+	Holder.Cmdbar.Text = str:sub(1, stop - 1)..' '
+	wait()
+	Holder.Cmdbar.Text = Holder.Cmdbar.Text:gsub( '\t', '' )
+	Holder.Cmdbar.CursorPosition = 1020
+end
+
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
@@ -3534,8 +3568,8 @@ CMDs[#CMDs + 1] = {NAME = 'spectate / view [plr]', DESC = 'View a player'}
 CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
 CMDs[#CMDs + 1] = {NAME = 'freecam / fc', DESC = 'Allows you to freely move camera around the game'}
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
-CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed'}
-CMDs[#CMDs + 1] = {NAME = 'freecamtp / fctp', DESC = 'Teleports you to the location of freecam'}
+CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
@@ -3585,7 +3619,7 @@ CMDs[#CMDs + 1] = {NAME = 'setos [text]', DESC = 'Sets your os to whatever you i
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'bang [plr]', DESC = 'owo'}
+CMDs[#CMDs + 1] = {NAME = 'bang [plr] [speed]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang [plr]', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
@@ -3692,6 +3726,13 @@ for i = 1, #CMDs do
 		local desc = Instance.new("StringValue",newcmd)
 		desc.Name = "Desc"
 		desc.Value = CMDs[i].DESC
+		newcmd.MouseButton1Down:Connect(function()
+			if newcmd.Visible and newcmd.TextTransparency == 0 then
+				Holder.Cmdbar:CaptureFocus()
+				autoComplete(newcmd.Text)
+				maximizeHolder()
+			end
+		end)
 	end
 end
 
@@ -3818,7 +3859,6 @@ Clip = true
 Players.LocalPlayer.CharacterAdded:Connect(function()
 	FLYING = false
 	Floating = false
-	bangplr = nil
 	
 	if not Clip then
 		execCmd('clip nonotify')
@@ -3991,6 +4031,13 @@ function addcmdtext(text,name,desc)
 		local desc = Instance.new("StringValue",newcmd)
 		desc.Name = "Desc"
 		desc.Value = tooltipDesc
+		newcmd.MouseButton1Down:Connect(function()
+			if newcmd.Visible and newcmd.TextTransparency == 0 then
+				Holder.Cmdbar:CaptureFocus()
+				autoComplete(newcmd.Text)
+				maximizeHolder()
+			end
+		end)
 	end
 end
 
@@ -4296,17 +4343,20 @@ Holder.Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
 		execCmd(Holder.Cmdbar.Text,Players.LocalPlayer)
 	end
-	Holder.Cmdbar.Text = "Command Bar"
-	IndexContents('',true,false,true)
-	if canvasPos ~= nil then
-		CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
-		canvasTop = false
-	end
 	if tabComplete then tabComplete:Disconnect() end
-	if SettingsOpen == true then
-		wait(0.2)
-		Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
-		Holder.CMDs.Visible = false
+	wait()
+	if not Holder.Cmdbar:IsFocused() then
+		Holder.Cmdbar.Text = "Command Bar"
+		IndexContents('',true,false,true)
+		if canvasPos ~= nil then
+			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
+			canvasTop = false
+		end
+		if SettingsOpen == true then
+			wait(0.2)
+			Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
+			Holder.CMDs.Visible = false
+		end
 	end
 end)
 
@@ -4320,20 +4370,7 @@ Holder.Cmdbar.Focused:Connect(function()
 	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
 		if Holder.Cmdbar:IsFocused() then
 			if input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
-				local str = topCommand
-				local endingChar = {"[", "/", "(", " "}
-				local stop = 0
-				for i=1,#str do
-					local c = str:sub(i,i)
-					if table.find(endingChar, c) then
-						stop = i
-						break
-					end
-				end
-				Holder.Cmdbar.Text = str:sub(1, stop - 1)..' '
-				wait()
-				Holder.Cmdbar.Text = Holder.Cmdbar.Text:gsub( '\t', '' )
-				Holder.Cmdbar.CursorPosition = 1020
+				autoComplete(topCommand)
 			end
 		else
 			tabComplete:Disconnect()
@@ -4776,17 +4813,6 @@ end
  
 UserInputService.InputBegan:connect(onInputBegan)
 
-game:GetService('RunService').Stepped:connect(function()
-	if bangplr then
-		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Players[bangplr].Character.HumanoidRootPart.CFrame
-	end
-	if spinenabled then
-		pcall(function()
-			spinning.Position = Players.LocalPlayer.Character.Head.Position
-		end)
-	end
-end)
-
 Fly.Select.MouseButton1Click:Connect(function()
 	if keySelected then
 		addbind('togglefly',keyPressed)
@@ -5098,7 +5124,7 @@ Settings.Plugins.Select.MouseButton1Click:Connect(function()
 		wait(0.5)
 		disablebuttons()
 	else
-		notify('Incompatible Exploit','Your exploit is unable to use plugins')
+		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
 	end
 end)
 
@@ -6053,11 +6079,10 @@ hiddenGUIS = {}
 addcmd('hideguis',{},
 	function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
-		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and not v.Visible then
+		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and v.Visible then
 			v.Visible = false
 			if not FindInTable(hiddenGUIS,v) then
 				table.insert(hiddenGUIS,v)
-				print('a')
 			end
 		end
 	end
@@ -6087,7 +6112,7 @@ addcmd('savegame',{'saveplace'},
 		saveinstance()
 		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
 	end
 end)
 
@@ -6271,149 +6296,304 @@ addcmd('unview',{'unspectate'},
 	notify('Spectate','View turned off')
 end)
 
-fa = false
-cam = workspace.CurrentCamera
-cam1 = 0
-cam2 = 0
-cam3 = 0
-k1 = false
-k2 = false
-k3 = false
-k4 = false
-k5 = false
-k6 = false
-cs = 0.5
-function movecam()
-	local fc = Players.LocalPlayer.Character:FindFirstChild('xFC')
-	if fa == false then
-		repeat
-			if Players.LocalPlayer.Character:FindFirstChild('xFC') then
-				local fp = fc.Position
-				fc.CFrame = CFrame.new(Vector3.new(fp.X,fp.Y+cam3,fp.Z),cam.CFrame.p)*CFrame.new(cam2,0,cam1)
-				fa = true
-				Players.LocalPlayer.Character.Head.Anchored = true
-			end
-			game:GetService('RunService').RenderStepped:Wait()
-		until not Players.LocalPlayer.Character:FindFirstChild('xFC')
-		fa = false
+ContextActionService = game:GetService("ContextActionService")
+RunService = game:GetService("RunService")
+StarterGui = game:GetService("StarterGui")
+UserInputService = game:GetService("UserInputService")
+
+LocalPlayer = game.Players.LocalPlayer
+
+Camera = workspace.CurrentCamera
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	local newCamera = workspace.CurrentCamera
+	if newCamera then
+		Camera = newCamera
+	end
+end)
+
+TOGGLE_INPUT_PRIORITY = Enum.ContextActionPriority.Low.Value
+INPUT_PRIORITY = Enum.ContextActionPriority.High.Value
+FREECAM_MACRO_KB = {Enum.KeyCode.LeftShift, Enum.KeyCode.P}
+
+NAV_GAIN = Vector3.new(1, 1, 1)*64
+PAN_GAIN = Vector2.new(0.75, 1)*8
+
+PITCH_LIMIT = math.rad(90)
+
+VEL_STIFFNESS = 1.5
+PAN_STIFFNESS = 1.0
+
+Spring = {} do
+	Spring.__index = Spring
+
+	function Spring.new(freq, pos)
+		local self = setmetatable({}, Spring)
+		self.f = freq
+		self.p = pos
+		self.v = pos*0
+		return self
+	end
+
+	function Spring:Update(dt, goal)
+		local f = self.f*2*math.pi
+		local p0 = self.p
+		local v0 = self.v
+
+		local offset = goal - p0
+		local decay = math.exp(-f*dt)
+
+		local p1 = goal + (v0*dt - offset*(f*dt + 1))*decay
+		local v1 = (f*dt*(offset*f - v0) + v0)*decay
+
+		self.p = p1
+		self.v = v1
+
+		return p1
+	end
+
+	function Spring:Reset(pos)
+		self.p = pos
+		self.v = pos*0
 	end
 end
-function kp1(inputObject, gameProcessedEvent)
-	if not gameProcessedEvent and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('xFC') then
-		if inputObject.KeyCode == Enum.KeyCode.W or inputObject.KeyCode == Enum.KeyCode.Up then
-			k1 = true
-			cam1 = cs end
-		if inputObject.KeyCode == Enum.KeyCode.S or inputObject.KeyCode == Enum.KeyCode.Down then
-			k2 = true
-			cam1 = (cs*-1) end
-		if inputObject.KeyCode == Enum.KeyCode.A or inputObject.KeyCode == Enum.KeyCode.Left then
-			k3 = true
-			cam2 = cs end
-		if inputObject.KeyCode == Enum.KeyCode.D or inputObject.KeyCode == Enum.KeyCode.Right then
-			k4 = true
-			cam2 = (cs*-1) end
-		if inputObject.KeyCode == Enum.KeyCode.E or inputObject.KeyCode == Enum.KeyCode.Space then
-			k5 = true
-			cam3 = cs end
-		if inputObject.KeyCode == Enum.KeyCode.Q or inputObject.KeyCode == Enum.KeyCode.LeftControl then
-			k6 = true
-			cam3 = (cs*-1) end
+
+cameraPos = Vector3.new()
+cameraRot = Vector2.new()
+
+velSpring = Spring.new(VEL_STIFFNESS, Vector3.new())
+panSpring = Spring.new(PAN_STIFFNESS, Vector2.new())
+
+Input = {} do
+	
+	keyboard = {
+		W = 0,
+		A = 0,
+		S = 0,
+		D = 0,
+		E = 0,
+		Q = 0,
+		Up = 0,
+		Down = 0,
+		LeftShift = 0,
+	}
+
+	mouse = {
+		Delta = Vector2.new(),
+		MouseWheel = 0,
+	}
+
+	NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
+	PAN_MOUSE_SPEED    = Vector2.new(1, 1)*(math.pi/64)
+	NAV_ADJ_SPEED      = 0.75
+	NAV_SHIFT_MUL      = 0.25
+
+	navSpeed = 1
+
+	function Input.Vel(dt)
+		navSpeed = math.clamp(navSpeed + dt*(keyboard.Up - keyboard.Down)*NAV_ADJ_SPEED, 0.01, 4)
+
+		kKeyboard = Vector3.new(
+			keyboard.D - keyboard.A,
+			keyboard.E - keyboard.Q,
+			keyboard.S - keyboard.W
+		)*NAV_KEYBOARD_SPEED
+
+		shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+
+		return (kKeyboard)*(navSpeed*(shift and NAV_SHIFT_MUL or 1))
+	end
+	
+		function Input.Pan(dt)
+			kMouse = mouse.Delta*PAN_MOUSE_SPEED
+			mouse.Delta = Vector2.new()
+			return kMouse
+		end
+	
+	do
+		function Keypress(action, state, input)
+			keyboard[input.KeyCode.Name] = state == Enum.UserInputState.Begin and 1 or 0
+			return Enum.ContextActionResult.Sink
+		end
+
+		function MousePan(action, state, input)
+			delta = input.Delta
+			mouse.Delta = Vector2.new(-delta.y, -delta.x)
+			return Enum.ContextActionResult.Sink
+		end
+
+		function MouseWheel(action, state, input)
+			mouse[input.UserInputType.Name] = -input.Position.z
+			return Enum.ContextActionResult.Sink
+		end
+
+		function Zero(t)
+			for k, v in pairs(t) do
+				t[k] = v*0
+			end
+		end
+
+		function Input.StartCapture()
+			ContextActionService:BindActionAtPriority("FreecamKeyboard", Keypress, false, INPUT_PRIORITY,
+				Enum.KeyCode.W,
+				Enum.KeyCode.A,
+				Enum.KeyCode.S,
+				Enum.KeyCode.D,
+				Enum.KeyCode.E,
+				Enum.KeyCode.Q,
+				Enum.KeyCode.Up,
+				Enum.KeyCode.Down
+			)
+			ContextActionService:BindActionAtPriority("FreecamMousePan",          MousePan,   false, INPUT_PRIORITY, Enum.UserInputType.MouseMovement)
+		end
+
+		function Input.StopCapture()
+			navSpeed = 1
+			Zero(keyboard)
+			Zero(mouse)
+			ContextActionService:UnbindAction("FreecamKeyboard")
+			ContextActionService:UnbindAction("FreecamMousePan")
+			ContextActionService:UnbindAction("FreecamMouseWheel")
+		end
 	end
 end
-UserInputService.InputBegan:connect(kp1)
-function kp2(inputObject, gameProcessedEvent)
-	if not gameProcessedEvent and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('xFC') then
-		if inputObject.KeyCode == Enum.KeyCode.W or inputObject.KeyCode == Enum.KeyCode.Up then
-			k1 = false
-			if k2 == false then
-				cam1 = 0
+
+function GetFocusDistance(cameraFrame)
+	local znear = 0.1
+	local viewport = Camera.ViewportSize
+	local projy = 2*math.tan(cameraFov/2)
+	local projx = viewport.x/viewport.y*projy
+	local fx = cameraFrame.rightVector
+	local fy = cameraFrame.upVector
+	local fz = cameraFrame.lookVector
+
+	local minVect = Vector3.new()
+	local minDist = 512
+
+	for x = 0, 1, 0.5 do
+		for y = 0, 1, 0.5 do
+			local cx = (x - 0.5)*projx
+			local cy = (y - 0.5)*projy
+			local offset = fx*cx - fy*cy + fz
+			local origin = cameraFrame.p + offset*znear
+			local _, hit = workspace:FindPartOnRay(Ray.new(origin, offset.unit*minDist))
+			local dist = (hit - origin).magnitude
+			if minDist > dist then
+				minDist = dist
+				minVect = offset.unit
 			end
 		end
-		if inputObject.KeyCode == Enum.KeyCode.S or inputObject.KeyCode == Enum.KeyCode.Down then
-			k2 = false
-			if k1 == false then
-				cam1 = 0
-			end
-		end
-		if inputObject.KeyCode == Enum.KeyCode.A or inputObject.KeyCode == Enum.KeyCode.Left then
-			k3= false
-			if k4== false then
-				cam2 = 0
-			end
-		end
-		if inputObject.KeyCode == Enum.KeyCode.D or inputObject.KeyCode == Enum.KeyCode.Right then
-			k4 = false
-			if k3 == false then
-				cam2 = 0
-			end
-		end
-		if inputObject.KeyCode == Enum.KeyCode.E or inputObject.KeyCode == Enum.KeyCode.Space then
-			k5 = false
-			if k6 == false then
-				cam3 = 0
-			end
-		end
-		if inputObject.KeyCode == Enum.KeyCode.Q or inputObject.KeyCode == Enum.KeyCode.LeftControl then
-			k6 = false
-			if k5 == false then
-				cam3 = 0
-			end
-		end
+	end
+
+	return fz:Dot(minVect)*minDist
+end
+
+local function StepFreecam(dt)
+	local vel = velSpring:Update(dt, Input.Vel(dt))
+	local pan = panSpring:Update(dt, Input.Pan(dt))
+
+	local zoomFactor = math.sqrt(math.tan(math.rad(70/2))/math.tan(math.rad(cameraFov/2)))
+
+	cameraRot = cameraRot + pan*PAN_GAIN*(dt/zoomFactor)
+	cameraRot = Vector2.new(math.clamp(cameraRot.x, -PITCH_LIMIT, PITCH_LIMIT), cameraRot.y%(2*math.pi))
+
+	local cameraCFrame = CFrame.new(cameraPos)*CFrame.fromOrientation(cameraRot.x, cameraRot.y, 0)*CFrame.new(vel*NAV_GAIN*dt)
+	cameraPos = cameraCFrame.p
+
+	Camera.CFrame = cameraCFrame
+	Camera.Focus = cameraCFrame*CFrame.new(0, 0, -GetFocusDistance(cameraCFrame))
+	Camera.FieldOfView = cameraFov
+end
+
+local PlayerState = {} do
+	mouseBehavior = ""
+	mouseIconEnabled = ""
+	cameraType = ""
+	cameraFocus = ""
+	cameraCFrame = ""
+	cameraFieldOfView =  ""
+	screenGuis = {}
+
+	function PlayerState.Push()
+		cameraFieldOfView = Camera.FieldOfView
+		Camera.FieldOfView = 70
+
+		cameraType = Camera.CameraType
+		Camera.CameraType = Enum.CameraType.Custom
+
+		cameraCFrame = Camera.CFrame
+		cameraFocus = Camera.Focus
+
+		mouseIconEnabled = UserInputService.MouseIconEnabled
+		UserInputService.MouseIconEnabled = true
+
+		mouseBehavior = UserInputService.MouseBehavior
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+
+	function PlayerState.Pop()
+		Camera.FieldOfView = 70
+
+		Camera.CameraType = cameraType
+		cameraType = nil
+
+		Camera.CFrame = cameraCFrame
+		cameraCFrame = nil
+
+		Camera.Focus = cameraFocus
+		cameraFocus = nil
+
+		UserInputService.MouseIconEnabled = mouseIconEnabled
+		mouseIconEnabled = nil
+
+		UserInputService.MouseBehavior = mouseBehavior
+		mouseBehavior = nil
 	end
 end
-UserInputService.InputEnded:connect(kp2)
-fcEnabled = false
-function FC()
-	if not Players.LocalPlayer.Character:FindFirstChild('xFC') then
-		local fc = Instance.new('Part',Players.LocalPlayer.Character)
-		fc.CanCollide = false
-		fc.Anchored = true
-		fc.Transparency = 1
-		fc.Size = Vector3.new(1,1,1)
-		fc.Name = 'xFC'
-		fc.CFrame = Players.LocalPlayer.Character.Head.CFrame
-		local cam = workspace.CurrentCamera
-		cam.CameraSubject = fc
-		cam.CameraType = 'Custom'
-		movecam()
-	end
+
+function StartFreecam()
+	local cameraCFrame = Camera.CFrame
+	cameraRot = Vector2.new(cameraCFrame:toEulerAnglesYXZ())
+	cameraPos = cameraCFrame.p
+	cameraFov = Camera.FieldOfView
+
+	velSpring:Reset(Vector3.new())
+	panSpring:Reset(Vector2.new())
+
+	PlayerState.Push()
+	RunService:BindToRenderStep("Freecam", Enum.RenderPriority.Camera.Value, StepFreecam)
+	Input.StartCapture()
 end
-function UFC()
-	if Players.LocalPlayer.Character:FindFirstChild('xFC') then
-		Players.LocalPlayer.Character:FindFirstChild('xFC'):Destroy()
-		local cam = workspace.CurrentCamera
-		cam.CameraSubject = Players.LocalPlayer.Character.Humanoid
-		cam.CameraType = 'Custom'
-		Players.LocalPlayer.Character.Head.Anchored = false
-	end
+
+function StopFreecam()
+	Input.StopCapture()
+	RunService:UnbindFromRenderStep("Freecam")
+	PlayerState.Pop()
+	workspace.Camera.FieldOfView = 70	
 end
 
 addcmd('freecam',{'fc'},
 	function(args, speaker)
-	FC()
+	StartFreecam()
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
 	function(args, speaker)
-	UFC()
+	StopFreecam()
 end)
 
 addcmd('freecamspeed',{'fcspeed'},
 	function(args, speaker)
-	if isNumber(args[1]) then
-		cs = args[1]
+	if args[1] and isNumber(args[1]) then
+		local FCspeed = args[1]
+		NAV_KEYBOARD_SPEED = Vector3.new(FCspeed, FCspeed, FCspeed)
+	else
+		NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 	end
 end)
 
-addcmd('fctp',{'freecamtp','freecamteleport'},
+addcmd('gotocamera',{'gotocam'},
 	function(args, speaker)
-	if not speaker.Character:FindFirstChild('xFC') then
-		notify('Freecam TP','Freecam must be enabled to teleport to it')
-	else
-		speaker.Character.Head.Anchored = false
-		speaker.Character.HumanoidRootPart.CFrame = speaker.Character:FindFirstChild('xFC').CFrame
-		speaker.Character.Head.Anchored = true
-	end
+	speaker.Character.HumanoidRootPart.CFrame = workspace.Camera.CFrame
 end)
 
 addcmd('fov',{},
@@ -6568,14 +6748,19 @@ addcmd('f3x',{'fex'},
 end)
 
 addcmd('antiafk',{'antiidle'},
-	function(args, speaker)
-	if getconnections then
-		for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do 
-  		  v:Disable()
+    function(args, speaker)
+	local GC = getconnections or get_signal_cons
+	if GC then
+		for i,v in pairs(GC(Players.LocalPlayer.Idled)) do
+			if v["Disable"] then
+				v["Disable"](v)
+			elseif v["Disconnect"] then
+				v["Disconnect"](v)
+			end
 		end
 		notify('Anti Idle','Anti idle is enabled')
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing getconnections)')
 	end
 end)
 
@@ -7559,19 +7744,34 @@ addcmd('creeper',{},
 	end
 end)
 
-bangplr = nil
-
 addcmd('bang',{'rape'},
 	function(args, speaker)
 	if not r15(speaker) then
+		execCmd('unbang')
+		wait()
 		local players = getPlayer(args[1], speaker)
 		for i,v in pairs(players)do
 			bangAnim = Instance.new("Animation")
 			bangAnim.AnimationId = "rbxassetid://148840371"
 			bang = speaker.Character.Humanoid:LoadAnimation(bangAnim)
 			bang:Play(.1, 1, 1)
-			bang:AdjustSpeed(3)
+			if args[2] then
+				bang:AdjustSpeed(args[2])
+			else
+				bang:AdjustSpeed(3)
+			end
 			bangplr = Players[v].Name
+			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+				bangLoop:Disconnect()
+				bang:Stop()
+				bangAnim:Destroy()
+				bangDied:Disconnect()
+			end)
+			bangLoop = game:GetService('RunService').Stepped:connect(function()
+				pcall(function()
+					Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Players[bangplr].Character.HumanoidRootPart.CFrame
+				end)
+			end)
 		end
 	else
 		notify('R6 Required','This command requires the r6 rig type')
@@ -7580,9 +7780,12 @@ end)
 
 addcmd('unbang',{'unrape'},
 	function(args, speaker)
-	bangplr = nil
-	bang:Stop()
-	bangAnim:Destroy()
+	if bangLoop then
+		bangLoop:Disconnect()
+		bangDied:Disconnect()
+		bang:Stop()
+		bangAnim:Destroy()
+	end
 end)
 
 addcmd('bringpart',{},
@@ -7752,6 +7955,8 @@ end)
 
 addcmd('hatspin',{'spinhats'},
 	function(args, speaker)
+	execCmd('unhatspin')
+	wait(.5)
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
 		local keep = Instance.new("BodyPosition") keep.Parent = v.Handle keep.Name = "no"
 		local spin = Instance.new("BodyAngularVelocity") spin.Parent = v.Handle spin.Name = "ha"
@@ -7765,18 +7970,24 @@ addcmd('hatspin',{'spinhats'},
 		end
 		keep.P = 30000
 		keep.D = 50
-		spinning = keep
-		spinenabled = true
+		spinhats = game:GetService('RunService').Stepped:connect(function()
+			pcall(function()
+				keep.Position = Players.LocalPlayer.Character.Head.Position
+			end)
+		end)
 	end
 end)
 
 addcmd('unhatspin',{'unspinhats'},
 	function(args, speaker)
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
+		if spinhats then
+			spinhats:Disconnect()
+		end
 		v.Parent = workspace
-		wait(0.5)
 		v.Handle.no:Destroy()
 		v.Handle.ha:Destroy()
+		wait()
 		v.Parent = speaker.Character
 	end
 end)
@@ -7974,6 +8185,7 @@ addcmd('reach',{},
 					local a = Instance.new("SelectionBox",v.Handle)
 					a.Name = "SelectionBoxCreated"
 					a.Adornee = v.Handle
+					v.Handle.Massless = true
 					v.Handle.Size = Vector3.new(0.5,0.5,args[1])
 					v.GripPos = Vector3.new(0,0,0)
 					speaker.Character.Humanoid:UnequipTools()
@@ -7983,6 +8195,7 @@ addcmd('reach',{},
 					local a = Instance.new("SelectionBox",v.Handle)
 					a.Name = "SelectionBoxCreated"
 					a.Adornee = v.Handle
+					v.Handle.Massless = true
 					v.Handle.Size = Vector3.new(0.5,0.5,60)
 					v.GripPos = Vector3.new(0,0,0)
 					speaker.Character.Humanoid:UnequipTools()
