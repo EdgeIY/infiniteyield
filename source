@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.8.1'
+ver = '3.8.2'
 
 Players = game:GetService("Players")
 
@@ -6591,7 +6591,9 @@ end)
 
 addcmd('fixcam',{'restorecam'},
 	function(args, speaker)
-	UFC()
+	if fcLoaded then
+		StopFreecam()
+	end
 	workspace.CurrentCamera:remove()
 	wait(.1)
 	repeat wait() until speaker.Character ~= nil
