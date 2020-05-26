@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.8.2'
+ver = '3.8.3'
 
 Players = game:GetService("Players")
 
@@ -6348,8 +6348,8 @@ addcmd('freecam',{'fc'},
 		cameraPos = Vector3.new()
 		cameraRot = Vector2.new()
 		
-		velSpring = Spring.new(1.5, Vector3.new())
-		panSpring = Spring.new(1.0, Vector2.new())
+		velSpring = Spring.new(5, Vector3.new())
+		panSpring = Spring.new(5, Vector2.new())
 		
 		Input = {} do
 			
