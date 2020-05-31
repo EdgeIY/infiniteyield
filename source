@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.8.3'
+ver = '3.8.4'
 
 Players = game:GetService("Players")
 
@@ -2380,7 +2380,7 @@ lastMessage = nil
 lastLabel = nil
 dupeCount = 1
 function CreateLabel(Name, Text)
-	if lastMessage == Text then
+	if lastMessage == Name..Text then
 		dupeCount = dupeCount+1
 		lastLabel.Text = Time()..' - ['..Name..']: '..Text..' (x'..dupeCount..')'
 	else
@@ -2399,7 +2399,7 @@ function CreateLabel(Name, Text)
 		end
 		local tl = Instance.new('TextLabel', scrollCL)
 		local il = Instance.new('Frame', tl)
-		lastMessage = Text
+		lastMessage = Name..Text
 		lastLabel = tl
 		tl.Name = Name
 		tl.ZIndex = 10
@@ -3446,9 +3446,9 @@ if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("Player
 			end
 		end
 	end
-	chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+	local chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
 			
-	chatbox.FocusLost:connect(function(enterpressed)
+	function chatboxFocusLost(enterpressed)
 		if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
 			IndexContents('',true)
 			if canvasPos ~= nil then
@@ -3457,13 +3457,17 @@ if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("Player
 			end
 		end
 		minimizeHolder()
-	end)
+	end
+	local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
 	
 	Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
 		wait()
 		if newbar:FindFirstChild('BoxFrame') then
 			chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-			chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+			if chatboxFunc then chatboxFunc:Disconnect() end
+			chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+			if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
+			chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
 		end
 	end)
 else
@@ -4451,7 +4455,7 @@ function ESP(plr)
 				end)
 				local function espLoop()
 					if PARENT:FindFirstChild(plr.Name..'_ESP') then
-						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') then
+						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
 							local pos = math.floor((Players.LocalPlayer.Character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
@@ -8162,30 +8166,30 @@ currentToolSize = ""
 currentGripPos = ""
 addcmd('reach',{},
 	function(args, speaker)
-	if args[1] then
-		for i,v in pairs(speaker.Character:GetDescendants()) do
-			if v:IsA("Tool") then
-				if args[1] then
-					currentToolSize = v.Handle.Size
-					currentGripPos = v.GripPos
-					local a = Instance.new("SelectionBox",v.Handle)
-					a.Name = "SelectionBoxCreated"
-					a.Adornee = v.Handle
-					v.Handle.Massless = true
-					v.Handle.Size = Vector3.new(0.5,0.5,args[1])
-					v.GripPos = Vector3.new(0,0,0)
-					speaker.Character.Humanoid:UnequipTools()
-				else
-					currentToolSize = v.Handle.Size
-					currentGripPos = v.GripPos
-					local a = Instance.new("SelectionBox",v.Handle)
-					a.Name = "SelectionBoxCreated"
-					a.Adornee = v.Handle
-					v.Handle.Massless = true
-					v.Handle.Size = Vector3.new(0.5,0.5,60)
-					v.GripPos = Vector3.new(0,0,0)
-					speaker.Character.Humanoid:UnequipTools()
-				end
+	execCmd('unreach')
+	wait()
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") then
+			if args[1] then
+				currentToolSize = v.Handle.Size
+				currentGripPos = v.GripPos
+				local a = Instance.new("SelectionBox",v.Handle)
+				a.Name = "SelectionBoxCreated"
+				a.Adornee = v.Handle
+				v.Handle.Massless = true
+				v.Handle.Size = Vector3.new(0.5,0.5,args[1])
+				v.GripPos = Vector3.new(0,0,0)
+				speaker.Character.Humanoid:UnequipTools()
+			else
+				currentToolSize = v.Handle.Size
+				currentGripPos = v.GripPos
+				local a = Instance.new("SelectionBox",v.Handle)
+				a.Name = "SelectionBoxCreated"
+				a.Adornee = v.Handle
+				v.Handle.Massless = true
+				v.Handle.Size = Vector3.new(0.5,0.5,60)
+				v.GripPos = Vector3.new(0,0,0)
+				speaker.Character.Humanoid:UnequipTools()
 			end
 		end
 	end
@@ -8334,13 +8338,9 @@ function kill(speaker,target,fast)
 			repeat wait(0.1)
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
 			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
-			local goBack
-			goBack = speaker.CharacterAdded:Connect(function()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
-				wait(0.3)
-				speaker.Character.HumanoidRootPart.CFrame = NormPos
-				goBack:Disconnect()
-			end)
+			wait(0.3)
+			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
+			print('OK!')
 		end
 	else
 		notify('Tool Required','You need to have a tool to use this command')
@@ -8400,13 +8400,8 @@ function bring(speaker,target,fast)
 			repeat wait(0.1)
 				hrp.CFrame = NormPos
 			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
-			local goBack
-			goBack = speaker.CharacterAdded:Connect(function()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
-				wait(0.3)
-				speaker.Character.HumanoidRootPart.CFrame = NormPos
-				goBack:Disconnect()
-			end)
+			wait(0.3)
+			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
 		notify('Tool Required','You need to have a tool to use this command')
