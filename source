@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.8.4'
+ver = '3.9'
 
 Players = game:GetService("Players")
 
@@ -3509,6 +3509,7 @@ CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
+CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
@@ -3541,8 +3542,8 @@ CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
-CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos', DESC = 'Notifies you the coordinates of your character'}
-CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos', DESC = 'Copies the coordinates of your character to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
+CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
 CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
 CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where you last died'}
@@ -3581,6 +3582,7 @@ CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is 70)'}
 CMDs[#CMDs + 1] = {NAME = 'fixcam / restorecam', DESC = 'Fixes camera'}
 CMDs[#CMDs + 1] = {NAME = 'enableshiftlock / enablesl', DESC = 'Enables the shift lock option'}
+CMDs[#CMDs + 1] = {NAME = 'lookat [plr]', DESC = 'Moves your camera view to a player'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
@@ -3591,11 +3593,16 @@ CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes 
 CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
+CMDs[#CMDs + 1] = {NAME = 'invisibleparts / invisparts (CLIENT)', DESC = 'Shows invisible parts'}
+CMDs[#CMDs + 1] = {NAME = 'uninvisibleparts / uninvisparts (CLIENT)', DESC = 'Makes parts affected by invisparts return to normal'}
+CMDs[#CMDs + 1] = {NAME = 'deleteinvisparts / dip (CLIENT)', DESC = 'Deletes invisible parts'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
-CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'gotopartdelay [num]', DESC = 'Adjusts how quickly you teleport to each part (default is 0.1)'}
+CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
+CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd', DESC = 'Uses all click detectors in a game'}
 CMDs[#CMDs + 1] = {NAME = 'simulationradius / simradius', DESC = 'Sets your SimulationRadius to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
@@ -3652,6 +3659,8 @@ CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip heigh
 CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower [num]', DESC = 'Change a players jump height'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num]', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
+CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
+CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'disables nosit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
 CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
 CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
@@ -4445,12 +4454,31 @@ function ESP(plr)
 				TextLabel.TextStrokeTransparency = 0
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Bottom
 				local espLoopFunc
-				plr.CharacterAdded:Connect(function()
+				local teamChange
+				local addedFunc
+				addedFunc = plr.CharacterAdded:Connect(function()
 					if ESPenabled then
 						espLoopFunc:Disconnect()
+						teamChange:Disconnect()
 						ESPholder:Destroy()
 						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
 						ESP(plr)
+						addedFunc:Disconnect()
+					else
+						teamChange:Disconnect()
+						addedFunc:Disconnect()
+					end
+				end)
+				teamChange = plr:GetPropertyChangedSignal("TeamColor"):connect(function()
+					if ESPenabled then
+						espLoopFunc:Disconnect()
+						addedFunc:Disconnect()
+						ESPholder:Destroy()
+						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						ESP(plr)
+						teamChange:Disconnect()
+					else
+						teamChange:Disconnect()
 					end
 				end)
 				local function espLoop()
@@ -4460,6 +4488,8 @@ function ESP(plr)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
+						teamChange:Disconnect()
+						addedFunc:Disconnect()
 						espLoopFunc:Disconnect()
 					end
 				end
@@ -4493,12 +4523,36 @@ function CHMS(plr)
 					a.Color = plr.TeamColor
 				end
 			end
-			plr.CharacterAdded:Connect(function()
+			local addedFunc
+			local teamChange
+			local CHMSremoved
+			addedFunc = plr.CharacterAdded:Connect(function()
 				if CHMSenabled then
 					ESPholder:Destroy()
+					teamChange:Disconnect()
 					repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
 					CHMS(plr)
+					addedFunc:Disconnect()
+				else
+					teamChange:Disconnect()
+					addedFunc:Disconnect()
 				end
+			end)
+			teamChange = plr:GetPropertyChangedSignal("TeamColor"):connect(function()
+				if CHMSenabled then
+					ESPholder:Destroy()
+					addedFunc:Disconnect()
+					repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+					CHMS(plr)
+					teamChange:Disconnect()
+				else
+					teamChange:Disconnect()
+				end
+			end)
+			CHMSremoved = ESPholder.AncestryChanged:connect(function()
+				teamChange:Disconnect()
+				addedFunc:Disconnect()
+				CHMSremoved:Disconnect()
 			end)
 		end
 	end)
@@ -4546,21 +4600,42 @@ function Locate(plr)
 				TextLabel.TextStrokeTransparency = 0
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Bottom
 				local lcLoopFunc
-				plr.CharacterAdded:Connect(function()
+				local addedFunc
+				local teamChange
+				addedFunc = plr.CharacterAdded:Connect(function()
 					if ESPholder ~= nil and ESPholder.Parent ~= nil then
 						lcLoopFunc:Disconnect()
+						teamChange:Disconnect()
 						ESPholder:Destroy()
 						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
 						Locate(plr)
+						addedFunc:Disconnect()
+					else
+						teamChange:Disconnect()
+						addedFunc:Disconnect()
+					end
+				end)
+				teamChange = plr:GetPropertyChangedSignal("TeamColor"):connect(function()
+					if ESPholder ~= nil and ESPholder.Parent ~= nil then
+						lcLoopFunc:Disconnect()
+						addedFunc:Disconnect()
+						ESPholder:Destroy()
+						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						Locate(plr)
+						teamChange:Disconnect()
+					else
+						teamChange:Disconnect()
 					end
 				end)
 				local function lcLoop()
 					if PARENT:FindFirstChild(plr.Name..'_LC') then
-						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') then
+						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
 							local pos = math.floor((Players.LocalPlayer.Character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
+						teamChange:Disconnect()
+						addedFunc:Disconnect()
 						lcLoopFunc:Disconnect()
 					end
 				end
@@ -6126,6 +6201,12 @@ addcmd('clearerror',{'clearerrors'},
 	game:GetService("GuiService"):ClearError()
 end)
 
+addcmd('volume',{'vol'},
+	function(args, speaker)
+	local level = args[1]/10
+	UserSettings():GetService("UserGameSettings").MasterVolume = level
+end)
+
 addcmd('esp',{},
 	function(args, speaker)
 	if not CHMSenabled then
@@ -6270,6 +6351,9 @@ end)
 viewing = nil
 addcmd('view',{'spectate'},
 	function(args, speaker)
+	if fcLoaded then
+		StopFreecam()
+	end
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		if viewDied then
@@ -6279,14 +6363,10 @@ addcmd('view',{'spectate'},
 		viewing = Players[v]
 		notify('Spectate','Viewing ' .. Players[v].Name)
 		local function viewDiedFunc()
-			viewDied = Players[v].CharacterAdded:Connect(function()
-				repeat wait() until Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart')
-				workspace.CurrentCamera.CameraSubject = Players[v].Character
-				viewDied:Disconnect()
-				viewDiedFunc()
-			end)
+			repeat wait() until Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart')
+			workspace.CurrentCamera.CameraSubject = Players[v].Character
 		end
-		viewDiedFunc()
+		viewDied = Players[v].CharacterAdded:connect(viewDiedFunc)
 	end
 end)
 
@@ -6593,6 +6673,29 @@ addcmd('fov',{},
 	end
 end)
 
+preMaxZoom = Players.LocalPlayer.CameraMaxZoomDistance
+preMinZoom = Players.LocalPlayer.CameraMinZoomDistance
+addcmd('lookat',{},
+	function(args, speaker)
+	if speaker.CameraMaxZoomDistance ~= 0.5 then
+		preMaxZoom = speaker.CameraMaxZoomDistance
+		preMinZoom = speaker.CameraMinZoomDistance
+	end
+	speaker.CameraMaxZoomDistance = 0.5
+	speaker.CameraMinZoomDistance = 0.5
+	wait()
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local target = Players[v].Character
+		if target and target:FindFirstChild('Head') then
+			workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.p, target.Head.CFrame.p)
+			wait(0.1)
+		end
+	end
+	speaker.CameraMaxZoomDistance = preMaxZoom
+	speaker.CameraMinZoomDistance = preMinZoom
+end)
+
 addcmd('fixcam',{'restorecam'},
 	function(args, speaker)
 	if fcLoaded then
@@ -6639,89 +6742,99 @@ end)
 
 addcmd('unlockws',{'unlockworkspace'},
 	function(args, speaker)
-    local function unlock(instance) 
-        for i,v in pairs(instance:GetChildren()) do
-            if v:IsA("BasePart") then
-                v.Locked = false
-            end
-            unlock(v)
-        end
-    end
-    unlock(workspace)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Locked = false
+		end
+	end
 end)
 
 addcmd('lockws',{'lockworkspace'},
-	function(args, speaker)
-    local function lock(instance) 
-        for i,v in pairs(instance:GetChildren()) do
-            if v:IsA("BasePart") then
-                v.Locked = true
-            end
-            lock(v)
-        end
-    end
-    lock(workspace)
+	function(args, speaker) 
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Locked = true
+		end
+	end
 end)
 
 addcmd('delete',{'remove'},
 	function(args, speaker)
-	part = getstring(1)
-    local function dels(instance)
-        for i,v in pairs(instance:GetDescendants())do
-            if v.Name:lower() == part:lower() then v:Destroy() end
-            dels(v)
-        end
-    end
-    dels(workspace)
-notify('Item(s) Deleted','Deleted ' ..getstring(1))
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() then
+			v:Destroy()
+		end
+	end
+	notify('Item(s) Deleted','Deleted ' ..getstring(1))
 end)
 
 addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},
 	function(args, speaker)
-	part = getstring(1)
-    local function dels(instance)
-        for i,v in pairs(instance:GetDescendants())do
-            if v.ClassName:lower() == part:lower() then v:Destroy() end
-            dels(v)
-        end
-    end
-    dels(workspace)
-notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.ClassName:lower() == getstring(1):lower() then
+			v:Destroy()
+		end
+	end
+	notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
 addcmd('chardelete',{'charremove','cd'},
 	function(args, speaker)
-	part = getstring(1)
-    local function dels(instance)
-        for i,v in pairs(instance:GetDescendants())do
-            if v.Name:lower() == part:lower() then v:Destroy() end
-            dels(v)
-        end
-    end
-    dels(speaker.Character)
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() then
+			v:Destroy()
+		end
+	end
 	notify('Item(s) Deleted','Deleted ' ..getstring(1))
 end)
 
 addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremoveclassname','cdc'},
 	function(args, speaker)
-	part = getstring(1)
-    local function dels(instance)
-        for i,v in pairs(instance:GetDescendants())do
-            if v.ClassName:lower() == part:lower() then v:Destroy() end
-            dels(v)
-        end
-    end
-    dels(speaker.Character)
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v.ClassName:lower() == getstring(1):lower() then
+			v:Destroy()
+		end
+	end
 	notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
 addcmd('deletevelocity',{'dv','removevelocity','removeforces'},
 	function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants())do
+	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("BodyVelocity") or v:IsA("BodyGyro") or v:IsA("RocketPropulsion") or v:IsA("BodyThrust") or v:IsA("BodyAngularVelocity") or v:IsA("AngularVelocity") or v:IsA("BodyForce") or v:IsA("VectorForce") or v:IsA("LineForce") then
 			v:Destroy()
 		end
 	end
+end)
+
+addcmd('deleteinvisparts',{'deleteinvisibleparts','dip'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BasePart") and v.Transparency == 1 and v.CanCollide then
+			v:Destroy()
+		end
+	end
+end)
+
+shownParts = {}
+addcmd('invisibleparts',{'invisparts'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BasePart") and v.Transparency == 1 then
+			if not table.find(shownParts,v) then
+				table.insert(shownParts,v)
+			end
+			v.Transparency = 0
+		end
+	end
+end)
+
+addcmd('uninvisibleparts',{'uninvisparts'},
+	function(args, speaker)
+	for i,v in pairs(shownParts) do
+		v.Transparency = 1
+	end
+	shownParts = {}
 end)
 
 addcmd('btools',{},
@@ -6876,11 +6989,11 @@ addcmd('goto',{'to'},
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChild("Humanoid") then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
+			wait(0.1)
 			speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)
 		end
-		wait(0.1)
 	end
 end)
 
@@ -6890,9 +7003,15 @@ addcmd('vehiclegoto',{'vgoto'},
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
 			local seat = speaker.Character.Humanoid.SeatPart
-			seat.Parent.Parent:MoveTo(Players[v].Character.HumanoidRootPart.Position)
+			local vehicleModel = seat.Parent
+			repeat
+				if vehicleModel.ClassName ~= "Model" then
+					vehicleModel = vehicleModel.Parent
+				end
+			until vehicleModel.ClassName == "Model"
+			wait(0.1)
+			vehicleModel:MoveTo(Players[v].Character.HumanoidRootPart.Position)
 		end
-		wait(0.1)
 	end
 end)
 
@@ -6902,8 +7021,9 @@ addcmd('clientbring',{'cbring'},
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
 			if Players[v].Character:FindFirstChild("Humanoid") then
-				Players[v].Character:FindFirstChildOfClass('Humanoid').Jump = true
+				Players[v].Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
+			wait()
 			Players[v].Character.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)
 		end
 	end
@@ -6918,7 +7038,10 @@ addcmd('loopbring',{},
 			if Players[v].Name ~= speaker.Name and not FindInTable(bringT, Players[v].Name) then
 				table.insert(bringT, Players[v].Name)
 				local pchar=Players[v].Character
-				pchar:FindFirstChildOfClass('Humanoid').Jump = true
+				if pchar:FindFirstChild("Humanoid") then
+					pchar:FindFirstChildOfClass('Humanoid').Sit = false
+				end
+				wait()
 				local distance = 3
 				if args[2] and isNumber(args[2]) then
 					distance = args[2]
@@ -6928,13 +7051,13 @@ addcmd('loopbring',{},
 					lDelay = args[3]
 				end
 				repeat
-				pchar = Players[v].Character
-				for i,c in pairs(players) do
-					if pchar~= nil and pchar:FindFirstChild("HumanoidRootPart") and speaker.Character ~= nil and speaker.Character:FindFirstChild("HumanoidRootPart") then
-						pchar.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame + Vector3.new(distance,1,0)
+					pchar = Players[v].Character
+					for i,c in pairs(players) do
+						if pchar~= nil and pchar:FindFirstChild("HumanoidRootPart") and speaker.Character ~= nil and speaker.Character:FindFirstChild("HumanoidRootPart") then
+							pchar.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame + Vector3.new(distance,1,0)
+						end
 					end
-				end
-				wait(lDelay)
+					wait(lDelay)
 				until not FindInTable(bringT, Players[v].Name)
 			end
 		end)
@@ -6958,7 +7081,7 @@ addcmd('walkto',{'follow'},
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChild("Humanoid") then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			walkto = true
 			repeat wait()
@@ -7040,8 +7163,11 @@ addcmd('refresh',{'re'},
 	refresh(speaker)
 end)
 
+invisRunning = false
 addcmd('invisible',{'invis'},
 	function(args, speaker)
+	if invisRunning then return end
+	invisRunning = true
 	-- Full credit to AmokahFox @V3rmillion
 	local Player = speaker
 	repeat wait(.1) until Player.Character
@@ -7101,6 +7227,7 @@ addcmd('invisible',{'invis'},
 	            Character:FindFirstChildWhichIsA'Humanoid':Destroy()
 	            IsInvis = false
 	            InvisibleCharacter.Parent = nil
+				invisRunning = false
 	        end)
 	    elseif IsInvis == false then
 	        pcall(function()
@@ -7113,8 +7240,10 @@ addcmd('invisible',{'invis'},
 	    end
 	end
 	
-	local invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+	local invisDied
+	invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
 	    Respawn()
+		invisDied:Disconnect()
 	end)
 	
 	
@@ -7138,6 +7267,7 @@ addcmd('invisible',{'invis'},
 	function TurnVisible()
 	    if IsInvis == false then return end
 		invisFix:Disconnect()
+		invisDied:Disconnect()
 	    CF = workspace.CurrentCamera.CFrame
 	    Character = Character
 	    local CF_1 = Player.Character.HumanoidRootPart.CFrame
@@ -7146,9 +7276,13 @@ addcmd('invisible',{'invis'},
 	    Player.Character = Character
 	    Character.Parent = workspace
 	    IsInvis = false
-	    execCmd('fixcam')
 	    Player.Character.Animate.Disabled = true
 	    Player.Character.Animate.Disabled = false
+		invisDied = Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+		    Respawn()
+			invisDied:Disconnect()
+		end)
+		invisRunning = false
 	end
 	notify('Invisible','You now appear invisible to other players')
 end)
@@ -7322,6 +7456,29 @@ addcmd('sit',{},
 	speaker.Character:FindFirstChildOfClass("Humanoid").Sit = true
 end)
 
+function noSitFunc()
+	wait()
+	if Players.LocalPlayer.Character.Humanoid.Sit then
+		Players.LocalPlayer.Character.Humanoid.Sit = false
+	end
+end
+addcmd('nosit',{},
+	function(args, speaker)
+	if noSit then noSit:Disconnect() nositDied:Disconnect() end
+	noSit = Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Sit"):connect(noSitFunc)
+	local function nositDiedFunc()
+		repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('Humanoid')
+		noSit:Disconnect()
+		noSit = Players.LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Sit"):connect(noSitFunc)
+	end
+	nositDied = speaker.CharacterAdded:connect(nositDiedFunc)
+end)
+
+addcmd('unnosit',{},
+	function(args, speaker)
+	if noSit then noSit:Disconnect() nositDied:Disconnect() end
+end)
+
 addcmd('jump',{},
 	function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
@@ -7447,19 +7604,25 @@ end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},
 	function(args, speaker)
-	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		local pos = tostring(char.HumanoidRootPart.Position)
-		notify('Current Position',pos)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		local char = Players[v].Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			local pos = tostring(char.HumanoidRootPart.Position)
+			notify('Current Position',pos)
+		end
 	end
 end)
 
 addcmd('copyposition',{'copypos'},
 	function(args, speaker)
-	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		local pos = tostring(char.HumanoidRootPart.Position)
-		toClipboard(pos)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		local char = Players[v].Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			local pos = tostring(char.HumanoidRootPart.Position)
+			toClipboard(pos)
+		end
 	end
 end)
 
@@ -7591,6 +7754,9 @@ addcmd('loopgoto',{},
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		loopgoto = nil
+		if speaker.Character:FindFirstChild("Humanoid") then
+			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+		end
 		wait()
 		loopgoto = Players[v]
 		local distance = 3
@@ -7601,7 +7767,6 @@ addcmd('loopgoto',{},
 		if args[3] and isNumber(args[3]) then
 			lDelay = args[3]
 		end
-		speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
 		repeat
 			if Players[v].Character ~= nil then
 				speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(distance,1,0)
@@ -7787,16 +7952,6 @@ addcmd('bringpart',{},
 	end
 end)
 
-addcmd('gotopart',{},
-	function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
-		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
-			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
-			wait(0.1)
-		end
-	end
-end)
-
 addcmd('bringpartclass',{'bpc'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
@@ -7806,13 +7961,37 @@ addcmd('bringpartclass',{'bpc'},
 	end
 end)
 
+gotopartDelay = 0.1
+addcmd('gotopart',{},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
+			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+		end
+	end
+end)
+
 addcmd('gotopartclass',{'gpc'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
 			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
-			wait(0.1)
 		end
+	end
+end)
+
+addcmd('gotopartdelay',{},
+	function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		gotopartDelay = args[1]
 	end
 end)
 
@@ -7822,6 +8001,19 @@ addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},
 		if v:IsA("ClickDetector") then
 			v.MaxActivationDistance = math.huge
 		end
+	end
+end)
+
+addcmd('fireclickdetectors',{'firecd','firecds'},
+	function(args, speaker)
+	if fireclickdetector then
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("ClickDetector") then
+				fireclickdetector(v)
+			end
+		end
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing fireclickdetector)')
 	end
 end)
 
@@ -7937,8 +8129,9 @@ addcmd('flashback',{'diedtp'},
 	function(args, speaker)
 	if lastDeath ~= nil then
 		if speaker.Character:FindFirstChild("Humanoid") then
-			speaker.Character:FindFirstChildOfClass('Humanoid').Jump = true
+			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 		end
+		wait()
 		speaker.Character.HumanoidRootPart.CFrame = lastDeath
 	end
 end)
