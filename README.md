@@ -4,7 +4,7 @@ The best command line script for roblox.
 
 Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
 
- - Currently 208 commands
+ - Currently 217 commands
  - Open Source
  - 6 years of development
 
