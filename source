@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.9.2'
+ver = '3.9.3'
 
 Players = game:GetService("Players")
 
@@ -4392,17 +4392,18 @@ Cmdbar.Focused:Connect(function()
 end)
 
 UserInputService.InputBegan:Connect(function(input)
-	if not Cmdbar or Cmdbar:IsFocused() then return end
-	if input.KeyCode == Enum.KeyCode.Up then
-		historyCount = historyCount + 1
-		if historyCount > #cmdHistory then historyCount = #cmdHistory end
-		Cmdbar.Text = cmdHistory[historyCount] or ""
-		Cmdbar.CursorPosition = 1020
-	elseif input.KeyCode == Enum.KeyCode.Down then
-		historyCount = historyCount - 1
-		if historyCount < 1 then historyCount = 1 end
-		Cmdbar.Text = cmdHistory[historyCount] or ""
-		Cmdbar.CursorPosition = 1020
+	if Cmdbar and Cmdbar:IsFocused() then
+		if input.KeyCode == Enum.KeyCode.Up then
+			historyCount = historyCount + 1
+			if historyCount > #cmdHistory then historyCount = #cmdHistory end
+			Cmdbar.Text = cmdHistory[historyCount] or ""
+			Cmdbar.CursorPosition = 1020
+		elseif input.KeyCode == Enum.KeyCode.Down then
+			historyCount = historyCount - 1
+			if historyCount < 1 then historyCount = 1 end
+			Cmdbar.Text = cmdHistory[historyCount] or ""
+			Cmdbar.CursorPosition = 1020
+		end
 	end
 end)
 
