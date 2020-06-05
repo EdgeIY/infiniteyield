@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.9'
+ver = '3.9.1'
 
 Players = game:GetService("Players")
 
@@ -3657,7 +3657,7 @@ CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhy
 CMDs[#CMDs + 1] = {NAME = 'speed / ws [num]', DESC = 'Change your walkspeed'}
 CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip height'}
 CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower [num]', DESC = 'Change a players jump height'}
-CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num]', DESC = 'Change your gravity'}
+CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
 CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'disables nosit'}
@@ -6381,6 +6381,7 @@ addcmd('unview',{'unspectate'},
 end)
 
 fcLoaded = false
+NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 addcmd('freecam',{'fc'},
 	function(args, speaker)
 	if fcLoaded == false then
@@ -6453,7 +6454,6 @@ addcmd('freecam',{'fc'},
 				Delta = Vector2.new(),
 			}
 		
-			NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 			PAN_MOUSE_SPEED = Vector2.new(1, 1)*(math.pi/64)
 			NAV_ADJ_SPEED = 0.75
 			NAV_SHIFT_MUL = 0.25
@@ -6647,15 +6647,11 @@ end)
 
 addcmd('freecamspeed',{'fcspeed'},
 	function(args, speaker)
-	if fcLoaded then
-		if args[1] and isNumber(args[1]) then
-			local FCspeed = args[1]
-			NAV_KEYBOARD_SPEED = Vector3.new(FCspeed, FCspeed, FCspeed)
-		else
-			NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
-		end
+	if args[1] and isNumber(args[1]) then
+		local FCspeed = args[1]
+		NAV_KEYBOARD_SPEED = Vector3.new(FCspeed, FCspeed, FCspeed)
 	else
-		notify('Freecam Speed','Run freecam before adjusting its speed')
+		NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 	end
 end)
 
@@ -7310,7 +7306,7 @@ addcmd('weaken',{},
 	for _, child in pairs(speaker.Character:GetDescendants()) do
 		if child.ClassName == "Part" then
 			if args[1] then
-				child.CustomPhysicalProperties = PhysicalProperties.new(args[1], 0.3, 0.5)
+				child.CustomPhysicalProperties = PhysicalProperties.new(-args[1], 0.3, 0.5)
 			else
 				child.CustomPhysicalProperties = PhysicalProperties.new(0, 0.3, 0.5)
 			end
