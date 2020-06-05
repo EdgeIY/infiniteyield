@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.9.1'
+ver = '3.9.2'
 
 Players = game:GetService("Players")
 
@@ -1112,7 +1112,7 @@ Holder_6.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
 Holder_6.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_6.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_6.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Holder_6.ScrollBarThickness = 8
+Holder_6.ScrollBarThickness = 0
 Holder_6.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_6.VerticalScrollBarInset = 'Always'
 Holder_6.ZIndex = 10
@@ -1353,7 +1353,7 @@ Holder_4.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
 Holder_4.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_4.CanvasSize = UDim2.new(0, 0, 0, 0)
 Holder_4.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Holder_4.ScrollBarThickness = 8
+Holder_4.ScrollBarThickness = 0
 Holder_4.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_4.VerticalScrollBarInset = 'Always'
 Holder_4.ZIndex = 10
@@ -1546,7 +1546,7 @@ Holder_5.BackgroundTransparency = 1
 Holder_5.BorderSizePixel = 0
 Holder_5.Position = UDim2.new(0, 0, 0, 0)
 Holder_5.Selectable = false
-Holder_5.Size = UDim2.new(0, 250, 0, 140)
+Holder_5.Size = UDim2.new(0, 250, 0, 145)
 Holder_5.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
 Holder_5.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_5.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -4397,10 +4397,12 @@ UserInputService.InputBegan:Connect(function(input)
         historyCount = historyCount + 1
         if historyCount > #cmdHistory then historyCount = #cmdHistory end
         Holder.Cmdbar.Text = cmdHistory[historyCount] or ""
+		Holder.Cmdbar.CursorPosition = 1020
     elseif input.KeyCode == Enum.KeyCode.Down then
         historyCount = historyCount - 1
         if historyCount < 1 then historyCount = 1 end
         Holder.Cmdbar.Text = cmdHistory[historyCount] or ""
+		Holder.Cmdbar.CursorPosition = 1020
     end
 end)
 
