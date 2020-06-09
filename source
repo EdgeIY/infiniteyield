@@ -1889,7 +1889,7 @@ end
 function toClipboard(String)
 	local clipBoard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 	if clipBoard then
-		clipBoard("https://discord.io/infiniteyield")
+		clipBoard(String)
 		notify('Clipboard','Copied to clipboard')
 	else
 		notify('Clipboard',"Your exploit doesn't have the ability to use the clipboard")
