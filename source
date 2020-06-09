@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '3.9.3'
+ver = '4.0'
 
 Players = game:GetService("Players")
 
@@ -20,7 +20,6 @@ Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
 Dark = Instance.new("Frame")
 Cmdbar = Instance.new("TextBox")
-Dark_2 = Instance.new("Frame")
 CMDsF = Instance.new("ScrollingFrame")
 SettingsButton = Instance.new("ImageButton")
 ColorsButton = Instance.new("ImageButton")
@@ -28,21 +27,18 @@ Settings = Instance.new("Frame")
 Prefix = Instance.new("TextLabel")
 PrefixBox = Instance.new("TextBox")
 Keybinds = Instance.new("TextLabel")
-Select = Instance.new("TextButton")
 StayOpen = Instance.new("TextLabel")
 Button = Instance.new("Frame")
 On = Instance.new("TextButton")
 Positions = Instance.new("TextLabel")
-Select_8 = Instance.new("TextButton")
-SpawnC = Instance.new("TextLabel")
-Select_2 = Instance.new("TextButton")
+EventBind = Instance.new("TextLabel")
 Plugins = Instance.new("TextLabel")
-Select_9 = Instance.new("TextButton")
 Example = Instance.new("TextButton")
 Notification = Instance.new("Frame")
 Title_2 = Instance.new("TextLabel")
 Text_2 = Instance.new("TextLabel")
-CloseButton = Instance.new("ImageButton")
+CloseButton = Instance.new("TextButton")
+CloseImage = Instance.new("ImageLabel")
 Tooltip = Instance.new("Frame")
 Title_3 = Instance.new("TextLabel")
 Description = Instance.new("TextLabel")
@@ -51,9 +47,6 @@ Logo = Instance.new("ImageLabel")
 Credits = Instance.new("TextBox")
 KeybindsFrame = Instance.new("Frame")
 Close = Instance.new("TextButton")
-SpawnCFrame = Instance.new("Frame")
-Holder_6 = Instance.new("ScrollingFrame")
-Close_5 = Instance.new("TextButton")
 Add = Instance.new("TextButton")
 Delete = Instance.new("TextButton")
 Holder_2 = Instance.new("ScrollingFrame")
@@ -86,18 +79,8 @@ Fling = Instance.new("TextLabel")
 Select_12 = Instance.new("TextButton")
 shadow_2 = Instance.new("Frame")
 PopupText_2 = Instance.new("TextLabel")
-Exit_2 = Instance.new("ImageButton")
-SpawnCEditor = Instance.new("Frame")
-background_4 = Instance.new("Frame")
-Cmdbar_3 = Instance.new("TextBox")
-Add_5 = Instance.new("TextButton")
-DelayNum = Instance.new("TextBox")
-DelayT = Instance.new("TextLabel")
-Directions_3 = Instance.new("TextLabel")
-Dark_11 = Instance.new("Frame")
-shadow_4 = Instance.new("Frame")
-PopupText_4 = Instance.new("TextLabel")
-Exit_4 = Instance.new("ImageButton")
+Exit_2 = Instance.new("TextButton")
+ExitImage_2 = Instance.new("ImageLabel")
 PositionsFrame = Instance.new("Frame")
 Close_3 = Instance.new("TextButton")
 Delete_5 = Instance.new("TextButton")
@@ -115,11 +98,8 @@ Example_3 = Instance.new("Frame")
 Text_4 = Instance.new("TextLabel")
 Delete_4 = Instance.new("TextButton")
 Aliases = Instance.new("TextLabel")
-Select_7 = Instance.new("TextButton")
 PluginsFrame = Instance.new("Frame")
 Close_4 = Instance.new("TextButton")
-Add_4 = Instance.new("TextButton")
-Delete_8 = Instance.new("TextButton")
 Add_3 = Instance.new("TextButton")
 Holder_5 = Instance.new("ScrollingFrame")
 Example_5 = Instance.new("Frame")
@@ -135,12 +115,15 @@ About = Instance.new("TextLabel")
 Directions_2 = Instance.new("TextLabel")
 shadow_3 = Instance.new("Frame")
 PopupText_3 = Instance.new("TextLabel")
-Exit_3 = Instance.new("ImageButton")
+Exit_3 = Instance.new("TextButton")
+ExitImage_3 = Instance.new("ImageLabel")
 logsDrag = Instance.new("Frame")
 shadow = Instance.new("Frame")
-Hide = Instance.new("ImageButton")
+Hide = Instance.new("TextButton")
+HideImage = Instance.new("ImageLabel")
 PopupText = Instance.new("TextLabel")
-Exit = Instance.new("ImageButton")
+Exit = Instance.new("TextButton")
+ExitImage = Instance.new("ImageLabel")
 background = Instance.new("Frame")
 Clear = Instance.new("TextButton")
 Toggle = Instance.new("TextButton")
@@ -157,7 +140,8 @@ Directions_4 = Instance.new("TextLabel")
 Path = Instance.new("TextLabel")
 shadow_5 = Instance.new("Frame")
 PopupText_5 = Instance.new("TextLabel")
-Exit_5 = Instance.new("ImageButton")
+Exit_4 = Instance.new("TextButton")
+ExitImage_5 = Instance.new("ImageLabel")
 
 PARENT = nil
 if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
@@ -186,7 +170,6 @@ Holder.Name = randomString()
 Holder.Parent = PARENT
 Holder.Active = true
 Holder.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Holder.BackgroundTransparency = 0.2
 Holder.BorderSizePixel = 0
 Holder.Position = UDim2.new(1, -250, 1, -220)
 Holder.Size = UDim2.new(0, 250, 0, 220)
@@ -196,14 +179,15 @@ table.insert(shade2,Holder)
 Title.Name = "Title"
 Title.Parent = Holder
 Title.Active = true
-Title.BackgroundTransparency = 1
+Title.BackgroundColor3 = Color3.fromRGB(36,36,37)
 Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
-Title.TextSize = 20
+Title.TextSize = 18
 Title.Text = "Infinite Yield FE v"..ver
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
+table.insert(shade1,Title)
 table.insert(text1,Title)
 
 Dark.Name = "Dark"
@@ -220,26 +204,15 @@ Cmdbar.Name = "Cmdbar"
 Cmdbar.Parent = Holder
 Cmdbar.BackgroundTransparency = 1
 Cmdbar.BorderSizePixel = 0
-Cmdbar.Position = UDim2.new(0, 0, 0, 25)
-Cmdbar.Size = UDim2.new(0, 250, 0, 20)
+Cmdbar.Position = UDim2.new(0, 5, 0, 20)
+Cmdbar.Size = UDim2.new(0, 240, 0, 25)
 Cmdbar.Font = Enum.Font.SourceSans
-Cmdbar.TextSize = 20
-Cmdbar.Text = "Command Bar"
+Cmdbar.TextSize = 18
+Cmdbar.TextXAlignment = Enum.TextXAlignment.Left
 Cmdbar.TextColor3 = Color3.new(1, 1, 1)
-Cmdbar.TextScaled = true
-Cmdbar.TextWrapped = true
+Cmdbar.Text = ""
 Cmdbar.ZIndex = 10
-table.insert(text1,Cmdbar)
-
-Dark_2.Name = "Dark"
-Dark_2.Parent = Holder
-Dark_2.Active = true
-Dark_2.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
-Dark_2.BorderSizePixel = 0
-Dark_2.Position = UDim2.new(0, 0, 0, 20)
-Dark_2.Size = UDim2.new(0, 250, 0, 5)
-Dark_2.ZIndex = 10
-table.insert(shade1,Dark_2)
+Cmdbar.PlaceholderText = "Command Bar"
 
 CMDsF.Name = "CMDs"
 CMDsF.Parent = Holder
@@ -265,13 +238,14 @@ SettingsButton.Size = UDim2.new(0, 20, 0, 20)
 SettingsButton.Image = "rbxassetid://1204397029"
 SettingsButton.ZIndex = 10
 
-ColorsButton.Name = "ColorsButton"
-ColorsButton.Parent = Holder
-ColorsButton.BackgroundTransparency = 1
-ColorsButton.Position = UDim2.new(0, 212, 0, 2)
-ColorsButton.Size = UDim2.new(0, 16, 0, 16)
-ColorsButton.Image = "rbxassetid://4911962991"
-ColorsButton.ZIndex = 10
+ReferenceButton = Instance.new("ImageButton")
+ReferenceButton.Name = "ReferenceButton"
+ReferenceButton.Parent = Holder
+ReferenceButton.BackgroundTransparency = 1
+ReferenceButton.Position = UDim2.new(0, 212, 0, 2)
+ReferenceButton.Size = UDim2.new(0, 16, 0, 16)
+ReferenceButton.Image = "rbxassetid://3523243755"
+ReferenceButton.ZIndex = 10
 
 Settings.Name = "Settings"
 Settings.Parent = Holder
@@ -283,15 +257,32 @@ Settings.Size = UDim2.new(0, 250, 0, 175)
 Settings.ZIndex = 10
 table.insert(shade1,Settings)
 
+SettingsHolder = Instance.new("ScrollingFrame")
+SettingsHolder.Name = "Holder"
+SettingsHolder.Parent = Settings
+SettingsHolder.BackgroundTransparency = 1
+SettingsHolder.BorderSizePixel = 0
+SettingsHolder.Size = UDim2.new(1,0,1,0)
+SettingsHolder.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
+SettingsHolder.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.CanvasSize = UDim2.new(0, 0, 0, 235)
+SettingsHolder.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.ScrollBarThickness = 8
+SettingsHolder.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.VerticalScrollBarInset = 'Always'
+SettingsHolder.ZIndex = 10
+table.insert(scroll,SettingsHolder)
+
 Prefix.Name = "Prefix"
-Prefix.Parent = Settings
+Prefix.Parent = SettingsHolder
 Prefix.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 Prefix.BorderSizePixel = 0
-Prefix.Position = UDim2.new(0, 0, 0, 5)
-Prefix.Size = UDim2.new(0, 250, 0, 20)
+Prefix.BackgroundTransparency = 1
+Prefix.Position = UDim2.new(0, 5, 0, 5)
+Prefix.Size = UDim2.new(1, -10, 0, 20)
 Prefix.Font = Enum.Font.SourceSans
 Prefix.TextSize = 14
-Prefix.Text = "    Prefix"
+Prefix.Text = "Prefix"
 Prefix.TextColor3 = Color3.new(1, 1, 1)
 Prefix.TextXAlignment = Enum.TextXAlignment.Left
 Prefix.ZIndex = 10
@@ -302,7 +293,7 @@ PrefixBox.Name = "PrefixBox"
 PrefixBox.Parent = Prefix
 PrefixBox.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
 PrefixBox.BorderSizePixel = 0
-PrefixBox.Position = UDim2.new(0, 230, 0, 0)
+PrefixBox.Position = UDim2.new(1, -20, 0, 0)
 PrefixBox.Size = UDim2.new(0, 20, 0, 20)
 PrefixBox.Font = Enum.Font.SourceSansBold
 PrefixBox.TextSize = 14
@@ -312,73 +303,70 @@ PrefixBox.ZIndex = 10
 table.insert(shade3,PrefixBox)
 table.insert(text2,PrefixBox)
 
+function makeSettingsButton(name,iconID,off)
+	local button = Instance.new("TextButton")
+	button.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+	button.BorderSizePixel = 0
+	button.Position = UDim2.new(0,0,0,0)
+	button.Size = UDim2.new(1,0,0,25)
+	button.Text = ""
+	button.ZIndex = 10
+	local icon = Instance.new("ImageLabel",button)
+	icon.Name = "Icon"
+	icon.Position = UDim2.new(0,5,0,5)
+	icon.Size = UDim2.new(0,16,0,16)
+	icon.BackgroundTransparency = 1
+	icon.Image = iconID
+	icon.ZIndex = 10
+	if off then
+		icon.ScaleType = Enum.ScaleType.Crop
+		icon.ImageRectSize = Vector2.new(16,16)
+		icon.ImageRectOffset = Vector2.new(off,0)
+	end
+	local label = Instance.new("TextLabel",button)
+	label.Name = "ButtonLabel"
+	label.BackgroundTransparency = 1
+	label.Text = name
+	label.Position = UDim2.new(0,28,0,0)
+	label.Size = UDim2.new(1,-28,1,0)
+	label.Font = Enum.Font.SourceSans
+	label.TextColor3 = Color3.new(1, 1, 1)
+	label.TextSize = 14
+	label.ZIndex = 10
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	table.insert(shade2,button)
+	table.insert(text1,label)
+	return button
+end
+
+ColorsButton = makeSettingsButton("Edit Theme","rbxassetid://4911962991")
+ColorsButton.Position = UDim2.new(0,5,0,55)
+ColorsButton.Size = UDim2.new(1,-10,0,25)
+ColorsButton.Name = "Colors"
+ColorsButton.Parent = SettingsHolder
+
+Keybinds = makeSettingsButton("Edit Keybinds","rbxassetid://129697930")
+Keybinds.Position = UDim2.new(0, 5, 0, 85)
+Keybinds.Size = UDim2.new(1, -10, 0, 25)
 Keybinds.Name = "Keybinds"
-Keybinds.Parent = Settings
-Keybinds.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Keybinds.BorderSizePixel = 0
-Keybinds.Position = UDim2.new(0, 0, 0, 55)
-Keybinds.Size = UDim2.new(0, 250, 0, 20)
-Keybinds.Font = Enum.Font.SourceSans
-Keybinds.TextSize = 14
-Keybinds.Text = "    Keybinds"
-Keybinds.TextColor3 = Color3.new(1, 1, 1)
-Keybinds.TextXAlignment = Enum.TextXAlignment.Left
-Keybinds.ZIndex = 10
-table.insert(shade2,Keybinds)
-table.insert(text1,Keybinds)
+Keybinds.Parent = SettingsHolder
 
-Select.Name = "Select"
-Select.Parent = Keybinds
-Select.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select.BorderSizePixel = 0
-Select.Position = UDim2.new(0, 200, 0, 0)
-Select.Size = UDim2.new(0, 50, 0, 20)
-Select.Font = Enum.Font.SourceSans
-Select.TextSize = 14
-Select.Text = "Edit"
-Select.TextColor3 = Color3.new(0, 0, 0)
-Select.ZIndex = 10
-table.insert(shade3,Select)
-table.insert(text2,Select)
-
+Aliases = makeSettingsButton("Edit Aliases","rbxassetid://5147488658")
+Aliases.Position = UDim2.new(0, 5, 0, 115)
+Aliases.Size = UDim2.new(1, -10, 0, 25)
 Aliases.Name = "Aliases"
-Aliases.Parent = Settings
-Aliases.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Aliases.BorderSizePixel = 0
-Aliases.Position = UDim2.new(0, 0, 0, 80)
-Aliases.Size = UDim2.new(0, 250, 0, 20)
-Aliases.Font = Enum.Font.SourceSans
-Aliases.TextSize = 14
-Aliases.Text = "    Aliases"
-Aliases.TextColor3 = Color3.new(1, 1, 1)
-Aliases.TextXAlignment = Enum.TextXAlignment.Left
-Aliases.ZIndex = 10
-table.insert(shade2,Aliases)
-table.insert(text1,Aliases)
-
-Select_7.Name = "Select"
-Select_7.Parent = Aliases
-Select_7.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_7.BorderSizePixel = 0
-Select_7.Position = UDim2.new(0, 200, 0, 0)
-Select_7.Size = UDim2.new(0, 50, 0, 20)
-Select_7.Font = Enum.Font.SourceSans
-Select_7.TextSize = 14
-Select_7.Text = "Edit"
-Select_7.TextColor3 = Color3.new(0, 0, 0)
-Select_7.ZIndex = 10
-table.insert(shade3,Select_7)
-table.insert(text2,Select_7)
+Aliases.Parent = SettingsHolder
 
 StayOpen.Name = "StayOpen"
-StayOpen.Parent = Settings
+StayOpen.Parent = SettingsHolder
 StayOpen.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 StayOpen.BorderSizePixel = 0
-StayOpen.Position = UDim2.new(0, 0, 0, 30)
-StayOpen.Size = UDim2.new(0, 250, 0, 20)
+StayOpen.BackgroundTransparency = 1
+StayOpen.Position = UDim2.new(0, 5, 0, 30)
+StayOpen.Size = UDim2.new(1, -10, 0, 20)
 StayOpen.Font = Enum.Font.SourceSans
 StayOpen.TextSize = 14
-StayOpen.Text = "    Keep Menu Open"
+StayOpen.Text = "Keep Menu Open"
 StayOpen.TextColor3 = Color3.new(1, 1, 1)
 StayOpen.TextXAlignment = Enum.TextXAlignment.Left
 StayOpen.ZIndex = 10
@@ -389,7 +377,7 @@ Button.Name = "Button"
 Button.Parent = StayOpen
 Button.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
 Button.BorderSizePixel = 0
-Button.Position = UDim2.new(0, 230, 0, 0)
+Button.Position = UDim2.new(1, -20, 0, 0)
 Button.Size = UDim2.new(0, 20, 0, 20)
 Button.ZIndex = 10
 table.insert(shade3,Button)
@@ -407,92 +395,23 @@ On.Text = ""
 On.TextColor3 = Color3.new(0, 0, 0)
 On.ZIndex = 10
 
-Positions.Name = "Positions"
-Positions.Parent = Settings
-Positions.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Positions.BorderSizePixel = 0
-Positions.Position = UDim2.new(0, 0, 0, 105)
-Positions.Size = UDim2.new(0, 250, 0, 20)
-Positions.Font = Enum.Font.SourceSans
-Positions.TextSize = 14
-Positions.Text = "    Waypoints / Positions / Part TP"
-Positions.TextColor3 = Color3.new(1, 1, 1)
-Positions.TextXAlignment = Enum.TextXAlignment.Left
-Positions.ZIndex = 10
-table.insert(shade2,Positions)
-table.insert(text1,Positions)
+Positions = makeSettingsButton("Edit/Goto Waypoints","rbxassetid://5147488592")
+Positions.Position = UDim2.new(0, 5, 0, 145)
+Positions.Size = UDim2.new(1, -10, 0, 25)
+Positions.Name = "Waypoints"
+Positions.Parent = SettingsHolder
 
-Select_8.Name = "Select"
-Select_8.Parent = Positions
-Select_8.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_8.BorderSizePixel = 0
-Select_8.Position = UDim2.new(0, 200, 0, 0)
-Select_8.Size = UDim2.new(0, 50, 0, 20)
-Select_8.Font = Enum.Font.SourceSans
-Select_8.TextSize = 14
-Select_8.Text = "Edit / TP"
-Select_8.TextColor3 = Color3.new(0, 0, 0)
-Select_8.ZIndex = 10
-table.insert(shade3,Select_8)
-table.insert(text2,Select_8)
+EventBind = makeSettingsButton("Edit Event Binds","rbxassetid://5147695474",759)
+EventBind.Position = UDim2.new(0, 5, 0, 205)
+EventBind.Size = UDim2.new(1, -10, 0, 25)
+EventBind.Name = "EventBinds"
+EventBind.Parent = SettingsHolder
 
-SpawnC.Name = "SpawnC"
-SpawnC.Parent = Settings
-SpawnC.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-SpawnC.BorderSizePixel = 0
-SpawnC.Position = UDim2.new(0, 0, 0, 155)
-SpawnC.Size = UDim2.new(0, 250, 0, 20)
-SpawnC.Font = Enum.Font.SourceSans
-SpawnC.TextSize = 14
-SpawnC.Text = "    Spawn Commands"
-SpawnC.TextColor3 = Color3.new(1, 1, 1)
-SpawnC.TextXAlignment = Enum.TextXAlignment.Left
-SpawnC.ZIndex = 10
-table.insert(shade2,SpawnC)
-table.insert(text1,SpawnC)
-
-Select_2.Name = "Select"
-Select_2.Parent = SpawnC
-Select_2.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_2.BorderSizePixel = 0
-Select_2.Position = UDim2.new(0, 200, 0, 0)
-Select_2.Size = UDim2.new(0, 50, 0, 20)
-Select_2.Font = Enum.Font.SourceSans
-Select_2.TextSize = 14
-Select_2.Text = "Edit"
-Select_2.TextColor3 = Color3.new(0, 0, 0)
-Select_2.ZIndex = 10
-table.insert(shade3,Select_2)
-table.insert(text2,Select_2)
-
+Plugins = makeSettingsButton("Manage Plugins","rbxassetid://5147695474",743)
+Plugins.Position = UDim2.new(0, 5, 0, 175)
+Plugins.Size = UDim2.new(1, -10, 0, 25)
 Plugins.Name = "Plugins"
-Plugins.Parent = Settings
-Plugins.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Plugins.BorderSizePixel = 0
-Plugins.Position = UDim2.new(0, 0, 0, 130)
-Plugins.Size = UDim2.new(0, 250, 0, 20)
-Plugins.Font = Enum.Font.SourceSans
-Plugins.TextSize = 14
-Plugins.Text = "    Plugins"
-Plugins.TextColor3 = Color3.new(1, 1, 1)
-Plugins.TextXAlignment = Enum.TextXAlignment.Left
-Plugins.ZIndex = 10
-table.insert(shade2,Plugins)
-table.insert(text1,Plugins)
-
-Select_9.Name = "Select"
-Select_9.Parent = Plugins
-Select_9.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_9.BorderSizePixel = 0
-Select_9.Position = UDim2.new(0, 200, 0, 0)
-Select_9.Size = UDim2.new(0, 50, 0, 20)
-Select_9.Font = Enum.Font.SourceSans
-Select_9.TextSize = 14
-Select_9.Text = "Edit"
-Select_9.TextColor3 = Color3.new(0, 0, 0)
-Select_9.ZIndex = 10
-table.insert(shade3,Select_9)
-table.insert(text2,Select_9)
+Plugins.Parent = SettingsHolder
 
 Example.Name = "Example"
 Example.Parent = Holder
@@ -547,10 +466,17 @@ table.insert(text1,Text_2)
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = Notification
 CloseButton.BackgroundTransparency = 1
-CloseButton.Position = UDim2.new(0, 0, 0, 0)
+CloseButton.Position = UDim2.new(1, -20, 0, 0)
 CloseButton.Size = UDim2.new(0, 20, 0, 20)
-CloseButton.Image = "rbxassetid://2132544126"
+CloseButton.Text = ""
 CloseButton.ZIndex = 10
+
+CloseImage.Parent = CloseButton
+CloseImage.BackgroundColor3 = Color3.new(1, 1, 1)
+CloseImage.BackgroundTransparency = 1
+CloseImage.Position = UDim2.new(0, 5, 0, 5)
+CloseImage.Size = UDim2.new(0, 10, 0, 10)
+CloseImage.Image = "rbxassetid://5054663650"
 
 Tooltip.Name = randomString()
 Tooltip.Parent = PARENT
@@ -733,7 +659,7 @@ KeybindEditor.Name = randomString()
 KeybindEditor.Parent = PARENT
 KeybindEditor.Active = true
 KeybindEditor.BackgroundTransparency = 1
-KeybindEditor.Position = UDim2.new(0.5, -180, 0, -400)
+KeybindEditor.Position = UDim2.new(0.5, -180, 0, -500)
 KeybindEditor.Size = UDim2.new(0, 360, 0, 20)
 KeybindEditor.ZIndex = 10
 
@@ -777,7 +703,7 @@ BindTo.Parent = background_2
 BindTo.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
 BindTo.BorderSizePixel = 0
 BindTo.Position = UDim2.new(0, 10, 0, 95)
-BindTo.Size = UDim2.new(0, 115, 0, 75)
+BindTo.Size = UDim2.new(0, 115, 0, 50)
 BindTo.Font = Enum.Font.SourceSans
 BindTo.TextSize = 16
 BindTo.Text = "Click to bind"
@@ -785,6 +711,35 @@ BindTo.TextColor3 = Color3.new(1, 1, 1)
 BindTo.ZIndex = 10
 table.insert(shade2,BindTo)
 table.insert(text1,BindTo)
+
+BindTrigger = Instance.new("TextLabel")
+BindTrigger.Name = "TriggerLabel"
+BindTrigger.BackgroundTransparency = 1
+BindTrigger.Position = UDim2.new(0, 10, 0, 155)
+BindTrigger.Size = UDim2.new(0, 45, 0, 20)
+BindTrigger.Font = Enum.Font.SourceSans
+BindTrigger.TextSize = 14
+BindTrigger.Text = "Trigger:"
+BindTrigger.TextColor3 = Color3.new(1, 1, 1)
+BindTrigger.ZIndex = 10
+BindTrigger.TextXAlignment = Enum.TextXAlignment.Left
+BindTrigger.Parent = background_2
+table.insert(text1,BindTrigger)
+
+BindTriggerSelect = Instance.new("TextButton")
+BindTriggerSelect.Name = "BindTo"
+BindTriggerSelect.Parent = background_2
+BindTriggerSelect.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+BindTriggerSelect.BorderSizePixel = 0
+BindTriggerSelect.Position = UDim2.new(0, 60, 0, 155)
+BindTriggerSelect.Size = UDim2.new(0, 65, 0, 20)
+BindTriggerSelect.Font = Enum.Font.SourceSans
+BindTriggerSelect.TextSize = 16
+BindTriggerSelect.Text = "KeyDown"
+BindTriggerSelect.TextColor3 = Color3.new(1, 1, 1)
+BindTriggerSelect.ZIndex = 10
+table.insert(shade2,BindTriggerSelect)
+table.insert(text1,BindTriggerSelect)
 
 Add_2.Name = "Add"
 Add_2.Parent = background_2
@@ -808,13 +763,11 @@ Cmdbar_2.Position = UDim2.new(0, 150, 0, 20)
 Cmdbar_2.Size = UDim2.new(0, 150, 0, 20)
 Cmdbar_2.Font = Enum.Font.SourceSans
 Cmdbar_2.TextSize = 14
-Cmdbar_2.Text = "Command"
+Cmdbar_2.TextXAlignment = Enum.TextXAlignment.Left
 Cmdbar_2.TextColor3 = Color3.new(1, 1, 1)
-Cmdbar_2.TextScaled = true
-Cmdbar_2.TextWrapped = true
+Cmdbar_2.Text = ""
 Cmdbar_2.ZIndex = 10
-table.insert(shade2,Cmdbar_2)
-table.insert(text1,Cmdbar_2)
+Cmdbar_2.PlaceholderText = "Command"
 
 Toggles.Name = "Toggles"
 Toggles.Parent = background_2
@@ -1074,8 +1027,7 @@ table.insert(shade2,shadow_2)
 PopupText_2.Name = "PopupText"
 PopupText_2.Parent = shadow_2
 PopupText_2.BackgroundTransparency = 1
-PopupText_2.Position = UDim2.new(0, 51, 0, 0)
-PopupText_2.Size = UDim2.new(0.76, -16, 0.95, 0)
+PopupText_2.Size = UDim2.new(1, 0, 0.95, 0)
 PopupText_2.ZIndex = 10
 PopupText_2.Font = Enum.Font.SourceSans
 PopupText_2.TextSize = 14
@@ -1087,208 +1039,17 @@ table.insert(text1,PopupText_2)
 Exit_2.Name = "Exit"
 Exit_2.Parent = shadow_2
 Exit_2.BackgroundTransparency = 1
+Exit_2.Position = UDim2.new(1, -20, 0, 0)
 Exit_2.Size = UDim2.new(0, 20, 0, 20)
+Exit_2.Text = ""
 Exit_2.ZIndex = 10
-Exit_2.Image = "rbxassetid://2132544126"
 
-SpawnCFrame.Name = "SpawnCFrame"
-SpawnCFrame.Parent = Settings
-SpawnCFrame.Active = true
-SpawnCFrame.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
-SpawnCFrame.BorderSizePixel = 0
-SpawnCFrame.Position = UDim2.new(0, 0, 0, 175)
-SpawnCFrame.Size = UDim2.new(0, 250, 0, 175)
-SpawnCFrame.ZIndex = 10
-table.insert(shade1,SpawnCFrame)
-
-Holder_6.Name = "Holder"
-Holder_6.Parent = SpawnCFrame
-Holder_6.BackgroundTransparency = 1
-Holder_6.BorderSizePixel = 0
-Holder_6.Position = UDim2.new(0, 0, 0, 0)
-Holder_6.Selectable = false
-Holder_6.Size = UDim2.new(0, 250, 0, 145)
-Holder_6.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_6.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Holder_6.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_6.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Holder_6.ScrollBarThickness = 0
-Holder_6.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-Holder_6.VerticalScrollBarInset = 'Always'
-Holder_6.ZIndex = 10
-
-Close_5.Name = "Close"
-Close_5.Parent = SpawnCFrame
-Close_5.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Close_5.BorderSizePixel = 0
-Close_5.Position = UDim2.new(0, 205, 0, 150)
-Close_5.Size = UDim2.new(0, 40, 0, 20)
-Close_5.Font = Enum.Font.SourceSans
-Close_5.TextSize = 14
-Close_5.Text = "Close"
-Close_5.TextColor3 = Color3.new(1, 1, 1)
-Close_5.ZIndex = 10
-table.insert(shade2,Close_5)
-table.insert(text1,Close_5)
-
-Add_4.Name = "Add"
-Add_4.Parent = SpawnCFrame
-Add_4.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Add_4.BorderSizePixel = 0
-Add_4.Position = UDim2.new(0, 5, 0, 150)
-Add_4.Size = UDim2.new(0, 40, 0, 20)
-Add_4.Font = Enum.Font.SourceSans
-Add_4.TextSize = 14
-Add_4.Text = "Add"
-Add_4.TextColor3 = Color3.new(1, 1, 1)
-Add_4.ZIndex = 10
-table.insert(shade2,Add_4)
-table.insert(text1,Add_4)
-
-Delete_8.Name = "Delete"
-Delete_8.Parent = SpawnCFrame
-Delete_8.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Delete_8.BorderSizePixel = 0
-Delete_8.Position = UDim2.new(0, 50, 0, 150)
-Delete_8.Size = UDim2.new(0, 40, 0, 20)
-Delete_8.Font = Enum.Font.SourceSans
-Delete_8.TextSize = 14
-Delete_8.Text = "Clear"
-Delete_8.TextColor3 = Color3.new(1, 1, 1)
-Delete_8.ZIndex = 10
-table.insert(shade2,Delete_8)
-table.insert(text1,Delete_8)
-
-SpawnCEditor.Name = randomString()
-SpawnCEditor.Parent = PARENT
-SpawnCEditor.Active = true
-SpawnCEditor.BackgroundTransparency = 1
-SpawnCEditor.Position = UDim2.new(0.5, -180, 0, -400)
-SpawnCEditor.Size = UDim2.new(0, 360, 0, 20)
-SpawnCEditor.ZIndex = 10
-
-background_4.Name = "background"
-background_4.Parent = SpawnCEditor
-background_4.Active = true
-background_4.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
-background_4.BorderSizePixel = 0
-background_4.Position = UDim2.new(0, 0, 0, 20)
-background_4.Size = UDim2.new(0, 360, 0, 75)
-background_4.ZIndex = 10
-table.insert(shade1,background_4)
-
-Cmdbar_3.Name = "Cmdbar"
-Cmdbar_3.Parent = background_4
-Cmdbar_3.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Cmdbar_3.BorderSizePixel = 0
-Cmdbar_3.Position = UDim2.new(0, 150, 0, 45)
-Cmdbar_3.Size = UDim2.new(0, 150, 0, 20)
-Cmdbar_3.Font = Enum.Font.SourceSans
-Cmdbar_3.TextSize = 16
-Cmdbar_3.Text = "Command"
-Cmdbar_3.TextColor3 = Color3.new(1, 1, 1)
-Cmdbar_3.TextScaled = true
-Cmdbar_3.TextWrapped = true
-Cmdbar_3.ZIndex = 10
-table.insert(shade2,Cmdbar_3)
-table.insert(text1,Cmdbar_3)
-
-Add_5.Name = "Add"
-Add_5.Parent = background_4
-Add_5.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Add_5.BorderSizePixel = 0
-Add_5.Position = UDim2.new(0, 310, 0, 45)
-Add_5.Size = UDim2.new(0, 40, 0, 20)
-Add_5.Font = Enum.Font.SourceSans
-Add_5.TextSize = 14
-Add_5.Text = "Add"
-Add_5.TextColor3 = Color3.new(1, 1, 1)
-Add_5.ZIndex = 10
-table.insert(shade2,Add_5)
-table.insert(text1,Add_5)
-
-DelayNum.Name = "DelayNum"
-DelayNum.Parent = background_4
-DelayNum.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-DelayNum.BorderSizePixel = 0
-DelayNum.Position = UDim2.new(0, 310, 0, 15)
-DelayNum.Size = UDim2.new(0, 40, 0, 20)
-DelayNum.Font = Enum.Font.SourceSans
-DelayNum.TextSize = 14
-DelayNum.Text = "0"
-DelayNum.TextColor3 = Color3.new(1, 1, 1)
-DelayNum.TextScaled = true
-DelayNum.TextWrapped = true
-DelayNum.ZIndex = 10
-table.insert(shade2,DelayNum)
-table.insert(text1,DelayNum)
-
-DelayT.Name = "Delay"
-DelayT.Parent = background_4
-DelayT.BackgroundTransparency = 1
-DelayT.BorderSizePixel = 0
-DelayT.Position = UDim2.new(0, 150, 0, 15)
-DelayT.Size = UDim2.new(0, 150, 0, 20)
-DelayT.Font = Enum.Font.SourceSans
-DelayT.TextSize = 14
-DelayT.Text = "Delay (seconds) (0 for none)"
-DelayT.TextColor3 = Color3.new(1, 1, 1)
-DelayT.TextWrapped = true
-DelayT.ZIndex = 10
-table.insert(text1,DelayT)
-
-Directions_3.Name = "Directions"
-Directions_3.Parent = background_4
-Directions_3.BackgroundTransparency = 1
-Directions_3.BorderSizePixel = 0
-Directions_3.Position = UDim2.new(0, 20, 0, 10)
-Directions_3.Size = UDim2.new(0, 98, 0, 60)
-Directions_3.Font = Enum.Font.SourceSans
-Directions_3.TextSize = 14
-Directions_3.Text = "Spawn commands automatically get executed when you spawn."
-Directions_3.TextColor3 = Color3.new(1, 1, 1)
-Directions_3.TextWrapped = true
-Directions_3.TextYAlignment = Enum.TextYAlignment.Top
-Directions_3.ZIndex = 10
-table.insert(text1,Directions_3)
-
-Dark_11.Name = "Dark"
-Dark_11.Parent = background_4
-Dark_11.Active = true
-Dark_11.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Dark_11.BorderSizePixel = 0
-Dark_11.Position = UDim2.new(0.378, 0, 0, 0)
-Dark_11.Size = UDim2.new(0, 2, 0, 75)
-Dark_11.ZIndex = 10
-table.insert(shade2,Dark_11)
-
-shadow_4.Name = "shadow"
-shadow_4.Parent = SpawnCEditor
-shadow_4.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-shadow_4.BorderSizePixel = 0
-shadow_4.Size = UDim2.new(0, 360, 0, 20)
-shadow_4.ZIndex = 10
-table.insert(shade2,shadow_4)
-
-PopupText_4.Name = "PopupText"
-PopupText_4.Parent = shadow_4
-PopupText_4.BackgroundTransparency = 1
-PopupText_4.Position = UDim2.new(0, 51, 0, 0)
-PopupText_4.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-PopupText_4.ZIndex = 10
-PopupText_4.Font = Enum.Font.SourceSans
-PopupText_4.TextSize = 14
-PopupText_4.Text = "Set Spawn Commands"
-PopupText_4.TextColor3 = Color3.new(1, 1, 1)
-PopupText_4.TextWrapped = true
-table.insert(text1,PopupText_4)
-
-Exit_4.Name = "Exit"
-Exit_4.Parent = shadow_4
-Exit_4.BackgroundTransparency = 1
-Exit_4.Size = UDim2.new(0, 20, 0, 20)
-Exit_4.ZIndex = 10
-Exit_4.Image = "rbxassetid://2132544126"
+ExitImage_2.Parent = Exit_2
+ExitImage_2.BackgroundColor3 = Color3.new(1, 1, 1)
+ExitImage_2.BackgroundTransparency = 1
+ExitImage_2.Position = UDim2.new(0, 5, 0, 5)
+ExitImage_2.Size = UDim2.new(0, 10, 0, 10)
+ExitImage_2.Image = "rbxassetid://5054663650"
 
 PositionsFrame.Name = "PositionsFrame"
 PositionsFrame.Parent = Settings
@@ -1599,7 +1360,7 @@ PluginEditor.Parent = PARENT
 PluginEditor.BorderSizePixel = 0
 PluginEditor.Active = true
 PluginEditor.BackgroundTransparency = 1
-PluginEditor.Position = UDim2.new(0.5, -180, 0, -400)
+PluginEditor.Position = UDim2.new(0.5, -180, 0, -500)
 PluginEditor.Size = UDim2.new(0, 360, 0, 20)
 PluginEditor.ZIndex = 10
 
@@ -1617,7 +1378,6 @@ Dark_9.Name = "Dark"
 Dark_9.Parent = background_3
 Dark_9.Active = true
 Dark_9.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Dark_9.BackgroundTransparency = 0
 Dark_9.BorderSizePixel = 0
 Dark_9.Position = UDim2.new(0, 222, 0, 0)
 Dark_9.Size = UDim2.new(0, 2, 0, 160)
@@ -1701,8 +1461,7 @@ table.insert(shade2,shadow_3)
 PopupText_3.Name = "PopupText"
 PopupText_3.Parent = shadow_3
 PopupText_3.BackgroundTransparency = 1
-PopupText_3.Position = UDim2.new(0, 51, 0, 0)
-PopupText_3.Size = UDim2.new(0.76, -16, 0.95, 0)
+PopupText_3.Size = UDim2.new(1, 0, 0.95, 0)
 PopupText_3.ZIndex = 10
 PopupText_3.Font = Enum.Font.SourceSans
 PopupText_3.TextSize = 14
@@ -1714,9 +1473,17 @@ table.insert(text1,PopupText_3)
 Exit_3.Name = "Exit"
 Exit_3.Parent = shadow_3
 Exit_3.BackgroundTransparency = 1
+Exit_3.Position = UDim2.new(1, -20, 0, 0)
 Exit_3.Size = UDim2.new(0, 20, 0, 20)
+Exit_3.Text = ""
 Exit_3.ZIndex = 10
-Exit_3.Image = "rbxassetid://2132544126"
+
+ExitImage_3.Parent = Exit_3
+ExitImage_3.BackgroundColor3 = Color3.new(1, 1, 1)
+ExitImage_3.BackgroundTransparency = 1
+ExitImage_3.Position = UDim2.new(0, 5, 0, 5)
+ExitImage_3.Size = UDim2.new(0, 10, 0, 10)
+ExitImage_3.Image = "rbxassetid://5054663650"
 
 logsDrag.Name = randomString()
 logsDrag.Parent = PARENT
@@ -1738,17 +1505,22 @@ table.insert(shade2,shadow)
 Hide.Name = "Hide"
 Hide.Parent = shadow
 Hide.BackgroundTransparency = 1
-Hide.Position = UDim2.new(0, 20, 0, 0)
+Hide.Position = UDim2.new(1, -40, 0, 0)
 Hide.Size = UDim2.new(0, 20, 0, 20)
+Hide.Text = ""
 Hide.ZIndex = 10
-Hide.Image = "rbxassetid://2406617031"
-Hide.ImageTransparency = 0.5
+
+HideImage.Parent = Hide
+HideImage.BackgroundColor3 = Color3.new(1, 1, 1)
+HideImage.BackgroundTransparency = 1
+HideImage.Position = UDim2.new(0, 3, 0, 3)
+HideImage.Size = UDim2.new(0, 14, 0, 14)
+HideImage.Image = "rbxassetid://2406617031"
 
 PopupText.Name = "PopupText"
 PopupText.Parent = shadow
 PopupText.BackgroundTransparency = 1
-PopupText.Position = UDim2.new(0, 48, 0, 0)
-PopupText.Size = UDim2.new(0.76, -16, 0.95, 0)
+PopupText.Size = UDim2.new(1, 0, 0.95, 0)
 PopupText.ZIndex = 10
 PopupText.Font = Enum.Font.SourceSans
 PopupText.TextSize = 14
@@ -1760,9 +1532,17 @@ table.insert(text1,PopupText)
 Exit.Name = "Exit"
 Exit.Parent = shadow
 Exit.BackgroundTransparency = 1
+Exit.Position = UDim2.new(1, -20, 0, 0)
 Exit.Size = UDim2.new(0, 20, 0, 20)
+Exit.Text = ""
 Exit.ZIndex = 10
-Exit.Image = "rbxassetid://2132544126"
+
+ExitImage.Parent = Exit
+ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+ExitImage.BackgroundTransparency = 1
+ExitImage.Position = UDim2.new(0, 5, 0, 5)
+ExitImage.Size = UDim2.new(0, 10, 0, 10)
+ExitImage.Image = "rbxassetid://5054663650"
 
 background.Name = "background"
 background.Parent = logsDrag
@@ -1882,7 +1662,7 @@ ToPartFrame.Name = randomString()
 ToPartFrame.Parent = PARENT
 ToPartFrame.Active = true
 ToPartFrame.BackgroundTransparency = 1
-ToPartFrame.Position = UDim2.new(0.5, -180, 0, -400)
+ToPartFrame.Position = UDim2.new(0.5, -180, 0, -500)
 ToPartFrame.Size = UDim2.new(0, 360, 0, 20)
 ToPartFrame.ZIndex = 10
 
@@ -1966,8 +1746,7 @@ table.insert(shade2,shadow_5)
 PopupText_5.Name = "PopupText"
 PopupText_5.Parent = shadow_5
 PopupText_5.BackgroundTransparency = 1
-PopupText_5.Position = UDim2.new(0, 51, 0, 0)
-PopupText_5.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
+PopupText_5.Size = UDim2.new(1, 0, 0.95, 0)
 PopupText_5.ZIndex = 10
 PopupText_5.Font = Enum.Font.SourceSans
 PopupText_5.TextSize = 14
@@ -1976,12 +1755,114 @@ PopupText_5.TextColor3 = Color3.new(1, 1, 1)
 PopupText_5.TextWrapped = true
 table.insert(text1,PopupText_5)
 
-Exit_5.Name = "Exit"
-Exit_5.Parent = shadow_5
-Exit_5.BackgroundTransparency = 1
-Exit_5.Size = UDim2.new(0, 20, 0, 20)
-Exit_5.ZIndex = 10
-Exit_5.Image = "rbxassetid://2132544126"
+Exit_4.Name = "Exit"
+Exit_4.Parent = shadow_5
+Exit_4.BackgroundTransparency = 1
+Exit_4.Position = UDim2.new(1, -20, 0, 0)
+Exit_4.Size = UDim2.new(0, 20, 0, 20)
+Exit_4.Text = ""
+Exit_4.ZIndex = 10
+
+ExitImage_5.Parent = Exit_4
+ExitImage_5.BackgroundColor3 = Color3.new(1, 1, 1)
+ExitImage_5.BackgroundTransparency = 1
+ExitImage_5.Position = UDim2.new(0, 5, 0, 5)
+ExitImage_5.Size = UDim2.new(0, 10, 0, 10)
+ExitImage_5.Image = "rbxassetid://5054663650"
+
+function create(data)
+	local insts = {}
+	for i,v in pairs(data) do insts[v[1]] = Instance.new(v[2]) end
+	
+	for _,v in pairs(data) do
+		for prop,val in pairs(v[3]) do
+			if type(val) == "table" then
+				insts[v[1]][prop] = insts[val[1]]
+			else
+				insts[v[1]][prop] = val
+			end
+		end
+	end
+	
+	return insts[1]
+end
+
+ViewportTextBox = (function()
+	local textService = game:GetService("TextService")
+	
+	local funcs = {}
+	funcs.Update = function(self)
+        local cursorPos = self.TextBox.CursorPosition
+        local text = self.TextBox.Text
+        if text == "" then self.TextBox.Position = UDim2.new(0,2,0,0) return end
+        if cursorPos == -1 then return end
+        
+        local cursorText = text:sub(1,cursorPos-1)
+        local pos = nil
+        local leftEnd = -self.TextBox.Position.X.Offset
+        local rightEnd = leftEnd + self.View.AbsoluteSize.X
+
+        local totalTextSize = textService:GetTextSize(text,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
+        local cursorTextSize = textService:GetTextSize(cursorText,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
+        
+        if cursorTextSize > rightEnd then
+            pos = math.max(-2,cursorTextSize - self.View.AbsoluteSize.X + 2)
+        elseif cursorTextSize < leftEnd then
+            pos = math.max(-2,cursorTextSize-2)
+        elseif totalTextSize < rightEnd then
+            pos = math.max(-2,totalTextSize - self.View.AbsoluteSize.X + 2)
+        end
+        
+        if pos then
+            self.TextBox.Position = UDim2.new(0,-pos,0,0)
+            self.TextBox.Size = UDim2.new(1,pos,1,0)
+        end
+    end
+	
+	local mt = {}
+	mt.__index = funcs
+	
+	local function convert(textbox)
+		local obj = setmetatable({OffsetX = 0, TextBox = textbox},mt)
+		
+		local view = Instance.new("Frame")
+		view.BackgroundTransparency = textbox.BackgroundTransparency
+		view.BackgroundColor3 = textbox.BackgroundColor3
+		view.BorderSizePixel = textbox.BorderSizePixel
+		view.BorderColor3 = textbox.BorderColor3
+		view.Position = textbox.Position
+		view.Size = textbox.Size
+		view.ClipsDescendants = true
+		view.Name = textbox.Name
+		textbox.BackgroundTransparency = 1
+		textbox.Position = UDim2.new(0,4,0,0)
+		textbox.Size = UDim2.new(1,-8,1,0)
+		textbox.TextXAlignment = Enum.TextXAlignment.Left
+		textbox.Name = "Input"
+		table.insert(text1,textbox)
+		table.insert(shade2,view)
+		
+		obj.View = view
+		
+		textbox.Changed:Connect(function(prop)
+			if prop == "Text" or prop == "CursorPosition" or prop == "AbsoluteSize" then
+				obj:Update()
+			end
+		end)
+		
+		obj:Update()
+		
+		view.Parent = textbox.Parent
+		textbox.Parent = view
+		
+		return obj
+	end
+	
+	return {convert = convert}
+end)()
+
+ViewportTextBox.convert(Cmdbar).View.ZIndex = 10
+ViewportTextBox.convert(Cmdbar_2).View.ZIndex = 10
 
 function writefileExploit()
 	if writefile then
@@ -2006,7 +1887,11 @@ function r15(plr)
 end
 
 function toClipboard(String)
-	if not pcall(function() CB = setclipboard or Clipboard.set CB(String) notify('Clipboard','Copied to clipboard') end) then
+	local clipBoard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+	if clipBoard then
+		clipBoard("https://discord.io/infiniteyield")
+		notify('Clipboard','Copied to clipboard')
+	else
 		notify('Clipboard',"Your exploit doesn't have the ability to use the clipboard")
 	end
 end
@@ -2082,6 +1967,658 @@ function writefileCooldown(name,data)
 	end)
 end
 
+function dragGUI(gui)
+	spawn(function()
+		local dragging
+		local dragInput
+		local dragStart
+		local startPos
+		local function update(input)
+		    local delta = input.Position - dragStart
+			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
+		end
+		gui.InputBegan:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		        dragging = true
+		        dragStart = input.Position
+		        startPos = gui.Position
+		        
+		        input.Changed:Connect(function()
+		            if input.UserInputState == Enum.UserInputState.End then
+		                dragging = false
+		            end
+		        end)
+		    end
+		end)
+		gui.InputChanged:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		        dragInput = input
+		    end
+		end)
+		UserInputService.InputChanged:Connect(function(input)
+		    if input == dragInput and dragging then
+		        update(input)
+		    end
+		end)
+	end)
+end
+
+dragGUI(logsDrag)
+dragGUI(KeybindEditor)
+dragGUI(PluginEditor)
+dragGUI(ToPartFrame)
+
+eventEditor = (function()
+	local events = {}
+	
+	local function registerEvent(name,sets)
+		events[name] = {
+			commands = {},
+			sets = sets or {}
+		}
+	end
+	
+	local onEdited = nil
+	
+	local function fireEvent(name,...)
+		local args = {...}
+		local event = events[name]
+		if event then
+			for i,cmd in pairs(event.commands) do
+				local metCondition = true
+				for idx,set in pairs(event.sets) do
+					local argVal = args[idx]
+					local cmdSet = cmd[2][idx]
+					local condType = set.Type
+					if condType == "Player" then
+						if cmdSet == 0 then
+							metCondition = metCondition and (tostring(Players.LocalPlayer) == argVal)
+						elseif cmdSet ~= 1 then
+							metCondition = metCondition and table.find(getPlayer(cmdSet,Players.LocalPlayer),argVal)
+						end
+					elseif condType == "String" then
+						if cmdSet ~= 0 then
+							metCondition = metCondition and string.find(argVal:lower(),cmdSet:lower())
+						end
+					end
+					if not metCondition then break end
+				end
+				
+				if metCondition then
+					pcall(coroutine.wrap(function()
+						local cmdStr = cmd[1]
+						for count,arg in pairs(args) do
+							cmdStr = cmdStr:gsub("%$"..count,arg)
+						end
+						wait(cmd[3] or 0)
+						execCmd(cmdStr)
+					end))
+				end
+			end
+		end
+	end
+	
+	local main = create({
+		{1,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderSizePixel=0,Name="EventEditor",Position=UDim2.new(0.5,-175,0,-500),Size=UDim2.new(0,350,0,20),ZIndex=10,}},
+		{2,"Frame",{BackgroundColor3=currentShade2,BorderSizePixel=0,Name="TopBar",Parent={1},Size=UDim2.new(1,0,0,20),ZIndex=10,}},
+		{3,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={2},Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0.95,0),Text="Event Editor",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=Enum.TextXAlignment.Center,ZIndex=10,}},
+		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
+		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://5054663650",Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
+		{6,"Frame",{BackgroundColor3=currentShade1,BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,202),ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={6},Position=UDim2.new(0,5,0,5),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,-10,1,-10),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
+		{8,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={7},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
+		{9,"UIListLayout",{Parent={8},SortOrder=2,}},
+		{10,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,ClipsDescendants=true,Name="Settings",Parent={6},Position=UDim2.new(1,0,0,0),Size=UDim2.new(0,150,1,0),ZIndex=10,}},
+		{11,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),Name="Slider",Parent={10},Position=UDim2.new(0,-150,0,0),Size=UDim2.new(1,0,1,0),ZIndex=10,}},
+		{12,"Frame",{BackgroundColor3=Color3.new(0.23529413342476,0.23529413342476,0.23529413342476),BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,Name="Line",Parent={11},Size=UDim2.new(0,1,1,0),ZIndex=10,}},
+		{13,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={11},Position=UDim2.new(0,0,0,25),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,-25),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
+		{14,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={13},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
+		{15,"UIListLayout",{Parent={14},SortOrder=2,}},
+		{16,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={11},Size=UDim2.new(1,0,0,20),Text="Event Settings",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
+		{17,"TextButton",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),Font=3,Name="Close",BorderSizePixel=0,Parent={11},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="<",TextColor3=Color3.new(1,1,1),TextSize=18,ZIndex=10,}},
+		{18,"Folder",{Name="Templates",Parent={10},}},
+		{19,"Frame",{BackgroundColor3=Color3.new(0.19607844948769,0.19607844948769,0.19607844948769),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),Name="Players",Parent={18},Position=UDim2.new(0,0,0,25),Size=UDim2.new(1,0,0,86),Visible=false,ZIndex=10,}},
+		{20,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={19},Size=UDim2.new(1,0,0,20),Text="Choose Players",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
+		{21,"TextLabel",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Any",Parent={19},Position=UDim2.new(0,5,0,42),Size=UDim2.new(1,-10,0,20),Text="Any Player",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{22,"Frame",{BackgroundColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),BorderSizePixel=0,Name="Button",Parent={21},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),ZIndex=10,}},
+		{23,"TextButton",{BackgroundColor3=Color3.new(0.58823531866074,0.58823531866074,0.59215688705444),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="On",Parent={22},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(0,0,0),TextSize=14,ZIndex=10,}},
+		{24,"TextLabel",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Me",Parent={19},Position=UDim2.new(0,5,0,20),Size=UDim2.new(1,-10,0,20),Text="Me Only",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{25,"Frame",{BackgroundColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),BorderSizePixel=0,Name="Button",Parent={24},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),ZIndex=10,}},
+		{26,"TextButton",{BackgroundColor3=Color3.new(0.58823531866074,0.58823531866074,0.59215688705444),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="On",Parent={25},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(0,0,0),TextSize=14,ZIndex=10,}},
+		{27,"TextBox",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,ClearTextOnFocus=false,Font=3,Name="Custom",Parent={19},PlaceholderColor3=Color3.new(0.47058826684952,0.47058826684952,0.47058826684952),PlaceholderText="Custom Player Set",Position=UDim2.new(0,5,0,64),Size=UDim2.new(1,-35,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{28,"Frame",{BackgroundColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),BorderSizePixel=0,Name="CustomButton",Parent={19},Position=UDim2.new(1,-25,0,64),Size=UDim2.new(0,20,0,20),ZIndex=10,}},
+		{29,"TextButton",{BackgroundColor3=Color3.new(0.58823531866074,0.58823531866074,0.59215688705444),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="On",Parent={28},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(0,0,0),TextSize=14,ZIndex=10,}},
+		{30,"Frame",{BackgroundColor3=Color3.new(0.19607844948769,0.19607844948769,0.19607844948769),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),Name="Strings",Parent={18},Position=UDim2.new(0,0,0,25),Size=UDim2.new(1,0,0,64),Visible=false,ZIndex=10,}},
+		{31,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={30},Size=UDim2.new(1,0,0,20),Text="Choose String",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
+		{32,"TextLabel",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Any",Parent={30},Position=UDim2.new(0,5,0,20),Size=UDim2.new(1,-10,0,20),Text="Any String",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{33,"Frame",{BackgroundColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),BorderSizePixel=0,Name="Button",Parent={32},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),ZIndex=10,}},
+		{34,"TextButton",{BackgroundColor3=Color3.new(0.58823531866074,0.58823531866074,0.59215688705444),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="On",Parent={33},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(0,0,0),TextSize=14,ZIndex=10,}},
+		{35,"TextBox",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,ClearTextOnFocus=false,Font=3,Name="Custom",Parent={30},PlaceholderColor3=Color3.new(0.47058826684952,0.47058826684952,0.47058826684952),PlaceholderText="Match String",Position=UDim2.new(0,5,0,42),Size=UDim2.new(1,-35,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{36,"Frame",{BackgroundColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),BorderSizePixel=0,Name="CustomButton",Parent={30},Position=UDim2.new(1,-25,0,42),Size=UDim2.new(0,20,0,20),ZIndex=10,}},
+		{37,"TextButton",{BackgroundColor3=Color3.new(0.58823531866074,0.58823531866074,0.59215688705444),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="On",Parent={36},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(0,0,0),TextSize=14,ZIndex=10,}},
+		{38,"Frame",{BackgroundColor3=Color3.new(0.19607844948769,0.19607844948769,0.19607844948769),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),Name="DelayEditor",Parent={18},Position=UDim2.new(0,0,0,25),Size=UDim2.new(1,0,0,24),Visible=false,ZIndex=10,}},
+		{39,"TextBox",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,Font=3,Name="Secs",Parent={38},PlaceholderColor3=Color3.new(0.47058826684952,0.47058826684952,0.47058826684952),Position=UDim2.new(0,60,0,2),Size=UDim2.new(1,-65,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{40,"TextLabel",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Label",Parent={39},Position=UDim2.new(0,-55,0,0),Size=UDim2.new(1,0,1,0),Text="Delay (s):",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{41,"Frame",{BackgroundColor3=currentShade1,BorderSizePixel=0,ClipsDescendants=true,Name="EventTemplate",Parent={6},Size=UDim2.new(1,0,0,20),Visible=false,ZIndex=10,}},
+		{42,"TextButton",{BackgroundColor3=currentText1,BackgroundTransparency=1,Font=3,Name="Expand",Parent={41},Size=UDim2.new(0,20,0,20),Text=">",TextColor3=Color3.new(1,1,1),TextSize=18,ZIndex=10,}},
+		{43,"TextLabel",{BackgroundColor3=currentText1,BackgroundTransparency=1,Font=3,Name="EventName",Parent={41},Position=UDim2.new(0,25,0,0),Size=UDim2.new(1,-25,0,20),Text="OnSpawn",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{44,"Frame",{BackgroundColor3=Color3.new(0.19607844948769,0.19607844948769,0.19607844948769),BorderSizePixel=0,BackgroundTransparency=1,ClipsDescendants=true,Name="Cmds",Parent={41},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,1,-20),ZIndex=10,}},
+		{45,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BorderColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),Name="Add",Parent={44},Position=UDim2.new(0,0,1,-20),Size=UDim2.new(1,0,0,20),ZIndex=10,}},
+		{46,"TextBox",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ClearTextOnFocus=false,Font=3,Parent={45},PlaceholderColor3=Color3.new(0.7843137383461,0.7843137383461,0.7843137383461),PlaceholderText="Add new command",Position=UDim2.new(0,5,0,0),Size=UDim2.new(1,-10,1,0),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{47,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={44},Size=UDim2.new(1,0,1,-20),ZIndex=10,}},
+		{48,"UIListLayout",{Parent={47},SortOrder=2,}},
+		{49,"Frame",{currentShade1,BorderSizePixel=0,ClipsDescendants=true,Name="CmdTemplate",Parent={6},Size=UDim2.new(1,0,0,20),Visible=false,ZIndex=10,}},
+		{50,"TextBox",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ClearTextOnFocus=false,Font=3,Parent={49},PlaceholderColor3=Color3.new(1,1,1),Position=UDim2.new(0,5,0,0),Size=UDim2.new(1,-45,0,20),Text="a\b\c\d",TextColor3=currentText1,TextSize=14,TextXAlignment=0,ZIndex=10,}},
+		{51,"TextButton",{BackgroundColor3=currentShade1,BorderSizePixel=0,Font=3,Name="Delete",Parent={49},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="X",TextColor3=Color3.new(1,1,1),TextSize=18,ZIndex=10,}},
+		{52,"TextButton",{BackgroundColor3=currentShade1,BorderSizePixel=0,Font=3,Name="Settings",Parent={49},Position=UDim2.new(1,-40,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=18,ZIndex=10,}},
+		{53,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://1204397029",Parent={52},Position=UDim2.new(0,2,0,2),Size=UDim2.new(0,16,0,16),ZIndex=10,}},
+	})
+	main.Name = randomString()
+	local mainFrame = main:WaitForChild("Content")
+	local eventList = mainFrame:WaitForChild("List")
+	local eventListHolder = eventList:WaitForChild("Holder")
+	local cmdTemplate = mainFrame:WaitForChild("CmdTemplate")
+	local eventTemplate = mainFrame:WaitForChild("EventTemplate")
+	local settingsFrame = mainFrame:WaitForChild("Settings"):WaitForChild("Slider")
+	local settingsTemplates = mainFrame.Settings:WaitForChild("Templates")
+	local settingsList = settingsFrame:WaitForChild("List"):WaitForChild("Holder")
+	table.insert(shade2,main.TopBar) table.insert(shade1,mainFrame) table.insert(shade2,eventTemplate)
+	table.insert(text1,eventTemplate.EventName) table.insert(shade1,eventTemplate.Cmds.Add) table.insert(shade1,cmdTemplate)
+	table.insert(text1,cmdTemplate.TextBox) table.insert(shade2,cmdTemplate.Delete) table.insert(shade2,cmdTemplate.Settings)
+	table.insert(scroll,mainFrame.List) table.insert(shade1,settingsFrame) table.insert(shade2,settingsFrame.Line)
+	table.insert(shade2,settingsFrame.Close) table.insert(scroll,settingsFrame.List) table.insert(shade2,settingsTemplates.DelayEditor.Secs)
+	table.insert(text1,settingsTemplates.DelayEditor.Secs) table.insert(text1,settingsTemplates.DelayEditor.Secs.Label) table.insert(text1,settingsTemplates.Players.Title)
+	table.insert(shade3,settingsTemplates.Players.CustomButton) table.insert(shade2,settingsTemplates.Players.Custom) table.insert(text1,settingsTemplates.Players.Custom)
+	table.insert(shade3,settingsTemplates.Players.Any.Button) table.insert(shade3,settingsTemplates.Players.Me.Button) table.insert(text1,settingsTemplates.Players.Any)
+	table.insert(text1,settingsTemplates.Players.Me) table.insert(text1,settingsTemplates.Strings.Title) table.insert(text1,settingsTemplates.Strings.Any)
+	table.insert(shade3,settingsTemplates.Strings.Any.Button) table.insert(shade3,settingsTemplates.Strings.CustomButton) table.insert(text1,settingsTemplates.Strings.Custom)
+	table.insert(shade2,settingsTemplates.Strings.Custom)
+	
+	local tween = game:GetService("TweenService")
+	local tweenInf = TweenInfo.new(0.25,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+	
+	local currentlyEditingCmd = nil
+	
+	settingsFrame:WaitForChild("Close").MouseButton1Click:Connect(function()
+		settingsFrame:TweenPosition(UDim2.new(0,-150,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
+	end)
+	
+	local function resizeList()
+		local size = 0
+		
+		for i,v in pairs(eventListHolder:GetChildren()) do
+			if v.Name == "EventTemplate" then
+				size = size + 20
+				if v.Expand.Text == "V" then
+					size = size + 20*(1+(#events[v.EventName.Text].commands or 0))
+				end
+			end
+		end
+	
+		tween:Create(eventList,tweenInf,{CanvasSize = UDim2.new(0,0,0,size)}):Play()
+		
+		if size > eventList.AbsoluteSize.Y then
+			eventListHolder.Size = UDim2.new(1,-8,1,0)
+		else
+			eventListHolder.Size = UDim2.new(1,0,1,0)
+		end
+	end
+	
+	local function resizeSettingsList()
+		local size = 0
+		
+		for i,v in pairs(settingsList:GetChildren()) do
+			if v:IsA("Frame") then
+				size = size + v.AbsoluteSize.Y
+			end
+		end
+		
+		settingsList.Parent.CanvasSize = UDim2.new(0,0,0,size)
+		
+		if size > settingsList.Parent.AbsoluteSize.Y then
+			settingsList.Size = UDim2.new(1,-8,1,0)
+		else
+			settingsList.Size = UDim2.new(1,0,1,0)
+		end
+	end
+	
+	local function setupCheckbox(button,callback)
+		local enabled = button.On.BackgroundTransparency == 0
+		
+		local function update()
+			button.On.BackgroundTransparency = (enabled and 0 or 1)
+		end
+		
+		button.On.MouseButton1Click:Connect(function()
+			enabled = not enabled
+			update()
+			if callback then callback(enabled) end
+		end)
+		
+		return {
+			Toggle = function(nocall) enabled = not enabled update() if not nocall and callback then callback(enabled) end end,
+			Enable = function(nocall) if enabled then return end enabled = true update()if not nocall and callback then callback(enabled) end end,
+			Disable = function(nocall) if not enabled then return end enabled = false update()if not nocall and callback then callback(enabled) end end,
+			IsEnabled = function() return enabled end
+		}
+	end
+	
+	local function openSettingsEditor(event,cmd)
+		currentlyEditingCmd = cmd
+		
+		for i,v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
+		
+		local delayEditor = settingsTemplates.DelayEditor:Clone()
+		delayEditor.Secs.FocusLost:Connect(function()
+			cmd[3] = tonumber(delayEditor.Secs.Text) or 0
+			delayEditor.Secs.Text = cmd[3]
+			if onEdited then onEdited() end
+		end)
+		delayEditor.Secs.Text = cmd[3]
+		delayEditor.Visible = true
+		table.insert(shade2,delayEditor.Secs)
+		table.insert(text1,delayEditor.Secs)
+		table.insert(text1,delayEditor.Secs.Label)
+		delayEditor.Parent = settingsList
+		
+		for i,v in pairs(event.sets) do
+			if v.Type == "Player" then
+				local template = settingsTemplates.Players:Clone()
+				template.Title.Text = v.Name or "Player"
+	
+				local me,any,custom
+				
+				me = setupCheckbox(template.Me.Button,function(on)
+					if not on then return end
+					any.Disable()
+					custom.Disable()
+					cmd[2][i] = 0
+					if onEdited then onEdited() end
+				end)
+				
+				any = setupCheckbox(template.Any.Button,function(on)
+					if not on then return end
+					me.Disable()
+					custom.Disable()
+					cmd[2][i] = 1
+					if onEdited then onEdited() end
+				end)
+				
+				local customTextBox = template.Custom
+				custom = setupCheckbox(template.CustomButton,function(on)
+					if not on then return end
+					me.Disable()
+					any.Disable()
+					cmd[2][i] = customTextBox.Text
+					if onEdited then onEdited() end
+				end)
+				
+				ViewportTextBox.convert(customTextBox)
+				customTextBox.FocusLost:Connect(function()
+					if custom:IsEnabled() then
+						cmd[2][i] = customTextBox.Text
+						if onEdited then onEdited() end
+					end
+				end)
+				
+				local cVal = cmd[2][i]
+				if cVal == 0 then
+					me:Enable()
+				elseif cVal == 1 then
+					any:Enable()
+				else
+					custom:Enable()
+					customTextBox.Text = cVal
+				end
+				
+				template.Visible = true
+				table.insert(text1,template.Title)
+				table.insert(shade3,template.CustomButton)
+				table.insert(shade3,template.Any.Button)
+				table.insert(shade3,template.Me.Button)
+				table.insert(text1,template.Any)
+				table.insert(text1,template.Me)
+				template.Parent = settingsList
+			elseif v.Type == "String" then
+				local template = settingsTemplates.Strings:Clone()
+				template.Title.Text = v.Name or "String"
+	
+				local any,custom
+				
+				any = setupCheckbox(template.Any.Button,function(on)
+					if not on then return end
+					custom.Disable()
+					cmd[2][i] = 0
+					if onEdited then onEdited() end
+				end)
+				
+				local customTextBox = template.Custom
+				custom = setupCheckbox(template.CustomButton,function(on)
+					if not on then return end
+					any.Disable()
+					cmd[2][i] = customTextBox.Text
+					if onEdited then onEdited() end
+				end)
+				
+				ViewportTextBox.convert(customTextBox)
+				customTextBox.FocusLost:Connect(function()
+					if custom:IsEnabled() then
+						cmd[2][i] = customTextBox.Text
+						if onEdited then onEdited() end
+					end
+				end)
+				
+				local cVal = cmd[2][i]
+				if cVal == 0 then
+					any:Enable()
+				else
+					custom:Enable()
+					customTextBox.Text = cVal
+				end
+				
+				template.Visible = true
+				table.insert(text1,template.Title)
+				table.insert(text1,template.Any)
+				table.insert(shade3,template.Any.Button)
+				table.insert(shade3,template.CustomButton)
+				template.Parent = settingsList
+			end
+		end
+		resizeSettingsList()
+		settingsFrame:TweenPosition(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
+	end
+	
+	local function defaultSettings(ev)
+		local res = {}
+		
+		for i,v in pairs(ev.sets) do
+			if v.Type == "Player" then
+				res[#res+1] = v.Default or 0
+			elseif v.Type == "String" then
+				res[#res+1] = v.Default or 0
+			end
+		end
+		
+		return res
+	end
+	
+	local function refreshList()
+		for i,v in pairs(eventListHolder:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
+		
+		for name,event in pairs(events) do
+			local eventF = eventTemplate:Clone()
+			eventF.EventName.Text = name
+			eventF.Visible = true
+			table.insert(shade2,eventF)
+			table.insert(text1,eventF.EventName)
+			table.insert(shade1,eventF.Cmds.Add)
+			
+			local expanded = false
+			eventF.Expand.MouseButton1Down:Connect(function()
+				expanded = not expanded
+				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
+				eventF.Expand.Text = expanded and "V" or ">"
+				resizeList()
+			end)
+			
+			local function refreshCommands()
+				for i,v in pairs(eventF.Cmds.Holder:GetChildren()) do
+					if v.Name == "CmdTemplate" then
+						v:Destroy()
+					end
+				end
+				
+				for i,cmd in pairs(event.commands) do
+					local cmdF = cmdTemplate:Clone()
+					local cmdTextBox = cmdF.TextBox
+					ViewportTextBox.convert(cmdTextBox)
+					cmdTextBox.Text = cmd[1]
+					cmdF.Visible = true
+					table.insert(shade1,cmdF)
+					table.insert(shade2,cmdF.Delete)
+					table.insert(shade2,cmdF.Settings)
+					
+					cmdTextBox.FocusLost:Connect(function()
+						event.commands[i] = {cmdTextBox.Text,cmd[2],cmd[3]}
+						if onEdited then onEdited() end
+					end)
+					
+					cmdF.Settings.MouseButton1Click:Connect(function()
+						openSettingsEditor(event,cmd)
+					end)
+					
+					cmdF.Delete.MouseButton1Click:Connect(function()
+						table.remove(event.commands,i)
+						refreshCommands()
+						resizeList()
+						
+						if currentlyEditingCmd == cmd then
+							settingsFrame:TweenPosition(UDim2.new(0,-150,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
+						end
+						if onEdited then onEdited() end
+					end)
+					
+					cmdF.Parent = eventF.Cmds.Holder
+				end
+				
+				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
+			end
+			
+			local newBox = eventF.Cmds.Add.TextBox
+			ViewportTextBox.convert(newBox)
+			newBox.FocusLost:Connect(function(enter)
+				if enter then
+					event.commands[#event.commands+1] = {newBox.Text,defaultSettings(event),0}
+					newBox.Text = ""
+					
+					refreshCommands()
+					resizeList()
+					if onEdited then onEdited() end
+				end
+			end)
+			
+			--eventF:GetPropertyChangedSignal("AbsoluteSize"):Connect(resizeList)
+			
+			eventF.Parent = eventListHolder
+			
+			refreshCommands()
+		end
+		
+		resizeList()
+	end
+	
+	local function saveData()
+		local result = {}
+		for i,v in pairs(events) do
+			result[i] = v.commands
+		end
+		return game:GetService("HttpService"):JSONEncode(result)
+	end
+	
+	local function loadData(str)
+		local data = game:GetService("HttpService"):JSONDecode(str)
+		for i,v in pairs(data) do
+			if events[i] then
+				events[i].commands = v
+			end
+		end
+	end
+	
+	local function addCmd(event,data)
+		table.insert(events[event].commands,data)
+	end
+	
+	local function setOnEdited(f)
+		if type(f) == "function" then
+			onEdited = f
+		end
+	end
+	
+	main.TopBar.Close.MouseButton1Click:Connect(function()
+		main:TweenPosition(UDim2.new(0.5,-175,0,-500), "InOut", "Quart", 0.5, true, nil)
+	end)
+	dragGUI(main)
+	main.Parent = PARENT
+	
+	return {
+		RegisterEvent = registerEvent,
+		FireEvent = fireEvent,
+		Refresh = refreshList,
+		SaveData = saveData,
+		LoadData = loadData,
+		AddCmd = addCmd,
+		Frame = main,
+		SetOnEdited = setOnEdited
+	}
+end)()
+
+reference = (function()
+	local main = create({
+		{1,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,Name="Reference",Position=UDim2.new(0.5,-250,0,-500),Size=UDim2.new(0,500,0,20),ZIndex=10,}},
+		{2,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="TopBar",Parent={1},Size=UDim2.new(1,0,0,20),ZIndex=10,}},
+		{3,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={2},Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0.95,0),Text="Reference",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=Enum.TextXAlignment.Center,ZIndex=10,}},
+		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
+		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://5054663650",Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
+		{6,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,300),ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,1245),Name="List",Parent={6},ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,0),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",VerticalScrollBarInset=2,ZIndex=10,}},
+		{8,"UIListLayout",{Parent={7},SortOrder=2,}},
+		{9,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,375),ZIndex=10,}},
+		{10,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={9},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Special Player Cases",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{11,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={9},Position=UDim2.new(0,8,0,25),Size=UDim2.new(1,-8,0,20),Text="These keywords can be used to quickly select groups of players in commands:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{12,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={9},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{13,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Cases",Parent={9},Position=UDim2.new(0,8,0,55),Size=UDim2.new(1,-16,0,306),ZIndex=10,}},
+		{14,"UIListLayout",{Parent={13},SortOrder=2,}},
+		{15,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{16,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={15},Size=UDim2.new(1,0,1,0),Text="all",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{17,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={15},Position=UDim2.new(0,15,0,0),Size=UDim2.new(1,0,1,0),Text="- includes everyone",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{18,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{19,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={18},Size=UDim2.new(1,0,1,0),Text="others",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{20,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={18},Position=UDim2.new(0,37,0,0),Size=UDim2.new(1,0,1,0),Text="- includes everyone except you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{21,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{22,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={21},Size=UDim2.new(1,0,1,0),Text="me",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{23,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={21},Position=UDim2.new(0,19,0,0),Size=UDim2.new(1,0,1,0),Text="- includes your player only",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{24,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{25,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={24},Size=UDim2.new(1,0,1,0),Text="#[number]",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{26,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={24},Position=UDim2.new(0,59,0,0),Size=UDim2.new(1,0,1,0),Text="- gets a specified amount of random players",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{27,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{28,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={27},Size=UDim2.new(1,0,1,0),Text="random",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{29,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={27},Position=UDim2.new(0,44,0,0),Size=UDim2.new(1,0,1,0),Text="- affects a random player",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{30,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{31,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={30},Size=UDim2.new(1,0,1,0),Text="%[team name]",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{32,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={30},Position=UDim2.new(0,78,0,0),Size=UDim2.new(1,0,1,0),Text="- includes everyone on a given team",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{33,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{34,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={33},Size=UDim2.new(1,0,1,0),Text="allies / team",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{35,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={33},Position=UDim2.new(0,63,0,0),Size=UDim2.new(1,0,1,0),Text="- players who are on your team",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{36,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{37,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={36},Size=UDim2.new(1,0,1,0),Text="enemies / nonteam",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{38,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={36},Position=UDim2.new(0,101,0,0),Size=UDim2.new(1,0,1,0),Text="- players who are not on your team",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{39,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{40,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={39},Size=UDim2.new(1,0,1,0),Text="friends",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{41,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={39},Position=UDim2.new(0,40,0,0),Size=UDim2.new(1,0,1,0),Text="- anyone who is friends with you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{42,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{43,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={42},Size=UDim2.new(1,0,1,0),Text="nonfriends",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{44,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={42},Position=UDim2.new(0,61,0,0),Size=UDim2.new(1,0,1,0),Text="- anyone who is not friends with you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{45,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{46,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={45},Size=UDim2.new(1,0,1,0),Text="guests",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{47,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={45},Position=UDim2.new(0,36,0,0),Size=UDim2.new(1,0,1,0),Text="- guest players (obsolete)",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{48,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{49,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={48},Size=UDim2.new(1,0,1,0),Text="bacons",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{50,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={48},Position=UDim2.new(0,40,0,0),Size=UDim2.new(1,0,1,0),Text="- anyone with the \"bacon\" or pal hair",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{51,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{52,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={51},Size=UDim2.new(1,0,1,0),Text="age[number]",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{53,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={51},Position=UDim2.new(0,71,0,0),Size=UDim2.new(1,0,1,0),Text="- includes anyone below or at the given age",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{54,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{55,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={54},Size=UDim2.new(1,0,1,0),Text="rad[number]",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{56,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={54},Position=UDim2.new(0,70,0,0),Size=UDim2.new(1,0,1,0),Text="- includes anyone within the given radius",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{57,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{58,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={57},Size=UDim2.new(1,0,1,0),Text="nearest",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{59,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={57},Position=UDim2.new(0,43,0,0),Size=UDim2.new(1,0,1,0),Text="- gets the closest player to you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{60,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{61,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={60},Size=UDim2.new(1,0,1,0),Text="farthest",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{62,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={60},Position=UDim2.new(0,46,0,0),Size=UDim2.new(1,0,1,0),Text="- gets the farthest player from you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{63,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BackgroundTransparency=1,BorderSizePixel=0,Name="Case",Parent={13},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,0,0,18),ZIndex=10,}},
+		{64,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="CaseName",Parent={63},Size=UDim2.new(1,0,1,0),Text="group[ID]",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{65,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="CaseDesc",Parent={63},Position=UDim2.new(0,55,0,0),Size=UDim2.new(1,0,1,0),Text="- gets players who are in a certain group",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{66,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,180),ZIndex=10,}},
+		{67,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={66},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Various Operators",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{68,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={66},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{69,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={66},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,16),Text="Use commas to separate multiple expressions:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{70,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={66},Position=UDim2.new(0,8,0,75),Size=UDim2.new(1,-8,0,16),Text="Use - to exclude, and + to include players in your expression:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{71,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={66},Position=UDim2.new(0,8,0,91),Size=UDim2.new(1,-8,0,16),Text=";locate %blue-friends (gets players in blue team who aren't your friends)",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{72,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={66},Position=UDim2.new(0,8,0,46),Size=UDim2.new(1,-8,0,16),Text=";locate noob,noob2,bob",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{73,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={66},Position=UDim2.new(0,8,0,120),Size=UDim2.new(1,-8,0,16),Text="Put ! before a command to run it with the last arguments it was ran with:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{74,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={66},Position=UDim2.new(0,8,0,136),Size=UDim2.new(1,-8,0,32),Text="After running ;offset 0 100 0,  you can run !offset anytime to repeat that command with the same arguments that were used to run it last time",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{75,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,140),ZIndex=10,}},
+		{76,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={75},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Command Looping",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{77,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={75},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,20),Text="Form: [How many times it loops]^[delay (optional)]^[command]",TextColor3=Color3.new(1,1,1),TextSize=15,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{78,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={75},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{79,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={75},Position=UDim2.new(0,8,0,50),Size=UDim2.new(1,-8,0,20),Text="Use the 'breakloops' command to stop all running loops.",TextColor3=Color3.new(1,1,1),TextSize=15,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{80,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={75},Position=UDim2.new(0,8,0,80),Size=UDim2.new(1,-8,0,16),Text="Examples:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{81,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={75},Position=UDim2.new(0,8,0,98),Size=UDim2.new(1,-8,0,32),Text=";5^btools - gives you 5 sets of btools\n;10^3^drophats - drops your hats every 3 seconds 10 times",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{82,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,120),ZIndex=10,}},
+		{83,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={82},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Execute Multiple Commands at Once",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{84,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={82},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,20),Text="You can execute multiple commands at once using \"\\\"",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{85,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={82},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{86,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={82},Position=UDim2.new(0,8,0,60),Size=UDim2.new(1,-8,0,16),Text="Examples:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{87,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={82},Position=UDim2.new(0,8,0,78),Size=UDim2.new(1,-8,0,32),Text=";drophats\\respawn - drops your hats and respawns you\n;enable inventory\\enable playerlist\\refresh - enables those coregui items and refreshes you",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{88,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,75),ZIndex=10,}},
+		{89,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={88},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Browse Command History",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{90,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={88},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,32),Text="While focused on the command bar, you can use the up and down arrow keys to browse recently used commands",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{91,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={88},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{92,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,75),ZIndex=10,}},
+		{93,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={92},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Autocomplete in the Command Bar",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{94,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={92},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,32),Text="While focused on the command bar, you can use the tab key to insert the top suggested command into the command bar.",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{95,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={92},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{96,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,175),ZIndex=10,}},
+		{97,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={96},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Using Event Binds",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{98,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={96},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,32),Text="Use event binds to set up commands that get executed when certain events happen. You can edit the conditions for an event command to run (such as which player triggers it).",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{99,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={96},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),ZIndex=10,}},
+		{100,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={96},Position=UDim2.new(0,8,0,70),Size=UDim2.new(1,-8,0,48),Text="Some events may send arguments; you can use them in your event command by using $ followed by the argument number ($1, $2, etc). You can find out the order and types of these arguments by looking at the settings of the event command.",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{101,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Text",Parent={96},Position=UDim2.new(0,8,0,130),Size=UDim2.new(1,-8,0,16),Text="Example:",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{102,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={96},Position=UDim2.new(0,8,0,148),Size=UDim2.new(1,-8,0,16),Text="Setting up 'goto $1' on the OnChatted event will teleport you to any player that chats.",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,TextYAlignment=0,ZIndex=10,}},
+		{103,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,105),ZIndex=10,}},
+		{104,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={103},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Get Further Help",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
+		{105,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Text",Parent={103},Position=UDim2.new(0,8,0,30),Size=UDim2.new(1,-8,0,32),Text="You can join the Discord server to get support with IY,  and read up on more documentation such as the Plugin API.",TextColor3=Color3.new(1,1,1),TextSize=14,TextWrapped=true,TextXAlignment=0,ZIndex=10,}},
+		{106,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={103},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),Visible = false,ZIndex=10,}},
+		{107,"TextButton",{BackgroundColor3=Color3.fromRGB(124, 158, 217),BorderColor3=Color3.fromRGB(46, 46, 47),Font=4,Name="InviteButton",Parent={103},Position=UDim2.new(0,5,0,75),Size=UDim2.new(1,-10,0,25),Text="Copy Discord Invite Link (https://discord.io/infiniteyield)",TextColor3=Color3.fromRGB(46, 46, 47),TextSize=16,ZIndex=10,}},
+	})
+	for i,v in pairs(main.Content.List:GetDescendants()) do
+		if v:IsA("TextLabel") then
+			table.insert(text1,v)
+		end
+	end
+	table.insert(scroll,main.Content.List)
+	table.insert(shade1,main.Content)
+	table.insert(shade2,main.TopBar)
+	main.Name = randomString()
+	main.TopBar.Close.MouseButton1Click:Connect(function()
+		main:TweenPosition(UDim2.new(0.5,-250,0,-500), "InOut", "Quart", 0.5, true, nil)
+	end)
+	local inviteButton = main:FindFirstChild("InviteButton",true)
+	local lastPress = nil
+	inviteButton.MouseButton1Click:Connect(function()
+		local func = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+		if func then
+			func("https://discord.io/infiniteyield")
+			inviteButton.Text = "Copied"
+		else
+			inviteButton.Text = "No Clipboard Function, type out the link"
+		end
+		local pressTime = tick()
+		lastPress = pressTime
+		wait(2)
+		if lastPress ~= pressTime then return end
+		inviteButton.Text = "Copy Discord Invite Link (https://discord.io/infiniteyield)"
+	end)
+	dragGUI(main)
+	main.Parent = PARENT
+	
+	ReferenceButton.MouseButton1Click:Connect(function()
+		main:TweenPosition(UDim2.new(0.5,-250,0.5,-150), "InOut", "Quart", 0.5, true, nil)
+	end)
+end)()
+
 currentShade1 = Color3.fromRGB(36, 36, 37)
 currentShade2 = Color3.fromRGB(46, 46, 47)
 currentShade3 = Color3.fromRGB(78, 78, 79)
@@ -2095,7 +2632,6 @@ defaultsettings = {
 	logsEnabled = false;
 	aliases = {};
 	binds = {};
-	spawnCmds = {};
 	WayPoints = {};
 	PluginsTable = {}
 }
@@ -2104,6 +2640,7 @@ defaults = game:GetService("HttpService"):JSONEncode(defaultsettings)
 
 nosaves = false
 
+loadedEventData = nil
 function saves()
 	if writefileExploit() then
 		if pcall(function() readfile("IY_FE.iy") end) then
@@ -2114,7 +2651,7 @@ function saves()
 				if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
 				if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
 				if json.binds ~= nil then binds = json.binds else binds = {} end
-				if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds else spawnCmds = {} end
+				if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds end
 				if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
 				if json.PluginsTable ~= nil then PluginsTable = json.PluginsTable else PluginsTable = {} end
 				if json.currentShade1 ~= nil then currentShade1 = Color3.new(json.currentShade1[1],json.currentShade1[2],json.currentShade1[3]) end
@@ -2123,6 +2660,7 @@ function saves()
 				if json.currentText1 ~= nil then currentText1 = Color3.new(json.currentText1[1],json.currentText1[2],json.currentText1[3]) end
 				if json.currentText2 ~= nil then currentText2 = Color3.new(json.currentText2[1],json.currentText2[2],json.currentText2[3]) end
 				if json.currentScroll ~= nil then currentScroll = Color3.new(json.currentScroll[1],json.currentScroll[2],json.currentScroll[3]) end
+				if json.eventBinds then loadedEventData = json.eventBinds end
 			else
 				writefileCooldown("IY_FE.iy", defaults)
 				wait()
@@ -2140,7 +2678,6 @@ function saves()
 				logsEnabled = false
 				aliases = {}
 				binds = {}
-				spawnCmds = {}
 				WayPoints = {}
 				PluginsTable = {}
 				
@@ -2149,7 +2686,8 @@ function saves()
 				local Directions = Instance.new("TextLabel")
 				local shadow = Instance.new("Frame")
 				local PopupText = Instance.new("TextLabel")
-				local Exit = Instance.new("ImageButton")
+				local Exit = Instance.new("TextButton")
+				local ExitImage = Instance.new("ImageLabel")
 				
 				FileError.Name = randomString()
 				FileError.Parent = PARENT
@@ -2193,8 +2731,7 @@ function saves()
 				PopupText.Name = "PopupText"
 				PopupText.Parent = shadow
 				PopupText.BackgroundTransparency = 1
-				PopupText.Position = UDim2.new(0, 51, 0, 0)
-				PopupText.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
+				PopupText.Size = UDim2.new(1, 0, 0.95, 0)
 				PopupText.ZIndex = 10
 				PopupText.Font = Enum.Font.SourceSans
 				PopupText.TextSize = 14
@@ -2205,9 +2742,17 @@ function saves()
 				Exit.Name = "Exit"
 				Exit.Parent = shadow
 				Exit.BackgroundTransparency = 1
+				Exit.Position = UDim2.new(1, -20, 0, 0)
 				Exit.Size = UDim2.new(0, 20, 0, 20)
+				Exit.Text = ""
 				Exit.ZIndex = 10
-				Exit.Image = "rbxassetid://2132544126"
+				
+				ExitImage.Parent = Exit
+				ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+				ExitImage.BackgroundTransparency = 1
+				ExitImage.Position = UDim2.new(0, 5, 0, 5)
+				ExitImage.Size = UDim2.new(0, 10, 0, 10)
+				ExitImage.Image = "rbxassetid://5054663650"
 				
 				Exit.MouseButton1Click:Connect(function()
 					FileError:Destroy()
@@ -2220,7 +2765,6 @@ function saves()
 		logsEnabled = false
 		aliases = {}
 		binds = {}
-		spawnCmds = {}
 		WayPoints = {}
 		PluginsTable = {}
 	end
@@ -2236,7 +2780,6 @@ function updatesaves()
 		logsEnabled = logsEnabled;
 		aliases = aliases;
 		binds = binds;
-		spawnCmds = spawnCmds;
 		WayPoints = AllWaypoints;
 		PluginsTable = PluginsTable;
 		currentShade1 = {currentShade1.R,currentShade1.G,currentShade1.B};
@@ -2244,11 +2787,14 @@ function updatesaves()
 		currentShade3 = {currentShade3.R,currentShade3.G,currentShade3.B};
 		currentText1 = {currentText1.R,currentText1.G,currentText1.B};
 		currentText2 = {currentText2.R,currentText2.G,currentText2.B};
-		currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B}
+		currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
+		eventBinds = eventEditor.SaveData()
 		}
 		writefileCooldown("IY_FE.iy", game:GetService("HttpService"):JSONEncode(update))
 	end
 end
+
+eventEditor.SetOnEdited(updatesaves)
 
 pWayPoints = {}
 WayPoints = {}
@@ -2279,9 +2825,9 @@ PrefixBox.Text = prefix
 SettingsOpen = false
 
 if StayOpen == false then
-	Holder.Settings.StayOpen.Button.On.BackgroundTransparency = 1
+	Holder.Settings.Holder.StayOpen.Button.On.BackgroundTransparency = 1
 else
-	Holder.Settings.StayOpen.Button.On.BackgroundTransparency = 0
+	Holder.Settings.Holder.StayOpen.Button.On.BackgroundTransparency = 0
 end
 
 if logsEnabled then
@@ -2306,26 +2852,6 @@ function cmdbarHolder()
 	if StayOpen == false then
 		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, -45), "InOut", "Quart", 0.5, true, nil)
 	end
-end
-
-function enablebuttons()
-	Settings.Aliases.Select.Visible = true
-	Settings.SpawnC.Select.Visible = true
-	Settings.Keybinds.Select.Visible = true
-	Settings.StayOpen.Button.On.Visible = true
-	Settings.Prefix.PrefixBox.Visible = true
-	Settings.Positions.Select.Visible = true
-	Settings.Plugins.Select.Visible = true
-end
-
-function disablebuttons()
-	Settings.Aliases.Select.Visible = false
-	Settings.SpawnC.Select.Visible = false
-	Settings.Keybinds.Select.Visible = false
-	Settings.StayOpen.Button.On.Visible = false
-	Settings.Prefix.PrefixBox.Visible = false
-	Settings.Positions.Select.Visible = false
-	Settings.Plugins.Select.Visible = false
 end
 
 notifyCount = 0
@@ -2446,12 +2972,19 @@ IYMouse.KeyDown:connect(function(Key)
 	end
 end)
 
+lastMinimizeReq = 0
+
 Holder.MouseEnter:Connect(function()
+	lastMinimizeReq = 0
 	maximizeHolder()
 end)
 
 Holder.MouseLeave:Connect(function()
 	if not Cmdbar:IsFocused() then
+		local reqTime = tick()
+		lastMinimizeReq = reqTime
+		wait(1)
+		if lastMinimizeReq ~= reqTime then return end
 		minimizeHolder()
 	end
 end)
@@ -2475,6 +3008,9 @@ function updateColors(color,ctype)
 	elseif ctype == text1 then
 		for i,v in pairs(text1) do
 			v.TextColor3 = color
+			if v:IsA("TextBox") then
+				v.PlaceholderColor3 = color	
+			end
 		end
 		currentText1 = color
 	elseif ctype == text2 then
@@ -2931,11 +3467,11 @@ Holder.SettingsButton.MouseButton1Click:Connect(function()
 	end
 end)
 
-Holder.Settings.StayOpen.Button.On.MouseButton1Click:Connect(function()
+Holder.Settings.Holder.StayOpen.Button.On.MouseButton1Click:Connect(function()
 	if StayOpen == false then StayOpen = true
-		Holder.Settings.StayOpen.Button.On.BackgroundTransparency = 0
+		Holder.Settings.Holder.StayOpen.Button.On.BackgroundTransparency = 0
 	else StayOpen = false
-		Holder.Settings.StayOpen.Button.On.BackgroundTransparency = 1
+		Holder.Settings.Holder.StayOpen.Button.On.BackgroundTransparency = 1
 	end
 	updatesaves()
 end)
@@ -3046,52 +3582,25 @@ shadow.Hide.MouseButton1Down:connect(function()
 	end
 end)
 
-SpawnC.Select.MouseButton1Click:Connect(function()
-	SpawnCFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
-	wait(0.5)
-	disablebuttons()
+EventBind.MouseButton1Click:Connect(function()
+	eventEditor.Frame:TweenPosition(UDim2.new(0.5,-175,0.5,-101), "InOut", "Quart", 0.5, true, nil)
 end)
 
-SpawnCFrame.Close.MouseButton1Click:Connect(function()
-	enablebuttons()
-	SpawnCFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
-end)
-
-SpawnCFrame.Delete.MouseButton1Click:Connect(function()
-	spawnCmds = {}
-	updatesaves()
-	refreshSpawnC()
-	notify('Spawn Commands Updated','Cleared all spawn commands')
-end)
-
-Add_5.MouseButton1Click:Connect(function()
-	if Cmdbar_3.Text ~= '' and Cmdbar_3.Text ~= 'Command' then
-		if isNumber(DelayNum.Text) then
-		addspawn(Cmdbar_3.Text,tonumber(DelayNum.Text))
-		refreshSpawnC()
-		updatesaves()
-		notify('Spawn Commands Updated','"'..Cmdbar_3.Text..'" will run when your player spawns')
-		else
-			notify('Spawn Command Error','Command delay must be a number')
-		end
-	end
-end)
-
-Keybinds.Select.MouseButton1Click:Connect(function()
+Keybinds.MouseButton1Click:Connect(function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
-	disablebuttons()
+	SettingsHolder.Visible = false
 end)
 
 KeybindsFrame.Close.MouseButton1Click:Connect(function()
-	enablebuttons()
+	SettingsHolder.Visible = true
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Holder.Settings.Keybinds.Select.MouseButton1Click:Connect(function()
+Keybinds.MouseButton1Click:Connect(function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
-	disablebuttons()
+	SettingsHolder.Visible = false
 end)
 
 KeybindsFrame.Add.MouseButton1Click:Connect(function()
@@ -3106,35 +3615,25 @@ KeybindsFrame.Delete.MouseButton1Click:Connect(function()
 end)
 
 AliasesFrame.Close.MouseButton1Click:Connect(function()
-	enablebuttons()
+	SettingsHolder.Visible = true
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Settings.Aliases.Select.MouseButton1Click:Connect(function()
+Aliases.MouseButton1Click:Connect(function()
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
-	disablebuttons()
+	SettingsHolder.Visible = false
 end)
 
 PositionsFrame.Close.MouseButton1Click:Connect(function()
-	enablebuttons()
+	SettingsHolder.Visible = true
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Settings.Positions.Select.MouseButton1Click:Connect(function()
+Positions.MouseButton1Click:Connect(function()
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
-	disablebuttons()
-end)
-
-SpawnCFrame.Add.MouseButton1Click:Connect(function()
-	SpawnCEditor:TweenPosition(UDim2.new(0.5, -180, 0, 285), "InOut", "Quart", 0.5, true, nil)
-end)
-
-Exit_4.MouseButton1Click:Connect(function()
-	SpawnCEditor:TweenPosition(UDim2.new(0.5, -180, 0, -400), "InOut", "Quart", 0.5, true, nil)
-	Cmdbar_3.Text = 'Command'
-	DelayNum.Text = '0'
+	SettingsHolder.Visible = false
 end)
 
 selectionBox = Instance.new("SelectionBox")
@@ -3170,8 +3669,8 @@ Part.MouseButton1Click:Connect(function()
 	ClickSelect = IYMouse.Button1Down:connect(SelectPart)
 end)
 
-Exit_5.MouseButton1Click:Connect(function()
-	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, -400), "InOut", "Quart", 0.5, true, nil)
+Exit_4.MouseButton1Click:Connect(function()
+	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	if ActivateHighlight then
 		ActivateHighlight:Disconnect()
 	end
@@ -3230,8 +3729,9 @@ AliasesFrame.Delete.MouseButton1Click:Connect(function()
 	refreshaliases()
 end)
 
-Holder.Settings.Prefix.PrefixBox:GetPropertyChangedSignal("Text"):connect(function()
-	prefix = Holder.Settings.Prefix.PrefixBox.Text
+Holder.Settings.Holder.Prefix.PrefixBox:GetPropertyChangedSignal("Text"):connect(function()
+	prefix = Holder.Settings.Holder.Prefix.PrefixBox.Text
+	Cmdbar.PlaceholderText = "Command Bar ("..prefix..")"
 	updatesaves()
 end)
 
@@ -3322,49 +3822,6 @@ end
 
 dragMain(Title,Holder)
 
-function dragGUI(gui)
-	spawn(function()
-		local dragging
-		local dragInput
-		local dragStart
-		local startPos
-		local function update(input)
-		    local delta = input.Position - dragStart
-			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			game:GetService("TweenService"):Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
-		end
-		gui.InputBegan:Connect(function(input)
-		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		        dragging = true
-		        dragStart = input.Position
-		        startPos = gui.Position
-		        
-		        input.Changed:Connect(function()
-		            if input.UserInputState == Enum.UserInputState.End then
-		                dragging = false
-		            end
-		        end)
-		    end
-		end)
-		gui.InputChanged:Connect(function(input)
-		    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-		        dragInput = input
-		    end
-		end)
-		UserInputService.InputChanged:Connect(function(input)
-		    if input == dragInput and dragging then
-		        update(input)
-		    end
-		end)
-	end)
-end
-
-dragGUI(logsDrag)
-dragGUI(KeybindEditor)
-dragGUI(PluginEditor)
-dragGUI(SpawnCEditor)
-dragGUI(ToPartFrame)
-
 CSP = Holder
 frame = CSP:WaitForChild('CMDs')
 
@@ -3387,6 +3844,13 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	local Index,SizeY = 0,0
 	local indexnum = 0
 	topCommand = nil
+	local chunks = {}
+	if str:sub(#str,#str) == "\\" then str = "" end
+	for w in string.gmatch(str,"[^\\]+") do
+		table.insert(chunks,w)
+	end
+	if #chunks > 0 then str = chunks[#chunks] end
+	if str:sub(1,1) == "!" then str = str:sub(2) end
 	for i,v in next, frame:GetChildren() do
 		if bool then
 			if Match(v.Text,str) then
@@ -3474,7 +3938,7 @@ else
 	print('Custom chat detected. Will not provide suggestions for commands typed in the chat.')
 end
 
-function autoComplete(str)
+function autoComplete(str,curText)
 	local endingChar = {"[", "/", "(", " "}
 	local stop = 0
 	for i=1,#str do
@@ -3484,16 +3948,28 @@ function autoComplete(str)
 			break
 		end
 	end
-	Cmdbar.Text = str:sub(1, stop - 1)..' '
+	curText = curText or Cmdbar.Text
+	local subPos = 0
+	local pos = 1
+	local findRes = string.find(curText,"\\",pos)
+	while findRes do
+		subPos = findRes
+		pos = findRes+1
+		findRes = string.find(curText,"\\",pos)
+	end
+	if curText:sub(subPos+1,subPos+1) == "!" then subPos = subPos + 1 end
+	Cmdbar.Text = curText:sub(1,subPos) .. str:sub(1, stop - 1)..' '
 	wait()
 	Cmdbar.Text = Cmdbar.Text:gsub( '\t', '' )
-	Cmdbar.CursorPosition = 1020
+	Cmdbar.CursorPosition = #Cmdbar.Text+1--1020
 end
 
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
+CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
 CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
@@ -3510,6 +3986,7 @@ CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
+CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
@@ -3557,6 +4034,8 @@ CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
 CMDs[#CMDs + 1] = {NAME = 'pmspam [plr] [text]', DESC = 'Makes you spam a players whispers'}
 CMDs[#CMDs + 1] = {NAME = 'unpmspam [plr]', DESC = 'Turns off pm spam'}
 CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
+CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
@@ -3591,6 +4070,11 @@ CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Remo
 CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
 CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
 CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
+CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
+CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
+CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'invisibleparts / invisparts (CLIENT)', DESC = 'Shows invisible parts'}
@@ -3650,10 +4134,6 @@ CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
-CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
-CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
-CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
-CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
 CMDs[#CMDs + 1] = {NAME = 'speed / ws [num]', DESC = 'Change your walkspeed'}
 CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip height'}
 CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower [num]', DESC = 'Change a players jump height'}
@@ -3674,8 +4154,10 @@ CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
 CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
 CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
 CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
+CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Stops your animations'}
+CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
-CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your arms'}
+CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
 CMDs[#CMDs + 1] = {NAME = 'naked', DESC = 'Removes your clothing'}
 CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
@@ -3693,6 +4175,7 @@ CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
+CMDs[#CMDs + 1] = {NAME = 'autokeypress / keypress [key] [press delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
 CMDs[#CMDs + 1] = {NAME = 'hovername', DESC = 'Shows a players username when your mouse is hovered over them'}
 CMDs[#CMDs + 1] = {NAME = 'unhovername / nohovername', DESC = 'Turns off hovername'}
@@ -3741,8 +4224,9 @@ for i = 1, #CMDs do
 		desc.Value = CMDs[i].DESC
 		newcmd.MouseButton1Down:Connect(function()
 			if newcmd.Visible and newcmd.TextTransparency == 0 then
+				local currentText = Cmdbar.Text
 				Cmdbar:CaptureFocus()
-				autoComplete(newcmd.Text)
+				autoComplete(newcmd.Text,currentText)
 				maximizeHolder()
 			end
 		end)
@@ -3876,15 +4360,6 @@ Players.LocalPlayer.CharacterAdded:Connect(function()
 	if not Clip then
 		execCmd('clip nonotify')
 	end
-	
-	if #spawnCmds > 0 then
-		for i,v in pairs(spawnCmds)do
-			spawn(function()
-				wait(v.DELAY)
-				execCmd(v.COMMAND,Players.LocalPlayer)
-			end)
-		end
-	end
 
 	repeat wait() until Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
 
@@ -3941,9 +4416,10 @@ end
 
 historyCount = 0
 cmdHistory = {}
+lastCmds = {}
 split=" "
 lastBreakTime = 0
-function execCmd(cmdStr,speaker)
+function execCmd(cmdStr,speaker,store)
 	spawn(function()
 		local rawCmdStr = cmdStr
 		cmdStr = string.gsub(cmdStr,"\\\\","%%BackSlash%%")
@@ -3952,6 +4428,7 @@ function execCmd(cmdStr,speaker)
 			v = string.gsub(v,"%%BackSlash%%","\\")
 			local x,y,num = v:find("^(%d+)%^")
 			local cmdDelay = 0
+			local infTimes = false
 			if num then
 				v = v:sub(y+1)
 				local x,y,del = v:find("^([%d%.]+)%^")
@@ -3959,25 +4436,57 @@ function execCmd(cmdStr,speaker)
 					v = v:sub(y+1)
 					cmdDelay = tonumber(del) or 0
 				end
+			else
+				local x,y = v:find("^inf%^")
+				if x then
+					infTimes = true
+					v = v:sub(y+1)
+					local x,y,del = v:find("^([%d%.]+)%^")
+					if del then
+						v = v:sub(y+1)
+						del = tonumber(del) or 1
+						cmdDelay = (del > 0 and del or 1)
+					else
+						cmdDelay = 1
+					end
+				end
 			end
 		num = tonumber(num or 1)
+		
+		if v:sub(1,1) == "!" then
+			local chunks = splitString(v:sub(2),split)
+			if chunks[1] and lastCmds[chunks[1]] then v = lastCmds[chunks[1]] end
+		end
+		
 		local args = splitString(v,split)
-		local cmd = findCmd(args[1])
+		local cmdName = args[1]
+		local cmd = findCmd(cmdName)
 		if cmd then
 			table.remove(args,1)
 			cargs = args
 			if not speaker then speaker = Players.LocalPlayer end
-			if speaker == Players.LocalPlayer then
-				if cmdHistory[1] ~= rawCmdStr then table.insert(cmdHistory,1,rawCmdStr) end
+			if store then
+				if speaker == Players.LocalPlayer then
+					if cmdHistory[1] ~= rawCmdStr then table.insert(cmdHistory,1,rawCmdStr) end
+				end
+				if #cmdHistory > 20 then table.remove(cmdHistory) end
+				
+				lastCmds[cmdName] = v
 			end
-			if #cmdHistory > 20 then table.remove(cmdHistory) end
 			local cmdStartTime = tick()
-			for rep = 1,num do
-				if lastBreakTime > cmdStartTime then break end
-					pcall(function()
-						cmd.FUNC(args, speaker)
-					end)
-					if cmdDelay ~= 0 then wait(cmdDelay) end
+			if infTimes then
+				while lastBreakTime < cmdStartTime do
+					pcall(cmd.FUNC,args, speaker)
+					wait(cmdDelay)
+				end
+			else
+				for rep = 1,num do
+					if lastBreakTime > cmdStartTime then break end
+						pcall(function()
+							cmd.FUNC(args, speaker)
+						end)
+						if cmdDelay ~= 0 then wait(cmdDelay) end
+					end
 				end
 			end
 		end
@@ -3985,13 +4494,13 @@ function execCmd(cmdStr,speaker)
 end	
 
 function addcmd(name,alias,func,plgn)
-	cmds[#cmds+1]=
-	{
-		NAME=name;
-		ALIAS=alias;
-		FUNC=func;
-		PLUGIN=plgn;
-	}
+    cmds[#cmds+1]=
+    {
+        NAME=name;
+        ALIAS=alias or {};
+        FUNC=func;
+        PLUGIN=plgn;
+    }
 end
 
 function removecmd(cmd)
@@ -4012,19 +4521,12 @@ function removecmd(cmd)
 	end
 end
 
-function addbind(cmd,key)
+function addbind(cmd,key,iskeyup)
 	binds[#binds+1]=
 	{
 		COMMAND=cmd;
 		KEY=key;
-	}
-end
-
-function addspawn(cmd,sDelay)
-	spawnCmds[#spawnCmds+1]=
-	{
-		COMMAND=cmd;
-		DELAY=sDelay;
+		ISKEYUP=iskeyup;
 	}
 end
 
@@ -4345,6 +4847,7 @@ Players.LocalPlayer.Chatted:connect(function(message)
 	do_exec(message, Players.LocalPlayer)
 end)
 
+Cmdbar.PlaceholderText = "Command Bar ("..prefix..")"
 Cmdbar:GetPropertyChangedSignal("Text"):connect(function()
 	if Cmdbar:IsFocused() then
 		IndexContents(Cmdbar.Text,true,true)
@@ -4354,12 +4857,12 @@ end)
 tabComplete = nil
 Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
-		execCmd(Cmdbar.Text,Players.LocalPlayer)
+		execCmd(Cmdbar.Text,Players.LocalPlayer,true)
 	end
 	if tabComplete then tabComplete:Disconnect() end
 	wait()
 	if not Cmdbar:IsFocused() then
-		Cmdbar.Text = "Command Bar"
+		Cmdbar.Text = ""
 		IndexContents('',true,false,true)
 		if canvasPos ~= nil then
 			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
@@ -4690,7 +5193,7 @@ function refreshbinds()
 			else
 				key = input:sub(14)
 			end
-			newbind.Text.Text = key.." > "..binds[i].COMMAND
+			newbind.Text.Text = key.." > "..binds[i].COMMAND.."  "..(binds[i].ISKEYUP and "(keyup)" or "(keydown)")
 			Holder_2.CanvasSize = UDim2.new(0,0,0, Position + 30)
 			newbind.Text.Delete.MouseButton1Click:Connect(function()
 				unkeybind(binds[i].COMMAND,binds[i].KEY)
@@ -4765,49 +5268,6 @@ end
 
 refreshwaypoints()
 
-function removeSpawnC(cmd,Delay)
-	for i = #spawnCmds,1,-1 do
-		if spawnCmds[i].COMMAND == cmd and spawnCmds[i].DELAY == Delay then
-			table.remove(spawnCmds, i)
-		end
-	end
-	refreshSpawnC()
-	updatesaves()
-	notify('Spawn Commands Updated','Removed "'..cmd..'" from spawn commands')
-end
-
-function refreshSpawnC()
-	if Holder_6 then
-		Holder_6:ClearAllChildren()
-		Holder_6.CanvasSize = UDim2.new(0, 0, 0, 10)
-		for i = 1, #spawnCmds do
-			local YSize = 25
-			local Position = ((i * YSize) - YSize)
-			local newspawn = Example_2:Clone()
-			newspawn.Parent = Holder_6
-			newspawn.Visible = true
-			newspawn.Position = UDim2.new(0,0,0, Position + 5)
-			table.insert(shade2,newspawn)
-			table.insert(shade2,newspawn.Text)
-			table.insert(text1,newspawn.Text)
-			table.insert(shade3,newspawn.Text.Delete)
-			table.insert(text2,newspawn.Text.Delete)
-			if spawnCmds[i].DELAY == 0 or spawnCmds[i].DELAY == '0' then
-				newspawn.Text.Text = spawnCmds[i].COMMAND
-			else
-				newspawn.Text.Text = spawnCmds[i].COMMAND..' (Delay '..spawnCmds[i].DELAY..')'
-			end
-			Holder_6.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newspawn.Text.Delete.MouseButton1Click:Connect(function()
-				removeSpawnC(spawnCmds[i].COMMAND,spawnCmds[i].DELAY)
-				refreshSpawnC()
-			end)
-		end
-	end
-end
-
-refreshSpawnC()
-
 function refreshaliases()
 	if #aliases > 0 then
 		AliasHint:Destroy()
@@ -4836,9 +5296,16 @@ function refreshaliases()
 	end
 end
 
+bindChosenKeyUp = false
+
 BindTo.MouseButton1Click:Connect(function()
 	awaitingInput = true
 	BindTo.Text = 'Press something'
+end)
+
+BindTriggerSelect.MouseButton1Click:Connect(function()
+	bindChosenKeyUp = not bindChosenKeyUp
+	BindTriggerSelect.Text = bindChosenKeyUp and "KeyUp" or "KeyDown"
 end)
 
 Add_2.MouseButton1Click:Connect(function()
@@ -4846,7 +5313,7 @@ Add_2.MouseButton1Click:Connect(function()
 		if string.find(Cmdbar_2.Text, "\\\\") then
 			notify('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
 		else
-			addbind(Cmdbar_2.Text,keyPressed)
+			addbind(Cmdbar_2.Text,keyPressed,bindChosenKeyUp)
 			refreshbinds()
 			updatesaves()
 			if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4861,8 +5328,10 @@ end)
 Exit_2.MouseButton1Click:Connect(function()
 	Cmdbar_2.Text = 'Command'
 	BindTo.Text = 'Click to bind'
+	bindChosenKeyUp = false
+	BindTriggerSelect.Text = "KeyDown"
 	keySelected = false
-	KeybindEditor:TweenPosition(UDim2.new(0.5, -180, 0, -400), "InOut", "Quart", 0.5, true, nil)
+	KeybindEditor:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 end)
 
 function onInputBegan(input,gameProcessed)
@@ -4881,23 +5350,42 @@ function onInputBegan(input,gameProcessed)
 		keySelected = true
 	end
 	if not gameProcessed and #binds > 0 then
-		for i,v in pairs(binds)do
-			if input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower() then
-				execCmd(v.COMMAND,Players.LocalPlayer)
-			elseif input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick' then
-				execCmd(v.COMMAND,Players.LocalPlayer)
-			elseif input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick' then
-				execCmd(v.COMMAND,Players.LocalPlayer)
+		for i,v in pairs(binds) do
+			if not v.ISKEYUP then
+				if input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower() then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				elseif input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick' then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				elseif input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick' then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				end
+			end
+		end
+	end
+end
+
+function onInputEnded(input,gameProcessed)
+	if not gameProcessed and #binds > 0 then
+		for i,v in pairs(binds) do
+			if v.ISKEYUP then
+				if input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower() then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				elseif input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick' then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				elseif input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick' then
+					execCmd(v.COMMAND,Players.LocalPlayer)
+				end
 			end
 		end
 	end
 end
  
 UserInputService.InputBegan:connect(onInputBegan)
+UserInputService.InputEnded:connect(onInputEnded)
 
 Fly.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('togglefly',keyPressed)
+		addbind('togglefly',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4910,7 +5398,7 @@ end)
 
 Noclip.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('togglenoclip',keyPressed)
+		addbind('togglenoclip',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4923,7 +5411,7 @@ end)
 
 Float.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('togglefloat',keyPressed)
+		addbind('togglefloat',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4936,7 +5424,7 @@ end)
 
 ClickTP.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('clicktp',keyPressed)
+		addbind('clicktp',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4949,7 +5437,7 @@ end)
 
 ClickDelete.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('clickdel',keyPressed)
+		addbind('clickdel',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4962,7 +5450,7 @@ end)
 
 Xray.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('togglexray',keyPressed)
+		addbind('togglexray',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4975,7 +5463,7 @@ end)
 
 Swim.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('toggleswim',keyPressed)
+		addbind('toggleswim',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -4988,7 +5476,7 @@ end)
 
 Fling.Select.MouseButton1Click:Connect(function()
 	if keySelected then
-		addbind('togglefling',keyPressed)
+		addbind('togglefling',keyPressed,bindChosenKeyUp)
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
@@ -5043,6 +5531,7 @@ function addPlugin(name)
 				table.insert(PluginsTable, fileName)
 				LoadPlugin(fileName)
 				refreshplugins()
+				pcall(eventEditor.Refresh)
 			else
 				notify('Plugin Error','This plugin is already added')
 			end
@@ -5192,7 +5681,7 @@ PluginsGUI.AddPlugin.MouseButton1Click:connect(function()
 end)
 
 Exit_3.MouseButton1Click:connect(function()
-	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, -400), "InOut", "Quart", 0.5, true, nil)
+	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	PluginsGUI.FileName.Text = 'Plugin File Name'
 end)
 
@@ -5200,18 +5689,18 @@ PluginsFrame.Add.MouseButton1Click:Connect(function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, 310), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Settings.Plugins.Select.MouseButton1Click:Connect(function()
+Plugins.MouseButton1Click:Connect(function()
 	if writefileExploit() then
 		PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 		wait(0.5)
-		disablebuttons()
+		SettingsHolder.Visible = false
 	else
 		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
 	end
 end)
 
 PluginsFrame.Close.MouseButton1Click:Connect(function()
-	enablebuttons()
+	SettingsHolder.Visible = true
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
@@ -5232,43 +5721,23 @@ addcmd('addalias',{},
 	end
 end)
 
-addcmd('loadsavedaliases',{},
-	function(args, speaker)
-    if #args < 2 then return end
-    local cmd = string.lower(args[1])
-    local alias = string.lower(args[2])
-    for i,v in pairs(cmds) do
-        if v.NAME:lower()==cmd or std.inTable(v.ALIAS,cmd) then
-            customAlias[alias] = v
-			refreshaliases()
-            break
-        end
-    end
-end)
-
-if aliases then
-	for i = 1, #aliases do
-		execCmd('loadsavedaliases '..aliases[i].CMD..' '..aliases[i].ALIAS)
-	end
-end
-
 addcmd('removealias',{},
 	function(args, speaker)
-	if #args < 1 then return end
-	local alias = string.lower(args[1])
-	if customAlias[alias] then
-		local cmd = customAlias[alias].NAME
-		customAlias[alias] = nil
-		for i,v in pairs(aliases) do
-			if v.ALIAS == tostring(alias) then
-				table.remove(aliases, i)
+		if #args < 1 then return end
+		local alias = string.lower(args[1])
+		if customAlias[alias] then
+			local cmd = customAlias[alias].NAME
+			customAlias[alias] = nil
+			for i = #aliases,1,-1 do
+				if aliases[i].ALIAS == tostring(alias) then
+					table.remove(aliases, i)
+				end
 			end
+			notify('Aliases Modified',"Removed the alias "..alias.." from "..cmd)
+			updatesaves()
+			refreshaliases()
 		end
-		notify('Aliases Modified',"Removed the alias "..alias.." from "..cmd)
-		updatesaves()
-		refreshaliases()
-	end
-end)
+	end)
 
 addcmd('clraliases',{},
 	function(args, speaker)
@@ -5281,298 +5750,318 @@ end)
 
 addcmd('serverinfo',{'info','sinfo'},
 	function(args, speaker)
-	local FRAME = Instance.new("Frame")
-	local shadow = Instance.new("Frame")
-	local PopupText = Instance.new("TextLabel")
-	local Exit = Instance.new("ImageButton")
-	local background = Instance.new("Frame")
-	local TextLabel = Instance.new("TextLabel")
-	local TextLabel2 = Instance.new("TextLabel")
-	local TextLabel3 = Instance.new("TextLabel")
-	local Time = Instance.new("TextLabel")
-	local appearance = Instance.new("TextLabel")
-	local maxplayers = Instance.new("TextLabel")
-	local name = Instance.new("TextLabel")
-	local placeid = Instance.new("TextLabel")
-	local playerid = Instance.new("TextLabel")
-	local players = Instance.new("TextLabel")
-	local CopyApp = Instance.new("TextButton")
-	local CopyPlrID = Instance.new("TextButton")
-	local CopyPlcID = Instance.new("TextButton")
-	
-	FRAME.Name = randomString()
-	FRAME.Parent = PARENT
-	FRAME.Active = true
-	FRAME.BackgroundTransparency = 1
-	FRAME.Position = UDim2.new(0.5, -130, 0, -400)
-	FRAME.Size = UDim2.new(0, 250, 0, 20)
-	FRAME.ZIndex = 10
-	dragGUI(FRAME)
-	
-	shadow.Name = "shadow"
-	shadow.Parent = FRAME
-	shadow.BackgroundColor3 = currentShade2
-	shadow.BorderSizePixel = 0
-	shadow.Size = UDim2.new(0, 250, 0, 20)
-	shadow.ZIndex = 10
-	table.insert(shade2,shadow)
-	
-	PopupText.Name = "PopupText"
-	PopupText.Parent = shadow
-	PopupText.BackgroundTransparency = 1
-	PopupText.Position = UDim2.new(0, 38, 0, 0)
-	PopupText.Size = UDim2.new(0.760355055, -16, 0.949999988, 0)
-	PopupText.ZIndex = 10
-	PopupText.Font = Enum.Font.SourceSans
-	PopupText.TextSize = 14
-	PopupText.Text = "Server"
-	PopupText.TextColor3 = currentText1
-	PopupText.TextWrapped = true
-	table.insert(text1,PopupText)
-	
-	Exit.Name = "Exit"
-	Exit.Parent = shadow
-	Exit.BackgroundTransparency = 1
-	Exit.Size = UDim2.new(0, 20, 0, 20)
-	Exit.ZIndex = 10
-	Exit.Image = "rbxassetid://2132544126"
-	
-	background.Name = "background"
-	background.Parent = FRAME
-	background.Active = true
-	background.BackgroundColor3 = currentShade1
-	background.BorderSizePixel = 0
-	background.Position = UDim2.new(0, 0, 1, 0)
-	background.Size = UDim2.new(0, 250, 0, 250)
-	background.ZIndex = 10
-	table.insert(shade1,background)
-	
-	TextLabel.Name = "Text Label"
-	TextLabel.Parent = background
-	TextLabel.BackgroundTransparency = 1
-	TextLabel.BorderSizePixel = 0
-	TextLabel.Position = UDim2.new(0, 5, 0, 80)
-	TextLabel.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel.ZIndex = 10
-	TextLabel.Font = Enum.Font.SourceSansLight
-	TextLabel.TextSize = 20
-	TextLabel.Text = "Run Time:"
-	TextLabel.TextColor3 = currentText1
-	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,TextLabel)
-	
-	TextLabel2.Name = "Text Label2"
-	TextLabel2.Parent = background
-	TextLabel2.BackgroundTransparency = 1
-	TextLabel2.BorderSizePixel = 0
-	TextLabel2.Position = UDim2.new(0, 5, 0, 130)
-	TextLabel2.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel2.ZIndex = 10
-	TextLabel2.Font = Enum.Font.SourceSansLight
-	TextLabel2.TextSize = 20
-	TextLabel2.Text = "Statistics:"
-	TextLabel2.TextColor3 = currentText1
-	TextLabel2.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,TextLabel2)
-	
-	TextLabel3.Name = "Text Label3"
-	TextLabel3.Parent = background
-	TextLabel3.BackgroundTransparency = 1
-	TextLabel3.BorderSizePixel = 0
-	TextLabel3.Position = UDim2.new(0, 5, 0, 10)
-	TextLabel3.Size = UDim2.new(0, 100, 0, 20)
-	TextLabel3.ZIndex = 10
-	TextLabel3.Font = Enum.Font.SourceSansLight
-	TextLabel3.TextSize = 20
-	TextLabel3.Text = "Local Player:"
-	TextLabel3.TextColor3 = currentText1
-	TextLabel3.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,TextLabel3)
-	
-	Time.Name = "Time"
-	Time.Parent = background
-	Time.BackgroundTransparency = 1
-	Time.BorderSizePixel = 0
-	Time.Position = UDim2.new(0, 5, 0, 105)
-	Time.Size = UDim2.new(0, 100, 0, 20)
-	Time.ZIndex = 10
-	Time.Font = Enum.Font.SourceSans
-	Time.FontSize = Enum.FontSize.Size14
-	Time.Text = "LOADING"
-	Time.TextColor3 = currentText1
-	Time.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,Time)
-	
-	appearance.Name = "appearance"
-	appearance.Parent = background
-	appearance.BackgroundTransparency = 1
-	appearance.BorderSizePixel = 0
-	appearance.Position = UDim2.new(0, 5, 0, 55)
-	appearance.Size = UDim2.new(0, 100, 0, 20)
-	appearance.ZIndex = 10
-	appearance.Font = Enum.Font.SourceSans
-	appearance.FontSize = Enum.FontSize.Size14
-	appearance.Text = "Appearance: LOADING"
-	appearance.TextColor3 = currentText1
-	appearance.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,appearance)
-	
-	maxplayers.Name = "maxplayers"
-	maxplayers.Parent = background
-	maxplayers.BackgroundTransparency = 1
-	maxplayers.BorderSizePixel = 0
-	maxplayers.Position = UDim2.new(0, 5, 0, 175)
-	maxplayers.Size = UDim2.new(0, 100, 0, 20)
-	maxplayers.ZIndex = 10
-	maxplayers.Font = Enum.Font.SourceSans
-	maxplayers.FontSize = Enum.FontSize.Size14
-	maxplayers.Text = "LOADING"
-	maxplayers.TextColor3 = currentText1
-	maxplayers.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,maxplayers)
-	
-	name.Name = "name"
-	name.Parent = background
-	name.BackgroundTransparency = 1
-	name.BorderSizePixel = 0
-	name.Position = UDim2.new(0, 5, 0, 215)
-	name.Size = UDim2.new(0, 240, 0, 30)
-	name.ZIndex = 10
-	name.Font = Enum.Font.SourceSans
-	name.FontSize = Enum.FontSize.Size14
-	name.Text = "Place Name: LOADING"
-	name.TextColor3 = currentText1
-	name.TextWrapped = true
-	name.TextXAlignment = Enum.TextXAlignment.Left
-	name.TextYAlignment = Enum.TextYAlignment.Top
-	table.insert(text1,name)
-	
-	placeid.Name = "placeid"
-	placeid.Parent = background
-	placeid.BackgroundTransparency = 1
-	placeid.BorderSizePixel = 0
-	placeid.Position = UDim2.new(0, 5, 0, 195)
-	placeid.Size = UDim2.new(0, 100, 0, 20)
-	placeid.ZIndex = 10
-	placeid.Font = Enum.Font.SourceSans
-	placeid.FontSize = Enum.FontSize.Size14
-	placeid.Text = "Place ID: LOADING"
-	placeid.TextColor3 = currentText1
-	placeid.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,placeid)
-	
-	playerid.Name = "playerid"
-	playerid.Parent = background
-	playerid.BackgroundTransparency = 1
-	playerid.BorderSizePixel = 0
-	playerid.Position = UDim2.new(0, 5, 0, 35)
-	playerid.Size = UDim2.new(0, 100, 0, 20)
-	playerid.ZIndex = 10
-	playerid.Font = Enum.Font.SourceSans
-	playerid.FontSize = Enum.FontSize.Size14
-	playerid.Text = "Player ID: LOADING"
-	playerid.TextColor3 = currentText1
-	playerid.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,playerid)
-	
-	players.Name = "players"
-	players.Parent = background
-	players.BackgroundTransparency = 1
-	players.BorderSizePixel = 0
-	players.Position = UDim2.new(0, 5, 0, 155)
-	players.Size = UDim2.new(0, 100, 0, 20)
-	players.ZIndex = 10
-	players.Font = Enum.Font.SourceSans
-	players.FontSize = Enum.FontSize.Size14
-	players.Text = "LOADING"
-	players.TextColor3 = currentText1
-	players.TextXAlignment = Enum.TextXAlignment.Left
-	table.insert(text1,players)
-	
-	CopyApp.Name = "CopyApp"
-	CopyApp.Parent = background
-	CopyApp.BackgroundColor3 = currentShade2
-	CopyApp.BorderSizePixel = 0
-	CopyApp.Position = UDim2.new(0, 210, 0, 55)
-	CopyApp.Size = UDim2.new(0, 35, 0, 20)
-	CopyApp.Font = Enum.Font.SourceSans
-	CopyApp.TextSize = 14
-	CopyApp.Text = "Copy"
-	CopyApp.TextColor3 = currentText1
-	CopyApp.ZIndex = 10
-	table.insert(shade2,CopyApp)
-	table.insert(text1,CopyApp)
-	
-	CopyPlrID.Name = "CopyPlrID"
-	CopyPlrID.Parent = background
-	CopyPlrID.BackgroundColor3 = currentShade2
-	CopyPlrID.BorderSizePixel = 0
-	CopyPlrID.Position = UDim2.new(0, 210, 0, 35)
-	CopyPlrID.Size = UDim2.new(0, 35, 0, 20)
-	CopyPlrID.Font = Enum.Font.SourceSans
-	CopyPlrID.TextSize = 14
-	CopyPlrID.Text = "Copy"
-	CopyPlrID.TextColor3 = currentText1
-	CopyPlrID.ZIndex = 10
-	table.insert(shade2,CopyPlrID)
-	table.insert(text1,CopyPlrID)
-	
-	CopyPlcID.Name = "CopyPlcID"
-	CopyPlcID.Parent = background
-	CopyPlcID.BackgroundColor3 = currentShade2
-	CopyPlcID.BorderSizePixel = 0
-	CopyPlcID.Position = UDim2.new(0, 210, 0, 195)
-	CopyPlcID.Size = UDim2.new(0, 35, 0, 20)
-	CopyPlcID.Font = Enum.Font.SourceSans
-	CopyPlcID.TextSize = 14
-	CopyPlcID.Text = "Copy"
-	CopyPlcID.TextColor3 = currentText1
-	CopyPlcID.ZIndex = 10
-	table.insert(shade2,CopyPlcID)
-	table.insert(text1,CopyPlcID)
-	
-	local SINFOGUI = background
-	FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
-	wait(0.5)
-	Exit.MouseButton1Click:Connect(function()
-		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -400), "InOut", "Quart", 0.5, true, nil) 
-		wait(0.6)
-		FRAME:Destroy()
+	spawn(function()
+		local FRAME = Instance.new("Frame")
+		local shadow = Instance.new("Frame")
+		local PopupText = Instance.new("TextLabel")
+		local Exit = Instance.new("TextButton")
+		local ExitImage = Instance.new("ImageLabel")
+		local background = Instance.new("Frame")
+		local TextLabel = Instance.new("TextLabel")
+		local TextLabel2 = Instance.new("TextLabel")
+		local TextLabel3 = Instance.new("TextLabel")
+		local Time = Instance.new("TextLabel")
+		local appearance = Instance.new("TextLabel")
+		local maxplayers = Instance.new("TextLabel")
+		local name = Instance.new("TextLabel")
+		local placeid = Instance.new("TextLabel")
+		local playerid = Instance.new("TextLabel")
+		local players = Instance.new("TextLabel")
+		local CopyApp = Instance.new("TextButton")
+		local CopyPlrID = Instance.new("TextButton")
+		local CopyPlcID = Instance.new("TextButton")
+		
+		FRAME.Name = randomString()
+		FRAME.Parent = PARENT
+		FRAME.Active = true
+		FRAME.BackgroundTransparency = 1
+		FRAME.Position = UDim2.new(0.5, -130, 0, -500)
+		FRAME.Size = UDim2.new(0, 250, 0, 20)
+		FRAME.ZIndex = 10
+		dragGUI(FRAME)
+		
+		shadow.Name = "shadow"
+		shadow.Parent = FRAME
+		shadow.BackgroundColor3 = currentShade2
+		shadow.BorderSizePixel = 0
+		shadow.Size = UDim2.new(0, 250, 0, 20)
+		shadow.ZIndex = 10
+		table.insert(shade2,shadow)
+		
+		PopupText.Name = "PopupText"
+		PopupText.Parent = shadow
+		PopupText.BackgroundTransparency = 1
+		PopupText.Size = UDim2.new(1, 0, 0.95, 0)
+		PopupText.ZIndex = 10
+		PopupText.Font = Enum.Font.SourceSans
+		PopupText.TextSize = 14
+		PopupText.Text = "Server"
+		PopupText.TextColor3 = currentText1
+		PopupText.TextWrapped = true
+		table.insert(text1,PopupText)
+		
+		Exit.Name = "Exit"
+		Exit.Parent = shadow
+		Exit.BackgroundTransparency = 1
+		Exit.Position = UDim2.new(1, -20, 0, 0)
+		Exit.Size = UDim2.new(0, 20, 0, 20)
+		Exit.Text = ""
+		Exit.ZIndex = 10
+		
+		ExitImage.Parent = Exit
+		ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+		ExitImage.BackgroundTransparency = 1
+		ExitImage.Position = UDim2.new(0, 5, 0, 5)
+		ExitImage.Size = UDim2.new(0, 10, 0, 10)
+		ExitImage.Image = "rbxassetid://5054663650"
+		
+		background.Name = "background"
+		background.Parent = FRAME
+		background.Active = true
+		background.BackgroundColor3 = currentShade1
+		background.BorderSizePixel = 0
+		background.Position = UDim2.new(0, 0, 1, 0)
+		background.Size = UDim2.new(0, 250, 0, 250)
+		background.ZIndex = 10
+		table.insert(shade1,background)
+		
+		TextLabel.Name = "Text Label"
+		TextLabel.Parent = background
+		TextLabel.BackgroundTransparency = 1
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Position = UDim2.new(0, 5, 0, 80)
+		TextLabel.Size = UDim2.new(0, 100, 0, 20)
+		TextLabel.ZIndex = 10
+		TextLabel.Font = Enum.Font.SourceSansLight
+		TextLabel.TextSize = 20
+		TextLabel.Text = "Run Time:"
+		TextLabel.TextColor3 = currentText1
+		TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,TextLabel)
+		
+		TextLabel2.Name = "Text Label2"
+		TextLabel2.Parent = background
+		TextLabel2.BackgroundTransparency = 1
+		TextLabel2.BorderSizePixel = 0
+		TextLabel2.Position = UDim2.new(0, 5, 0, 130)
+		TextLabel2.Size = UDim2.new(0, 100, 0, 20)
+		TextLabel2.ZIndex = 10
+		TextLabel2.Font = Enum.Font.SourceSansLight
+		TextLabel2.TextSize = 20
+		TextLabel2.Text = "Statistics:"
+		TextLabel2.TextColor3 = currentText1
+		TextLabel2.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,TextLabel2)
+		
+		TextLabel3.Name = "Text Label3"
+		TextLabel3.Parent = background
+		TextLabel3.BackgroundTransparency = 1
+		TextLabel3.BorderSizePixel = 0
+		TextLabel3.Position = UDim2.new(0, 5, 0, 10)
+		TextLabel3.Size = UDim2.new(0, 100, 0, 20)
+		TextLabel3.ZIndex = 10
+		TextLabel3.Font = Enum.Font.SourceSansLight
+		TextLabel3.TextSize = 20
+		TextLabel3.Text = "Local Player:"
+		TextLabel3.TextColor3 = currentText1
+		TextLabel3.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,TextLabel3)
+		
+		Time.Name = "Time"
+		Time.Parent = background
+		Time.BackgroundTransparency = 1
+		Time.BorderSizePixel = 0
+		Time.Position = UDim2.new(0, 5, 0, 105)
+		Time.Size = UDim2.new(0, 100, 0, 20)
+		Time.ZIndex = 10
+		Time.Font = Enum.Font.SourceSans
+		Time.FontSize = Enum.FontSize.Size14
+		Time.Text = "LOADING"
+		Time.TextColor3 = currentText1
+		Time.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,Time)
+		
+		appearance.Name = "appearance"
+		appearance.Parent = background
+		appearance.BackgroundTransparency = 1
+		appearance.BorderSizePixel = 0
+		appearance.Position = UDim2.new(0, 5, 0, 55)
+		appearance.Size = UDim2.new(0, 100, 0, 20)
+		appearance.ZIndex = 10
+		appearance.Font = Enum.Font.SourceSans
+		appearance.FontSize = Enum.FontSize.Size14
+		appearance.Text = "Appearance: LOADING"
+		appearance.TextColor3 = currentText1
+		appearance.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,appearance)
+		
+		maxplayers.Name = "maxplayers"
+		maxplayers.Parent = background
+		maxplayers.BackgroundTransparency = 1
+		maxplayers.BorderSizePixel = 0
+		maxplayers.Position = UDim2.new(0, 5, 0, 175)
+		maxplayers.Size = UDim2.new(0, 100, 0, 20)
+		maxplayers.ZIndex = 10
+		maxplayers.Font = Enum.Font.SourceSans
+		maxplayers.FontSize = Enum.FontSize.Size14
+		maxplayers.Text = "LOADING"
+		maxplayers.TextColor3 = currentText1
+		maxplayers.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,maxplayers)
+		
+		name.Name = "name"
+		name.Parent = background
+		name.BackgroundTransparency = 1
+		name.BorderSizePixel = 0
+		name.Position = UDim2.new(0, 5, 0, 215)
+		name.Size = UDim2.new(0, 240, 0, 30)
+		name.ZIndex = 10
+		name.Font = Enum.Font.SourceSans
+		name.FontSize = Enum.FontSize.Size14
+		name.Text = "Place Name: LOADING"
+		name.TextColor3 = currentText1
+		name.TextWrapped = true
+		name.TextXAlignment = Enum.TextXAlignment.Left
+		name.TextYAlignment = Enum.TextYAlignment.Top
+		table.insert(text1,name)
+		
+		placeid.Name = "placeid"
+		placeid.Parent = background
+		placeid.BackgroundTransparency = 1
+		placeid.BorderSizePixel = 0
+		placeid.Position = UDim2.new(0, 5, 0, 195)
+		placeid.Size = UDim2.new(0, 100, 0, 20)
+		placeid.ZIndex = 10
+		placeid.Font = Enum.Font.SourceSans
+		placeid.FontSize = Enum.FontSize.Size14
+		placeid.Text = "Place ID: LOADING"
+		placeid.TextColor3 = currentText1
+		placeid.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,placeid)
+		
+		playerid.Name = "playerid"
+		playerid.Parent = background
+		playerid.BackgroundTransparency = 1
+		playerid.BorderSizePixel = 0
+		playerid.Position = UDim2.new(0, 5, 0, 35)
+		playerid.Size = UDim2.new(0, 100, 0, 20)
+		playerid.ZIndex = 10
+		playerid.Font = Enum.Font.SourceSans
+		playerid.FontSize = Enum.FontSize.Size14
+		playerid.Text = "Player ID: LOADING"
+		playerid.TextColor3 = currentText1
+		playerid.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,playerid)
+		
+		players.Name = "players"
+		players.Parent = background
+		players.BackgroundTransparency = 1
+		players.BorderSizePixel = 0
+		players.Position = UDim2.new(0, 5, 0, 155)
+		players.Size = UDim2.new(0, 100, 0, 20)
+		players.ZIndex = 10
+		players.Font = Enum.Font.SourceSans
+		players.FontSize = Enum.FontSize.Size14
+		players.Text = "LOADING"
+		players.TextColor3 = currentText1
+		players.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1,players)
+		
+		CopyApp.Name = "CopyApp"
+		CopyApp.Parent = background
+		CopyApp.BackgroundColor3 = currentShade2
+		CopyApp.BorderSizePixel = 0
+		CopyApp.Position = UDim2.new(0, 210, 0, 55)
+		CopyApp.Size = UDim2.new(0, 35, 0, 20)
+		CopyApp.Font = Enum.Font.SourceSans
+		CopyApp.TextSize = 14
+		CopyApp.Text = "Copy"
+		CopyApp.TextColor3 = currentText1
+		CopyApp.ZIndex = 10
+		table.insert(shade2,CopyApp)
+		table.insert(text1,CopyApp)
+		
+		CopyPlrID.Name = "CopyPlrID"
+		CopyPlrID.Parent = background
+		CopyPlrID.BackgroundColor3 = currentShade2
+		CopyPlrID.BorderSizePixel = 0
+		CopyPlrID.Position = UDim2.new(0, 210, 0, 35)
+		CopyPlrID.Size = UDim2.new(0, 35, 0, 20)
+		CopyPlrID.Font = Enum.Font.SourceSans
+		CopyPlrID.TextSize = 14
+		CopyPlrID.Text = "Copy"
+		CopyPlrID.TextColor3 = currentText1
+		CopyPlrID.ZIndex = 10
+		table.insert(shade2,CopyPlrID)
+		table.insert(text1,CopyPlrID)
+		
+		CopyPlcID.Name = "CopyPlcID"
+		CopyPlcID.Parent = background
+		CopyPlcID.BackgroundColor3 = currentShade2
+		CopyPlcID.BorderSizePixel = 0
+		CopyPlcID.Position = UDim2.new(0, 210, 0, 195)
+		CopyPlcID.Size = UDim2.new(0, 35, 0, 20)
+		CopyPlcID.Font = Enum.Font.SourceSans
+		CopyPlcID.TextSize = 14
+		CopyPlcID.Text = "Copy"
+		CopyPlcID.TextColor3 = currentText1
+		CopyPlcID.ZIndex = 10
+		table.insert(shade2,CopyPlcID)
+		table.insert(text1,CopyPlcID)
+		
+		local SINFOGUI = background
+		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
+		wait(0.5)
+		Exit.MouseButton1Click:Connect(function()
+			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil) 
+			wait(0.6)
+			FRAME:Destroy()
+		end)
+		local Asset = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+		SINFOGUI.name.Text = "Place Name: " .. Asset.Name
+		SINFOGUI.playerid.Text = "Player ID: " ..speaker.UserId
+		SINFOGUI.maxplayers.Text = Players.MaxPlayers.. " Players Max"
+		SINFOGUI.placeid.Text = "Place ID: " ..game.PlaceId
+		
+		CopyApp.MouseButton1Click:Connect(function()
+			toClipboard(speaker.CharacterAppearanceId)
+		end)
+		CopyPlrID.MouseButton1Click:Connect(function()
+			toClipboard(speaker.UserId)
+		end)
+		CopyPlcID.MouseButton1Click:Connect(function()
+			toClipboard(game.PlaceId)
+		end)
+		
+		repeat
+			players = Players:getPlayers()
+			SINFOGUI.players.Text = #players.. " Player(s)"
+			SINFOGUI.appearance.Text = "Appearance: " ..speaker.CharacterAppearanceId
+			local seconds = math.floor(workspace.DistributedGameTime)
+			local minutes = math.floor(workspace.DistributedGameTime / 60)
+			local hours = math.floor(workspace.DistributedGameTime / 60 / 60)
+			local seconds = seconds - (minutes * 60)
+		local minutes = minutes - (hours * 60)
+			if hours < 1 then if minutes < 1 then
+				SINFOGUI.Time.Text = seconds .. " Second(s)" else
+				SINFOGUI.Time.Text = minutes .. " Minute(s), " .. seconds .. " Second(s)"
+			end
+			else
+				SINFOGUI.Time.Text = hours .. " Hour(s), " .. minutes .. " Minute(s), " .. seconds .. " Second(s)"
+			end
+			wait(1)
+		until SINFOGUI.Parent == nil
 	end)
-	local Asset = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
-	SINFOGUI.name.Text = "Place Name: " .. Asset.Name
-	SINFOGUI.playerid.Text = "Player ID: " ..speaker.UserId
-	SINFOGUI.maxplayers.Text = Players.MaxPlayers.. " Players Max"
-	SINFOGUI.placeid.Text = "Place ID: " ..game.PlaceId
-	
-	CopyApp.MouseButton1Click:Connect(function()
-		toClipboard(speaker.CharacterAppearanceId)
-	end)
-	CopyPlrID.MouseButton1Click:Connect(function()
-		toClipboard(speaker.UserId)
-	end)
-	CopyPlcID.MouseButton1Click:Connect(function()
-		toClipboard(game.PlaceId)
-	end)
-	
-	repeat
-		players = Players:getPlayers()
-		SINFOGUI.players.Text = #players.. " Player(s)"
-		SINFOGUI.appearance.Text = "Appearance: " ..speaker.CharacterAppearanceId
-		local seconds = math.floor(workspace.DistributedGameTime)
-		local minutes = math.floor(workspace.DistributedGameTime / 60)
-		local hours = math.floor(workspace.DistributedGameTime / 60 / 60)
-		local seconds = seconds - (minutes * 60)
-	local minutes = minutes - (hours * 60)
-		if hours < 1 then if minutes < 1 then
-			SINFOGUI.Time.Text = seconds .. " Second(s)" else
-			SINFOGUI.Time.Text = minutes .. " Minute(s), " .. seconds .. " Second(s)"
-		end
-		else
-			SINFOGUI.Time.Text = hours .. " Hour(s), " .. minutes .. " Minute(s), " .. seconds .. " Second(s)"
-		end
-		wait(1)
-	until SINFOGUI.Parent == nil
+end)
+
+addcmd('jobid',{},
+	function(args, speaker)
+	toClipboard(game.JobId)
+end)
+
+addcmd('notifyjobid',{},
+	function(args, speaker)
+	notify('JobId',game.JobId)
 end)
 
 addcmd('breakloops',{'break'},
@@ -6140,7 +6629,7 @@ invisGUIS = {}
 addcmd('showguis',{},
 	function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
-		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and not v.Visible then
+		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and not v.Visible then
 			v.Visible = true
 			if not FindInTable(invisGUIS,v) then
 				table.insert(invisGUIS,v)
@@ -6161,7 +6650,7 @@ hiddenGUIS = {}
 addcmd('hideguis',{},
 	function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
-		if v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame") and v.Visible then
+		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and v.Visible then
 			v.Visible = false
 			if not FindInTable(hiddenGUIS,v) then
 				table.insert(hiddenGUIS,v)
@@ -6208,6 +6697,11 @@ addcmd('volume',{'vol'},
 	function(args, speaker)
 	local level = args[1]/10
 	UserSettings():GetService("UserGameSettings").MasterVolume = level
+end)
+
+addcmd('notify',{},
+	function(args, speaker)
+	notify(getstring(1))
 end)
 
 addcmd('esp',{},
@@ -6260,7 +6754,7 @@ espParts = {}
 addcmd('partesp',{},
 	function(args, speaker)
 	local partEspName = getstring(1):lower()
-	if not FindInTable(espParts,partEspName) then print('Added to table!!')
+	if not FindInTable(espParts,partEspName) then
 		table.insert(espParts,partEspName)
 		for i,v in pairs(workspace:GetDescendants()) do
 			if v:IsA("BasePart") and v.Name:lower() == partEspName then
@@ -6994,6 +7488,7 @@ addcmd('goto',{'to'},
 			speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)
 		end
 	end
+	execCmd('breakvelocity')
 end)
 
 addcmd('vehiclegoto',{'vgoto'},
@@ -7326,6 +7821,24 @@ addcmd('unweaken',{'unstrengthen'},
 	end
 end)
 
+addcmd('breakvelocity',{},
+	function(args, speaker)
+    local BeenASecond = false
+    spawn(function()
+      repeat wait()
+        for i,v in pairs(speaker:GetDescendants()) do
+          if v:IsA("BasePart") then
+            v.Velocity = Vector3.new(0, 0, 0)
+          end
+        end
+      until BeenASecond
+    end)
+    spawn(function()
+      wait(1)
+      BeenASecond = true
+    end)
+end)
+
 addcmd('jpower',{'jumppower','jp'},
 	function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower=tonumber(args[1])
@@ -7506,7 +8019,7 @@ addcmd('team',{},
 	speaker.Team = teamname
 end)
 
-addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname'},
+addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},
 	function(args, speaker)
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
@@ -7565,6 +8078,16 @@ addcmd('animation',{'anim'},
 	else
 		notify('R6 Required','This command requires the r6 rig type')
 	end
+end)
+
+addcmd('noanim',{},
+	function(args, speaker)
+	speaker.Character.Animate.Disabled = true
+end)
+
+addcmd('reanim',{},
+	function(args, speaker)
+	speaker.Character.Animate.Disabled = false
 end)
 
 addcmd('tpposition',{'tppos'},
@@ -7852,6 +8375,40 @@ end)
 addcmd('spamspeed',{},
 	function(args, speaker)
 	spamspeed = args[1]
+end)
+
+bubblechatting = false
+getBubblechat = nil
+addcmd('bubblechat',{},
+	function(args, speaker)
+	if bubblechatting then return end
+	bubblechatting = true
+	getBubblechat = Players.PlayerAdded:connect(function(plr)
+		local chatfunc
+		chatfunc = plr.Chatted:connect(function(chat)
+			if bubblechatting == true then
+				game:GetService("Chat"):Chat(plr.Character.Head,chat,Enum.ChatColor.White)
+			else
+				chatfunc:Disconnect()
+			end
+		end)
+	end)
+	for i,v in pairs(Players:GetPlayers()) do
+		local chatfunc
+		chatfunc = v.Chatted:connect(function(chat)
+			if bubblechatting == true then
+				game:GetService("Chat"):Chat(v.Character.Head,chat,Enum.ChatColor.White)
+			else
+				chatfunc:Disconnect()
+			end
+		end)
+	end
+end)
+
+addcmd('unbubblechat',{'nobubblechat'},
+	function(args, speaker)
+	bubblechatting = false
+	if getBubblechat then getBubblechat:Disconnect() end
 end)
 
 addcmd('blockhead',{},
@@ -8177,6 +8734,7 @@ end)
 addcmd('vr',{},
 	function(args, speaker)
 	-- Full credit to Abacaxl @V3rmillion
+	-- Free for all thanks to Zinnia
 	loadstring(game:HttpGet('https://ghostbin.co/paste/yb288/raw'))()
 end)
 
@@ -8530,9 +9088,8 @@ function kill(speaker,target,fast)
 			repeat wait(0.1)
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
 			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
-			wait(0.3)
+			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
-			print('OK!')
 		end
 	else
 		notify('Tool Required','You need to have a tool to use this command')
@@ -8592,7 +9149,7 @@ function bring(speaker,target,fast)
 			repeat wait(0.1)
 				hrp.CFrame = NormPos
 			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
-			wait(0.3)
+			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -8888,7 +9445,7 @@ addcmd('freezeunanchored',{'freezeua'},
 				local bodygyro = Instance.new("BodyGyro",v)
 				bodygyro.CFrame = v.CFrame
 				bodygyro.MaxTorque = Vector3.new(hUge,hUge,hUge)
-				if not table.find(frozenParts,v) then print('added')
+				if not table.find(frozenParts,v) then
 					table.insert(frozenParts,v)
 				end
 			end
@@ -8916,6 +9473,114 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 	end
 	frozenParts = {}
 end)
+
+keycodeMap = {
+	["0"] = 0x30,
+	["1"] = 0x31,
+	["2"] = 0x32,
+	["3"] = 0x33,
+	["4"] = 0x34,
+	["5"] = 0x35,
+	["6"] = 0x36,
+	["7"] = 0x37,
+	["8"] = 0x38,
+	["9"] = 0x39,
+	["a"] = 0x41,
+	["b"] = 0x42,
+	["c"] = 0x43,
+	["d"] = 0x44,
+	["e"] = 0x45,
+	["f"] = 0x46,
+	["g"] = 0x47,
+	["h"] = 0x48,
+	["i"] = 0x49,
+	["j"] = 0x4A,
+	["k"] = 0x4B,
+	["l"] = 0x4C,
+	["m"] = 0x4D,
+	["n"] = 0x4E,
+	["o"] = 0x4F,
+	["p"] = 0x50,
+	["q"] = 0x51,
+	["r"] = 0x52,
+	["s"] = 0x53,
+	["t"] = 0x54,
+	["u"] = 0x55,
+	["v"] = 0x56,
+	["w"] = 0x57,
+	["x"] = 0x58,
+	["y"] = 0x59,
+	["z"] = 0x5A,
+	["enter"] = 0x0D,
+	["shift"] = 0x10,
+	["ctrl"] = 0x11,
+	["alt"] = 0x12,
+	["pause"] = 0x13,
+	["capslock"] = 0x14,
+	["spacebar"] = 0x20,
+	["pageup"] = 0x21,
+	["pagedown"] = 0x22,
+	["end"] = 0x23,
+	["home"] = 0x24,
+	["left"] = 0x25,
+	["up"] = 0x26,
+	["right"] = 0x27,
+	["down"] = 0x28,
+	["insert"] = 0x2D,
+	["delete"] = 0x2E,
+	["f1"] = 0x70,
+	["f2"] = 0x71,
+	["f3"] = 0x72,
+	["f4"] = 0x73,
+	["f5"] = 0x74,
+	["f6"] = 0x75,
+	["f7"] = 0x76,
+	["f8"] = 0x77,
+	["f9"] = 0x78,
+	["f10"] = 0x79,
+	["f11"] = 0x7A,
+	["f12"] = 0x7B,
+}
+autoKeyPressing = false
+cancelAutoKeyPress = nil
+
+addcmd('autokeypress',{'keypress'},
+	function(args, speaker)
+		if keypress and keyrelease and args[1] then
+			local code = keycodeMap[args[1]:lower()]
+			if not code then notify('Auto Key Press',"Invalid key") return end
+			execCmd('unautokeypress')
+			wait()
+			local clickDelay = 0.1
+			local releaseDelay = 0.1
+			if args[2] and isNumber(args[2]) then clickDelay = tonumber(args[2]) end
+			if args[3] and isNumber(args[3]) then releaseDelay = tonumber(args[3]) end
+			autoKeyPressing = true
+			cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+				if not gameProcessedEvent then
+					if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
+						autoKeyPressing = false
+						cancelAutoKeyPress:Disconnect()
+					end
+				end
+			end)
+			notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+			repeat wait(clickDelay)
+				keypress(code)
+				wait(releaseDelay)
+				keyrelease(code)
+			until autoKeyPressing == false
+			if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
+		else
+			notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		end
+	end)
+	
+addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},
+	function(args, speaker)
+		autoKeyPressing = false
+		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
+	end)
 
 addcmd('tpunanchored',{'tpua'},
 	function(args, speaker)
@@ -8979,6 +9644,87 @@ if PluginsTable ~= nil or PluginsTable ~= {} then
 	FindPlugins(PluginsTable)
 end
 
+-- Events
+eventEditor.RegisterEvent("OnExecute")
+eventEditor.RegisterEvent("OnSpawn",{
+	{Type="Player",Name="Player Filter ($1)"}
+})
+eventEditor.RegisterEvent("OnDied",{
+	{Type="Player",Name="Player Filter ($1)"}
+})
+eventEditor.RegisterEvent("OnKilled",{
+	{Type="Player",Name="Victim Player ($1)"},
+	{Type="Player",Name="Killer Player ($2)",Default = 1}
+})
+eventEditor.RegisterEvent("OnJoin",{
+	{Type="Player",Name="Player Filter ($1)",Default = 1}
+})
+eventEditor.RegisterEvent("OnChatted",{
+	{Type="Player",Name="Player Filter ($1)",Default = 1},
+	{Type="String",Name="Message Filter ($2)"}
+})
+
+function hookCharEvents(plr,instant)
+	local char = plr.Character
+	if not char then return end
+	
+	local humanoid = char:WaitForChild("Humanoid",10)
+	if not humanoid then return end
+	
+	humanoid.Died:Connect(function()
+		eventEditor.FireEvent("OnDied",plr.Name)
+		
+		local killedBy = humanoid:FindFirstChild("creator")
+		if killedBy and killedBy.Value and killedBy.Value.Parent then
+			eventEditor.FireEvent("OnKilled",plr.Name,killedBy.Name)
+		end
+	end)
+end
+
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+	eventEditor.FireEvent("OnJoin",plr.Name)
+	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
+	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+end)
+
+for _,plr in pairs(game:GetService("Players"):GetPlayers()) do
+	pcall(function()
+		plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
+		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+		hookCharEvents(plr)
+	end)
+end
+
+if spawnCmds and #spawnCmds > 0 then
+	for i,v in pairs(spawnCmds) do
+		eventEditor.AddCmd("OnSpawn",{v.COMMAND or "",{0},v.DELAY or 0})
+	end
+	updatesaves()
+end
+
+if loadedEventData then eventEditor.LoadData(loadedEventData) end
+eventEditor.Refresh()
+
+eventEditor.FireEvent("OnExecute")
+
+if aliases and #aliases > 0 then
+	local cmdMap = {}
+	for i,v in pairs(cmds) do
+		cmdMap[v.NAME:lower()] = v
+		for _,alias in pairs(v.ALIAS) do
+			cmdMap[alias:lower()] = v
+		end
+    end
+	for i = 1, #aliases do
+		local cmd = string.lower(aliases[i].CMD)
+	    local alias = string.lower(aliases[i].ALIAS)
+		if cmdMap[cmd] then
+			customAlias[alias] = cmdMap[cmd]
+		end
+	end
+	refreshaliases()
+end
+
 IYMouse.Move:connect(checkTT)
 
 if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
@@ -8991,13 +9737,14 @@ if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/E
 		local TextBox = Instance.new("TextLabel")
 		local shadow = Instance.new("Frame")
 		local PopupText = Instance.new("TextLabel")
-		local Exit = Instance.new("ImageButton")
+		local Exit = Instance.new("TextButton")
+		local ExitImage = Instance.new("ImageLabel")
 		
 		AnnGUI.Name = randomString()
 		AnnGUI.Parent = PARENT
 		AnnGUI.Active = true
 		AnnGUI.BackgroundTransparency = 1
-		AnnGUI.Position = UDim2.new(0.5, -180, 0, -400)
+		AnnGUI.Position = UDim2.new(0.5, -180, 0, -500)
 		AnnGUI.Size = UDim2.new(0, 360, 0, 20)
 		AnnGUI.ZIndex = 10
 		
@@ -9033,8 +9780,7 @@ if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/E
 		PopupText.Name = "PopupText"
 		PopupText.Parent = shadow
 		PopupText.BackgroundTransparency = 1
-		PopupText.Position = UDim2.new(0, 51, 0, 0)
-		PopupText.Size = UDim2.new(0.76, -16, 0.95, 0)
+		PopupText.Size = UDim2.new(1, 0, 0.95, 0)
 		PopupText.ZIndex = 10
 		PopupText.Font = Enum.Font.SourceSans
 		PopupText.TextSize = 14
@@ -9045,15 +9791,23 @@ if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/E
 		Exit.Name = "Exit"
 		Exit.Parent = shadow
 		Exit.BackgroundTransparency = 1
+		Exit.Position = UDim2.new(1, -20, 0, 0)
 		Exit.Size = UDim2.new(0, 20, 0, 20)
+		Exit.Text = ""
 		Exit.ZIndex = 10
-		Exit.Image = "rbxassetid://2132544126"
+		
+		ExitImage.Parent = Exit
+		ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+		ExitImage.BackgroundTransparency = 1
+		ExitImage.Position = UDim2.new(0, 5, 0, 5)
+		ExitImage.Size = UDim2.new(0, 10, 0, 10)
+		ExitImage.Image = "rbxassetid://5054663650"
 		
 		wait(1)
 		AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, 150), "InOut", "Quart", 0.5, true, nil)
 		
 		Exit.MouseButton1Click:Connect(function()
-			AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, -400), "InOut", "Quart", 0.5, true, nil)
+			AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 			wait(0.6)
 			AnnGUI:Destroy()
 		end)
