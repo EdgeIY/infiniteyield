@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.0'
+ver = '4.0.1'
 
 Players = game:GetService("Players")
 
@@ -6849,7 +6849,7 @@ end)
 viewing = nil
 addcmd('view',{'spectate'},
 	function(args, speaker)
-	if fcLoaded then
+	if fcRunning then
 		StopFreecam()
 	end
 	local players = getPlayer(args[1], speaker)
@@ -6879,6 +6879,7 @@ addcmd('unview',{'unspectate'},
 end)
 
 fcLoaded = false
+fcRunning = false
 NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 addcmd('freecam',{'fc'},
 	function(args, speaker)
@@ -7114,7 +7115,7 @@ addcmd('freecam',{'fc'},
 		
 		function StartFreecam()
 			local cameraCFrame = Camera.CFrame
-			cameraRot = Vector2.new(cameraCFrame:toEulerAnglesYXZ())
+			cameraRot = Vector2.new()
 			cameraPos = cameraCFrame.p
 			cameraFov = Camera.FieldOfView
 		
@@ -7134,12 +7135,14 @@ addcmd('freecam',{'fc'},
 		end
 	end
 	StartFreecam()
+	fcRunning = true
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
 	function(args, speaker)
-	if fcLoaded then
+	if fcRunning then
 		StopFreecam()
+		fcRunning = false
 	end
 end)
 
@@ -7192,7 +7195,7 @@ end)
 
 addcmd('fixcam',{'restorecam'},
 	function(args, speaker)
-	if fcLoaded then
+	if fcRunning then
 		StopFreecam()
 	end
 	workspace.CurrentCamera:remove()
