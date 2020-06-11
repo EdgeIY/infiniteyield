@@ -2052,7 +2052,7 @@ eventEditor = (function()
 							cmdStr = cmdStr:gsub("%$"..count,arg)
 						end
 						wait(cmd[3] or 0)
-						execCmd(cmdStr:sub(1, #cmdStr - 1))
+						execCmd(cmdStr:gsub("\r", ""))
 					end))
 				end
 			end
@@ -4834,7 +4834,7 @@ function do_exec(str, plr)
 	if not t then return end
 	str = str:sub(t[2])
 	if t[1]=='cmd' then
-		execCmd(str:sub(1, #str - 1), plr)
+		execCmd(str:gsub("\r", ""), plr)
 		IndexContents('',true,false,true)
 		if canvasPos ~= nil then
 			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
@@ -4858,7 +4858,7 @@ end)
 tabComplete = nil
 Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
-		execCmd(Cmdbar.Text:sub(1, #Cmdbar.Text - 1),Players.LocalPlayer,true)
+		execCmd(Cmdbar.Text:gsub("\r", ""),Players.LocalPlayer,true)
 	end
 	if tabComplete then tabComplete:Disconnect() end
 	wait()
