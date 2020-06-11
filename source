@@ -2052,7 +2052,7 @@ eventEditor = (function()
 							cmdStr = cmdStr:gsub("%$"..count,arg)
 						end
 						wait(cmd[3] or 0)
-						execCmd(cmdStr:gsub("\r", ""))
+						execCmd(cmdStr)
 					end))
 				end
 			end
@@ -4421,6 +4421,7 @@ lastCmds = {}
 split=" "
 lastBreakTime = 0
 function execCmd(cmdStr,speaker,store)
+	cmdStr = cmdStr:gsub("%s+$","")
 	spawn(function()
 		local rawCmdStr = cmdStr
 		cmdStr = string.gsub(cmdStr,"\\\\","%%BackSlash%%")
@@ -4834,7 +4835,7 @@ function do_exec(str, plr)
 	if not t then return end
 	str = str:sub(t[2])
 	if t[1]=='cmd' then
-		execCmd(str:gsub("\r", ""), plr)
+		execCmd(str, plr)
 		IndexContents('',true,false,true)
 		if canvasPos ~= nil then
 			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
@@ -4858,7 +4859,7 @@ end)
 tabComplete = nil
 Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
-		execCmd(Cmdbar.Text:gsub("\r", ""),Players.LocalPlayer,true)
+		execCmd(Cmdbar.Text,Players.LocalPlayer,true)
 	end
 	if tabComplete then tabComplete:Disconnect() end
 	wait()
