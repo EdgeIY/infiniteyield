@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.0.1'
+ver = '4.1'
 
 Players = game:GetService("Players")
 
@@ -3565,6 +3565,7 @@ Players.PlayerRemoving:connect(function(player)
 		viewing = nil
 		if viewDied then
 			viewDied:Disconnect()
+			viewChanged:Disconnect()
 		end
 		notify('Spectate','View turned off (player left)')
 	end
@@ -3829,18 +3830,9 @@ Match = function(name,str)
 	return name:lower():find(str:lower()) and true
 end
 
-canvasPos = nil
-canvasTop = false
+canvasPos = Vector2.new(0,0)
 topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
-	if str == '' or str == ' ' or str == prefix then
-		if canvasTop == false then
-			canvasPos = CMDsF.CanvasPosition.Y
-		end
-	else
-		CMDsF.CanvasPosition = Vector2.new(0,0)
-		canvasTop = true
-	end
 	local Index,SizeY = 0,0
 	local indexnum = 0
 	topCommand = nil
@@ -3893,6 +3885,11 @@ end
 PlayerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
 local chatbox
 if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end) then	
+	local function chatboxFocused()
+		canvasPos = CMDsF.CanvasPosition
+	end
+	local chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
+	
 	local function Index()
 		if chatbox.Text:lower():sub(1,1) == prefix then
 			if SettingsOpen == true then
@@ -3915,11 +3912,8 @@ if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("Player
 	function chatboxFocusLost(enterpressed)
 		if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
 			IndexContents('',true)
-			if canvasPos ~= nil then
-				CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
-				canvasTop = false
-			end
 		end
+		CMDsF.CanvasPosition = canvasPos
 		minimizeHolder()
 	end
 	local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
@@ -3928,6 +3922,8 @@ if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("Player
 		wait()
 		if newbar:FindFirstChild('BoxFrame') then
 			chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+			if chatboxFocusedC then chatboxFocusedC:Disconnect() end
+			chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
 			if chatboxFunc then chatboxFunc:Disconnect() end
 			chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
 			if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
@@ -3971,7 +3967,7 @@ CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the 
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
-CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
+CMDs[#CMDs + 1] = {NAME = 'serverhop [maxplayers] [minplayers] [maxqueries]', DESC = 'Teleports you to a different server'}
 CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
@@ -3985,6 +3981,7 @@ CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantikick', DESC = 'Prevents localscripts from kicking you'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
@@ -4028,7 +4025,7 @@ CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall yo
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / logs', DESC = 'Log what people say or whisper'}
-CMDs[#CMDs + 1] = {NAME = 'chat [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
+CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
 CMDs[#CMDs + 1] = {NAME = 'pmspam [plr] [text]', DESC = 'Makes you spam a players whispers'}
@@ -4139,6 +4136,7 @@ CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip heigh
 CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower [num]', DESC = 'Change a players jump height'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
+CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while still being able to walk'}
 CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'disables nosit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
@@ -4148,14 +4146,6 @@ CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
 CMDs[#CMDs + 1] = {NAME = 'nobillboardgui / nobgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
-CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
-CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
-CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
-CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
-CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
-CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
-CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Stops your animations'}
-CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
@@ -4173,6 +4163,16 @@ CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters ac
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
+CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
+CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
+CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
+CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
+CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
+CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Stops your animations'}
+CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
+CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
@@ -4471,22 +4471,28 @@ function execCmd(cmdStr,speaker,store)
 				if speaker == Players.LocalPlayer then
 					if cmdHistory[1] ~= rawCmdStr then table.insert(cmdHistory,1,rawCmdStr) end
 				end
-				if #cmdHistory > 20 then table.remove(cmdHistory) end
+				if #cmdHistory > 30 then table.remove(cmdHistory) end
 				
 				lastCmds[cmdName] = v
 			end
 			local cmdStartTime = tick()
 			if infTimes then
 				while lastBreakTime < cmdStartTime do
-					pcall(cmd.FUNC,args, speaker)
+					local success,err = pcall(cmd.FUNC,args, speaker)
+					if not success and _G.IY_DEBUG then
+						warn("Command Error:", cmdName, err)
+					end
 					wait(cmdDelay)
 				end
 			else
 				for rep = 1,num do
 					if lastBreakTime > cmdStartTime then break end
-						pcall(function()
+						local success,err = pcall(function()
 							cmd.FUNC(args, speaker)
 						end)
+						if not success and _G.IY_DEBUG then
+							warn("Command Error:", cmdName, err)
+						end
 						if cmdDelay ~= 0 then wait(cmdDelay) end
 					end
 				end
@@ -4837,10 +4843,7 @@ function do_exec(str, plr)
 	if t[1]=='cmd' then
 		execCmd(str, plr)
 		IndexContents('',true,false,true)
-		if canvasPos ~= nil then
-			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
-			canvasTop = false
-		end
+		CMDsF.CanvasPosition = canvasPos
 	end
 end
 
@@ -4866,20 +4869,18 @@ Cmdbar.FocusLost:connect(function(enterpressed)
 	if not Cmdbar:IsFocused() then
 		Cmdbar.Text = ""
 		IndexContents('',true,false,true)
-		if canvasPos ~= nil then
-			CMDsF.CanvasPosition = Vector2.new(0, canvasPos)
-			canvasTop = false
-		end
 		if SettingsOpen == true then
 			wait(0.2)
 			Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
 			Holder.CMDs.Visible = false
 		end
 	end
+	CMDsF.CanvasPosition = canvasPos
 end)
 
 Cmdbar.Focused:Connect(function()
-	historyCount = 0 
+	historyCount = 0
+	canvasPos = CMDsF.CanvasPosition
 	if SettingsOpen == true then
 		wait(0.2)
 		Holder.CMDs.Visible = true
@@ -6079,34 +6080,58 @@ end)
 
 addcmd('rejoin',{'rj'},
 	function(args, speaker)
-	game:GetService('TeleportService'):Teleport(game.PlaceId)
+	game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 end)
+
+local PlaceId = game.PlaceId
+local URL = ("https://www.roblox.com/games/getgameinstancesjson?placeId=%s&startindex="):format(PlaceId)
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+
+function ServerHop(MaxQueries, MaxPlayers, MinPlayers)
+	local List = {}
+	MaxQueries = (MaxQueries or 10) * 10
+	
+	for page = 0, MaxQueries do
+		local Query = HttpService:JSONDecode(game:HttpGet(URL..page))
+		
+		if page % 10 == 0 then -- ask roblox, not me.
+			for i,v in next, Query.Collection do 
+				List[v.Guid] = {
+					PlayerCount = #v.CurrentPlayers,
+					IsSlow = v.ShowShutdownAllButton,
+					Capacity = v.Capacity,
+				}
+			end
+		end
+	end
+
+	local ChosenServer = nil
+
+	for i,v in pairs(List) do
+		if i ~= game.JobId then
+			local MaxCheck = (MaxPlayers and v.PlayerCount <= MaxPlayers) or (not MaxPlayers and true)
+			local MinCheck = (MinPlayers and v.PlayerCount >= MinPlayers) or (not MinPlayers and true)
+			local CapacityCheck = v.Capacity ~= v.PlayerCount
+			local SlowCheck = not v.IsSlow
+			
+			if MaxCheck and MinCheck and CapacityCheck and SlowCheck then
+				ChosenServer = i
+				break
+			end
+		end
+	end
+
+	if ChosenServer then
+		TeleportService:TeleportToPlaceInstance(game.PlaceId, ChosenServer, game.Players.LocalPlayer)
+	else
+		notify("Server Hop Failure", "Could not find a server!")
+	end
+end
 
 addcmd('serverhop',{'shop'},
 	function(args, speaker)
-	local PlaceId = game.PlaceId
-	local URL = ("https://www.roblox.com/games/getgameinstancesjson?placeId=%s&startindex="):format(PlaceId)
-	
-	local List = {}
-	
-	for page = 0, 30 do
-		local Query = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL..page))
-	
-		for i,v in next, Query.Collection do 
-			List[v.Guid] = v.Ping
-		end
-	end
-	
-	local ChosenServer = game.JobId
-	
-	for i,v in pairs(List) do
-		if i ~= game.JobId then
-			ChosenServer = i
-			break
-		end
-	end
-	
-	game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,ChosenServer,speaker)
+	ServerHop(tonumber(args[3]), tonumber(args[1]), tonumber(args[2]))
 end)
 
 addcmd('joinplayer',{'joinp'},
@@ -6696,6 +6721,22 @@ addcmd('clearerror',{'clearerrors'},
 	game:GetService("GuiService"):ClearError()
 end)
 
+addcmd('clientantikick',{},
+	function(args, speaker)
+	local mt = getrawmetatable(game)
+	local old = mt.__namecall
+	
+	setreadonly(mt, false)
+	mt.__namecall = function(self, ...)
+	    local method = getnamecallmethod()
+	    if method == "Kick" then
+	        return
+	    end
+	    return old(self, ...)
+	end
+	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
+end)
+
 addcmd('volume',{'vol'},
 	function(args, speaker)
 	local level = args[1]/10
@@ -6858,26 +6899,34 @@ addcmd('view',{'spectate'},
 	for i,v in pairs(players) do
 		if viewDied then
 			viewDied:Disconnect()
+			viewChanged:Disconnect()
 		end
-		workspace.CurrentCamera.CameraSubject = Players[v].Character
 		viewing = Players[v]
+		workspace.CurrentCamera.CameraSubject = viewing.Character
 		notify('Spectate','Viewing ' .. Players[v].Name)
 		local function viewDiedFunc()
 			repeat wait() until Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart')
-			workspace.CurrentCamera.CameraSubject = Players[v].Character
+			workspace.CurrentCamera.CameraSubject = viewing.Character
 		end
 		viewDied = Players[v].CharacterAdded:connect(viewDiedFunc)
+		local function viewChangedFunc()
+			workspace.CurrentCamera.CameraSubject = viewing.Character
+		end
+		viewChanged = workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):connect(viewChangedFunc)
 	end
 end)
 
 addcmd('unview',{'unspectate'},
 	function(args, speaker)
 	workspace.CurrentCamera.CameraSubject = speaker.Character
-	viewing = nil
+	if viewing ~= nil then
+		viewing = nil
+		notify('Spectate','View turned off')
+	end
 	if viewDied then
 		viewDied:Disconnect()
+		viewChanged:Disconnect()
 	end
-	notify('Spectate','View turned off')
 end)
 
 fcLoaded = false
@@ -7200,6 +7249,7 @@ addcmd('fixcam',{'restorecam'},
 	if fcRunning then
 		StopFreecam()
 	end
+	execCmd('unview')
 	workspace.CurrentCamera:remove()
 	wait(.1)
 	repeat wait() until speaker.Character ~= nil
@@ -7974,6 +8024,20 @@ addcmd('sit',{},
 	speaker.Character:FindFirstChildOfClass("Humanoid").Sit = true
 end)
 
+addcmd('sitwalk',{},
+	function(args, speaker)
+	local sitAnim = 'http://www.roblox.com/asset/?id=2506281703'
+	speaker.Character.Animate.idle:FindFirstChildOfClass("Animation").AnimationId = sitAnim
+	speaker.Character.Animate.walk:FindFirstChildOfClass("Animation").AnimationId = sitAnim
+	speaker.Character.Animate.run:FindFirstChildOfClass("Animation").AnimationId = sitAnim
+	speaker.Character.Animate.jump:FindFirstChildOfClass("Animation").AnimationId = sitAnim
+	if r15(speaker) then
+		speaker.Character.Humanoid.HipHeight = 0.5
+	else
+		speaker.Character.Humanoid.HipHeight = -1.5
+	end
+end)
+
 function noSitFunc()
 	wait()
 	if Players.LocalPlayer.Character.Humanoid.Sit then
@@ -8094,6 +8158,16 @@ end)
 addcmd('reanim',{},
 	function(args, speaker)
 	speaker.Character.Animate.Disabled = false
+end)
+
+addcmd('animspeed', {},
+	function(args, speaker)
+	local Char = speaker.Character
+	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+
+	for i,v in next, Hum:GetPlayingAnimationTracks() do
+		v:AdjustSpeed(tonumber(args[1] or 1))
+	end
 end)
 
 addcmd('tpposition',{'tppos'},
@@ -8326,7 +8400,7 @@ addcmd('headsit',{},
 	end
 end)
 
-addcmd('chat',{},
+addcmd('chat',{'say'},
 	function(args, speaker)
 	local cString = getstring(1)
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
@@ -8628,6 +8702,7 @@ addcmd('light',{},
 	light.Range = 30
 	if args[1] then
 		light.Brightness = args[1]
+		light.Range = args[1]
 	else
 		light.Brightness = 5
 	end
