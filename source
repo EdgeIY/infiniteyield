@@ -8026,11 +8026,12 @@ end)
 
 addcmd('sitwalk',{},
 	function(args, speaker)
-	local sitAnim = 'http://www.roblox.com/asset/?id=2506281703'
-	speaker.Character.Animate.idle:FindFirstChildOfClass("Animation").AnimationId = sitAnim
-	speaker.Character.Animate.walk:FindFirstChildOfClass("Animation").AnimationId = sitAnim
-	speaker.Character.Animate.run:FindFirstChildOfClass("Animation").AnimationId = sitAnim
-	speaker.Character.Animate.jump:FindFirstChildOfClass("Animation").AnimationId = sitAnim
+	local anims = speaker.Character.Animate
+	local sit = anims.sit:FindFirstChildOfClass("Animation").AnimationId
+	anims.idle:FindFirstChildOfClass("Animation").AnimationId = sit
+	anims.walk:FindFirstChildOfClass("Animation").AnimationId = sit
+	anims.run:FindFirstChildOfClass("Animation").AnimationId = sit
+	anims.jump:FindFirstChildOfClass("Animation").AnimationId = sit
 	if r15(speaker) then
 		speaker.Character.Humanoid.HipHeight = 0.5
 	else
