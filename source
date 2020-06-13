@@ -6918,7 +6918,6 @@ end)
 
 addcmd('unview',{'unspectate'},
 	function(args, speaker)
-	workspace.CurrentCamera.CameraSubject = speaker.Character
 	if viewing ~= nil then
 		viewing = nil
 		notify('Spectate','View turned off')
@@ -6927,6 +6926,7 @@ addcmd('unview',{'unspectate'},
 		viewDied:Disconnect()
 		viewChanged:Disconnect()
 	end
+	workspace.CurrentCamera.CameraSubject = speaker.Character
 end)
 
 fcLoaded = false
