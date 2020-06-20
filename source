@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.1'
+ver = '4.2'
 
 Players = game:GetService("Players")
 
@@ -1651,7 +1651,7 @@ PositionsHint.Position = UDim2.new(0, 25, 0, 40)
 PositionsHint.Size = UDim2.new(0, 200, 0, 70)
 PositionsHint.Font = Enum.Font.SourceSansItalic
 PositionsHint.TextSize = 16
-PositionsHint.Text = "Use the 'spos' or 'setwaypoint' command to add a position using your character (NOTE: Part teleports will not save)"
+PositionsHint.Text = "Use the 'swp' or 'setwaypoint' command to add a position using your character (NOTE: Part teleports will not save)"
 PositionsHint.TextColor3 = Color3.new(1, 1, 1)
 PositionsHint.TextStrokeColor3 = Color3.new(1, 1, 1)
 PositionsHint.TextWrapped = true
@@ -1871,7 +1871,9 @@ function writefileExploit()
 end
 
 function isNumber(str)
-	return tonumber(str) ~= nil
+	if tonumber(str) ~= nil or str == 'inf' then
+		return true
+	end
 end
 
 function tools(plr)
@@ -1952,7 +1954,7 @@ end
 
 AllWaypoints = {}
 
-cooldown = false
+local cooldown = false
 function writefileCooldown(name,data)
 	spawn(function()
 		if not cooldown then
@@ -2619,12 +2621,12 @@ reference = (function()
 	end)
 end)()
 
-currentShade1 = Color3.fromRGB(36, 36, 37)
-currentShade2 = Color3.fromRGB(46, 46, 47)
-currentShade3 = Color3.fromRGB(78, 78, 79)
-currentText1 = Color3.new(1, 1, 1)
-currentText2 = Color3.new(0, 0, 0)
-currentScroll = Color3.fromRGB(78,78,79)
+local currentShade1 = Color3.fromRGB(36, 36, 37)
+local currentShade2 = Color3.fromRGB(46, 46, 47)
+local currentShade3 = Color3.fromRGB(78, 78, 79)
+local currentText1 = Color3.new(1, 1, 1)
+local currentText2 = Color3.new(0, 0, 0)
+local currentScroll = Color3.fromRGB(78,78,79)
 
 defaultsettings = {
 	prefix = ';';
@@ -2640,7 +2642,7 @@ defaults = game:GetService("HttpService"):JSONEncode(defaultsettings)
 
 nosaves = false
 
-loadedEventData = nil
+local loadedEventData = nil
 function saves()
 	if writefileExploit() then
 		if pcall(function() readfile("IY_FE.iy") end) then
@@ -2854,8 +2856,8 @@ function cmdbarHolder()
 	end
 end
 
-notifyCount = 0
 pinNotification = nil
+local notifyCount = 0
 function notify(text,text2,length)
 	spawn(function()
 		local LnotifyCount = notifyCount+1
@@ -2902,9 +2904,9 @@ function notify(text,text2,length)
 	end)
 end
 
-lastMessage = nil
-lastLabel = nil
-dupeCount = 1
+local lastMessage = nil
+local lastLabel = nil
+local dupeCount = 1
 function CreateLabel(Name, Text)
 	if lastMessage == Name..Text then
 		dupeCount = dupeCount+1
@@ -2959,7 +2961,6 @@ function CreateLabel(Name, Text)
 	end
 end
 
-infJump = false
 IYMouse.KeyDown:connect(function(Key)
 	if (Key==prefix) then
 		Cmdbar:CaptureFocus()
@@ -2967,13 +2968,10 @@ IYMouse.KeyDown:connect(function(Key)
 			repeat Cmdbar.Text = '' until Cmdbar.Text == ''
 		end)
 		maximizeHolder()
-	elseif infJump == true and Key == " " then
-		Players.LocalPlayer.Character.Humanoid:ChangeState(3)
 	end
 end)
 
-lastMinimizeReq = 0
-
+local lastMinimizeReq = 0
 Holder.MouseEnter:Connect(function()
 	lastMinimizeReq = 0
 	maximizeHolder()
@@ -2985,7 +2983,9 @@ Holder.MouseLeave:Connect(function()
 		lastMinimizeReq = reqTime
 		wait(1)
 		if lastMinimizeReq ~= reqTime then return end
-		minimizeHolder()
+		if not Cmdbar:IsFocused() then
+			minimizeHolder()
+		end
 	end
 end)
 
@@ -3649,8 +3649,8 @@ selected.Color3 = Color3.new(0,166,0)
 selected.Adornee = nil
 selected.Parent = PARENT
 
-ActivateHighlight = nil
-ClickSelect = nil
+local ActivateHighlight = nil
+local ClickSelect = nil
 Part.MouseButton1Click:Connect(function()
 	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, 335), "InOut", "Quart", 0.5, true, nil)
 	local function HighlightPart()
@@ -3823,9 +3823,6 @@ end
 
 dragMain(Title,Holder)
 
-CSP = Holder
-frame = CSP:WaitForChild('CMDs')
-
 Match = function(name,str)
 	return name:lower():find(str:lower()) and true
 end
@@ -3835,6 +3832,7 @@ topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
 	local Index,SizeY = 0,0
 	local indexnum = 0
+	local frame = Holder:WaitForChild('CMDs')
 	topCommand = nil
 	local chunks = {}
 	if str:sub(#str,#str) == "\\" then str = "" end
@@ -3971,6 +3969,7 @@ CMDs[#CMDs + 1] = {NAME = 'serverhop [maxplayers] [minplayers] [maxqueries]', DE
 CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
+CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
 CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
@@ -3981,7 +3980,7 @@ CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
-CMDs[#CMDs + 1] = {NAME = 'clientantikick', DESC = 'Prevents localscripts from kicking you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
@@ -4006,6 +4005,7 @@ CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypo
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
+CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [plr]', DESC = 'Tween to a player (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [plr]', DESC = 'Go to a player while in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
 CMDs[#CMDs + 1] = {NAME = 'unloopgoto [plr]', DESC = 'Stops teleporting you to a player'}
@@ -4015,7 +4015,9 @@ CMDs[#CMDs + 1] = {NAME = 'unloopbring [plr]', DESC = 'Undoes loopbring'}
 CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'tweentpposition / ttppos [X Y Z]', DESC = 'Tween to coordinates (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
@@ -4033,6 +4035,8 @@ CMDs[#CMDs + 1] = {NAME = 'unpmspam [plr]', DESC = 'Turns off pm spam'}
 CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
 CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
+CMDs[#CMDs + 1] = {NAME = 'safechat', DESC = 'Enables safe chat'}
+CMDs[#CMDs + 1] = {NAME = 'nosafechat / disablesafechat', DESC = 'Disables safechat'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
@@ -4064,21 +4068,15 @@ CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (D
 CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'delete [instance name] (CLIENT)', DESC = 'Removes any part with a certain name from the workspace (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Removes any part with a certain classname from the workspace (DOES NOT REPLICATE)'}
-CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
-CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
-CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
-CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
-CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
-CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
-CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
-CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'invisibleparts / invisparts (CLIENT)', DESC = 'Shows invisible parts'}
 CMDs[#CMDs + 1] = {NAME = 'uninvisibleparts / uninvisparts (CLIENT)', DESC = 'Makes parts affected by invisparts return to normal'}
 CMDs[#CMDs + 1] = {NAME = 'deleteinvisparts / dip (CLIENT)', DESC = 'Deletes invisible parts'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotopart / tgotopart [part name]', DESC = 'Tweens your character to a part or multiple parts'}
 CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotopartclass / tgpc [class name]', DESC = 'Tweens your character to a part or multiple parts based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'gotopartdelay [num]', DESC = 'Adjusts how quickly you teleport to each part (default is 0.1)'}
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
@@ -4108,6 +4106,9 @@ CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [plr]', DESC = 'Chats the date the
 CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = 'Shows a players platform'}
 CMDs[#CMDs + 1] = {NAME = 'chatos [plr]', DESC = 'Chats a players platform'}
 CMDs[#CMDs + 1] = {NAME = 'setos [text]', DESC = 'Sets your os to whatever you input'}
+CMDs[#CMDs + 1] = {NAME = 'region [plr]', DESC = 'Tells you the region of a player'}
+CMDs[#CMDs + 1] = {NAME = 'chatregion [plr]', DESC = 'Chats the region of a player'}
+CMDs[#CMDs + 1] = {NAME = 'setregion [text]', DESC = 'Sets your region to whatever you input'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -4123,6 +4124,9 @@ CMDs[#CMDs + 1] = {NAME = 'fastbring [plr] (TOOL)', DESC = 'Brings a player (les
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
+CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
+CMDs[#CMDs + 1] = {NAME = 'boomboxmute', DESC = 'Mutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'unboomboxmute ', DESC = 'Unmutes someones boombox'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
 CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players heads (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -4157,12 +4161,22 @@ CMDs[#CMDs + 1] = {NAME = 'blocktool', DESC = 'Turns the currently selected tool
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
 CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
+CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
+CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
+CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
+CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
+CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
+CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
+CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
+CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
@@ -4186,9 +4200,10 @@ CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add f
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
 CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
+CMDs[#CMDs + 1] = {NAME = 'deleteselectedtool / dst', DESC = 'Removes any currently selected tools'}
 CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are dropped'}
 CMDs[#CMDs + 1] = {NAME = 'ungrabtools / nograbtools', DESC = 'Disables grabtools'}
-CMDs[#CMDs + 1] = {NAME = 'copytools [plr]', DESC = 'Copies a players tools'}
+CMDs[#CMDs + 1] = {NAME = 'copytools [plr] (CLIENT)', DESC = 'Copies a players tools'}
 CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools', DESC = 'Duplicates your inventory tools'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
@@ -4318,8 +4333,7 @@ function respawn(plr)
 	end
 end
 
-refreshCmd = false
-
+local refreshCmd = false
 function refresh(plr)
 	spawn(function()
 		refreshCmd = true
@@ -4415,11 +4429,11 @@ function splitString(str,delim)
 	return broken
 end
 
-historyCount = 0
 cmdHistory = {}
 lastCmds = {}
-split=" "
-lastBreakTime = 0
+local historyCount = 0
+local split=" "
+local lastBreakTime = 0
 function execCmd(cmdStr,speaker,store)
 	cmdStr = cmdStr:gsub("%s+$","")
 	spawn(function()
@@ -5154,9 +5168,9 @@ function Locate(plr)
 	end)
 end
 
-bindsGUI = KeybindEditor
-awaitingInput = false
-keySelected = false
+local bindsGUI = KeybindEditor
+local awaitingInput = false
+local keySelected = false
 
 function unkeybind(cmd,key)
 	for i = #binds,1,-1 do
@@ -5299,7 +5313,7 @@ function refreshaliases()
 	end
 end
 
-bindChosenKeyUp = false
+local bindChosenKeyUp = false
 
 BindTo.MouseButton1Click:Connect(function()
 	awaitingInput = true
@@ -6653,7 +6667,7 @@ addcmd('disable',{},
 	end
 end)
 
-invisGUIS = {}
+local invisGUIS = {}
 addcmd('showguis',{},
 	function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
@@ -6674,7 +6688,7 @@ addcmd('unshowguis',{},
 	invisGUIS = {}
 end)
 
-hiddenGUIS = {}
+local hiddenGUIS = {}
 addcmd('hideguis',{},
 	function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
@@ -6721,19 +6735,26 @@ addcmd('clearerror',{'clearerrors'},
 	game:GetService("GuiService"):ClearError()
 end)
 
-addcmd('clientantikick',{},
+addcmd('clientantikick',{'antikick'},
 	function(args, speaker)
 	local mt = getrawmetatable(game)
 	local old = mt.__namecall
-	
-	setreadonly(mt, false)
-	mt.__namecall = function(self, ...)
-	    local method = getnamecallmethod()
-	    if method == "Kick" then
-	        return
-	    end
-	    return old(self, ...)
+	local protect = newcclosure or protect_function
+
+	if not protect then
+		notify("Incompatible Exploit Warning", "Your exploit does not support protection against stack trace errors, resulting to fallback function")
+		protect = function(f) return f end
 	end
+
+	setreadonly(mt, false)
+	mt.__namecall = protect(function(self, ...)
+		local method = getnamecallmethod()
+		if method == "Kick" then
+			return
+		end
+		return old(self, ...)
+	end)
+
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
 
@@ -6775,7 +6796,7 @@ addcmd('noesp',{'unesp'},
 	end
 end)
 
-partEspTrigger = nil
+local partEspTrigger = nil
 function partAdded(part)
 	if #espParts > 0 then
 		if FindInTable(espParts,part.Name:lower()) then
@@ -6794,7 +6815,7 @@ function partAdded(part)
 	end
 end
 
-espParts = {}
+local espParts = {}
 addcmd('partesp',{},
 	function(args, speaker)
 	local partEspName = getstring(1):lower()
@@ -6929,7 +6950,7 @@ addcmd('unview',{'unspectate'},
 	workspace.CurrentCamera.CameraSubject = speaker.Character
 end)
 
-fcLoaded = false
+local fcLoaded = false
 fcRunning = false
 NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
 addcmd('freecam',{'fc'},
@@ -7221,8 +7242,8 @@ addcmd('fov',{},
 	end
 end)
 
-preMaxZoom = Players.LocalPlayer.CameraMaxZoomDistance
-preMinZoom = Players.LocalPlayer.CameraMinZoomDistance
+local preMaxZoom = Players.LocalPlayer.CameraMaxZoomDistance
+local preMinZoom = Players.LocalPlayer.CameraMinZoomDistance
 addcmd('lookat',{},
 	function(args, speaker)
 	if speaker.CameraMaxZoomDistance ~= 0.5 then
@@ -7365,7 +7386,7 @@ addcmd('deleteinvisparts',{'deleteinvisibleparts','dip'},
 	end
 end)
 
-shownParts = {}
+local shownParts = {}
 addcmd('invisibleparts',{'invisparts'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
@@ -7413,6 +7434,13 @@ addcmd('antiafk',{'antiidle'},
 		notify('Anti Idle','Anti idle is enabled')
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing getconnections)')
+	end
+end)
+
+addcmd('datalimit',{},
+    function(args, speaker)
+	if tonumber(args[1]) then
+		game:GetService("NetworkClient"):SetOutgoingKBPSLimit(args[1])
 	end
 end)
 
@@ -7505,6 +7533,47 @@ addcmd('setos',{'spoofos', 'osspoof'},
 	notify('OS','Your os is now set to '..getstring(1))
 end)
 
+addcmd('region',{},
+	function(args, speaker)
+	if gethiddenproperty then
+		local players = getPlayer(args[1], speaker)
+		local regions = {}
+		for i,v in pairs(players) do
+			local p = Players[v]
+			table.insert(regions,p.Name.."'s region is: "..gethiddenproperty(p, "CountryRegionCodeReplicate"))
+		end
+		notify('Regions',table.concat(regions, ',\n'))
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing gethiddenproperty)')
+	end
+end)
+
+addcmd('chatregion',{},
+	function(args, speaker)
+	if gethiddenproperty then
+	local players = getPlayer(args[1], speaker)
+	local regions = {}
+	for i,v in pairs(players) do
+		local p = Players[v]
+		table.insert(regions,p.Name.."'s region is: "..gethiddenproperty(p, "CountryRegionCodeReplicate"))
+	end
+	local chatString = table.concat(regions, ', ')
+	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing gethiddenproperty)')
+	end
+end)
+
+addcmd('setregion',{'spoofregion', 'regionspoof'},
+	function(args, speaker)
+	if sethiddenproperty then	
+	sethiddenproperty(speaker, "CountryRegionCodeReplicate", getstring(1))
+	notify('Region','Your region is now set to '..getstring(1))
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
+
 addcmd('copyname',{'copyuser'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -7547,6 +7616,21 @@ addcmd('goto',{'to'},
 	execCmd('breakvelocity')
 end)
 
+addcmd('tweengoto',{'tto','tweento'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		if Players[v].Character ~= nil then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(0.1)
+			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)}):Play()
+		end
+	end
+	execCmd('breakvelocity')
+end)
+
 addcmd('vehiclegoto',{'vgoto'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -7579,7 +7663,7 @@ addcmd('clientbring',{'cbring'},
 	end
 end)
 
-bringT = {}
+local bringT = {}
 addcmd('loopbring',{},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -7650,7 +7734,7 @@ addcmd('freeze',{'fr'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i, v in pairs(players) do
+		for i,v in pairs(players) do
 			spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("BasePart") and not x.Anchored then
@@ -7666,7 +7750,7 @@ addcmd('thaw',{'unfreeze','unfr'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i, v in pairs(players) do
+		for i,v in pairs(players) do
 			spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("BasePart") and x.Anchored then
@@ -7696,6 +7780,40 @@ end)
 addcmd('unloopoof',{},
 	function(args, speaker)
 	oofing = false
+end)
+
+addcmd('boomboxmute',{},
+	function(args, speaker)
+	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	local players = getPlayer(args[1], speaker)
+	if players ~= nil then
+		for i,v in pairs(players) do
+			spawn(function()
+				for i, x in next, Players[v].Character:GetDescendants() do
+					if x:IsA("Sound") and x.Playing == true then
+						x.Playing = false
+					end
+				end
+			end)
+		end
+	end
+end)
+
+addcmd('boomboxunmute',{},
+	function(args, speaker)
+	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','SoundService RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	local players = getPlayer(args[1], speaker)
+	if players ~= nil then
+		for i,v in pairs(players) do
+			spawn(function()
+				for i, x in next, Players[v].Character:GetDescendants() do
+					if x:IsA("Sound") and x.Playing == false then
+						x.Playing = true
+					end
+				end
+			end)
+		end
+	end
 end)
 
 addcmd('reset',{},
@@ -8067,14 +8185,18 @@ addcmd('jump',{},
 	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
 end)
 
+local infjump
 addcmd('infjump',{'infinitejump'},
 	function(args, speaker)
-	infJump = true
+	if infJump then infJump:Disconnect() end
+	infJump = game:GetService("UserInputService").JumpRequest:connect(function(Jump)
+		game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+	end)
 end)
 
 addcmd('uninfjump',{'uninfinitejump','noinfjump','noinfinitejump'},
 	function(args, speaker)
-	infJump = false
+	if infJump then infJump:Disconnect() end
 end)
 
 addcmd('team',{},
@@ -8181,6 +8303,16 @@ addcmd('tpposition',{'tppos'},
 	end
 end)
 
+addcmd('tweentpposition',{'ttppos'},
+	function(args, speaker)
+	if #args < 3 then return end
+	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
+	local char = speaker.Character
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+	end
+end)
+
 addcmd('offset',{},
 	function(args, speaker)
 	if #args < 3 then return end
@@ -8188,6 +8320,16 @@ addcmd('offset',{},
 	local char = speaker.Character
 	if char and char:FindFirstChild("HumanoidRootPart") then
 		char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame + Vector3.new(tpX,tpY,tpZ)
+	end
+end)
+
+addcmd('tweenoffset',{'toffset'},
+	function(args, speaker)
+	if #args < 3 then return end
+	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
+	local char = speaker.Character
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
 	end
 end)
 
@@ -8232,9 +8374,13 @@ end)
 addcmd('speed',{'ws'},
 	function(args, speaker)
 	if args[2] then
-		speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed=tonumber(args[2])
+		if isNumber(args[2]) then
+			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = args[2]
+		end
 	else
-		speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed=tonumber(args[1])
+		if isNumber(args[1]) then
+			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = args[1]
+		end
 	end
 end)
 
@@ -8268,6 +8414,15 @@ addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},
 			v:destroy()
 		end
 	end
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA('Tool') or v:IsA('HopperBin') then
+			v:destroy()
+		end
+	end
+end)
+
+addcmd('deleteselectedtool',{'dst'},
+	function(args, speaker)
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:destroy()
@@ -8351,7 +8506,7 @@ addcmd('explorer',{'dex'},
 	Load(Dex)
 end)
 
-loopgoto = nil
+local loopgoto = nil
 addcmd('loopgoto',{},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -8459,11 +8614,12 @@ addcmd('spamspeed',{},
 end)
 
 bubblechatting = false
-getBubblechat = nil
+local getBubblechat
 addcmd('bubblechat',{},
 	function(args, speaker)
 	if bubblechatting then return end
 	bubblechatting = true
+	if getBubblechat then getBubblechat:Disconnect() end
 	getBubblechat = Players.PlayerAdded:connect(function(plr)
 		local chatfunc
 		chatfunc = plr.Chatted:connect(function(chat)
@@ -8490,6 +8646,16 @@ addcmd('unbubblechat',{'nobubblechat'},
 	function(args, speaker)
 	bubblechatting = false
 	if getBubblechat then getBubblechat:Disconnect() end
+end)
+
+addcmd('safechat',{},
+	function(args, speaker)
+	speaker.SetSuperSafeChat(true)
+end)
+
+addcmd('nosafechat',{'disablesafechat','unsafechat'},
+	function(args, speaker)
+	speaker.SetSuperSafeChat(false)
 end)
 
 addcmd('blockhead',{},
@@ -8612,6 +8778,20 @@ addcmd('gotopart',{},
 	end
 end)
 
+addcmd('tweengotopart',{'tgotopart'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
+			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+		end
+	end
+end)
+
 addcmd('gotopartclass',{'gpc'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
@@ -8621,6 +8801,19 @@ addcmd('gotopartclass',{'gpc'},
 			end
 			wait(gotopartDelay)
 			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+		end
+	end
+end)
+
+addcmd('tweengotopartclass',{'tgpc'},
+	function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.ClassName:lower() == getstring(1):lower() and v:IsA("BasePart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
+			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
 		end
 	end
 end)
@@ -8829,6 +9022,20 @@ addcmd('split',{},
 	end
 end)
 
+addcmd('nilchar',{},
+	function(args, speaker)
+	if speaker.Character ~= nil then
+		speaker.Character.Parent = nil
+	end
+end)
+
+addcmd('unnilchar',{'nonilchar'},
+	function(args, speaker)
+	if speaker.Character ~= nil then
+		speaker.Character.Parent = workspace
+	end
+end)
+
 addcmd('equiptools',{},
 	function(args, speaker)
 	for i,v in pairs(speaker.Backpack:GetChildren()) do
@@ -8994,8 +9201,8 @@ addcmd('droppabletools',{},
 	end
 end)
 
-currentToolSize = ""
-currentGripPos = ""
+local currentToolSize = ""
+local currentGripPos = ""
 addcmd('reach',{},
 	function(args, speaker)
 	execCmd('unreach')
@@ -9281,7 +9488,7 @@ addcmd('unspin',{},
 	end
 end)
 
-transparent = false
+local transparent = false
 function x(v)
 	if v then
 		for _,i in pairs(workspace:GetDescendants()) do
@@ -9316,7 +9523,7 @@ addcmd('togglexray',{},
 	x(transparent)
 end)
 
-walltpTouch = nil
+local walltpTouch = nil
 addcmd('walltp',{},
 	function(args, speaker)
 	local torso
@@ -9354,8 +9561,8 @@ addcmd('autoclick',{},
 		wait()
 		local clickDelay = 0.1
 		local releaseDelay = 0.1
-		if args[1] and isNumber(args[1]) then clickDelay = tonumber(args[1]) end
-		if args[2] and isNumber(args[2]) then releaseDelay = tonumber(args[2]) end
+		if args[1] and isNumber(args[1]) then clickDelay = args[1] end
+		if args[2] and isNumber(args[2]) then releaseDelay = args[2] end
 		autoclicking = true
 		cancelAutoClick = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
@@ -9387,8 +9594,8 @@ addcmd('mousesensitivity',{'ms'},
 	UserInputService.MouseDeltaSensitivity = args[1]
 end)
 
-nameBox = nil
-nbSelection = nil
+local nameBox = nil
+local nbSelection = nil
 addcmd('hovername',{},
 	function(args, speaker)
 	execCmd('unhovername')
@@ -9635,8 +9842,8 @@ addcmd('autokeypress',{'keypress'},
 			wait()
 			local clickDelay = 0.1
 			local releaseDelay = 0.1
-			if args[2] and isNumber(args[2]) then clickDelay = tonumber(args[2]) end
-			if args[3] and isNumber(args[3]) then releaseDelay = tonumber(args[3]) end
+			if args[2] and isNumber(args[2]) then clickDelay = args[2] end
+			if args[3] and isNumber(args[3]) then releaseDelay = args[3] end
 			autoKeyPressing = true
 			cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 				if not gameProcessedEvent then
