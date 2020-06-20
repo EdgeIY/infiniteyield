@@ -4125,8 +4125,8 @@ CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
-CMDs[#CMDs + 1] = {NAME = 'boomboxmute', DESC = 'Mutes someones boombox'}
-CMDs[#CMDs + 1] = {NAME = 'unboomboxmute ', DESC = 'Unmutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'muteboombox [plr]', DESC = 'Mutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [plr]', DESC = 'Unmutes someones boombox'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
 CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players heads (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -7782,7 +7782,7 @@ addcmd('unloopoof',{},
 	oofing = false
 end)
 
-addcmd('boomboxmute',{},
+addcmd('muteboombox',{},
 	function(args, speaker)
 	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
@@ -7799,7 +7799,7 @@ addcmd('boomboxmute',{},
 	end
 end)
 
-addcmd('boomboxunmute',{},
+addcmd('unmuteboombox',{},
 	function(args, speaker)
 	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','SoundService RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
