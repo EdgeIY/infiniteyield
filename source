@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.2'
+ver = '4.2.1'
 
 Players = game:GetService("Players")
 
@@ -3556,7 +3556,7 @@ end)
 
 Players.PlayerRemoving:connect(function(player)
 	for i,v in pairs(PARENT:GetChildren()) do
-		if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' then
+		if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
 			v:Destroy()
 		end
 	end
