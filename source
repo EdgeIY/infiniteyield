@@ -6748,13 +6748,13 @@ addcmd('clientantikick',{'antikick'},
 
 	setreadonly(mt, false)
 	mt.__namecall = protect(function(self, ...)
-		hookfunction(game:GetService("Players").LocalPlayer.Kick,newcclosure(function() wait(9e9) end))
 		local method = getnamecallmethod()
 		if method == "Kick" then
 			return
 		end
 		return old(self, ...)
 	end)
+	hookfunction(game:GetService("Players").LocalPlayer.Kick,newcclosure(function() wait(9e9) end))
 
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
