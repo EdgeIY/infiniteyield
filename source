@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.2.1'
+ver = '4.3'
 
 Players = game:GetService("Players")
 
@@ -143,13 +143,6 @@ PopupText_5 = Instance.new("TextLabel")
 Exit_4 = Instance.new("TextButton")
 ExitImage_5 = Instance.new("ImageLabel")
 
-PARENT = nil
-if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
-	PARENT = game:GetService("CoreGui").RobloxGui
-else
-	PARENT = game:GetService("CoreGui")
-end
-
 function randomString()
 	local length = math.random(10,20)
 	local array = {}
@@ -157,6 +150,16 @@ function randomString()
 		array[i] = string.char(math.random(32, 126))
 	end
 	return table.concat(array)
+end
+
+PARENT = nil
+if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
+	PARENT = game:GetService("CoreGui").RobloxGui
+else
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	Main.Parent = game:GetService("CoreGui")
+	PARENT = Main
 end
 
 shade1 = {}
@@ -3970,6 +3973,7 @@ CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
 CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
+CMDs[#CMDs + 1] = {NAME = 'replicationlag [num]', DESC = 'Set IncommingReplicationLag'}
 CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
@@ -4001,6 +4005,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'setwaypoint / swp [name]', DESC = 'Sets a waypoint at your position'}
 CMDs[#CMDs + 1] = {NAME = 'waypointpos / wpp [name] [X Y Z]', DESC = 'Sets a waypoint with specified coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'waypoint / wp [name]', DESC = 'Teleports player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'tweenwaypoint / twp [name]', DESC = 'Tweens player to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -4052,6 +4057,8 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'spectate / view [plr]', DESC = 'View a player'}
 CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
 CMDs[#CMDs + 1] = {NAME = 'freecam / fc', DESC = 'Allows you to freely move camera around the game'}
+CMDs[#CMDs + 1] = {NAME = 'freecampos / fcpos [X Y Z]', DESC = 'Moves / opens freecam in a certain position'}
+CMDs[#CMDs + 1] = {NAME = 'freecamwaypoint / fcwp [name]', DESC = 'Moves / opens freecam to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
 CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
@@ -4184,9 +4191,10 @@ CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
 CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
 CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
 CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
-CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Stops your animations'}
+CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
+CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
@@ -4745,6 +4753,24 @@ SpecialPlayerCases = {
 		end
 		return returns
 	end,
+	["alive"] = function(speaker,args)
+		local returns = {}
+		for _,plr in pairs(Players:GetPlayers()) do
+			if plr.Character and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+				table.insert(returns,plr)
+			end
+		end
+		return returns
+	end,
+	["dead"] = function(speaker,args)
+		local returns = {}
+		for _,plr in pairs(Players:GetPlayers()) do
+			if (not plr.Character or not plr.Character:FindFirstChildOfClass("Humanoid")) or plr.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
+				table.insert(returns,plr)
+			end
+		end
+		return returns
+	end,
 	["rad(%d+)"] = function(speaker,args)
 		local returns = {}
 		local radius = tonumber(args[1])
@@ -4953,7 +4979,7 @@ function ESP(plr)
 					a.Name = plr.Name
 					a.Adornee = n
 					a.AlwaysOnTop = true
-					a.ZIndex = 0
+					a.ZIndex = 10
 					a.Size = n.Size
 					a.Transparency = 0.3
 					a.Color = plr.TeamColor
@@ -5040,7 +5066,7 @@ function CHMS(plr)
 					a.Name = plr.Name
 					a.Adornee = n
 					a.AlwaysOnTop = true
-					a.ZIndex = 0
+					a.ZIndex = 10
 					a.Size = n.Size
 					a.Transparency = 0.3
 					a.Color = plr.TeamColor
@@ -5099,7 +5125,7 @@ function Locate(plr)
 					a.Name = plr.Name
 					a.Adornee = n
 					a.AlwaysOnTop = true
-					a.ZIndex = 0
+					a.ZIndex = 10
 					a.Size = n.Size
 					a.Transparency = 0.3
 					a.Color = plr.TeamColor
@@ -6555,7 +6581,7 @@ addcmd('toggleswim',{},
 	end
 end)
 
-addcmd('setwaypoint',{'swp','spos','saveposition','savepos'},
+addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},
 	function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if speaker.Character:findFirstChild("HumanoidRootPart") then
@@ -6599,6 +6625,26 @@ addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},
 		for i,_ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				speaker.Character.HumanoidRootPart.CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)
+			end
+		end
+	end
+end)
+
+addcmd('tweenwaypoint',{'twp'},
+	function(args, speaker)
+	local WPName = tostring(getstring(1))
+	if speaker.Character then
+		for i,_ in pairs(WayPoints) do
+			local x = WayPoints[i].COORD[1]
+			local y = WayPoints[i].COORD[2]
+			local z = WayPoints[i].COORD[3]
+			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
+			end
+		end
+		for i,_ in pairs(pWayPoints) do
+			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
 			end
 		end
 	end
@@ -6914,9 +6960,7 @@ end)
 viewing = nil
 addcmd('view',{'spectate'},
 	function(args, speaker)
-	if fcRunning then
-		StopFreecam()
-	end
+	StopFreecam()
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		if viewDied then
@@ -6940,6 +6984,7 @@ end)
 
 addcmd('unview',{'unspectate'},
 	function(args, speaker)
+	StopFreecam()
 	if viewing ~= nil then
 		viewing = nil
 		notify('Spectate','View turned off')
@@ -6951,272 +6996,302 @@ addcmd('unview',{'unspectate'},
 	workspace.CurrentCamera.CameraSubject = speaker.Character
 end)
 
-local fcLoaded = false
-fcRunning = false
-NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
-addcmd('freecam',{'fc'},
-	function(args, speaker)
-	if fcLoaded == false then
-		fcLoaded = true
-		local Camera = workspace.CurrentCamera
-		workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-			local newCamera = workspace.CurrentCamera
-			if newCamera then
-				Camera = newCamera
-			end
-		end)
 
-		local INPUT_PRIORITY = Enum.ContextActionPriority.High.Value
-		
-		Spring = {} do
-			Spring.__index = Spring
-		
-			function Spring.new(freq, pos)
-				local self = setmetatable({}, Spring)
-				self.f = freq
-				self.p = pos
-				self.v = pos*0
-				return self
-			end
-		
-			function Spring:Update(dt, goal)
-				local f = self.f*2*math.pi
-				local p0 = self.p
-				local v0 = self.v
-		
-				local offset = goal - p0
-				local decay = math.exp(-f*dt)
-		
-				local p1 = goal + (v0*dt - offset*(f*dt + 1))*decay
-				local v1 = (f*dt*(offset*f - v0) + v0)*decay
-		
-				self.p = p1
-				self.v = v1
-		
-				return p1
-			end
-		
-			function Spring:Reset(pos)
-				self.p = pos
-				self.v = pos*0
+fcRunning = false
+local Camera = workspace.CurrentCamera
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	local newCamera = workspace.CurrentCamera
+	if newCamera then
+		Camera = newCamera
+	end
+end)
+
+local INPUT_PRIORITY = Enum.ContextActionPriority.High.Value
+
+Spring = {} do
+	Spring.__index = Spring
+
+	function Spring.new(freq, pos)
+		local self = setmetatable({}, Spring)
+		self.f = freq
+		self.p = pos
+		self.v = pos*0
+		return self
+	end
+
+	function Spring:Update(dt, goal)
+		local f = self.f*2*math.pi
+		local p0 = self.p
+		local v0 = self.v
+
+		local offset = goal - p0
+		local decay = math.exp(-f*dt)
+
+		local p1 = goal + (v0*dt - offset*(f*dt + 1))*decay
+		local v1 = (f*dt*(offset*f - v0) + v0)*decay
+
+		self.p = p1
+		self.v = v1
+
+		return p1
+	end
+
+	function Spring:Reset(pos)
+		self.p = pos
+		self.v = pos*0
+	end
+end
+
+cameraPos = Vector3.new()
+cameraRot = Vector2.new()
+
+velSpring = Spring.new(5, Vector3.new())
+panSpring = Spring.new(5, Vector2.new())
+
+Input = {} do
+	
+	keyboard = {
+		W = 0,
+		A = 0,
+		S = 0,
+		D = 0,
+		E = 0,
+		Q = 0,
+		Up = 0,
+		Down = 0,
+		LeftShift = 0,
+	}
+
+	mouse = {
+		Delta = Vector2.new(),
+	}
+
+	NAV_KEYBOARD_SPEED = Vector3.new(1, 1, 1)
+	PAN_MOUSE_SPEED = Vector2.new(1, 1)*(math.pi/64)
+	NAV_ADJ_SPEED = 0.75
+	NAV_SHIFT_MUL = 0.25
+
+	navSpeed = 1
+
+	function Input.Vel(dt)
+		navSpeed = math.clamp(navSpeed + dt*(keyboard.Up - keyboard.Down)*NAV_ADJ_SPEED, 0.01, 4)
+
+		kKeyboard = Vector3.new(
+			keyboard.D - keyboard.A,
+			keyboard.E - keyboard.Q,
+			keyboard.S - keyboard.W
+		)*NAV_KEYBOARD_SPEED
+
+		shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+
+		return (kKeyboard)*(navSpeed*(shift and NAV_SHIFT_MUL or 1))
+	end
+	
+		function Input.Pan(dt)
+			kMouse = mouse.Delta*PAN_MOUSE_SPEED
+			mouse.Delta = Vector2.new()
+			return kMouse
+		end
+	
+	do
+		function Keypress(action, state, input)
+			keyboard[input.KeyCode.Name] = state == Enum.UserInputState.Begin and 1 or 0
+			return Enum.ContextActionResult.Sink
+		end
+
+		function MousePan(action, state, input)
+			delta = input.Delta
+			mouse.Delta = Vector2.new(-delta.y, -delta.x)
+			return Enum.ContextActionResult.Sink
+		end
+
+		function Zero(t)
+			for k, v in pairs(t) do
+				t[k] = v*0
 			end
 		end
-		
-		cameraPos = Vector3.new()
-		cameraRot = Vector2.new()
-		
-		velSpring = Spring.new(5, Vector3.new())
-		panSpring = Spring.new(5, Vector2.new())
-		
-		Input = {} do
-			
-			keyboard = {
-				W = 0,
-				A = 0,
-				S = 0,
-				D = 0,
-				E = 0,
-				Q = 0,
-				Up = 0,
-				Down = 0,
-				LeftShift = 0,
-			}
-		
-			mouse = {
-				Delta = Vector2.new(),
-			}
-		
-			PAN_MOUSE_SPEED = Vector2.new(1, 1)*(math.pi/64)
-			NAV_ADJ_SPEED = 0.75
-			NAV_SHIFT_MUL = 0.25
-		
+
+		function Input.StartCapture()
+			game:GetService("ContextActionService"):BindActionAtPriority("FreecamKeyboard", Keypress, false, INPUT_PRIORITY,
+				Enum.KeyCode.W,
+				Enum.KeyCode.A,
+				Enum.KeyCode.S,
+				Enum.KeyCode.D,
+				Enum.KeyCode.E,
+				Enum.KeyCode.Q,
+				Enum.KeyCode.Up,
+				Enum.KeyCode.Down
+			)
+			game:GetService("ContextActionService"):BindActionAtPriority("FreecamMousePan",          MousePan,   false, INPUT_PRIORITY, Enum.UserInputType.MouseMovement)
+		end
+
+		function Input.StopCapture()
 			navSpeed = 1
-		
-			function Input.Vel(dt)
-				navSpeed = math.clamp(navSpeed + dt*(keyboard.Up - keyboard.Down)*NAV_ADJ_SPEED, 0.01, 4)
-		
-				kKeyboard = Vector3.new(
-					keyboard.D - keyboard.A,
-					keyboard.E - keyboard.Q,
-					keyboard.S - keyboard.W
-				)*NAV_KEYBOARD_SPEED
-		
-				shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
-		
-				return (kKeyboard)*(navSpeed*(shift and NAV_SHIFT_MUL or 1))
-			end
-			
-				function Input.Pan(dt)
-					kMouse = mouse.Delta*PAN_MOUSE_SPEED
-					mouse.Delta = Vector2.new()
-					return kMouse
-				end
-			
-			do
-				function Keypress(action, state, input)
-					keyboard[input.KeyCode.Name] = state == Enum.UserInputState.Begin and 1 or 0
-					return Enum.ContextActionResult.Sink
-				end
-		
-				function MousePan(action, state, input)
-					delta = input.Delta
-					mouse.Delta = Vector2.new(-delta.y, -delta.x)
-					return Enum.ContextActionResult.Sink
-				end
-		
-				function Zero(t)
-					for k, v in pairs(t) do
-						t[k] = v*0
-					end
-				end
-		
-				function Input.StartCapture()
-					game:GetService("ContextActionService"):BindActionAtPriority("FreecamKeyboard", Keypress, false, INPUT_PRIORITY,
-						Enum.KeyCode.W,
-						Enum.KeyCode.A,
-						Enum.KeyCode.S,
-						Enum.KeyCode.D,
-						Enum.KeyCode.E,
-						Enum.KeyCode.Q,
-						Enum.KeyCode.Up,
-						Enum.KeyCode.Down
-					)
-					game:GetService("ContextActionService"):BindActionAtPriority("FreecamMousePan",          MousePan,   false, INPUT_PRIORITY, Enum.UserInputType.MouseMovement)
-				end
-		
-				function Input.StopCapture()
-					navSpeed = 1
-					Zero(keyboard)
-					Zero(mouse)
-					game:GetService("ContextActionService"):UnbindAction("FreecamKeyboard")
-					game:GetService("ContextActionService"):UnbindAction("FreecamMousePan")
-				end
-			end
-		end
-		
-		function GetFocusDistance(cameraFrame)
-			local znear = 0.1
-			local viewport = Camera.ViewportSize
-			local projy = 2*math.tan(cameraFov/2)
-			local projx = viewport.x/viewport.y*projy
-			local fx = cameraFrame.rightVector
-			local fy = cameraFrame.upVector
-			local fz = cameraFrame.lookVector
-		
-			local minVect = Vector3.new()
-			local minDist = 512
-		
-			for x = 0, 1, 0.5 do
-				for y = 0, 1, 0.5 do
-					local cx = (x - 0.5)*projx
-					local cy = (y - 0.5)*projy
-					local offset = fx*cx - fy*cy + fz
-					local origin = cameraFrame.p + offset*znear
-					local _, hit = workspace:FindPartOnRay(Ray.new(origin, offset.unit*minDist))
-					local dist = (hit - origin).magnitude
-					if minDist > dist then
-						minDist = dist
-						minVect = offset.unit
-					end
-				end
-			end
-		
-			return fz:Dot(minVect)*minDist
-		end
-		
-		local function StepFreecam(dt)
-			local vel = velSpring:Update(dt, Input.Vel(dt))
-			local pan = panSpring:Update(dt, Input.Pan(dt))
-		
-			local zoomFactor = math.sqrt(math.tan(math.rad(70/2))/math.tan(math.rad(cameraFov/2)))
-		
-			cameraRot = cameraRot + pan*Vector2.new(0.75, 1)*8*(dt/zoomFactor)
-			cameraRot = Vector2.new(math.clamp(cameraRot.x, -math.rad(90), math.rad(90)), cameraRot.y%(2*math.pi))
-		
-			local cameraCFrame = CFrame.new(cameraPos)*CFrame.fromOrientation(cameraRot.x, cameraRot.y, 0)*CFrame.new(vel*Vector3.new(1, 1, 1)*64*dt)
-			cameraPos = cameraCFrame.p
-		
-			Camera.CFrame = cameraCFrame
-			Camera.Focus = cameraCFrame*CFrame.new(0, 0, -GetFocusDistance(cameraCFrame))
-			Camera.FieldOfView = cameraFov
-		end
-		
-		local PlayerState = {} do
-			mouseBehavior = ""
-			mouseIconEnabled = ""
-			cameraType = ""
-			cameraFocus = ""
-			cameraCFrame = ""
-			cameraFieldOfView =  ""
-		
-			function PlayerState.Push()
-				cameraFieldOfView = Camera.FieldOfView
-				Camera.FieldOfView = 70
-		
-				cameraType = Camera.CameraType
-				Camera.CameraType = Enum.CameraType.Custom
-		
-				cameraCFrame = Camera.CFrame
-				cameraFocus = Camera.Focus
-		
-				mouseIconEnabled = UserInputService.MouseIconEnabled
-				UserInputService.MouseIconEnabled = true
-		
-				mouseBehavior = UserInputService.MouseBehavior
-				UserInputService.MouseBehavior = Enum.MouseBehavior.Default
-			end
-		
-			function PlayerState.Pop()
-				Camera.FieldOfView = 70
-		
-				Camera.CameraType = cameraType
-				cameraType = nil
-		
-				Camera.CFrame = cameraCFrame
-				cameraCFrame = nil
-		
-				Camera.Focus = cameraFocus
-				cameraFocus = nil
-		
-				UserInputService.MouseIconEnabled = mouseIconEnabled
-				mouseIconEnabled = nil
-		
-				UserInputService.MouseBehavior = mouseBehavior
-				mouseBehavior = nil
-			end
-		end
-		
-		function StartFreecam()
-			local cameraCFrame = Camera.CFrame
-			cameraRot = Vector2.new()
-			cameraPos = cameraCFrame.p
-			cameraFov = Camera.FieldOfView
-		
-			velSpring:Reset(Vector3.new())
-			panSpring:Reset(Vector2.new())
-		
-			PlayerState.Push()
-			game:GetService("RunService"):BindToRenderStep("Freecam", Enum.RenderPriority.Camera.Value, StepFreecam)
-			Input.StartCapture()
-		end
-		
-		function StopFreecam()
-			Input.StopCapture()
-			game:GetService("RunService"):UnbindFromRenderStep("Freecam")
-			PlayerState.Pop()
-			workspace.Camera.FieldOfView = 70	
+			Zero(keyboard)
+			Zero(mouse)
+			game:GetService("ContextActionService"):UnbindAction("FreecamKeyboard")
+			game:GetService("ContextActionService"):UnbindAction("FreecamMousePan")
 		end
 	end
-	StartFreecam()
+end
+	
+function GetFocusDistance(cameraFrame)
+	local znear = 0.1
+	local viewport = Camera.ViewportSize
+	local projy = 2*math.tan(cameraFov/2)
+	local projx = viewport.x/viewport.y*projy
+	local fx = cameraFrame.rightVector
+	local fy = cameraFrame.upVector
+	local fz = cameraFrame.lookVector
+
+	local minVect = Vector3.new()
+	local minDist = 512
+
+	for x = 0, 1, 0.5 do
+		for y = 0, 1, 0.5 do
+			local cx = (x - 0.5)*projx
+			local cy = (y - 0.5)*projy
+			local offset = fx*cx - fy*cy + fz
+			local origin = cameraFrame.p + offset*znear
+			local _, hit = workspace:FindPartOnRay(Ray.new(origin, offset.unit*minDist))
+			local dist = (hit - origin).magnitude
+			if minDist > dist then
+				minDist = dist
+				minVect = offset.unit
+			end
+		end
+	end
+
+	return fz:Dot(minVect)*minDist
+end
+
+local function StepFreecam(dt)
+	local vel = velSpring:Update(dt, Input.Vel(dt))
+	local pan = panSpring:Update(dt, Input.Pan(dt))
+
+	local zoomFactor = math.sqrt(math.tan(math.rad(70/2))/math.tan(math.rad(cameraFov/2)))
+
+	cameraRot = cameraRot + pan*Vector2.new(0.75, 1)*8*(dt/zoomFactor)
+	cameraRot = Vector2.new(math.clamp(cameraRot.x, -math.rad(90), math.rad(90)), cameraRot.y%(2*math.pi))
+
+	local cameraCFrame = CFrame.new(cameraPos)*CFrame.fromOrientation(cameraRot.x, cameraRot.y, 0)*CFrame.new(vel*Vector3.new(1, 1, 1)*64*dt)
+	cameraPos = cameraCFrame.p
+
+	Camera.CFrame = cameraCFrame
+	Camera.Focus = cameraCFrame*CFrame.new(0, 0, -GetFocusDistance(cameraCFrame))
+	Camera.FieldOfView = cameraFov
+end
+
+local PlayerState = {} do
+	mouseBehavior = ""
+	mouseIconEnabled = ""
+	cameraType = ""
+	cameraFocus = ""
+	cameraCFrame = ""
+	cameraFieldOfView =  ""
+
+	function PlayerState.Push()
+		cameraFieldOfView = Camera.FieldOfView
+		Camera.FieldOfView = 70
+
+		cameraType = Camera.CameraType
+		Camera.CameraType = Enum.CameraType.Custom
+
+		cameraCFrame = Camera.CFrame
+		cameraFocus = Camera.Focus
+
+		mouseIconEnabled = UserInputService.MouseIconEnabled
+		UserInputService.MouseIconEnabled = true
+
+		mouseBehavior = UserInputService.MouseBehavior
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+
+	function PlayerState.Pop()
+		Camera.FieldOfView = 70
+
+		Camera.CameraType = cameraType
+		cameraType = nil
+
+		Camera.CFrame = cameraCFrame
+		cameraCFrame = nil
+
+		Camera.Focus = cameraFocus
+		cameraFocus = nil
+
+		UserInputService.MouseIconEnabled = mouseIconEnabled
+		mouseIconEnabled = nil
+
+		UserInputService.MouseBehavior = mouseBehavior
+		mouseBehavior = nil
+	end
+end
+
+function StartFreecam(pos)
+	if fcRunning then
+		StopFreecam()
+	end
+	local cameraCFrame = Camera.CFrame
+	if pos then
+		cameraCFrame = pos
+	end
+	cameraRot = Vector2.new()
+	cameraPos = cameraCFrame.p
+	cameraFov = Camera.FieldOfView
+
+	velSpring:Reset(Vector3.new())
+	panSpring:Reset(Vector2.new())
+
+	PlayerState.Push()
+	game:GetService("RunService"):BindToRenderStep("Freecam", Enum.RenderPriority.Camera.Value, StepFreecam)
+	Input.StartCapture()
 	fcRunning = true
+end
+
+function StopFreecam()
+	if not fcRunning then return end
+	Input.StopCapture()
+	game:GetService("RunService"):UnbindFromRenderStep("Freecam")
+	PlayerState.Pop()
+	workspace.Camera.FieldOfView = 70
+	fcRunning = false
+end
+
+addcmd('freecam',{'fc'},
+	function(args, speaker)
+	StartFreecam()
+end)
+
+addcmd('freecampos',{'fcpos','fcp'},
+	function(args, speaker)
+	if not args[1] then return end
+	local freecamPos = CFrame.new(args[1],args[2],args[3])
+	StartFreecam(freecamPos)
+end)
+
+addcmd('freecamwaypoint',{'fcwp'},
+	function(args, speaker)
+	local WPName = tostring(getstring(1))
+	if speaker.Character then
+		for i,_ in pairs(WayPoints) do
+			local x = WayPoints[i].COORD[1]
+			local y = WayPoints[i].COORD[2]
+			local z = WayPoints[i].COORD[3]
+			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				StartFreecam(CFrame.new(x,y,z))
+			end
+		end
+		for i,_ in pairs(pWayPoints) do
+			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				StartFreecam(CFrame.new(pWayPoints[i].COORD[1].Position))
+			end
+		end
+	end
 end)
 
 addcmd('unfreecam',{'nofreecam','unfc','nofc'},
 	function(args, speaker)
-	if fcRunning then
-		StopFreecam()
-		fcRunning = false
-	end
+	StopFreecam()
 end)
 
 addcmd('freecamspeed',{'fcspeed'},
@@ -7268,9 +7343,7 @@ end)
 
 addcmd('fixcam',{'restorecam'},
 	function(args, speaker)
-	if fcRunning then
-		StopFreecam()
-	end
+	StopFreecam()
 	execCmd('unview')
 	workspace.CurrentCamera:remove()
 	wait(.1)
@@ -7442,6 +7515,13 @@ addcmd('datalimit',{},
     function(args, speaker)
 	if tonumber(args[1]) then
 		game:GetService("NetworkClient"):SetOutgoingKBPSLimit(args[1])
+	end
+end)
+
+addcmd('replicationlag',{},
+    function(args, speaker)
+	if tonumber(args[1]) then
+		settings():GetService("NetworkSettings").IncommingReplicationLag = args[1]
 	end
 end)
 
@@ -7783,14 +7863,20 @@ addcmd('unloopoof',{},
 	oofing = false
 end)
 
+local notifiedRespectFiltering = false
 addcmd('muteboombox',{},
 	function(args, speaker)
-	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and game:GetService("SoundService").RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
 			spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
+					if x:IsA("Sound") and x.Playing == true then
+						x.Playing = false
+					end
+				end
+				for i, x in next, Players[v]:FindFirstChildOfClass("Backpack"):GetDescendants() do
 					if x:IsA("Sound") and x.Playing == true then
 						x.Playing = false
 					end
@@ -7802,7 +7888,7 @@ end)
 
 addcmd('unmuteboombox',{},
 	function(args, speaker)
-	if game:GetService("SoundService").RespectFilteringEnabled then notify('RespectFilteringEnabled','SoundService RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and game:GetService("SoundService").RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -8291,6 +8377,16 @@ addcmd('animspeed', {},
 
 	for i,v in next, Hum:GetPlayingAnimationTracks() do
 		v:AdjustSpeed(tonumber(args[1] or 1))
+	end
+end)
+
+addcmd('stopanimations', {'stopanims','stopanim'},
+	function(args, speaker)
+	local Char = speaker.Character
+	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+
+	for i,v in next, Hum:GetPlayingAnimationTracks() do
+		v:Stop()
 	end
 end)
 
@@ -9340,6 +9436,48 @@ addcmd('togglefling',{},
 	else
 		execCmd('fling')
 	end
+end)
+
+addcmd('invisfling',{},
+	function(args, speaker)
+	local ch = game.Players.LocalPlayer.Character
+	local prt=Instance.new("Model", game.Players.LocalPlayer.Character)
+	local z1 = Instance.new("Part")
+	z1.Name="Torso"
+	z1.CanCollide = false
+	z1.Anchored = true
+	local z2 = Instance.new("Part", prt)
+	z2.Name="Head"
+	z2.Anchored = true
+	z2.CanCollide = false
+	local z3 =Instance.new("Humanoid", prt)
+	z3.Name="Humanoid"
+	z1.Position = Vector3.new(0,9999,0)
+	game.Players.LocalPlayer.Character=prt
+	wait(3)
+	game.Players.LocalPlayer.Character=ch
+	wait(3)
+	local plr = game.Players.LocalPlayer
+	local Hum = Instance.new("Humanoid")
+	z2:Clone()
+	Hum.Parent = game.Players.LocalPlayer.Character
+	local root =  game.Players.LocalPlayer.Character.HumanoidRootPart
+	for i,v in pairs(plr.Character:GetChildren()) do
+		if v ~= root and  v.Name ~= "Humanoid" then
+			v:Destroy()
+		end
+	end
+	root.Transparency = 0
+	root.Color = Color3.new(1, 1, 1)
+	game:GetService('RunService').RenderStepped:connect(function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CanCollide = false
+	end)
+	sFLY()
+	workspace.CurrentCamera.CameraSubject = root
+	local bambam = Instance.new("BodyThrust")
+	bambam.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+	bambam.Force = Vector3.new(99999,99999*10,99999)
+	bambam.Location = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
 end)
 
 function kill(speaker,target,fast)
