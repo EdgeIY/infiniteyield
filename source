@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.3'
+ver = '4.3.1'
 
 Players = game:GetService("Players")
 
@@ -4339,13 +4339,13 @@ function GetInTable(Table, Name)
 end
 
 function respawn(plr)
-	plr.Character:FindFirstChildOfClass('Humanoid').Health = 0
-	plr.Character:BreakJoints()
-	for _,v in pairs(plr.Character:GetChildren()) do
-		if v:IsA("BasePart") then
-			v:Destroy()
-		end
-	end
+	local char = plr.Character
+	char:ClearAllChildren()
+	local newChar = Instance.new("Model",workspace)
+	plr.Character = newChar
+	wait()
+	plr.Character = char
+	newChar:Destroy()
 end
 
 local refreshCmd = false
@@ -6306,7 +6306,7 @@ function sFLY(vfly)
 		BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
 		spawn(function()
 			repeat wait()
-			if not vfly then
+			if not vfly and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
 				Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 			end
 			if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
@@ -6329,7 +6329,9 @@ function sFLY(vfly)
 			SPEED = 0
 			BG:destroy()
 			BV:destroy()
-			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+			if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+				Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+			end
 		end)
 	end
 	IYMouse.KeyDown:connect(function(KEY)
@@ -9447,8 +9449,8 @@ end)
 
 addcmd('invisfling',{},
 	function(args, speaker)
-	local ch = game.Players.LocalPlayer.Character
-	local prt=Instance.new("Model", game.Players.LocalPlayer.Character)
+	local ch = speaker.Character
+	local prt=Instance.new("Model", speaker.Character)
 	local z1 = Instance.new("Part")
 	z1.Name="Torso"
 	z1.CanCollide = false
@@ -9460,31 +9462,35 @@ addcmd('invisfling',{},
 	local z3 =Instance.new("Humanoid", prt)
 	z3.Name="Humanoid"
 	z1.Position = Vector3.new(0,9999,0)
-	game.Players.LocalPlayer.Character=prt
+	speaker.Character=prt
 	wait(3)
-	game.Players.LocalPlayer.Character=ch
+	speaker.Character=ch
 	wait(3)
-	local plr = game.Players.LocalPlayer
 	local Hum = Instance.new("Humanoid")
 	z2:Clone()
-	Hum.Parent = game.Players.LocalPlayer.Character
-	local root =  game.Players.LocalPlayer.Character.HumanoidRootPart
-	for i,v in pairs(plr.Character:GetChildren()) do
+	Hum.Parent = speaker.Character
+	local root =  speaker.Character.HumanoidRootPart
+	for i,v in pairs(speaker.Character:GetChildren()) do
 		if v ~= root and  v.Name ~= "Humanoid" then
 			v:Destroy()
 		end
 	end
 	root.Transparency = 0
 	root.Color = Color3.new(1, 1, 1)
-	game:GetService('RunService').RenderStepped:connect(function()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CanCollide = false
+	local invisflingStepped
+	invisflingStepped = game:GetService('RunService').RenderStepped:connect(function()
+		if speaker.Character and speaker.Character:FindFirstChildOfClass("HumanoidRootPart") then
+			speaker.Character.HumanoidRootPart.CanCollide = false
+		else
+			invisflingStepped:Disconnect()
+		end
 	end)
 	sFLY()
 	workspace.CurrentCamera.CameraSubject = root
 	local bambam = Instance.new("BodyThrust")
-	bambam.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+	bambam.Parent = speaker.Character.HumanoidRootPart
 	bambam.Force = Vector3.new(99999,99999*10,99999)
-	bambam.Location = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+	bambam.Location = speaker.Character.HumanoidRootPart.Position
 end)
 
 function kill(speaker,target,fast)
