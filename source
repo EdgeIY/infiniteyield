@@ -4356,10 +4356,12 @@ function refresh(plr)
 		wait()
 		respawn(plr)
 		wait()
-		repeat wait() until plr.Character ~= nil and plr.Character:FindFirstChild('HumanoidRootPart')
+		repeat wait() until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart')
 		wait(.1)
-		plr.Character:MoveTo(rpos)
-		wait()
+		if rpos then
+			plr.Character:MoveTo(rpos)
+			wait()
+		end
 		refreshCmd = false
 	end)
 end
