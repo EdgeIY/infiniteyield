@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.3.2'
+ver = '4.3.3'
 
 Players = game:GetService("Players")
 
@@ -2630,12 +2630,12 @@ reference = (function()
 	end)
 end)()
 
-local currentShade1 = Color3.fromRGB(36, 36, 37)
-local currentShade2 = Color3.fromRGB(46, 46, 47)
-local currentShade3 = Color3.fromRGB(78, 78, 79)
-local currentText1 = Color3.new(1, 1, 1)
-local currentText2 = Color3.new(0, 0, 0)
-local currentScroll = Color3.fromRGB(78,78,79)
+currentShade1 = Color3.fromRGB(36, 36, 37)
+currentShade2 = Color3.fromRGB(46, 46, 47)
+currentShade3 = Color3.fromRGB(78, 78, 79)
+currentText1 = Color3.new(1, 1, 1)
+currentText2 = Color3.new(0, 0, 0)
+currentScroll = Color3.fromRGB(78,78,79)
 
 defaultsettings = {
 	prefix = ';';
@@ -2833,7 +2833,7 @@ end
 UserInputService = game:GetService("UserInputService")
 IYMouse = Players.LocalPlayer:GetMouse()
 PrefixBox.Text = prefix
-SettingsOpen = false
+local SettingsOpen = false
 
 if StayOpen == false then
 	Holder.Settings.Holder.StayOpen.Button.On.BackgroundTransparency = 1
@@ -3035,7 +3035,7 @@ function updateColors(color,ctype)
 	end
 end
 
-colorpickerOpen = false
+local colorpickerOpen = false
 ColorsButton.MouseButton1Click:Connect(function()
 	cache_currentShade1 = currentShade1
 	cache_currentShade2 = currentShade2
@@ -3084,7 +3084,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 				local greenInput = pickerFrame.Green.Input
 				local blueInput = pickerFrame.Blue.Input
 		
-				local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+				local mouse = IYMouse
 		
 				local hue,sat,val = 0,0,1
 				local red,green,blue = 1,1,1
@@ -3646,13 +3646,13 @@ Positions.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = false
 end)
 
-selectionBox = Instance.new("SelectionBox")
+local selectionBox = Instance.new("SelectionBox")
 selectionBox.Name = randomString()
 selectionBox.Color3 = Color3.new(255,255,255)
 selectionBox.Adornee = nil
 selectionBox.Parent = PARENT
 
-selected = Instance.new("SelectionBox")
+local selected = Instance.new("SelectionBox")
 selected.Name = randomString()
 selected.Color3 = Color3.new(0,166,0)
 selected.Adornee = nil
@@ -3663,17 +3663,17 @@ local ClickSelect = nil
 Part.MouseButton1Click:Connect(function()
 	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, 335), "InOut", "Quart", 0.5, true, nil)
 	local function HighlightPart()
-		if selected.Adornee ~= Players.LocalPlayer:GetMouse().Target then
-			selectionBox.Adornee = Players.LocalPlayer:GetMouse().Target
+		if selected.Adornee ~= IYMouse.Target then
+			selectionBox.Adornee = IYMouse.Target
 		else
 			selectionBox.Adornee = nil
 		end
 	end
-	ActivateHighlight = Players.LocalPlayer:GetMouse().Move:connect(HighlightPart)
+	ActivateHighlight = IYMouse.Move:connect(HighlightPart)
 	local function SelectPart()
-		if Players.LocalPlayer:GetMouse().Target ~= nil then
-			selected.Adornee = Players.LocalPlayer:GetMouse().Target
-			Path.Text = getHierarchy(Players.LocalPlayer:GetMouse().Target)
+		if IYMouse.Target ~= nil then
+			selected.Adornee = IYMouse.Target
+			Path.Text = getHierarchy(IYMouse.Target)
 		end
 	end
 	ClickSelect = IYMouse.Button1Down:connect(SelectPart)
@@ -3836,8 +3836,8 @@ Match = function(name,str)
 	return name:lower():find(str:lower()) and true
 end
 
-canvasPos = Vector2.new(0,0)
-topCommand = nil
+local canvasPos = Vector2.new(0,0)
+local topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
 	local Index,SizeY = 0,0
 	local indexnum = 0
@@ -4448,7 +4448,7 @@ function splitString(str,delim)
 end
 
 cmdHistory = {}
-lastCmds = {}
+local lastCmds = {}
 local historyCount = 0
 local split=" "
 local lastBreakTime = 0
@@ -4909,7 +4909,7 @@ Cmdbar:GetPropertyChangedSignal("Text"):connect(function()
 	end
 end)
 
-tabComplete = nil
+local tabComplete = nil
 Cmdbar.FocusLost:connect(function(enterpressed)
 	if enterpressed then
 		execCmd(Cmdbar.Text,Players.LocalPlayer,true)
@@ -7060,11 +7060,11 @@ Spring = {} do
 	end
 end
 
-cameraPos = Vector3.new()
-cameraRot = Vector2.new()
+local cameraPos = Vector3.new()
+local cameraRot = Vector2.new()
 
-velSpring = Spring.new(5, Vector3.new())
-panSpring = Spring.new(5, Vector2.new())
+local velSpring = Spring.new(5, Vector3.new())
+local panSpring = Spring.new(5, Vector2.new())
 
 Input = {} do
 	
@@ -7094,19 +7094,19 @@ Input = {} do
 	function Input.Vel(dt)
 		navSpeed = math.clamp(navSpeed + dt*(keyboard.Up - keyboard.Down)*NAV_ADJ_SPEED, 0.01, 4)
 
-		kKeyboard = Vector3.new(
+		local kKeyboard = Vector3.new(
 			keyboard.D - keyboard.A,
 			keyboard.E - keyboard.Q,
 			keyboard.S - keyboard.W
 		)*NAV_KEYBOARD_SPEED
 
-		shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+		local shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
 
 		return (kKeyboard)*(navSpeed*(shift and NAV_SHIFT_MUL or 1))
 	end
 	
 		function Input.Pan(dt)
-			kMouse = mouse.Delta*PAN_MOUSE_SPEED
+			local kMouse = mouse.Delta*PAN_MOUSE_SPEED
 			mouse.Delta = Vector2.new()
 			return kMouse
 		end
@@ -7118,7 +7118,7 @@ Input = {} do
 		end
 
 		function MousePan(action, state, input)
-			delta = input.Delta
+			local delta = input.Delta
 			mouse.Delta = Vector2.new(-delta.y, -delta.x)
 			return Enum.ContextActionResult.Sink
 		end
@@ -7632,14 +7632,16 @@ addcmd('setos',{'spoofos', 'osspoof'},
 	notify('OS','Your os is now set to '..getstring(1))
 end)
 
+local sethidden = sethiddenproperty or set_hidden_property
+local gethidden = gethiddenproperty or get_hidden_property
 addcmd('region',{},
 	function(args, speaker)
-	if gethiddenproperty then
+	if gethidden then
 		local players = getPlayer(args[1], speaker)
 		local regions = {}
 		for i,v in pairs(players) do
 			local p = Players[v]
-			table.insert(regions,p.Name.."'s region is: "..gethiddenproperty(p, "CountryRegionCodeReplicate"))
+			table.insert(regions,p.Name.."'s region is: "..gethidden(p, "CountryRegionCodeReplicate"))
 		end
 		notify('Regions',table.concat(regions, ',\n'))
 	else
@@ -7649,12 +7651,12 @@ end)
 
 addcmd('chatregion',{},
 	function(args, speaker)
-	if gethiddenproperty then
+	if gethidden then
 	local players = getPlayer(args[1], speaker)
 	local regions = {}
 	for i,v in pairs(players) do
 		local p = Players[v]
-		table.insert(regions,p.Name.."'s region is: "..gethiddenproperty(p, "CountryRegionCodeReplicate"))
+		table.insert(regions,p.Name.."'s region is: "..gethidden(p, "CountryRegionCodeReplicate"))
 	end
 	local chatString = table.concat(regions, ', ')
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
@@ -7665,8 +7667,8 @@ end)
 
 addcmd('setregion',{'spoofregion', 'regionspoof'},
 	function(args, speaker)
-	if sethiddenproperty then	
-	sethiddenproperty(speaker, "CountryRegionCodeReplicate", getstring(1))
+	if sethidden then	
+	sethidden(speaker, "CountryRegionCodeReplicate", getstring(1))
 	notify('Region','Your region is now set to '..getstring(1))
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
@@ -8964,10 +8966,10 @@ end)
 
 addcmd('simulationradius',{'simradius'},
 	function(args, speaker)
-	if sethiddenproperty then		
+	if sethidden then		
 		simRadLoop = game:GetService('RunService').Stepped:connect(function()
 			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			sethiddenproperty(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+			sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
 		end)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
@@ -8976,11 +8978,11 @@ end)
 
 addcmd('nosimulationradius',{'nosimradius','unsimradius'},
 	function(args, speaker)
-	if sethiddenproperty then		
+	if sethidden then		
 		if simRadLoop then simRadLoop:Disconnect() end
 		wait()
 		speaker.MaximumSimulationRadius = 139
-		sethiddenproperty(speaker, "SimulationRadius", 139)
+		sethidden(speaker, "SimulationRadius", 139)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
@@ -9860,11 +9862,11 @@ addcmd('hitbox',{},
 	end
 end)
 
-freezingua = nil
+local freezingua = nil
 frozenParts = {}
 addcmd('freezeunanchored',{'freezeua'},
 	function(args, speaker)
-	if sethiddenproperty then
+	if sethidden then
 		local badnames = {
 			"Head",
 			"UpperTorso",
@@ -9906,7 +9908,7 @@ addcmd('freezeunanchored',{'freezeua'},
 						end
 					end
 					speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-					sethiddenproperty(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+					sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
 					local bodypos = Instance.new("BodyPosition",v)
 					bodypos.Position = v.Position
 					bodypos.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
@@ -9930,12 +9932,12 @@ end)
 
 addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 	function(args, speaker)
-	if sethiddenproperty then
+	if sethidden then
 		if freezingua then
 			freezingua:Disconnect()
 		end
 		speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-		sethiddenproperty(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+		sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
 		for i,v in pairs(frozenParts) do
 			for i,c in pairs(v:GetChildren()) do
 				if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
@@ -9944,6 +9946,38 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 			end
 		end
 		frozenParts = {}
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
+
+addcmd('tpunanchored',{'tpua'},
+	function(args, speaker)
+	if sethidden then
+		local players = getPlayer(args[1], speaker)
+		for i,v in pairs(players) do
+			local Forces = {}
+			for _,part in pairs(workspace:GetDescendants()) do
+				if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+					for i,c in pairs(part:GetChildren()) do
+						if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+							c:Destroy()
+						end
+					end
+					local ForceInstance = Instance.new("BodyPosition", part)
+					ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+					table.insert(Forces, ForceInstance)
+					if not table.find(frozenParts,part) then
+						table.insert(frozenParts,part)
+					end
+				end
+			end
+			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
+			sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+			for i,c in pairs(Forces) do
+				c.Position = Players[v].Character.Head.Position
+			end
+		end
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
@@ -10021,72 +10055,40 @@ cancelAutoKeyPress = nil
 
 addcmd('autokeypress',{'keypress'},
 	function(args, speaker)
-		if keypress and keyrelease and args[1] then
-			local code = keycodeMap[args[1]:lower()]
-			if not code then notify('Auto Key Press',"Invalid key") return end
-			execCmd('unautokeypress')
-			wait()
-			local clickDelay = 0.1
-			local releaseDelay = 0.1
-			if args[2] and isNumber(args[2]) then clickDelay = args[2] end
-			if args[3] and isNumber(args[3]) then releaseDelay = args[3] end
-			autoKeyPressing = true
-			cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-				if not gameProcessedEvent then
-					if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
-						autoKeyPressing = false
-						cancelAutoKeyPress:Disconnect()
-					end
+	if keypress and keyrelease and args[1] then
+		local code = keycodeMap[args[1]:lower()]
+		if not code then notify('Auto Key Press',"Invalid key") return end
+		execCmd('unautokeypress')
+		wait()
+		local clickDelay = 0.1
+		local releaseDelay = 0.1
+		if args[2] and isNumber(args[2]) then clickDelay = args[2] end
+		if args[3] and isNumber(args[3]) then releaseDelay = args[3] end
+		autoKeyPressing = true
+		cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+			if not gameProcessedEvent then
+				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
+					autoKeyPressing = false
+					cancelAutoKeyPress:Disconnect()
 				end
-			end)
-			notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
-			repeat wait(clickDelay)
-				keypress(code)
-				wait(releaseDelay)
-				keyrelease(code)
-			until autoKeyPressing == false
-			if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
-		else
-			notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
-		end
-	end)
+			end
+		end)
+		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+		repeat wait(clickDelay)
+			keypress(code)
+			wait(releaseDelay)
+			keyrelease(code)
+		until autoKeyPressing == false
+		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
+	else
+		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+	end
+end)
 	
 addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},
 	function(args, speaker)
-		autoKeyPressing = false
-		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
-	end)
-
-addcmd('tpunanchored',{'tpua'},
-	function(args, speaker)
-	if sethiddenproperty then
-		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players) do
-			local Forces = {}
-			for _,part in pairs(workspace:GetDescendants()) do
-				if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-					for i,c in pairs(part:GetChildren()) do
-						if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
-							c:Destroy()
-						end
-					end
-					local ForceInstance = Instance.new("BodyPosition", part)
-					ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-					table.insert(Forces, ForceInstance)
-					if not table.find(frozenParts,part) then
-						table.insert(frozenParts,part)
-					end
-				end
-			end
-			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			sethiddenproperty(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
-			for i,c in pairs(Forces) do
-				c.Position = Players[v].Character.Head.Position
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
+	autoKeyPressing = false
+	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
 end)
 
 addcmd('addplugin',{'plugin'},
