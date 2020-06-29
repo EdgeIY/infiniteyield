@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.3.4'
+ver = '4.3.5'
 
 Players = game:GetService("Players")
 
@@ -3841,7 +3841,7 @@ local topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
 	local Index,SizeY = 0,0
 	local indexnum = 0
-	local frame = Holder:WaitForChild('CMDs')
+	local frame = CMDsF
 	topCommand = nil
 	local chunks = {}
 	if str:sub(#str,#str) == "\\" then str = "" end
@@ -4897,39 +4897,46 @@ function do_exec(str, plr)
 	end
 end
 
-local lastEnter = 0
-local recentEnter = false
-UserInputService.InputBegan:Connect(function(input,gameProcessed)
-	if gameProcessed then
-		if Cmdbar and Cmdbar:IsFocused() then
-			if input.KeyCode == Enum.KeyCode.Up then
-				historyCount = historyCount + 1
-				if historyCount > #cmdHistory then historyCount = #cmdHistory end
-				Cmdbar.Text = cmdHistory[historyCount] or ""
-				Cmdbar.CursorPosition = 1020
-			elseif input.KeyCode == Enum.KeyCode.Down then
-				historyCount = historyCount - 1
-				if historyCount < 1 then historyCount = 1 end
-				Cmdbar.Text = cmdHistory[historyCount] or ""
-				Cmdbar.CursorPosition = 1020
-			end
-		elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter then
-			recentEnter = true
-			lastEnter = 0
-			local enterTime = tick()
-			lastEnter = enterTime
-			wait(0.1)
-			if lastEnter ~= enterTime then return end
-			recentEnter = false
-		end
-	end
+lastTextBoxString,lastTextBoxCon,lastEnteredString = nil,nil,nil
+
+UserInputService.TextBoxFocused:Connect(function(obj)
+    if lastTextBoxCon then lastTextBoxCon:Disconnect() end
+    if obj == Cmdbar then lastTextBoxString = nil return end
+    lastTextBoxString = obj.Text
+    lastTextBoxCon = obj:GetPropertyChangedSignal("Text"):Connect(function()
+        if not (UserInputService:IsKeyDown(Enum.KeyCode.Return) or UserInputService:IsKeyDown(Enum.KeyCode.KeypadEnter)) then
+            lastTextBoxString = obj.Text
+        end
+    end)
 end)
 
-Players.LocalPlayer.Chatted:connect(function(message)
-	wait()
-	if recentEnter then
-		do_exec(message, Players.LocalPlayer)
-	end
+UserInputService.InputBegan:Connect(function(input,gameProcessed)
+    if gameProcessed then
+        if Cmdbar and Cmdbar:IsFocused() then
+            if input.KeyCode == Enum.KeyCode.Up then
+                historyCount = historyCount + 1
+                if historyCount > #cmdHistory then historyCount = #cmdHistory end
+                Cmdbar.Text = cmdHistory[historyCount] or ""
+                Cmdbar.CursorPosition = 1020
+            elseif input.KeyCode == Enum.KeyCode.Down then
+                historyCount = historyCount - 1
+                if historyCount < 1 then historyCount = 1 end
+                Cmdbar.Text = cmdHistory[historyCount] or ""
+                Cmdbar.CursorPosition = 1020
+            end
+        elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter then
+            lastEnteredString = lastTextBoxString
+        end
+    end
+end)
+
+Players.LocalPlayer.Chatted:connect(function()
+    wait()
+    if lastEnteredString then
+        local message = lastEnteredString
+        lastEnteredString = nil
+        do_exec(message, Players.LocalPlayer)
+    end
 end)
 
 Cmdbar.PlaceholderText = "Command Bar ("..prefix..")"
