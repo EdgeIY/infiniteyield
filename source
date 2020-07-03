@@ -7739,7 +7739,7 @@ addcmd('goto',{'to'},
 	execCmd('breakvelocity')
 end)
 
-addcmd('tweengoto',{'tto','tweento'},
+addcmd('tweengoto',{'tgoto','tto','tweento'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
