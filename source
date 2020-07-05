@@ -7656,6 +7656,8 @@ end)
 
 local sethidden = sethiddenproperty or set_hidden_property
 local gethidden = gethiddenproperty or get_hidden_property
+local countries = game:GetService("HttpService"):JSONDecode(game:HttpGet("http://country.io/names.json"))
+
 addcmd('region',{},
 	function(args, speaker)
 	if gethidden then
@@ -7663,7 +7665,7 @@ addcmd('region',{},
 		local regions = {}
 		for i,v in pairs(players) do
 			local p = Players[v]
-			table.insert(regions,p.Name.."'s region is: "..gethidden(p, "CountryRegionCodeReplicate"))
+			table.insert(regions,p.Name.."'s region is: "..countries[gethidden(p, "CountryRegionCodeReplicate")])
 		end
 		notify('Regions',table.concat(regions, ',\n'))
 	else
@@ -7678,7 +7680,7 @@ addcmd('chatregion',{},
 	local regions = {}
 	for i,v in pairs(players) do
 		local p = Players[v]
-		table.insert(regions,p.Name.."'s region is: "..gethidden(p, "CountryRegionCodeReplicate"))
+		table.insert(regions,p.Name.."'s region is: ".countries[gethidden(p, "CountryRegionCodeReplicate")])
 	end
 	local chatString = table.concat(regions, ', ')
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
