@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.4'
+ver = '4.4.1'
 
 Players = game:GetService("Players")
 
@@ -1996,6 +1996,9 @@ ViewportTextBox.convert(Cmdbar_2).View.ZIndex = 10
 
 IYMouse = Players.LocalPlayer:GetMouse()
 UserInputService = game:GetService("UserInputService")
+
+local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
+local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 
 function writefileExploit()
 	if writefile then
@@ -4272,7 +4275,7 @@ CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coord
 CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn', DESC = 'Sets a position where you will spawn'}
+CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn [delay]', DESC = 'Sets a position where you will spawn'}
 CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
 CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where you last died'}
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
@@ -4363,12 +4366,6 @@ CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'chatage [plr]', DESC = 'Chats the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [plr]', DESC = 'Chats the date the player joined Roblox'}
---CMDs[#CMDs + 1] = {NAME = 'os [plr]', DESC = 'Shows a players platform'}
---CMDs[#CMDs + 1] = {NAME = 'chatos [plr]', DESC = 'Chats a players platform'}
---CMDs[#CMDs + 1] = {NAME = 'setos [text]', DESC = 'Sets your os to whatever you input'}
-CMDs[#CMDs + 1] = {NAME = 'region [plr]', DESC = 'Tells you the region of a player'}
-CMDs[#CMDs + 1] = {NAME = 'chatregion [plr]', DESC = 'Chats the region of a player'}
-CMDs[#CMDs + 1] = {NAME = 'setregion [text]', DESC = 'Sets your region to whatever you input'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -4591,6 +4588,7 @@ function GetInTable(Table, Name)
 end
 
 function respawn(plr)
+	if invisRunning then TurnVisible() end
 	local char = plr.Character
 	char:ClearAllChildren()
 	local newChar = Instance.new("Model",workspace)
@@ -4636,7 +4634,7 @@ function onDied()
 end
 
 Clip = true
-
+spDelay = 0.1
 Players.LocalPlayer.CharacterAdded:Connect(function()
 	FLYING = false
 	Floating = false
@@ -4646,11 +4644,13 @@ Players.LocalPlayer.CharacterAdded:Connect(function()
 	end
 
 	repeat wait() until Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
-
-	if spawnpoint and not refreshCmd and spawnpos ~= nil then
-		wait(.1)
-		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawnpos
-	end
+	
+	pcall(function()
+		if spawnpoint and not refreshCmd and spawnpos ~= nil then
+			wait(spDelay)
+			Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawnpos
+		end
+	end)
 	
 	onDied()
 end)
@@ -8015,90 +8015,6 @@ addcmd('chatjoindate',{'cjd'},
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
 end)
 
---addcmd('os',{'platform', 'device'},
---	function(args, speaker)
---	local players = getPlayer(args[1], speaker)
---	local platforms = {}
---	for i,v in pairs(players) do
---		local p = Players[v]
---		table.insert(platforms,p.Name.."'s platform is: "..p.OsPlatform)
---	end
---	notify('OS',table.concat(platforms, ',\n'))
---end)
---
---addcmd('chatos',{'chatplatform', 'chatdevice'},
---	function(args, speaker)
---	local players = getPlayer(args[1], speaker)
---	local platforms = {}
---	for i,v in pairs(players) do
---		local p = Players[v]
---		table.insert(platforms,p.Name.."'s platform is: "..p.OsPlatform)
---	end
---	local chatString = table.concat(platforms, ', ')
---	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
---end)
---
---addcmd('setos',{'spoofos', 'osspoof'},
---	function(args, speaker)
---	speaker.OsPlatform = getstring(1)
---	notify('OS','Your os is now set to '..getstring(1))
---end)
-
-local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
-local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
-addcmd('region',{},
-	function(args, speaker)
-	if gethidden then
-		notify("Loading",'Hold on a sec')
-		local countries = game:GetService("HttpService"):JSONDecode(game:HttpGet("http://country.io/names.json"))
-		local players = getPlayer(args[1], speaker)
-		local regions = {}
-		for i,v in pairs(players) do
-				local p = Players[v]
-				local region = gethidden(p, "CountryRegionCodeReplicate")
-				if countries[region] then
-					region = countries[region]
-				end
-			table.insert(regions,p.Name.."'s region is: "..region)
-		end
-		notify('Regions',table.concat(regions, ',\n'))
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing gethiddenproperty)')
-	end
-end)
-
-addcmd('chatregion',{},
-	function(args, speaker)
-	if gethidden then
-		notify("Loading",'Hold on a sec')
-		local countries = game:GetService("HttpService"):JSONDecode(game:HttpGet("http://country.io/names.json"))
-		local players = getPlayer(args[1], speaker)
-		local regions = {}
-		for i,v in pairs(players) do
-			local p = Players[v]
-			local region = gethidden(p, "CountryRegionCodeReplicate")
-			if countries[region] then
-				region = countries[region]
-			end
-			table.insert(regions,p.Name.."'s region is: "..region)
-		end
-		local chatString = table.concat(regions, ', ')
-		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing gethiddenproperty)')
-	end
-end)
-
-addcmd('setregion',{'spoofregion', 'regionspoof'},
-	function(args, speaker)
-	if sethidden then	
-	sethidden(speaker, "CountryRegionCodeReplicate", getstring(1))
-	notify('Region','Your region is now set to '..getstring(1))
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
-end)
-
 addcmd('copyname',{'copyuser'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -8473,7 +8389,6 @@ addcmd('invisible',{'invis'},
 	    Respawn()
 		invisDied:Disconnect()
 	end)
-	
 	
 	if IsInvis == true then return end
 	IsInvis = true
@@ -9305,18 +9220,22 @@ end)
 addcmd('blockhats',{},
 	function(args, speaker)
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-		if v:FindFirstChild('Handle') and v.Handle:FindFirstChildOfClass('SpecialMesh') then
-			v.Handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
+		for i,c in pairs(v:GetDescendants()) do
+			if c:IsA("SpecialMesh") then
+				c:Destroy()
+			end
 		end
 	end
 end)
 
 addcmd('blocktool',{},
 	function(args, speaker)
-	for i,v in pairs(speaker.Character:GetChildren()) do
-		if v:IsA("Tool") or v:IsA("HopperBin") and v:FindFirstChild("Handle") then
-			if v.Handle:FindFirstChildOfClass('SpecialMesh') then
-				v.Handle:FindFirstChildOfClass('SpecialMesh'):Destroy()
+	for _,v in pairs(speaker.Character:GetChildren()) do
+		if v:IsA("Tool") or v:IsA("HopperBin") then
+			for i,c in pairs(v:GetDescendants()) do
+				if c:IsA("SpecialMesh") then
+					c:Destroy()
+				end
 			end
 		end
 	end
@@ -9328,16 +9247,12 @@ addcmd('creeper',{},
 		speaker.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 		speaker.Character.LeftUpperArm:Destroy()
 		speaker.Character.RightUpperArm:Destroy()
-		for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-			v:Destroy()
-		end
+		speaker.Character:FindFirstChildOfClass("Humanoid"):RemoveAccessories()
 	else
 		speaker.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 		speaker.Character["Left Arm"]:Destroy()
 		speaker.Character["Right Arm"]:Destroy()
-		for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-			v:Destroy()
-		end
+		speaker.Character:FindFirstChildOfClass("Humanoid"):RemoveAccessories()
 	end
 end)
 
@@ -9621,6 +9536,7 @@ addcmd('spawnpoint',{'spawn'},
 	function(args, speaker)
 	spawnpos = speaker.Character.HumanoidRootPart.CFrame
 	spawnpoint = true
+	spDelay = tonumber(args[1]) or 0.1
 	notify('Spawn Point','Spawn point created at '..tostring(spawnpos))
 end)
 
@@ -9668,10 +9584,10 @@ end)
 
 addcmd('unhatspin',{'unspinhats'},
 	function(args, speaker)
+	if spinhats then
+		spinhats:Disconnect()
+	end
 	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-		if spinhats then
-			spinhats:Disconnect()
-		end
 		v.Parent = workspace
 		v.Handle.no:Destroy()
 		v.Handle.ha:Destroy()
@@ -9854,9 +9770,7 @@ end)
 addcmd('deletehats',{'nohats','rhats'},
 	function(args, speaker)
 	if speaker.Character then
-		for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-			v:Destroy()
-		end
+		speaker.Character:FindFirstChildOfClass("Humanoid"):RemoveAccessories()
 	end
 end)
 
@@ -9997,13 +9911,6 @@ addcmd('fling',{},
 	for _, child in pairs(speaker.Character:GetDescendants()) do
 		if child:IsA("BasePart") then
 			child.CustomPhysicalProperties = PhysicalProperties.new(2, 0.3, 0.5)
-		end
-	end
-	for _,v in pairs(speaker.Character.Humanoid:GetAccessories()) do
-		for e,c in pairs(v:GetDescendants()) do
-			if c:IsA('BasePart') then
-				c.CustomPhysicalProperties = PhysicalProperties.new(0, 0.3, 0.5)
-			end
 		end
 	end
 	execCmd('noclip nonotify')
