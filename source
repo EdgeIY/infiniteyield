@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.4.1'
+ver = '4.4.2'
 
 Players = game:GetService("Players")
 
@@ -490,6 +490,7 @@ CloseImage.BackgroundTransparency = 1
 CloseImage.Position = UDim2.new(0, 5, 0, 5)
 CloseImage.Size = UDim2.new(0, 10, 0, 10)
 CloseImage.Image = "rbxassetid://5054663650"
+CloseImage.ZIndex = 10
 
 Tooltip.Name = randomString()
 Tooltip.Parent = PARENT
@@ -1092,6 +1093,7 @@ ExitImage_2.BackgroundTransparency = 1
 ExitImage_2.Position = UDim2.new(0, 5, 0, 5)
 ExitImage_2.Size = UDim2.new(0, 10, 0, 10)
 ExitImage_2.Image = "rbxassetid://5054663650"
+ExitImage_2.ZIndex = 10
 
 PositionsFrame.Name = "PositionsFrame"
 PositionsFrame.Parent = Settings
@@ -1526,6 +1528,7 @@ ExitImage_3.BackgroundTransparency = 1
 ExitImage_3.Position = UDim2.new(0, 5, 0, 5)
 ExitImage_3.Size = UDim2.new(0, 10, 0, 10)
 ExitImage_3.Image = "rbxassetid://5054663650"
+ExitImage_3.ZIndex = 10
 
 AliasHint.Name = "AliasHint"
 AliasHint.Parent = AliasesFrame
@@ -1683,6 +1686,7 @@ ExitImage_5.BackgroundTransparency = 1
 ExitImage_5.Position = UDim2.new(0, 5, 0, 5)
 ExitImage_5.Size = UDim2.new(0, 10, 0, 10)
 ExitImage_5.Image = "rbxassetid://5054663650"
+ExitImage_5.ZIndex = 10
 
 logs.Name = randomString()
 logs.Parent = PARENT
@@ -1742,6 +1746,7 @@ ImageLabel_2.BackgroundTransparency = 1
 ImageLabel_2.Position = UDim2.new(0, 5, 0, 5)
 ImageLabel_2.Size = UDim2.new(0, 10, 0, 10)
 ImageLabel_2.Image = "rbxassetid://5054663650"
+ImageLabel_2.ZIndex = 10
 
 background.Name = "background"
 background.Parent = logs
@@ -2916,6 +2921,7 @@ function saves()
 				ExitImage.Position = UDim2.new(0, 5, 0, 5)
 				ExitImage.Size = UDim2.new(0, 10, 0, 10)
 				ExitImage.Image = "rbxassetid://5054663650"
+				ExitImage.ZIndex = 10
 				
 				Exit.MouseButton1Click:Connect(function()
 					FileError:Destroy()
@@ -4349,6 +4355,7 @@ CMDs[#CMDs + 1] = {NAME = 'nosimulationradius / nosimradius', DESC = 'Turns off 
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
+CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
@@ -6152,6 +6159,7 @@ addcmd('serverinfo',{'info','sinfo'},
 		ExitImage.Position = UDim2.new(0, 5, 0, 5)
 		ExitImage.Size = UDim2.new(0, 10, 0, 10)
 		ExitImage.Image = "rbxassetid://5054663650"
+		ExitImage.ZIndex = 10
 		
 		background.Name = "background"
 		background.Parent = FRAME
@@ -8499,7 +8507,7 @@ end)
 
 addcmd('jpower',{'jumppower','jp'},
 	function(args, speaker)
-	local jpower = args[1] or 1
+	local jpower = args[1] or 50
 	if isNumber(jpower) then
 		speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
 	end
@@ -10452,6 +10460,11 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},
 	end
 end)
 
+addcmd('removeterrain',{'rterrain','noterrain'},
+	function(args, speaker)
+	workspace:FindFirstChildOfClass('Terrain'):Clear()
+end)
+
 addcmd('tpunanchored',{'tpua'},
 	function(args, speaker)
 	if sethidden then
@@ -10746,13 +10759,13 @@ if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/E
 		background.BackgroundColor3 = currentShade1
 		background.BorderSizePixel = 0
 		background.Position = UDim2.new(0, 0, 0, 20)
-		background.Size = UDim2.new(0, 360, 0, 116)
+		background.Size = UDim2.new(0, 360, 0, 150)
 		background.ZIndex = 10
 		
 		TextBox.Parent = background
 		TextBox.BackgroundTransparency = 1
-		TextBox.Position = UDim2.new(0.017, 0, 0.06, 0)
-		TextBox.Size = UDim2.new(0, 348, 0, 104)
+		TextBox.Position = UDim2.new(0, 5, 0, 5)
+		TextBox.Size = UDim2.new(0, 350, 0, 140)
 		TextBox.Font = Enum.Font.SourceSans
 		TextBox.TextSize = 18
 		TextBox.TextWrapped = true
@@ -10794,6 +10807,7 @@ if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/E
 		ExitImage.Position = UDim2.new(0, 5, 0, 5)
 		ExitImage.Size = UDim2.new(0, 10, 0, 10)
 		ExitImage.Image = "rbxassetid://5054663650"
+		ExitImage.ZIndex = 10
 		
 		wait(1)
 		AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, 150), "InOut", "Quart", 0.5, true, nil)
