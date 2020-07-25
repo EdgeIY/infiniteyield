@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.4.3'
+ver = '4.4.4'
 
 Players = game:GetService("Players")
 
@@ -4385,9 +4385,11 @@ CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'attach [plr] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'kill [plr] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
-CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastkill [plr] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastbring [plr] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'teleport / tp [plr] [plr] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [plr] [plr] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
 CMDs[#CMDs + 1] = {NAME = 'invisfling', DESC = 'Enables invisible fling'}
@@ -5292,6 +5294,7 @@ function ESP(plr)
 				TextLabel.TextColor3 = Color3.new(1, 1, 1)
 				TextLabel.TextStrokeTransparency = 0
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Bottom
+				TextLabel.Text = 'Name: '..plr.Name
 				local espLoopFunc
 				local teamChange
 				local addedFunc
@@ -5438,6 +5441,7 @@ function Locate(plr)
 				TextLabel.TextColor3 = Color3.new(1, 1, 1)
 				TextLabel.TextStrokeTransparency = 0
 				TextLabel.TextYAlignment = Enum.TextYAlignment.Bottom
+				TextLabel.Text = 'Name: '..plr.Name
 				local lcLoopFunc
 				local addedFunc
 				local teamChange
@@ -6801,7 +6805,7 @@ addcmd('float', {'platform'},
 					floatDied:Disconnect()
 				end
 			end			
-			FloatingFunc = game:GetService('RunService').RenderStepped:connect(FloatPadLoop)
+			FloatingFunc = game:GetService('RunService').Heartbeat:connect(FloatPadLoop)
 		end)
 	end
 end)
@@ -9104,7 +9108,7 @@ addcmd('headsit',{},
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		headSit = game:GetService("RunService").RenderStepped:Connect(function()
+		headSit = game:GetService("RunService").Heartbeat:Connect(function()
 			if Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart') and speaker.Character:FindFirstChild('HumanoidRootPart') then
 				if Players:FindFirstChild(Players[v].Name) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
 					speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
@@ -10084,7 +10088,7 @@ function kill(speaker,target,fast)
 			repeat
 				wait()
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
-			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
+			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
 			wait(3)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
@@ -10124,7 +10128,7 @@ function bring(speaker,target,fast)
 			repeat
 				wait()
 				hrp.CFrame = NormPos
-			until not target.Character:FindFirstChild("HumanoidRootPart") or speaker.Character:FindFirstChild("HumanoidRootPart")
+			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
 			wait(3)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
@@ -10146,6 +10150,61 @@ addcmd('fastbring',{'fastfebring'},
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		bring(speaker,Players[v],true)
+	end
+end)
+
+function teleport(speaker,target,target2,fast)
+	if tools(speaker) then
+		if target ~= nil then
+			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			if not fast then
+				refresh(speaker)
+				wait()
+				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				wait(0.3)
+			end
+			local hrp = speaker.Character.HumanoidRootPart
+			local hrp2 = target2.Character.HumanoidRootPart
+			attach(speaker,target)
+			repeat
+				wait()
+				hrp.CFrame = hrp2.CFrame
+			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
+			wait(3)
+			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
+		end
+	else
+		notify('Tool Required','You need to have an item in your inventory to use this command')
+	end
+end
+
+addcmd('tp',{'teleport'},
+	function(args, speaker)
+	local players1=getPlayer(args[1], speaker)
+	local players2=getPlayer(args[2], speaker)
+	for i,v in pairs(players1)do
+		if Players[v].Character:FindFirstChild("HumanoidRootPart") and Players[players2[1]].Character:FindFirstChild("HumanoidRootPart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(0.1)
+			teleport(speaker,Players[v],Players[players2[1]])
+		end
+	end
+end)
+
+addcmd('fasttp',{'fastteleport'},
+	function(args, speaker)
+	local players1=getPlayer(args[1], speaker)
+	local players2=getPlayer(args[2], speaker)
+	for i,v in pairs(players1)do
+		if Players[v].Character:FindFirstChild("HumanoidRootPart") and Players[players2[1]].Character:FindFirstChild("HumanoidRootPart") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(0.1)
+			teleport(speaker,Players[v],Players[players2[1]],true)
+		end
 	end
 end)
 
