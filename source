@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.4.4'
+ver = '4.5'
 
 Players = game:GetService("Players")
 
@@ -2015,6 +2015,11 @@ function isNumber(str)
 	if tonumber(str) ~= nil or str == 'inf' then
 		return true
 	end
+end
+
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
 end
 
 function tools(plr)
@@ -4076,6 +4081,7 @@ end
 dragMain(Title,Holder)
 
 Match = function(name,str)
+	str = str:gsub("%W", "%%%1")
 	return name:lower():find(str:lower()) and true
 end
 
@@ -4213,6 +4219,7 @@ end
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
+CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens FrostHook Spy'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
@@ -4249,6 +4256,7 @@ CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20
 CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly', DESC = 'Makes you fly in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
+CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'enables or disables the Q and E hotkeys for fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'float /  platform', DESC = 'Spawns a platform beneath you causing you to float'}
@@ -4356,6 +4364,8 @@ CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unancho
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
+CMDs[#CMDs + 1] = {NAME = 'clearnilinstances / nonilinstances / cni', DESC = 'Removes nil instances'}
+CMDs[#CMDs + 1] = {NAME = 'destroyheight / dh [num]', DESC = 'Sets FallenPartsDestroyHeight'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
@@ -4374,10 +4384,14 @@ CMDs[#CMDs + 1] = {NAME = 'chatage [plr]', DESC = 'Chats the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [plr]', DESC = 'Chats the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'copyappearanceid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'userid / id [plr]', DESC = 'Notifies a players user ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [plr]', DESC = 'Notifies a players appearance ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'bang [plr] [speed]', DESC = 'owo'}
-CMDs[#CMDs + 1] = {NAME = 'unbang [plr]', DESC = 'uwu'}
+CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
+CMDs[#CMDs + 1] = {NAME = 'carpet [plr]', DESC = 'Be someones carpet'}
+CMDs[#CMDs + 1] = {NAME = 'uncarpet', DESC = 'Undoes carpet'}
 CMDs[#CMDs + 1] = {NAME = 'friend [plr]', DESC = 'Sends a friend request to certain players'}
 CMDs[#CMDs + 1] = {NAME = 'unfriend [plr]', DESC = 'Unfriends certain players'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
@@ -4449,6 +4463,7 @@ CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
 CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
+CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
@@ -4612,11 +4627,11 @@ local refreshCmd = false
 function refresh(plr)
 	spawn(function()
 		refreshCmd = true
-		local rpos = plr.Character.HumanoidRootPart.Position
+		local rpos = getRoot(plr.Character).Position
 		wait()
 		respawn(plr)
 		wait()
-		repeat wait() until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart')
+		repeat wait() until plr.Character and getRoot(plr.Character)
 		wait(.1)
 		if rpos then
 			plr.Character:MoveTo(rpos)
@@ -4632,8 +4647,8 @@ function onDied()
 	spawn(function()
 		if pcall(function() Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') end) and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
 			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Died:connect(function()
-				if Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-					lastDeath = Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+				if getRoot(Players.LocalPlayer.Character) then
+					lastDeath = getRoot(Players.LocalPlayer.Character).CFrame
 				end
 			end)
 		else
@@ -4653,12 +4668,12 @@ Players.LocalPlayer.CharacterAdded:Connect(function()
 		execCmd('clip nonotify')
 	end
 
-	repeat wait() until Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+	repeat wait() until getRoot(Players.LocalPlayer.Character)
 	
 	pcall(function()
 		if spawnpoint and not refreshCmd and spawnpos ~= nil then
 			wait(spDelay)
-			Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawnpos
+			getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
 		end
 	end)
 	
@@ -4984,12 +4999,12 @@ SpecialPlayerCases = {
 	end,
 	["nearest"] = function(speaker,args)
 		local speakerChar = speaker.Character
-		if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
+		if not speakerChar or not getRoot(speakerChar) then return end
 		local lowest = math.huge
 		local NearestPlayer = nil
 		for _,plr in pairs(Players:GetPlayers()) do
 			if plr ~= speaker and plr.Character then
-				local distance = plr:DistanceFromCharacter(speakerChar:FindFirstChild("HumanoidRootPart").Position)
+				local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
 				if distance < lowest then
 					lowest = distance
 					NearestPlayer = {plr}
@@ -5000,12 +5015,12 @@ SpecialPlayerCases = {
 	end,
 	["farthest"] = function(speaker,args)
 		local speakerChar = speaker.Character
-		if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
+		if not speakerChar or not getRoot(speakerChar) then return end
 		local highest = math.huge
 		local FarthestPlayer = nil
 		for _,plr in pairs(Players:GetPlayers()) do
 			if plr ~= speaker and plr.Character then
-				local distance = plr:DistanceFromCharacter(speakerChar:FindFirstChild("HumanoidRootPart").Position)
+				local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
 				if distance > highest then
 					highest = distance
 					FarthestPlayer = {plr}
@@ -5046,10 +5061,10 @@ SpecialPlayerCases = {
 		local returns = {}
 		local radius = tonumber(args[1])
 		local speakerChar = speaker.Character
-		if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
+		if not speakerChar or not getRoot(speakerChar) then return end
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-				local magnitude = (plr.Character:FindFirstChild("HumanoidRootPart").Position-speakerChar.HumanoidRootPart.Position).magnitude
+			if plr.Character and getRoot(plr.Character) then
+				local magnitude = (getRoot(plr.Character).Position-getRoot(speakerChar).Position).magnitude
 				if magnitude <= radius then table.insert(returns,plr) end
 			end
 		end
@@ -5152,7 +5167,7 @@ function do_exec(str, plr)
 	if not t then return end
 	str = str:sub(t[2])
 	if t[1]=='cmd' then
-		execCmd(str, plr)
+		execCmd(str, plr, true)
 		IndexContents('',true,false,true)
 		CMDsF.CanvasPosition = canvasPos
 	end
@@ -5181,7 +5196,7 @@ UserInputService.InputBegan:Connect(function(input,gameProcessed)
                 Cmdbar.CursorPosition = 1020
             elseif input.KeyCode == Enum.KeyCode.Down then
                 historyCount = historyCount - 1
-                if historyCount < 1 then historyCount = 1 end
+                if historyCount < 0 then historyCount = 0 end
                 Cmdbar.Text = cmdHistory[historyCount] or ""
                 Cmdbar.CursorPosition = 1020
             end
@@ -5264,7 +5279,7 @@ function ESP(plr)
 		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not PARENT:FindFirstChild(plr.Name..'_ESP') then
 			local ESPholder = Instance.new("Folder", PARENT)
 			ESPholder.Name = plr.Name..'_ESP'
-			repeat wait(1) until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+			repeat wait(1) until plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 			for b,n in pairs (plr.Character:GetChildren()) do
 				if (n:IsA("BasePart")) then
 					local a = Instance.new("BoxHandleAdornment", ESPholder)
@@ -5303,7 +5318,7 @@ function ESP(plr)
 						espLoopFunc:Disconnect()
 						teamChange:Disconnect()
 						ESPholder:Destroy()
-						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 						ESP(plr)
 						addedFunc:Disconnect()
 					else
@@ -5316,7 +5331,7 @@ function ESP(plr)
 						espLoopFunc:Disconnect()
 						addedFunc:Disconnect()
 						ESPholder:Destroy()
-						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 						ESP(plr)
 						teamChange:Disconnect()
 					else
@@ -5325,8 +5340,8 @@ function ESP(plr)
 				end)
 				local function espLoop()
 					if PARENT:FindFirstChild(plr.Name..'_ESP') then
-						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
-							local pos = math.floor((Players.LocalPlayer.Character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).magnitude)
+						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
+							local pos = math.floor((getRoot(Players.LocalPlayer.Character).Position - getRoot(plr.Character).Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
@@ -5352,7 +5367,7 @@ function CHMS(plr)
 		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not PARENT:FindFirstChild(plr.Name..'_CHMS') then
 			local ESPholder = Instance.new("Folder", PARENT)
 			ESPholder.Name = plr.Name..'_CHMS'
-			repeat wait(1) until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+			repeat wait(1) until plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 			for b,n in pairs (plr.Character:GetChildren()) do
 				if (n:IsA("BasePart")) then
 					local a = Instance.new("BoxHandleAdornment", ESPholder)
@@ -5372,7 +5387,7 @@ function CHMS(plr)
 				if CHMSenabled then
 					ESPholder:Destroy()
 					teamChange:Disconnect()
-					repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+					repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 					CHMS(plr)
 					addedFunc:Disconnect()
 				else
@@ -5384,7 +5399,7 @@ function CHMS(plr)
 				if CHMSenabled then
 					ESPholder:Destroy()
 					addedFunc:Disconnect()
-					repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+					repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 					CHMS(plr)
 					teamChange:Disconnect()
 				else
@@ -5411,7 +5426,7 @@ function Locate(plr)
 		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not PARENT:FindFirstChild(plr.Name..'_LC') then
 			local ESPholder = Instance.new("Folder", PARENT)
 			ESPholder.Name = plr.Name..'_LC'
-			repeat wait(1) until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+			repeat wait(1) until plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 			for b,n in pairs (plr.Character:GetChildren()) do
 				if (n:IsA("BasePart")) then
 					local a = Instance.new("BoxHandleAdornment", ESPholder)
@@ -5450,7 +5465,7 @@ function Locate(plr)
 						lcLoopFunc:Disconnect()
 						teamChange:Disconnect()
 						ESPholder:Destroy()
-						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 						Locate(plr)
 						addedFunc:Disconnect()
 					else
@@ -5463,7 +5478,7 @@ function Locate(plr)
 						lcLoopFunc:Disconnect()
 						addedFunc:Disconnect()
 						ESPholder:Destroy()
-						repeat wait(1) until plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid')
+						repeat wait(1) until getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid')
 						Locate(plr)
 						teamChange:Disconnect()
 					else
@@ -5472,8 +5487,8 @@ function Locate(plr)
 				end)
 				local function lcLoop()
 					if PARENT:FindFirstChild(plr.Name..'_LC') then
-						if plr.Character and plr.Character:FindFirstChild('HumanoidRootPart') and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
-							local pos = math.floor((Players.LocalPlayer.Character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).magnitude)
+						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChild('Humanoid') and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChild('Humanoid') then
+							local pos = math.floor((getRoot(Players.LocalPlayer.Character).Position - getRoot(plr.Character).Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
@@ -5842,11 +5857,11 @@ IYMouse.Button1Down:connect(function()
 		if v.COMMAND == 'clicktp' then
 			local input = v.KEY
 			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) and Players.LocalPlayer.Character then
-				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
+				pcall(function() getRoot(Players.LocalPlayer.Character).CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
 			elseif input == 'LeftClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and Players.LocalPlayer.Character then
-				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
+				pcall(function() getRoot(Players.LocalPlayer.Character).CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
 			elseif UserInputService:IsKeyDown(Enum.KeyCode[input:sub(14)]) and Players.LocalPlayer.Character then
-				pcall(function() Players.LocalPlayer.Character.HumanoidRootPart.CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
+				pcall(function() getRoot(Players.LocalPlayer.Character).CFrame = IYMouse.Hit + Vector3.new(0,7,0) end)
 			end
 		elseif v.COMMAND == 'clickdel' then
 			local input = v.KEY
@@ -6591,13 +6606,14 @@ addcmd('togglenoclip',{},
 end)
 
 FLYING = false
+QEfly = true
 iyflyspeed = 1
 vehicleflyspeed = 1
 function sFLY(vfly)
-	repeat wait() until Players.LocalPlayer and Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and Players.LocalPlayer.Character:FindFirstChild('Humanoid')
+	repeat wait() until Players.LocalPlayer and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChild('Humanoid')
 	repeat wait() until IYMouse
 	
-	local T = Players.LocalPlayer.Character.HumanoidRootPart
+	local T = getRoot(Players.LocalPlayer.Character)
 	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local SPEED = 0
@@ -6666,13 +6682,13 @@ function sFLY(vfly)
 			else
 				CONTROL.R = iyflyspeed
             end
-        elseif KEY:lower() == 'e' then
+        elseif QEfly and KEY:lower() == 'e' then
             if vfly then
                 CONTROL.Q = vehicleflyspeed*2
             else
                 CONTROL.Q = iyflyspeed*2
             end
-        elseif KEY:lower() == 'q' then
+        elseif QEfly and KEY:lower() == 'q' then
             if vfly then
                 CONTROL.E = -vehicleflyspeed*2
             else
@@ -6738,6 +6754,15 @@ addcmd('vflyspeed',{'vflysp','vehicleflyspeed','vehicleflysp'},
 	end
 end)
 
+addcmd('qefly',{'flyqe'},
+	function(args, speaker)
+	if args[1] == 'false' then
+		QEfly = false
+	else
+		QEfly = true
+	end
+end)
+
 addcmd('togglefly',{},
 	function(args, speaker)
 	if FLYING then
@@ -6761,7 +6786,7 @@ addcmd('float', {'platform'},
 			Float.Anchored = true
 			local FloatValue = -3.5
 			if r15(speaker) then FloatValue = -3.65 end
-			Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,FloatValue,0)
+			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 			notify('Float','Float Enabled (Q = down & E = up)')
 			qUp = IYMouse.KeyUp:connect(function(KEY)
 				if KEY == 'q' then
@@ -6793,8 +6818,8 @@ addcmd('float', {'platform'},
 				floatDied:Disconnect()
 			end)
 			local function FloatPadLoop()
-				if pchar:FindFirstChild("Float") and pchar:FindFirstChild("HumanoidRootPart") then
-					Float.CFrame = pchar.HumanoidRootPart.CFrame * CFrame.new(0,FloatValue,0)
+				if pchar:FindFirstChild("Float") and getRoot(pchar) then
+					Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 				else
 					FloatingFunc:Disconnect()
 					Float:Destroy()
@@ -6902,9 +6927,9 @@ end)
 addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},
 	function(args, speaker)
 	local WPName = tostring(getstring(1))
-	if speaker.Character:findFirstChild("HumanoidRootPart") then
+	if getRoot(speaker).Character then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
-		local torso = speaker.Character:findFirstChild("HumanoidRootPart")
+		local torso = getRoot(speaker.Character)
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = game.PlaceId}
 		if AllWaypoints ~= nil then
 			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = game.PlaceId}
@@ -6917,7 +6942,7 @@ end)
 addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'},
 	function(args, speaker)
 	local WPName = tostring(getstring(1))
-	if speaker.Character:findFirstChild("HumanoidRootPart") then
+	if getRoot(speaker.Character) then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = game.PlaceId}
 		if AllWaypoints ~= nil then
@@ -6976,12 +7001,12 @@ addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},
 				local x = WayPoints[i].COORD[1]
 				local y = WayPoints[i].COORD[2]
 				local z = WayPoints[i].COORD[3]
-				speaker.Character.HumanoidRootPart.CFrame = CFrame.new(x,y,z)
+				getRoot(speaker.Character).CFrame = CFrame.new(x,y,z)
 			end
 		end
 		for i,_ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				speaker.Character.HumanoidRootPart.CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)
+				getRoot(speaker.Character).CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)
 			end
 		end
 	end
@@ -6996,12 +7021,12 @@ addcmd('tweenwaypoint',{'twp'},
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
 			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
+				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
 			end
 		end
 		for i,_ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
+				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
 			end
 		end
 	end
@@ -7387,7 +7412,7 @@ addcmd('view',{'spectate'},
 		workspace.CurrentCamera.CameraSubject = viewing.Character
 		notify('Spectate','Viewing ' .. Players[v].Name)
 		local function viewDiedFunc()
-			repeat wait() until Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart')
+			repeat wait() until Players[v].Character ~= nil and getRoot(Players[v].Character)
 			workspace.CurrentCamera.CameraSubject = viewing.Character
 		end
 		viewDied = Players[v].CharacterAdded:connect(viewDiedFunc)
@@ -7722,7 +7747,7 @@ addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
-		StartFreecam(Players[v].Character.HumanoidRootPart.CFrame)
+		StartFreecam(getRoot(Players[v].Character).CFrame)
 	end
 end)
 
@@ -7741,7 +7766,7 @@ end)
 
 addcmd('gotocamera',{'gotocam','tocam'},
 	function(args, speaker)
-	speaker.Character.HumanoidRootPart.CFrame = workspace.Camera.CFrame
+	getRoot(speaker.Character).CFrame = workspace.Camera.CFrame
 end)
 
 addcmd('fov',{},
@@ -8037,7 +8062,16 @@ addcmd('copyname',{'copyuser'},
 	end
 end)
 
-addcmd('copyid',{},
+addcmd('userid',{'id'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local id = tostring(Players[v].UserId)
+		notify('User ID',id)
+	end
+end)
+
+addcmd('copyid',{'copyuserid'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
@@ -8046,7 +8080,16 @@ addcmd('copyid',{},
 	end
 end)
 
-addcmd('copyappearanceid',{},
+addcmd('appearanceid',{'aid'},
+	function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local aid = tostring(Players[v].CharacterAppearanceId)
+		notify('Appearance ID',aid)
+	end
+end)
+
+addcmd('copyappearanceid',{'caid'},
 	function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
@@ -8064,7 +8107,7 @@ addcmd('goto',{'to'},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(0.1)
-			speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)
+			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
 		end
 	end
 	execCmd('breakvelocity')
@@ -8079,7 +8122,7 @@ addcmd('tweengoto',{'tgoto','tto','tweento'},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(0.1)
-			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)}):Play()
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)}):Play()
 		end
 	end
 	execCmd('breakvelocity')
@@ -8098,7 +8141,7 @@ addcmd('vehiclegoto',{'vgoto','vtp','vehicletp'},
 				end
 			until vehicleModel.ClassName == "Model"
 			wait(0.1)
-			vehicleModel:MoveTo(Players[v].Character.HumanoidRootPart.Position)
+			vehicleModel:MoveTo(getRoot(Players[v].Character).Position)
 		end
 	end
 end)
@@ -8141,7 +8184,7 @@ addcmd('clientbring',{'cbring'},
 				Players[v].Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait()
-			Players[v].Character.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame + Vector3.new(3,1,0)
+			getRoot(Players[v].Character).CFrame = getRoot(speaker.Character).CFrame + Vector3.new(3,1,0)
 		end
 	end
 end)
@@ -8170,8 +8213,8 @@ addcmd('loopbring',{},
 				repeat
 					pchar = Players[v].Character
 					for i,c in pairs(players) do
-						if pchar~= nil and pchar:FindFirstChild("HumanoidRootPart") and speaker.Character ~= nil and speaker.Character:FindFirstChild("HumanoidRootPart") then
-							pchar.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame + Vector3.new(distance,1,0)
+						if pchar~= nil and getRoot(pchar) and speaker.Character ~= nil and getRoot(speaker.Character) then
+							getRoot(pchar).CFrame = getRoot(speaker.Character).CFrame + Vector3.new(distance,1,0)
 						end
 					end
 					wait(lDelay)
@@ -8202,8 +8245,8 @@ addcmd('walkto',{'follow'},
 			end
 			walkto = true
 			repeat wait()
-				speaker.Character.Humanoid:MoveTo(Players[v].Character.HumanoidRootPart.Position)
-			until Players[v].Character == nil or not Players[v].Character:FindFirstChild('HumanoidRootPart') or walkto == false
+				speaker.Character.Humanoid:MoveTo(getRoot(Players[v].Character).Position)
+			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
 		end
 	end
 end)
@@ -8817,8 +8860,8 @@ addcmd('tpposition',{'tppos'},
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		char.HumanoidRootPart.CFrame = CFrame.new(tpX,tpY,tpZ)
+	if char and getRoot(char) then
+		getRoot(char).CFrame = CFrame.new(tpX,tpY,tpZ)
 	end
 end)
 
@@ -8827,8 +8870,8 @@ addcmd('tweentpposition',{'ttppos'},
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+	if char and getRoot(char) then
+		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
 	end
 end)
 
@@ -8837,8 +8880,8 @@ addcmd('offset',{},
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame + Vector3.new(tpX,tpY,tpZ)
+	if char and getRoot(char) then
+		getRoot(char).CFrame = getRoot(char).CFrame + Vector3.new(tpX,tpY,tpZ)
 	end
 end)
 
@@ -8847,8 +8890,8 @@ addcmd('tweenoffset',{'toffset'},
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+	if char and getRoot(char) then
+		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
 	end
 end)
 
@@ -8871,8 +8914,8 @@ addcmd('getposition',{'getpos','notifypos','notifyposition'},
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		local char = Players[v].Character
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			local pos = tostring(char.HumanoidRootPart.Position)
+		if char and getRoot(char) then
+			local pos = tostring(getRoot(char).Position)
 			notify('Current Position',pos)
 		end
 	end
@@ -8883,8 +8926,8 @@ addcmd('copyposition',{'copypos'},
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		local char = Players[v].Character
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			local pos = tostring(char.HumanoidRootPart.Position)
+		if char and getRoot(char) then
+			local pos = tostring(getRoot(char).Position)
 			toClipboard(pos)
 		end
 	end
@@ -9024,7 +9067,7 @@ addcmd('explorer',{'dex'},
 	if PARENT:FindFirstChild'Dex' then
 		PARENT.Dex:Destroy();
 	end
-	
+	notify("Loading",'Hold on a sec')
 	local Dex = game:GetObjects("rbxassetid://3567096419")[1]
 	Dex.Name = 'Dex'
 	Dex.Parent = PARENT
@@ -9052,7 +9095,6 @@ addcmd('explorer',{'dex'},
 			setfenv(Func, Fenv)
 		return Func
 	end
-	
 	local function LoadScripts(Script)
 		if Script.ClassName == "Script" or Script.ClassName == "LocalScript" then
 			spawn(function()
@@ -9063,11 +9105,16 @@ addcmd('explorer',{'dex'},
 			LoadScripts(v)
 		end
 	end
-	
 	LoadScripts(Obj)
 	end
 	
 	Load(Dex)
+end)
+
+addcmd('remotespy',{'rspy'},
+	function(args, speaker)
+	notify("Loading",'Hold on a sec')
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Nootchtai/FrostHook_Spy/master/Spy.lua"))()
 end)
 
 local loopgoto = nil
@@ -9091,7 +9138,7 @@ addcmd('loopgoto',{},
 		end
 		repeat
 			if Players[v].Character ~= nil then
-				speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame + Vector3.new(distance,1,0)
+				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(distance,1,0)
 			end
 			wait(lDelay)
 		until loopgoto ~= Players[v]
@@ -9109,9 +9156,9 @@ addcmd('headsit',{},
 	for i,v in pairs(players)do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
 		headSit = game:GetService("RunService").Heartbeat:Connect(function()
-			if Players[v].Character ~= nil and Players[v].Character:FindFirstChild('HumanoidRootPart') and speaker.Character:FindFirstChild('HumanoidRootPart') then
+			if Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) then
 				if Players:FindFirstChild(Players[v].Name) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
-					speaker.Character.HumanoidRootPart.CFrame = Players[v].Character.HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
+					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
 				else
 					headSit:Disconnect()
 				end
@@ -9285,7 +9332,7 @@ addcmd('bang',{'rape'},
 			else
 				bang:AdjustSpeed(3)
 			end
-			bangplr = Players[v].Name
+			local bangplr = Players[v].Name
 			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
 				bangLoop:Disconnect()
 				bang:Stop()
@@ -9294,7 +9341,7 @@ addcmd('bang',{'rape'},
 			end)
 			bangLoop = game:GetService('RunService').Stepped:connect(function()
 				pcall(function()
-					Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Players[bangplr].Character.HumanoidRootPart.CFrame
+					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[bangplr].Character).CFrame
 				end)
 			end)
 		end
@@ -9310,6 +9357,45 @@ addcmd('unbang',{'unrape'},
 		bangDied:Disconnect()
 		bang:Stop()
 		bangAnim:Destroy()
+	end
+end)
+
+addcmd('carpet',{},
+	function(args, speaker)
+	if not r15(speaker) then
+		execCmd('uncarpet')
+		wait()
+		local players = getPlayer(args[1], speaker)
+		for i,v in pairs(players)do
+			carpetAnim = Instance.new("Animation")
+			carpetAnim.AnimationId = "rbxassetid://282574440"
+			carpet = speaker.Character.Humanoid:LoadAnimation(carpetAnim)
+			carpet:Play(.1, 1, 1)
+			local carpetplr = Players[v].Name
+			carpetDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+				carpetLoop:Disconnect()
+				carpet:Stop()
+				carpetAnim:Destroy()
+				carpetDied:Disconnect()
+			end)
+			carpetLoop = game:GetService('RunService').Heartbeat:connect(function()
+				pcall(function()
+					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
+				end)
+			end)
+		end
+	else
+		notify('R6 Required','This command requires the r6 rig type')
+	end
+end)
+
+addcmd('uncarpet',{'nocarpet'},
+	function(args, speaker)
+	if carpetLoop then
+		carpetLoop:Disconnect()
+		carpetDied:Disconnect()
+		carpet:Stop()
+		carpetAnim:Destroy()
 	end
 end)
 
@@ -9333,7 +9419,7 @@ addcmd('bringpart',{},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
-			v.CFrame = speaker.Character.HumanoidRootPart.CFrame
+			v.CFrame = getRoot(speaker.Character).CFrame
 		end
 	end
 end)
@@ -9342,7 +9428,7 @@ addcmd('bringpartclass',{'bpc'},
 	function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1):lower() and v:IsA("BasePart") then
-			v.CFrame = speaker.Character.HumanoidRootPart.CFrame
+			v.CFrame = getRoot(speaker.Character).CFrame
 		end
 	end
 end)
@@ -9356,7 +9442,7 @@ addcmd('gotopart',{},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+			getRoot(speaker.Character).CFrame = v.CFrame
 		end
 	end
 end)
@@ -9369,8 +9455,8 @@ addcmd('tweengotopart',{'tgotopart'},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
-			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+			getRoot(speaker.Character).CFrame = v.CFrame
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
 		end
 	end
 end)
@@ -9383,7 +9469,7 @@ addcmd('gotopartclass',{'gpc'},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			speaker.Character.HumanoidRootPart.CFrame = v.CFrame
+			getRoot(speaker.Character).CFrame = v.CFrame
 		end
 	end
 end)
@@ -9396,7 +9482,7 @@ addcmd('tweengotopartclass',{'tgpc'},
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			game:GetService("TweenService"):Create(speaker.Character.HumanoidRootPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
 		end
 	end
 end)
@@ -9463,8 +9549,8 @@ addcmd('grabtools',{},
 				if v:FindFirstChild("Handle") then
 					repeat
 						wait()
-						if speaker.Character:FindFirstChild('HumanoidRootPart') then
-							v.Handle.CFrame = speaker.Character.HumanoidRootPart.CFrame
+						if getRoot(speaker.Character) then
+							v.Handle.CFrame = getRoot(speaker.Character).CFrame
 						end
 					until v.Parent == speaker.Character
 				end
@@ -9476,8 +9562,8 @@ addcmd('grabtools',{},
 			if part:FindFirstChild("Handle") then
 				repeat
 					wait()
-					if speaker.Character:FindFirstChild('HumanoidRootPart') then
-						part.Handle.CFrame = speaker.Character.HumanoidRootPart.CFrame
+					if getRoot(speaker.Character) then
+						part.Handle.CFrame = getRoot(speaker.Character).CFrame
 					end
 				until part.Parent == speaker.Character
 			end
@@ -9494,7 +9580,7 @@ end)
 
 addcmd('light',{},
 	function(args, speaker)
-	local light = Instance.new("PointLight", speaker.Character.HumanoidRootPart)
+	local light = Instance.new("PointLight", getRoot(speaker.Character))
 	light.Range = 30
 	if args[1] then
 		light.Brightness = args[1]
@@ -9547,7 +9633,7 @@ end)
 
 addcmd('spawnpoint',{'spawn'},
 	function(args, speaker)
-	spawnpos = speaker.Character.HumanoidRootPart.CFrame
+	spawnpos = getRoot(speaker.Character).CFrame
 	spawnpoint = true
 	spDelay = tonumber(args[1]) or 0.1
 	notify('Spawn Point','Spawn point created at '..tostring(spawnpos))
@@ -9566,7 +9652,7 @@ addcmd('flashback',{'diedtp'},
 			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 		end
 		wait()
-		speaker.Character.HumanoidRootPart.CFrame = lastDeath
+		getRoot(speaker.Character).CFrame = lastDeath
 	end
 end)
 
@@ -9636,6 +9722,16 @@ addcmd('unnilchar',{'nonilchar'},
 	function(args, speaker)
 	if speaker.Character ~= nil then
 		speaker.Character.Parent = workspace
+	end
+end)
+
+addcmd('noroot',{'removeroot','rroot'},
+	function(args, speaker)
+	if speaker.Character ~= nil then
+		local char = Players.LocalPlayer.Character
+		char.Parent = nil
+		char.HumanoidRootPart:Destroy()
+		char.Parent = workspace
 	end
 end)
 
@@ -9928,7 +10024,7 @@ addcmd('fling',{},
 	end
 	execCmd('noclip nonotify')
 	wait(.1)
-	local bambam = Instance.new("BodyAngularVelocity", speaker.Character.HumanoidRootPart)
+	local bambam = Instance.new("BodyAngularVelocity", getRoot(speaker.Character))
 	bambam.Name = randomString()
 	bambam.AngularVelocity = Vector3.new(0,311111,0)
 	bambam.MaxTorque = Vector3.new(0,311111,0)
@@ -9968,8 +10064,8 @@ addcmd('unfling',{'nofling'},
 	flinging = false
 	wait(.1)
 	local speakerChar = speaker.Character
-	if not speakerChar or not speakerChar:FindFirstChild("HumanoidRootPart") then return end
-	for i,v in pairs(speakerChar.HumanoidRootPart:GetChildren()) do
+	if not speakerChar or not getRoot(speakerChar) then return end
+	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
 		if v.ClassName == 'BodyAngularVelocity' then
 			v:Destroy()
 		end
@@ -10012,7 +10108,7 @@ addcmd('invisfling',{},
 	local Hum = Instance.new("Humanoid")
 	z2:Clone()
 	Hum.Parent = speaker.Character
-	local root =  speaker.Character.HumanoidRootPart
+	local root =  getRoot(speaker.Character)
 	for i,v in pairs(speaker.Character:GetChildren()) do
 		if v ~= root and  v.Name ~= "Humanoid" then
 			v:Destroy()
@@ -10022,8 +10118,8 @@ addcmd('invisfling',{},
 	root.Color = Color3.new(1, 1, 1)
 	local invisflingStepped
 	invisflingStepped = game:GetService('RunService').Stepped:connect(function()
-		if speaker.Character and speaker.Character:FindFirstChildOfClass("HumanoidRootPart") then
-			speaker.Character.HumanoidRootPart.CanCollide = false
+		if speaker.Character and getRoot(speaker.Character) then
+			getRoot(speaker.Character).CanCollide = false
 		else
 			invisflingStepped:Disconnect()
 		end
@@ -10031,9 +10127,9 @@ addcmd('invisfling',{},
 	sFLY()
 	workspace.CurrentCamera.CameraSubject = root
 	local bambam = Instance.new("BodyThrust")
-	bambam.Parent = speaker.Character.HumanoidRootPart
+	bambam.Parent = getRoot(speaker.Character)
 	bambam.Force = Vector3.new(99999,99999*10,99999)
-	bambam.Location = speaker.Character.HumanoidRootPart.Position
+	bambam.Location = getRoot(speaker.Character).Position
 end)
 
 function attach(speaker,target)
@@ -10041,8 +10137,8 @@ function attach(speaker,target)
 		local char = speaker.Character
 		local tchar = target.Character
 		local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
-		local hrp = speaker.Character.HumanoidRootPart
-		local hrp2 = target.Character.HumanoidRootPart
+		local hrp = getRoot(speaker.Character)
+		local hrp2 = getRoot(target.Character)
 		hum.Name = "1"
 		local newHum = hum:Clone()
 		newHum.Parent = char
@@ -10076,20 +10172,20 @@ end)
 function kill(speaker,target,fast)
 	if tools(speaker) then
 		if target ~= nil then
-			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			local NormPos = getRoot(speaker.Character).CFrame
 			if not fast then
 				refresh(speaker)
 				wait()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
 				wait(0.3)
 			end
-			local hrp = speaker.Character.HumanoidRootPart
+			local hrp = getRoot(speaker.Character)
 			attach(speaker,target)
 			repeat
 				wait()
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
-			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
-			wait(3)
+			until not getRoot(target.Character) or not getRoot(speaker.Character)
+			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -10116,20 +10212,20 @@ end)
 function bring(speaker,target,fast)
 	if tools(speaker) then
 		if target ~= nil then
-			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			local NormPos = getRoot(speaker.Character).CFrame
 			if not fast then
 				refresh(speaker)
 				wait()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
 				wait(0.3)
 			end
-			local hrp = speaker.Character.HumanoidRootPart
+			local hrp = getRoot(speaker.Character)
 			attach(speaker,target)
 			repeat
 				wait()
 				hrp.CFrame = NormPos
-			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
-			wait(3)
+			until not getRoot(target.Character) or not getRoot(speaker.Character)
+			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -10156,21 +10252,21 @@ end)
 function teleport(speaker,target,target2,fast)
 	if tools(speaker) then
 		if target ~= nil then
-			local NormPos = speaker.Character.HumanoidRootPart.CFrame
+			local NormPos = getRoot(speaker.Character).CFrame
 			if not fast then
 				refresh(speaker)
 				wait()
-				repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChild('HumanoidRootPart')
+				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
 				wait(0.3)
 			end
-			local hrp = speaker.Character.HumanoidRootPart
-			local hrp2 = target2.Character.HumanoidRootPart
+			local hrp = getRoot(speaker.Character)
+			local hrp2 = getRoot(target2.Character)
 			attach(speaker,target)
 			repeat
 				wait()
 				hrp.CFrame = hrp2.CFrame
-			until not target.Character:FindFirstChild("HumanoidRootPart") or not speaker.Character:FindFirstChild("HumanoidRootPart")
-			wait(3)
+			until not getRoot(target.Character) or not getRoot(speaker.Character)
+			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -10183,7 +10279,7 @@ addcmd('tp',{'teleport'},
 	local players1=getPlayer(args[1], speaker)
 	local players2=getPlayer(args[2], speaker)
 	for i,v in pairs(players1)do
-		if Players[v].Character:FindFirstChild("HumanoidRootPart") and Players[players2[1]].Character:FindFirstChild("HumanoidRootPart") then
+		if getRoot(Players[v].Character) and getRoot(Players[players2[1]].Character) then
 			if speaker.Character:FindFirstChild("Humanoid") then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
@@ -10198,7 +10294,7 @@ addcmd('fasttp',{'fastteleport'},
 	local players1=getPlayer(args[1], speaker)
 	local players2=getPlayer(args[2], speaker)
 	for i,v in pairs(players1)do
-		if Players[v].Character:FindFirstChild("HumanoidRootPart") and Players[players2[1]].Character:FindFirstChild("HumanoidRootPart") then
+		if getRoot(Players[v].Character) and getRoot(Players[players2[1]].Character) then
 			if speaker.Character:FindFirstChild("Humanoid") then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
@@ -10214,12 +10310,12 @@ addcmd('spin',{},
 	if args[1] and isNumber(args[1]) then
 		spinSpeed = args[1]
 	end
-	for i,v in pairs(speaker.Character.HumanoidRootPart:GetChildren()) do
+	for i,v in pairs(getRoot(speaker.Character):GetChildren()) do
 		if v.Name == "Spinning" then
 			v:Destroy()
 		end
 	end
-	local Spin = Instance.new("BodyAngularVelocity", speaker.Character.HumanoidRootPart)
+	local Spin = Instance.new("BodyAngularVelocity", getRoot(speaker.Character))
 	Spin.Name = "Spinning"
 	Spin.MaxTorque = Vector3.new(0, math.huge, 0)
 	Spin.AngularVelocity = Vector3.new(0,spinSpeed,0)
@@ -10227,7 +10323,7 @@ end)
 
 addcmd('unspin',{},
 	function(args, speaker)
-	for i,v in pairs(speaker.Character.HumanoidRootPart:GetChildren()) do
+	for i,v in pairs(getRoot(speaker.Character):GetChildren()) do
 		if v.Name == "Spinning" then
 			v:Destroy()
 		end
@@ -10279,9 +10375,9 @@ addcmd('walltp',{},
 		torso = speaker.Character.Torso
 	end
 	local function touchedFunc(hit)
-		local Root = speaker.Character.HumanoidRootPart
+		local Root = getRoot(speaker.Character)
 		if hit:IsA("BasePart") and hit.Position.Y > Root.Position.Y - speaker.Character.Humanoid.HipHeight then
-			local hitP = hit.Parent:FindFirstChild("HumanoidRootPart")
+			local hitP = getRoot(hit.Parent)
 			if hitP ~= nil then
 				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hitP.Size.Z/2 + speaker.Character.Humanoid.HipHeight,Root.CFrame.lookVector.Z)
 			elseif hitP == nil then
@@ -10432,6 +10528,24 @@ addcmd('removeterrain',{'rterrain','noterrain'},
 	workspace:FindFirstChildOfClass('Terrain'):Clear()
 end)
 
+addcmd('clearnilinstances',{'nonilinstances','cni'},
+	function(args, speaker)
+	if getnilinstances then
+		for i,v in pairs(getnilinstances()) do
+			v:Destroy()
+		end
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing getnilinstances)')
+	end
+end)
+
+addcmd('destroyheight',{'dh'},
+	function(args, speaker)
+	local dh = args[1] or -500
+	if isNumber(dh) then
+		workspace.FallenPartsDestroyHeight = dh
+	end
+end)
 
 local freezingua = nil
 frozenParts = {}
@@ -10740,11 +10854,11 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
 	JoinLog(plr)
 	ChatLog(plr)
 	if ESPenabled then
-		repeat wait(1) until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart')
+		repeat wait(1) until plr.Character and getRoot(plr.Character)
 		ESP(plr)
 	end
 	if CHMSenabled then
-		repeat wait(1) until plr.Character and plr.Character:FindFirstChild('HumanoidRootPart')
+		repeat wait(1) until plr.Character and getRoot(plr.Character)
 		CHMS(plr)
 	end
 end)
