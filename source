@@ -6927,7 +6927,7 @@ end)
 addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},
 	function(args, speaker)
 	local WPName = tostring(getstring(1))
-	if getRoot(speaker).Character then
+	if getRoot(speaker.Character) then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
 		local torso = getRoot(speaker.Character)
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = game.PlaceId}
