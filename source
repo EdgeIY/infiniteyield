@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.5.1'
+ver = '4.5.2'
 
 Players = game:GetService("Players")
 
@@ -163,7 +163,7 @@ function randomString()
 end
 
 PARENT = nil
-if syn.protect_gui then
+if syn and syn.protect_gui then
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	syn.protect_gui(Main)
@@ -1730,6 +1730,7 @@ ImageLabel.BackgroundTransparency = 1
 ImageLabel.Position = UDim2.new(0, 3, 0, 3)
 ImageLabel.Size = UDim2.new(0, 14, 0, 14)
 ImageLabel.Image = "rbxassetid://2406617031"
+ImageLabel.ZIndex = 10
 
 PopupText.Name = "PopupText"
 PopupText.Parent = shadow
