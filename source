@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.5'
+ver = '4.5.1'
 
 Players = game:GetService("Players")
 
@@ -163,7 +163,18 @@ function randomString()
 end
 
 PARENT = nil
-if game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
+if syn.protect_gui then
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	syn.protect_gui(Main)
+	Main.Parent = game:GetService("CoreGui")
+	PARENT = Main
+elseif get_hidden_gui then
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	Main.Parent = get_hidden_gui()
+	PARENT = Main
+elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 	PARENT = game:GetService("CoreGui").RobloxGui
 else
 	local Main = Instance.new("ScreenGui")
@@ -3047,23 +3058,23 @@ function notify(text,text2,length)
 			spawn(function()
 				pinNotification:Disconnect()
 				notificationPinned = true
-				Notification.Title.BackgroundTransparency = 1
+				Title_2.BackgroundTransparency = 1
 				wait(0.5)
-				Notification.Title.BackgroundTransparency = 0
+				Title_2.BackgroundTransparency = 0
 			end)
 		end)
 		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 		wait(0.6)
 		local closepressed = false
 		if text2 then
-			Notification.Title.Text = text
-			Notification.Text.Text = text2
+			Title_2.Text = text
+			Text_2.Text = text2
 		else
-			Notification.Title.Text = 'Notification'
-			Notification.Text.Text = text
+			Title_2.Text = 'Notification'
+			Text_2.Text = text
 		end
 		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -100), "InOut", "Quart", 0.5, true, nil)
-		Notification.CloseButton.MouseButton1Click:Connect(function()
+		CloseButton.MouseButton1Click:Connect(function()
 			Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			closepressed = true
 			pinNotification:Disconnect()
@@ -3142,13 +3153,13 @@ function CreateJoinLabel(plr,ID)
 	local info1 = Instance.new("TextLabel")
 	local info2 = Instance.new("TextLabel")
 	local ImageLabel_3 = Instance.new("ImageLabel")
-	infoFrame.Name = "infoFrame"
+	infoFrame.Name = randomString()
 	infoFrame.Parent = scroll_3
 	infoFrame.BackgroundColor3 = Color3.new(1, 1, 1)
 	infoFrame.BackgroundTransparency = 1
 	infoFrame.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
 	infoFrame.Size = UDim2.new(1, 0, 0, 50)
-	info1.Name = "info1"
+	info1.Name = randomString()
 	info1.Parent = infoFrame
 	info1.BackgroundTransparency = 1
 	info1.BorderSizePixel = 0
@@ -3161,7 +3172,7 @@ function CreateJoinLabel(plr,ID)
 	info1.TextColor3 = Color3.new(1, 1, 1)
 	info1.TextWrapped = true
 	info1.TextXAlignment = Enum.TextXAlignment.Left
-	info2.Name = "info2"
+	info2.Name = randomString()
 	info2.Parent = infoFrame
 	info2.BackgroundTransparency = 1
 	info2.BorderSizePixel = 0
@@ -3828,11 +3839,11 @@ Players.PlayerRemoving:connect(function(player)
 	end
 end)
 
-shadow.Exit.MouseButton1Down:connect(function()
+Exit.MouseButton1Down:connect(function()
 	logs:TweenPosition(UDim2.new(0, 0, 1, 10), "InOut", "Quart", 0.3, true, nil)
 end)
 
-shadow.Hide.MouseButton1Down:connect(function()
+Hide.MouseButton1Down:connect(function()
 	if logs.Position ~= UDim2.new(0, 0, 1, -20) then
 		logs:TweenPosition(UDim2.new(0, 0, 1, -20), "InOut", "Quart", 0.3, true, nil)
 	else
@@ -3850,7 +3861,7 @@ Keybinds.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = false
 end)
 
-KeybindsFrame.Close.MouseButton1Click:Connect(function()
+Close.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = true
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
@@ -3861,18 +3872,18 @@ Keybinds.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = false
 end)
 
-KeybindsFrame.Add.MouseButton1Click:Connect(function()
+Add.MouseButton1Click:Connect(function()
 	KeybindEditor:TweenPosition(UDim2.new(0.5, -180, 0, 260), "InOut", "Quart", 0.5, true, nil)
 end)
 
-KeybindsFrame.Delete.MouseButton1Click:Connect(function()
+Delete.MouseButton1Click:Connect(function()
 	binds = {}
 	refreshbinds()
 	updatesaves()
 	notify('Keybinds Updated','Removed all keybinds')
 end)
 
-AliasesFrame.Close.MouseButton1Click:Connect(function()
+Close_2.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = true
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
@@ -3883,7 +3894,7 @@ Aliases.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = false
 end)
 
-PositionsFrame.Close.MouseButton1Click:Connect(function()
+Close_3.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = true
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
@@ -3979,7 +3990,7 @@ end)
 
 cmds={}
 customAlias = {}
-AliasesFrame.Delete.MouseButton1Click:Connect(function()
+Delete_3.MouseButton1Click:Connect(function()
 	customAlias = {}
 	aliases = {}
 	notify('Aliases Modified','Removed all aliases')
@@ -4151,7 +4162,7 @@ if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("Player
 			if SettingsOpen == true then
 				wait(0.2)
 				CMDsF.Visible = true
-				Holder.Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+				Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 			end
 			IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
 		else
@@ -4579,11 +4590,11 @@ function checkTT()
 				yP = y
 			end
 			Tooltip.Position = UDim2.new(0, xP, 0, yP)
-			Tooltip.Description.Text = gt[1]
+			Description.Text = gt[1]
 			if gt[2] ~= nil then
-				Tooltip.Title.Text = gt[2].Value
+				Title_3.Text = gt[2].Value
 			else
-				Tooltip.Title.Text = ''
+				Title_3.Text = ''
 			end
 			Tooltip.Visible = true
 		else
@@ -6041,16 +6052,16 @@ function FindPlugins()
 	end
 end
 
-PluginsGUI.AddPlugin.MouseButton1Click:connect(function()
+AddPlugin.MouseButton1Click:connect(function()
 	addPlugin(PluginsGUI.FileName.Text)
 end)
 
 Exit_3.MouseButton1Click:connect(function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
-	PluginsGUI.FileName.Text = 'Plugin File Name'
+	FileName.Text = 'Plugin File Name'
 end)
 
-PluginsFrame.Add.MouseButton1Click:Connect(function()
+Add_3.MouseButton1Click:Connect(function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, 310), "InOut", "Quart", 0.5, true, nil)
 end)
 
@@ -6064,7 +6075,7 @@ Plugins.MouseButton1Click:Connect(function()
 	end
 end)
 
-PluginsFrame.Close.MouseButton1Click:Connect(function()
+Close_4.MouseButton1Click:Connect(function()
 	SettingsHolder.Visible = true
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
