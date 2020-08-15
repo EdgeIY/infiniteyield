@@ -174,11 +174,11 @@ elseif PROTOSMASHER_LOADED and get_hidden_gui then
 	Main.Name = randomString()
 	Main.Parent = get_hidden_gui()
 	PARENT = Main
-elseif elysianexecute and gethui then
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = gethui()
-	PARENT = Main
+--elseif elysianexecute and gethui then
+--	local Main = Instance.new("ScreenGui")
+--	Main.Name = randomString()
+--	Main.Parent = gethui()
+--	PARENT = Main
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 	PARENT = game:GetService("CoreGui").RobloxGui
 else
