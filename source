@@ -163,13 +163,13 @@ function randomString()
 end
 
 PARENT = nil
-if syn and syn.protect_gui then
+if not is_sirhurt_closure and syn and syn.protect_gui then
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	syn.protect_gui(Main)
 	Main.Parent = game:GetService("CoreGui")
 	PARENT = Main
-elseif get_hidden_gui then
+elseif not is_sirhurt_closure and get_hidden_gui then
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	Main.Parent = get_hidden_gui()
