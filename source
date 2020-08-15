@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.5.2'
+ver = '4.5.3'
 
 Players = game:GetService("Players")
 
@@ -163,16 +163,21 @@ function randomString()
 end
 
 PARENT = nil
-if syn and syn.protect_gui then
+if (not is_sirhurt_closure) and (syn and syn.protect_gui) then --sirhurt is retarded
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	syn.protect_gui(Main)
 	Main.Parent = game:GetService("CoreGui")
 	PARENT = Main
-elseif get_hidden_gui then
+elseif PROTOSMASHER_LOADED and get_hidden_gui then
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	Main.Parent = get_hidden_gui()
+	PARENT = Main
+elseif elysianexecute and gethui then
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	Main.Parent = gethui()
 	PARENT = Main
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 	PARENT = game:GetService("CoreGui").RobloxGui
