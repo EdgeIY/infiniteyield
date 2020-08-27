@@ -6469,55 +6469,46 @@ addcmd('rejoin',{'rj'},
     end
 end)
 
-local PlaceId = game.PlaceId
-local URL = ("https://www.roblox.com/games/getgameinstancesjson?placeId=%s&startindex="):format(PlaceId)
-local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
-
-function ServerHop(MaxQueries, MaxPlayers, MinPlayers)
-	local List = {}
-	MaxQueries = (MaxQueries or 10) * 10
-	
-	for page = 0, MaxQueries do
-		local Query = HttpService:JSONDecode(game:HttpGet(URL..page))
-		
-		if page % 10 == 0 then -- ask roblox, not me.
-			for i,v in next, Query.Collection do 
-				List[v.Guid] = {
-					PlayerCount = #v.CurrentPlayers,
-					IsSlow = v.ShowShutdownAllButton,
-					Capacity = v.Capacity,
-				}
-			end
-		end
-	end
-
-	local ChosenServer = nil
-
-	for i,v in pairs(List) do
-		if i ~= game.JobId then
-			local MaxCheck = (MaxPlayers and v.PlayerCount <= MaxPlayers) or (not MaxPlayers and true)
-			local MinCheck = (MinPlayers and v.PlayerCount >= MinPlayers) or (not MinPlayers and true)
-			local CapacityCheck = v.Capacity ~= v.PlayerCount
-			local SlowCheck = not v.IsSlow
-			
-			if MaxCheck and MinCheck and CapacityCheck and SlowCheck then
-				ChosenServer = i
-				break
-			end
-		end
-	end
-
-	if ChosenServer then
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, ChosenServer, game.Players.LocalPlayer)
-	else
-		notify("Server Hop Failure", "Could not find a server!")
-	end
-end
-
 addcmd('serverhop',{'shop'},
-	function(args, speaker)
-	ServerHop(tonumber(args[3]), tonumber(args[1]), tonumber(args[2]))
+function(args, speaker)
+    local PlaceId = game.PlaceId
+    local URL = game:HttpGet("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
+    
+    local MaxPlayers = tonumber(args[1])
+    if args[1] == nil then MaxPlayers = tonumber(game.Players.MaxPlayers) end
+
+    local List = {}
+
+    function tablelength(T)
+      local count = 0
+      for _ in pairs(T) do count = count + 1 end
+      return count
+    end
+    
+    local Query = game:GetService("HttpService"):JSONDecode(URL)
+    
+    for i=1,tonumber(tablelength(Query.data)) do
+        List[Query.data[i].id] = {
+            PlayerCount = tonumber(Query.data[i].playing),
+            IsSlow = tonumber(Query.data[i].ping)
+        }
+    end
+
+    local ChosenServer = game.JobId
+
+    for i,v in pairs(List) do
+        if i ~= game.JobId then
+            local MaxCheck = (MaxPlayers == nil and v.PlayerCount < MaxPlayers) or (MaxPlayers ~= nil and v.PlayerCount == MaxPlayers) or (not MaxPlayers and true)
+            local SlowCheck = (v.IsSlow < 500)
+            
+            if MaxCheck and SlowCheck then
+                ChosenServer = i
+                break
+            end
+        end
+    end
+
+    game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, ChosenServer, game.Players.LocalPlayer)
 end)
 
 addcmd('joinplayer',{'joinp'},
