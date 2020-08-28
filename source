@@ -6523,11 +6523,8 @@ end)
 addcmd('joinplayer',{'joinp'},
 	function(args, speaker)
 	local retries = 0
-	local gameID = game.PlaceId
-	if args[2] then
-		gameID = args[2]
-	end
 	function ToServer(User,PlaceId)	
+		if args[2] == nil then PlaceId = game.PlaceId end
 		if not pcall(function()
 			local FoundUser, UserId = pcall(function()
 				if tonumber(User) then
@@ -6539,27 +6536,28 @@ addcmd('joinplayer',{'joinp'},
 			if not FoundUser then
 				notify('Join Error','Username/UserID does not exist')
 			else
-				notify('Join Player','Loading servers. Hold on a sec.')
-				local res = game:HttpGet("https://www.roblox.com/headshot-thumbnail/json?userId="..UserId.."&width=48&height=48")
-				local HttpURL = game:GetService("HttpService"):JSONDecode(res)
-				local ThumbGrab = HttpURL["Url"]
-				local Thumb = ThumbGrab
-				local URL2 = ("https://www.roblox.com/games/getgameinstancesjson?placeId="..PlaceId.."&startindex=")
-				local Http = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL2.."0"))
+				notify('Join Player','Loading servers. Hold on a second.')
+				local URL2 = ("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
+				local Http = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL2))
 				local GUID
-				for i = 0,Http.TotalCollectionSize do
-					local Http = game:GetService("HttpService"):JSONDecode(game:HttpGet(URL2..i))
-					for x,n in pairs(Http.Collection) do
-						for _,v in pairs(n.CurrentPlayers) do
-							if v.Thumbnail.Url == Thumb then
-								GUID = n.Guid
-							end
-						end
+				
+				function tablelength(T)
+				  local count = 0
+				  for _ in pairs(T) do count = count + 1 end
+				  return count
+				end
+				
+				for i=1,tonumber(tablelength(Http.data)) do
+					for j,k in pairs(Http.data[i].playerIds) do
+					    if k == UserId then
+						GUID = Http.data[i].id
+					    end
 					end
 				end
+				
 				if GUID ~= nil then
 					notify('Join Player','Joining '..User)
-					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,speaker)
+					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,game.Players.LocalPlayer)
 				else
 					notify('Join Error','Unable to join user.')
 				end
@@ -6576,7 +6574,7 @@ addcmd('joinplayer',{'joinp'},
 			end
 		end
 	end
-	ToServer(args[1],gameID)
+	ToServer(args[1],args[2])
 end)
 
 addcmd('exit',{},
