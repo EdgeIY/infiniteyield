@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.6'
+ver = '4.6.1'
 
 Players = game:GetService("Players")
 
@@ -2021,6 +2021,7 @@ UserInputService = game:GetService("UserInputService")
 
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
+local setsimulation = setsimulationradius or set_simulation_radius
 
 function writefileExploit()
 	if writefile then
@@ -9566,8 +9567,12 @@ addcmd('simulationradius',{'simradius'},
 function(args, speaker)
 	if sethidden then		
 		simRadLoop = game:GetService('RunService').Stepped:connect(function()
-			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+			sethidden(speaker,"MaximumSimulationRadius",1/0)
+			if setsimulation then
+				setsimulation(1e308)
+			else
+				sethidden(speaker,"SimulationRadius", 1e308)
+			end
 		end)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
@@ -9579,8 +9584,12 @@ function(args, speaker)
 	if sethidden then		
 		if simRadLoop then simRadLoop:Disconnect() end
 		wait()
-		speaker.MaximumSimulationRadius = 139
-		sethidden(speaker, "SimulationRadius", 139)
+		sethidden(speaker,"MaximumSimulationRadius",139)
+		if setsimulation then
+			setsimulation(139,139)
+		else
+			sethidden(speaker, "SimulationRadius", 139)
+		end
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
@@ -10685,8 +10694,12 @@ function(args, speaker)
 							c:Destroy()
 						end
 					end
-					speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-					sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+					sethidden(speaker,"MaximumSimulationRadius",1/0)
+					if setsimulation then
+						setsimulation(1e308)
+					else
+						sethidden(speaker,"SimulationRadius", 1e308)
+					end
 					local bodypos = Instance.new("BodyPosition",v)
 					bodypos.Position = v.Position
 					bodypos.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
@@ -10714,8 +10727,12 @@ function(args, speaker)
 		if freezingua then
 			freezingua:Disconnect()
 		end
-		speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-		sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+		sethidden(speaker,"MaximumSimulationRadius",1/0)
+		if setsimulation then
+			setsimulation(1e308)
+		else
+			sethidden(speaker,"SimulationRadius", 1e308)
+		end
 		for i,v in pairs(frozenParts) do
 			for i,c in pairs(v:GetChildren()) do
 				if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
@@ -10750,8 +10767,12 @@ function(args, speaker)
 					end
 				end
 			end
-			speaker.MaximumSimulationRadius = math.pow(math.huge,math.huge)*math.huge
-			sethidden(speaker,"SimulationRadius", math.pow(math.huge,math.huge)*math.huge)
+			sethidden(speaker,"MaximumSimulationRadius",1/0)
+			if setsimulation then
+				setsimulation(1e308)
+			else
+				sethidden(speaker,"SimulationRadius", 1e308)
+			end
 			for i,c in pairs(Forces) do
 				c.Position = Players[v].Character.Head.Position
 			end
