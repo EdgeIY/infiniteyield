@@ -6500,7 +6500,6 @@ function(args, speaker)
 	local ChosenServer = nil
 	local PlaceId = game.PlaceId
 	local order_t_min = {}
-	local order_t_max = {}
 	local URL = game:HttpGet("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
 	local Query = game:GetService("HttpService"):JSONDecode(URL)
 	
@@ -6515,11 +6514,7 @@ function(args, speaker)
 	end
 	
 	if tostring(args[1]) == "max" then
-		for i=1,tonumber(tablelength(Query.data)) do
-			table.insert(order_t_max, Query.data[i].playing)
-		end
-		wait(0.1)
-		MaxPlayers = tonumber(game.Players.MaxPlayers)
+		MaxPlayers = tonumber(game.Players.MaxPlayers)-1
 	end
 
 	local List = {}
