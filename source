@@ -6480,21 +6480,60 @@ end)
 
 addcmd('serverhop',{'shop'},
 function(args, speaker)
-	local PlaceId = game.PlaceId
-	local URL = game:HttpGet("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
-	
-	local MaxPlayers = tonumber(args[1])
-	if args[1] == nil then MaxPlayers = tonumber(game.Players.MaxPlayers) end
-	
-	local List = {}
-	
 	function tablelength(T)
-		local count = 0
-		for _ in pairs(T) do count = count + 1 end
-		return count
+	  local count = 0
+	  for _ in pairs(T) do count = count + 1 end
+	  return count
 	end
 	
+	function mini(a)
+		local values = {}
+		for k,v in pairs(a) do
+			if type(k) == "number" and type(v) == "number" then
+				values[#values+1] = v
+			end
+		end
+		table.sort(values)
+		return values[1]
+	end
+		
+	function maxi(a)
+		local values = {}
+		for k,v in pairs(a) do
+			if type(k) == "number" and type(v) == "number" then
+				values[#values+1] = v
+			end
+		end
+		table.sort(values)
+		return tonumber(values[#values])-1
+	end
+	
+	local ChosenServer = nil
+	local PlaceId = game.PlaceId
+	local order_t_min = {}
+	local order_t_max = {}
+	local URL = game:HttpGet("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
 	local Query = game:GetService("HttpService"):JSONDecode(URL)
+	
+	local MaxPlayers = tonumber(args[1])
+	
+	if tostring(args[1]) == "min" then
+		for i=1,tonumber(tablelength(Query.data)) do
+			table.insert(order_t_min, Query.data[i].playing)
+		end
+		wait(0.1)
+		MaxPlayers = mini(order_t_min)
+	end
+	
+	if tostring(args[1]) == "max" then
+		for i=1,tonumber(tablelength(Query.data)) do
+			table.insert(order_t_max, Query.data[i].playing)
+		end
+		wait(0.1)
+		MaxPlayers = maxi(order_t_max)
+	end
+
+	local List = {}
 	
 	for i=1,tonumber(tablelength(Query.data)) do
 		List[Query.data[i].id] = {
@@ -6502,17 +6541,23 @@ function(args, speaker)
 			IsSlow = tonumber(Query.data[i].ping)
 		}
 	end
-	
-	local ChosenServer = game.JobId
-	
+
 	for i,v in pairs(List) do
 		if i ~= game.JobId then
 			local MaxCheck = (MaxPlayers == nil and v.PlayerCount < MaxPlayers) or (MaxPlayers ~= nil and v.PlayerCount == MaxPlayers) or (not MaxPlayers and true)
-			local SlowCheck = (v.IsSlow < 500)
+			local SlowCheck = (v.IsSlow < 750)
 			
 			if MaxCheck and SlowCheck then
 				ChosenServer = i
 				break
+			else
+				if tostring(args[1]) == "min" then
+					notify("Server Hop", "You're in the smallest server already.")
+				elseif tostring(args[1]) == "max" then
+					notify("Server Hop", "You're in the largest server already.")
+				else
+					notify("Server Hop", "Unable to find server with the given amount.")
+				end
 			end
 		end
 	end
