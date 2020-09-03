@@ -6496,17 +6496,6 @@ function(args, speaker)
 		table.sort(values)
 		return values[1]
 	end
-		
-	function maxi(a)
-		local values = {}
-		for k,v in pairs(a) do
-			if type(k) == "number" and type(v) == "number" then
-				values[#values+1] = v
-			end
-		end
-		table.sort(values)
-		return tonumber(values[#values])-1
-	end
 	
 	local ChosenServer = nil
 	local PlaceId = game.PlaceId
@@ -6530,7 +6519,7 @@ function(args, speaker)
 			table.insert(order_t_max, Query.data[i].playing)
 		end
 		wait(0.1)
-		MaxPlayers = maxi(order_t_max)
+		MaxPlayers = tonumber(game.Players.MaxPlayers)
 	end
 
 	local List = {}
