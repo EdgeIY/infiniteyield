@@ -2137,7 +2137,7 @@ function dragGUI(gui)
 	spawn(function()
 		local dragging
 		local dragInput
-		local dragStart
+		local dragStart = Vector3.new(0,0,0)
 		local startPos
 		local function update(input)
 			local delta = input.Position - dragStart
@@ -4040,7 +4040,7 @@ function dragMain(dragpoint,gui)
 	spawn(function()
 		local dragging
 		local dragInput
-		local dragStart
+		local dragStart = Vector3.new(0,0,0)
 		local startPos
 		local function update(input)
 			local pos = -250
