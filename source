@@ -11424,7 +11424,6 @@ function hookCharEvents(plr,instant)
 	humanoid.HealthChanged:Connect(function(health)
 		local change = math.abs(oldHealth - health)
 		if oldHealth > health then
-			print('Health Down. Current Health: '..health)
 			eventEditor.FireEvent("OnDamage",plr.Name,tonumber(health))
 		end
 		oldHealth = health
