@@ -10461,26 +10461,28 @@ addcmd('kill',{'fekill'},function(args, speaker)
 	end
 end)
 
-addcmd('handlekill',{'hkill'},function(args, speaker)
-	if firetouchinterest then
-		local players = getPlayer(args[1], speaker)
-		local Tool = speaker.Character:FindFirstChildOfClass("Tool")
-		local Handle = Tool and Tool:FindFirstChild("Handle")
-		for i,v in pairs(players) do
-			spawn(function()
-				while v.Character and v.Character.Humanoid and v.Character.Humanoid.Health > 0 do
-					for _, v1 in ipairs(v.Character:GetChildren()) do
-						if v1:IsA("BasePart") then
-							firetouchinterest(Handle, v1, 0)
-							wait(0.3)
-							firetouchinterest(Handle, v1, 1)
-						end
+addcmd('handlekill', {'hkill'}, function(args, speaker)
+	if not firetouchinterest then
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
+	end
+	local Tool = speaker.Character:FindFirstChildWhichIsA("Tool")
+	local Handle = Tool and Tool:FindFirstChild("Handle")
+	if not Tool or not Handle then
+		return notify("Tool needed!", "Please equip a tool with a Handle.")
+	end
+	for _, v in ipairs(getPlayer(args[1], speaker)) do
+		spawn(function()
+			v = Players[v]
+			while v.Character and v.Character:FindFirstChildWhichIsA("Humanoid") and v.Character.Humanoid.Health > 0 do
+				for _, v1 in pairs(v.Character:GetChildren()) do
+					if v1.IsA(v1, "BasePart") then
+						firetouchinterest(Handle, v1, 0)
+						game:GetService("RunService").RenderStepped:Wait()
+						firetouchinterest(Handle, v1, 1)
 					end
 				end
-			end)
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing firetouchinterest)')
+			end
+		end)
 	end
 end)
 
