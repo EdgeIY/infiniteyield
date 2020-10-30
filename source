@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.7.1'
+ver = '4.7.2'
 
 Players = game:GetService("Players")
 
@@ -6736,7 +6736,7 @@ addcmd('noclip',{},function(args, speaker)
 	local function NoclipLoop()
 		if Clip == false and speaker.Character ~= nil then
 			for _, child in pairs(speaker.Character:GetDescendants()) do
-				if child:IsA("BasePart") and child.CanCollide == true then
+				if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
 					child.CanCollide = false
 				end
 			end
@@ -6933,13 +6933,14 @@ addcmd('togglefly',{},function(args, speaker)
 end)
 
 Floating = false
+floatName = randomString()
 addcmd('float', {'platform'},function(args, speaker)
 	Floating = true
 	local pchar = speaker.Character
-	if pchar and not pchar:FindFirstChild("Float") then
+	if pchar and not pchar:FindFirstChild(floatName) then
 		spawn(function()
 			local Float = Instance.new('Part', pchar)
-			Float.Name = 'Float'
+			Float.Name = floatName
 			Float.Transparency = 1
 			Float.Size = Vector3.new(6,1,6)
 			Float.Anchored = true
@@ -6977,7 +6978,7 @@ addcmd('float', {'platform'},function(args, speaker)
 				floatDied:Disconnect()
 			end)
 			local function FloatPadLoop()
-				if pchar:FindFirstChild("Float") and getRoot(pchar) then
+				if pchar:FindFirstChild(floatName) and getRoot(pchar) then
 					Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 				else
 					FloatingFunc:Disconnect()
@@ -6998,8 +6999,8 @@ addcmd('unfloat',{'nofloat','unplatform','noplatform'},function(args, speaker)
 	Floating = false
 	local pchar = speaker.Character
 	notify('Float','Float Disabled')
-	if pchar:FindFirstChild("Float") then
-		pchar.Float:Destroy()
+	if pchar:FindFirstChild(floatName) then
+		pchar:FindFirstChild(floatName):Destroy()
 	end
 	if floatDied then
 		FloatingFunc:Disconnect()
