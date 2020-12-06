@@ -158,11 +158,12 @@ selectChat = Instance.new("TextButton")
 selectJoin = Instance.new("TextButton")
 
 function randomString()
-	local ret = ""
-	for i = 1, math.random(10, 20) do
-		ret ..= string.char(math.random(32, 126))
+	local length = math.random(10,20)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
 	end
-	return ret
+	return table.concat(array)
 end
 
 PARENT = nil
