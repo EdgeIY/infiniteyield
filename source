@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.7.2'
+ver = '4.8'
 
 Players = game:GetService("Players")
 
@@ -158,12 +158,11 @@ selectChat = Instance.new("TextButton")
 selectJoin = Instance.new("TextButton")
 
 function randomString()
-	local length = math.random(10,20)
-	local array = {}
-	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
+	local ret = ""
+	for i = 1, math.random(10, 20) do
+		ret ..= string.char(math.random(32, 126))
 	end
-	return table.concat(array)
+	return ret
 end
 
 PARENT = nil
@@ -173,15 +172,11 @@ if (not is_sirhurt_closure) and (syn and syn.protect_gui) then --sirhurt is reta
 	syn.protect_gui(Main)
 	Main.Parent = game:GetService("CoreGui")
 	PARENT = Main
-elseif PROTOSMASHER_LOADED and get_hidden_gui then
+elseif get_hidden_gui or gethui then
+	local hiddenUI = get_hidden_gui or gethui
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
-	Main.Parent = get_hidden_gui()
-	PARENT = Main
-elseif elysianexecute and gethui then
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = gethui()
+	Main.Parent = hiddenUI()
 	PARENT = Main
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 	PARENT = game:GetService("CoreGui").RobloxGui
@@ -217,7 +212,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "Infinite Yield FE v"..ver
+Title.Text = "🎄 Infinite Yield FE v"..ver.."  🎁"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 table.insert(shade1,Title)
@@ -4393,7 +4388,9 @@ CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = '
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality to boost FPS'}
+CMDs[#CMDs + 1] = {NAME = 'fpscap [num / none]', DESC = 'Caps FPS'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
+CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
@@ -4423,6 +4420,7 @@ CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [plr]', DESC = 'Tween to a player (bypasses some anti cheats)'}
+CMDs[#CMDs + 1] = {NAME = 'tweenspeed / tspeed [num]', DESC = 'Sets how fast all tween commands go (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [plr]', DESC = 'Go to a player while in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
 CMDs[#CMDs + 1] = {NAME = 'unloopgoto [plr]', DESC = 'Stops teleporting you to a player'}
@@ -4480,6 +4478,7 @@ CMDs[#CMDs + 1] = {NAME = 'freecamgoto / fcgoto / fctp [plr]', DESC = 'Moves / o
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
 CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the location of your camera'}
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
@@ -4503,7 +4502,9 @@ CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character t
 CMDs[#CMDs + 1] = {NAME = 'tweengotopart / tgotopart [part name]', DESC = 'Tweens your character to a part or multiple parts'}
 CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'tweengotopartclass / tgpc [class name]', DESC = 'Tweens your character to a part or multiple parts based on classname'}
-CMDs[#CMDs + 1] = {NAME = 'gotopartdelay [num]', DESC = 'Adjusts how quickly you teleport to each part (default is 0.1)'}
+CMDs[#CMDs + 1] = {NAME = 'gotomodel [part name]', DESC = 'Moves your character to a model or multiple models'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotomodel / tgotomodel [part name]', DESC = 'Tweens your character to a model or multiple models'}
+CMDs[#CMDs + 1] = {NAME = 'gotopartdelay / gotomodeldelay [num]', DESC = 'Adjusts how quickly you teleport to each part (default is 0.1)'}
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
@@ -4592,6 +4593,8 @@ CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump b
 CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
 CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when you run into an object'}
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
+CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
+CMDs[#CMDs + 1] = {NAME = 'unedgejump / unejump', DESC = 'Disables edgejump'}
 CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'norotate / noautorotate', DESC = 'Disables AutoRotate'}
@@ -4632,6 +4635,7 @@ CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
 CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
 CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
@@ -4642,7 +4646,9 @@ CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'
 CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
+CMDs[#CMDs + 1] = {NAME = 'loopanimation / loopanim', DESC = 'Loops your current animation'}
 CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
+CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims / reanim', DESC = 'Refreshes animations'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
@@ -4976,11 +4982,11 @@ end
 function addcmd(name,alias,func,plgn)
 	cmds[#cmds+1]=
 		{
-		NAME=name;
-		ALIAS=alias or {};
-		FUNC=func;
-		PLUGIN=plgn;
-	}
+			NAME=name;
+			ALIAS=alias or {};
+			FUNC=func;
+			PLUGIN=plgn;
+		}
 end
 
 function removecmd(cmd)
@@ -5004,10 +5010,10 @@ end
 function addbind(cmd,key,iskeyup)
 	binds[#binds+1]=
 		{
-		COMMAND=cmd;
-		KEY=key;
-		ISKEYUP=iskeyup;
-	}
+			COMMAND=cmd;
+			KEY=key;
+			ISKEYUP=iskeyup;
+		}
 end
 
 function addcmdtext(text,name,desc)
@@ -7162,6 +7168,14 @@ addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},function(args, speaker)
 	end
 end)
 
+tweenSpeed = 1
+addcmd('tweenspeed',{'tspeed'},function(args, speaker)
+	local newSpeed = args[1] or 1
+	if tonumber(newSpeed) then
+		tweenSpeed = tonumber(newSpeed)
+	end
+end)
+
 addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if speaker.Character then
@@ -7170,12 +7184,12 @@ addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
 			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
+				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
 			end
 		end
 		for i,_ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
+				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
 			end
 		end
 	end
@@ -7410,8 +7424,29 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	end
 end)
 
+addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
+	if setfpscap and type(setfpscap) == "function" then
+		local num = args[1] or 1e6
+		if num == 'none' then
+			return setfpscap(1e6)
+		elseif num > 0 then
+			return setfpscap(num)
+		else
+			return notify("Invalid argument", "Please provide a number above 0 or 'none'.")
+		end
+	else
+		return notify("Incompatible Exploit", "Your exploit does not support this command (missing setfpscap)")
+	end
+end)
+
 addcmd('notify',{},function(args, speaker)
 	notify(getstring(1))
+end)
+
+addcmd('lastcommand',{'lastcmd'},function(args, speaker)
+	if cmdHistory[2]:sub(1,11) ~= 'lastcommand' and cmdHistory[2]:sub(1,7) ~= 'lastcmd' then
+		execCmd(cmdHistory[2])
+	end
 end)
 
 addcmd('esp',{},function(args, speaker)
@@ -7913,6 +7948,10 @@ addcmd('gotocamera',{'gotocam','tocam'},function(args, speaker)
 	getRoot(speaker.Character).CFrame = workspace.Camera.CFrame
 end)
 
+addcmd('tweengotocamera',{'tweengotocam','tgotocam','ttocam'},function(args, speaker)
+	game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = workspace.Camera.CFrame}):Play()
+end)
+
 addcmd('fov',{},function(args, speaker)
 	local fov = args[1] or 70
 	if isNumber(fov) then
@@ -8261,7 +8300,7 @@ addcmd('tweengoto',{'tgoto','tto','tweento'},function(args, speaker)
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(0.1)
-			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)}):Play()
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)}):Play()
 		end
 	end
 	execCmd('breakvelocity')
@@ -8744,39 +8783,16 @@ addcmd('hipheight',{'hheight'},function(args, speaker)
 	end
 	speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight = height
 end)
---2.1
-addcmd('dance',{},function(args, speaker)
+
+addcmd('dance', {}, function(args, speaker)
 	if not r15(speaker) then
-		local pchar=speaker.Character
-		local anim = nil		
-		local dance1 = math.random(1,7)
-		if dance1 == 1 then
-			anim = '27789359'
-		end
-		if dance1 == 2 then
-			anim = '30196114'
-		end
-		if dance1 == 3 then
-			anim = '248263260'
-		end
-		if dance1 == 4 then
-			anim = '45834924'
-		end
-		if dance1 == 5 then
-			anim = '33796059'
-		end
-		if dance1 == 6 then
-			anim = '28488254'
-		end
-		if dance1 == 7 then
-			anim = '52155728'
-		end
+		local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 		local animation = Instance.new("Animation")
-		animation.AnimationId = "rbxassetid://"..anim
-		animTrack = pchar.Humanoid:LoadAnimation(animation)
+		animation.AnimationId = "rbxassetid://" .. dances[math.random(1, #dances)]
+		animTrack = speaker.Character.Humanoid:LoadAnimation(animation)
 		animTrack:Play()
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required', 'This command requires the r6 rig type')
 	end
 end)
 
@@ -8976,6 +8992,38 @@ addcmd('unautojump',{'noautojump', 'noajump', 'unajump'},function(args, speaker)
 	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or nil
 end)
 
+addcmd('edgejump',{'ejump'},function(args, speaker)
+	local Char = speaker.Character
+	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
+	-- Full credit to NoelGamer06 @V3rmillion
+	local state
+	local laststate
+	local lastcf
+	local function edgejump()
+		if Char and Human then
+			laststate = state
+			state = Human:GetState()
+			if laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping then
+				Char.HumanoidRootPart.CFrame = lastcf
+				Char.HumanoidRootPart.Velocity = Vector3.new(Char.HumanoidRootPart.Velocity.X, Human.JumpPower, Char.HumanoidRootPart.Velocity.Z)
+			end
+			lastcf = Char.HumanoidRootPart.CFrame
+		end
+	end
+	edgejump()
+	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or game:GetService("RunService").RenderStepped:Connect(edgejump)
+	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+		Char, Human = nChar, nChar:WaitForChild("Humanoid")
+		edgejump()
+		HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or game:GetService("RunService").RenderStepped:Connect(edgejump)
+	end)
+end)
+
+addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
+	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or nil
+	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or nil
+end)
+
 addcmd('team',{},function(args, speaker)
 	local teamname = nil
 	for a,b in pairs(game:GetService("Teams"):GetChildren()) do
@@ -9091,6 +9139,25 @@ addcmd('stopanimations', {'stopanims','stopanim'},function(args, speaker)
 	end
 end)
 
+addcmd('refreshanimations', {'refreshanimation','refreshanims','refreshanim','reanim'},function(args, speaker)
+	local Char = speaker.Character
+	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
+	local Animate = Char and Char.FindFirstChild(Char, "Animate")
+	Animate.Disabled = true
+	for _, v in ipairs(Human.GetPlayingAnimationTracks(Human)) do
+		v.Stop(v, 0)
+	end
+	Animate.Disabled = false
+end)
+
+addcmd('loopanimation', {'loopanim'},function(args, speaker)
+	local Char = speaker.Character
+	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
+	for _, v in ipairs(Human.GetPlayingAnimationTracks(Human)) do
+		v.Looped = true
+	end
+end)
+
 addcmd('tpposition',{'tppos'},function(args, speaker)
 	if #args < 3 then return end
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
@@ -9105,7 +9172,7 @@ addcmd('tweentpposition',{'ttppos'},function(args, speaker)
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
 	if char and getRoot(char) then
-		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
 	end
 end)
 
@@ -9123,7 +9190,7 @@ addcmd('tweenoffset',{'toffset'},function(args, speaker)
 	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
 	local char = speaker.Character
 	if char and getRoot(char) then
-		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+		game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
 	end
 end)
 
@@ -9688,8 +9755,7 @@ addcmd('tweengotopart',{'tgotopart'},function(args, speaker)
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			getRoot(speaker.Character).CFrame = v.CFrame
-			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
 		end
 	end
 end)
@@ -9713,7 +9779,31 @@ addcmd('tweengotopartclass',{'tgpc'},function(args, speaker)
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 			end
 			wait(gotopartDelay)
-			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = v.CFrame}):Play()
+		end
+	end
+end)
+
+addcmd('gotomodel',{},function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() and v:IsA("Model") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
+			getRoot(speaker.Character).CFrame = v:GetModelCFrame()
+		end
+	end
+end)
+
+addcmd('tweengotomodel',{'tgotomodel'},function(args, speaker)
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v.Name:lower() == getstring(1):lower() and v:IsA("Model") then
+			if speaker.Character:FindFirstChild("Humanoid") then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+			end
+			wait(gotopartDelay)
+			game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = v:GetModelCFrame()}):Play()
 		end
 	end
 end)
@@ -9986,6 +10076,21 @@ addcmd('noroot',{'removeroot','rroot'},function(args, speaker)
 	end
 end)
 
+addcmd('replaceroot',{'replacerootpart'},function(args, speaker)
+	if speaker.Character ~= nil and speaker.Character:FindFirstChild("HumanoidRootPart") then
+		local Char = speaker.Character
+		local OldParent = Char.Parent
+		local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
+		local OldPos = HRP.CFrame
+		Char.Parent = game
+		local HRP1 = HRP:Clone()
+		HRP1.Parent = Char
+		HRP = HRP:Destroy()
+		HRP1.CFrame = OldPos
+		Char.Parent = OldParent
+	end
+end)
+
 addcmd('equiptools',{},function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 		if v:IsA("Tool") or v:IsA("HopperBin") then
@@ -10070,6 +10175,27 @@ addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
 	game:GetService("Lighting").FogEnd = 100000
 	game:GetService("Lighting").GlobalShadows = false
 	game:GetService("Lighting").OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+end)
+
+addcmd('loopfullbright',{'loopfb'},function(args, speaker)
+	if brightLoop then
+		brightLoop:Disconnect()
+	end
+	local function brightFunc()
+		game:GetService("Lighting").Brightness = 2
+		game:GetService("Lighting").ClockTime = 14
+		game:GetService("Lighting").FogEnd = 100000
+		game:GetService("Lighting").GlobalShadows = false
+		game:GetService("Lighting").OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+	end
+	
+	brightLoop = game:GetService("RunService").RenderStepped:Connect(brightFunc)
+end)
+
+addcmd('unloopfullbright',{'unloopfb'},function(args, speaker)
+	if brightLoop then
+		brightLoop:Disconnect()
+	end
 end)
 
 addcmd('ambient',{},function(args, speaker)
@@ -10466,23 +10592,25 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 	if not firetouchinterest then
 		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
 	end
-	local Tool = speaker.Character:FindFirstChildWhichIsA("Tool")
-	local Handle = Tool and Tool:FindFirstChild("Handle")
+	local RS = game:GetService("RunService").RenderStepped
+	local Tool = speaker.Character.FindFirstChildWhichIsA(speaker.Character, "Tool")
+	local Handle = Tool and Tool.FindFirstChild(Tool, "Handle")
 	if not Tool or not Handle then
-		return notify("Tool needed!", "Please equip a tool with a Handle.")
+		return notify("Handle Kill", "You need to hold a \"Tool\" that does damage on touch. For example the default \"Sword\" tool.")
 	end
 	for _, v in ipairs(getPlayer(args[1], speaker)) do
+		v = Players[v]
 		spawn(function()
-			v = Players[v]
-			while v.Character and v.Character:FindFirstChildWhichIsA("Humanoid") and v.Character.Humanoid.Health > 0 do
-				for _, v1 in pairs(v.Character:GetChildren()) do
-					if v1.IsA(v1, "BasePart") then
-						firetouchinterest(Handle, v1, 0)
-						game:GetService("RunService").RenderStepped:Wait()
-						firetouchinterest(Handle, v1, 1)
-					end
+			while Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
+				local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
+				if not Human or Human.Health <= 0 then
+					break
+				end
+				for _, v1 in ipairs(v.Character.GetChildren(v.Character)) do
+					v1 = ((v1.IsA(v1, "BasePart") and firetouchinterest(Handle, v1, 1, (RS.Wait(RS) and nil) or firetouchinterest(Handle, v1, 0)) and nil) or v1) or v1
 				end
 			end
+			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequiped the tool!")
 		end)
 	end
 end)
