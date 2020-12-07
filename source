@@ -9838,16 +9838,18 @@ addcmd('fireclickdetectors',{'firecd','firecds'},function(args, speaker)
 	end
 end)
 
+simRadius = false
 addcmd('simulationradius',{'simradius'},function(args, speaker)
 	if sethidden then		
 		simRadLoop = game:GetService('RunService').Stepped:connect(function()
-			sethidden(speaker,"MaximumSimulationRadius",1/0)
 			if setsimulation then
-				setsimulation(1e308)
-			else
+				setsimulation(1e308, 1/0)
+			else	
+				sethidden(speaker,"MaximumSimulationRadius",1/0)
 				sethidden(speaker,"SimulationRadius", 1e308)
 			end
 		end)
+		simRadius = true
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
@@ -9857,12 +9859,13 @@ addcmd('nosimulationradius',{'nosimradius','unsimradius'},function(args, speaker
 	if sethidden then		
 		if simRadLoop then simRadLoop:Disconnect() end
 		wait()
-		sethidden(speaker,"MaximumSimulationRadius",139)
 		if setsimulation then
 			setsimulation(139,139)
-		else
-			sethidden(speaker, "SimulationRadius", 139)
+		else	
+			sethidden(speaker,"MaximumSimulationRadius",139)
+			sethidden(speaker,"SimulationRadius", 139)
 		end
+		simRadius = false
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
@@ -11016,11 +11019,8 @@ addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
 							c:Destroy()
 						end
 					end
-					sethidden(speaker,"MaximumSimulationRadius",1/0)
-					if setsimulation then
-						setsimulation(1e308)
-					else
-						sethidden(speaker,"SimulationRadius", 1e308)
+					if not simRadius then
+						execCmd('simulationradius')
 					end
 					local bodypos = Instance.new("BodyPosition",v)
 					bodypos.Position = v.Position
@@ -11048,11 +11048,8 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(ar
 		if freezingua then
 			freezingua:Disconnect()
 		end
-		sethidden(speaker,"MaximumSimulationRadius",1/0)
-		if setsimulation then
-			setsimulation(1e308)
-		else
-			sethidden(speaker,"SimulationRadius", 1e308)
+		if not simRadius then
+			execCmd('simulationradius')
 		end
 		for i,v in pairs(frozenParts) do
 			for i,c in pairs(v:GetChildren()) do
@@ -11087,11 +11084,8 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
 					end
 				end
 			end
-			sethidden(speaker,"MaximumSimulationRadius",1/0)
-			if setsimulation then
-				setsimulation(1e308)
-			else
-				sethidden(speaker,"SimulationRadius", 1e308)
+			if not simRadius then
+				execCmd('simulationradius')
 			end
 			for i,c in pairs(Forces) do
 				c.Position = Players[v].Character.Head.Position
