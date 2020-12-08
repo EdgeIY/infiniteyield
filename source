@@ -10163,7 +10163,7 @@ addcmd('touchinterests',{'touchinterest','firetouchinterests','firetouchinterest
 	if type(firetouchinterest) == "function" then
 		for i,v in pairs(workspace:GetDescendants()) do
 			if v:IsA("TouchTransmitter") or v:IsA('TouchInterest') then
-				firetouchinterest(getRoot(speaker.Character).CFrame, v:FindFirstAncestorWhichIsA('Part'), 0)
+				firetouchinterest(getRoot(speaker.Character).CFrame, v:FindFirstAncestorWhichIsA('BasePart'), 0)
 			end
 		end
 	else
