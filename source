@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.8.1'
+ver = '4.8.2'
 
 Players = game:GetService("Players")
 
@@ -3950,9 +3950,11 @@ for _, plr in pairs(Players:GetChildren()) do
 end
 
 Players.PlayerRemoving:connect(function(player)
-	for i,v in pairs(PARENT:GetChildren()) do
-		if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
-			v:Destroy()
+	if ESPenabled or CHMSenabled or game:GetService("CoreGui"):FindFirstChild(player.Name..'_LC') then
+		for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
+			if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
+				v:Destroy()
+			end
 		end
 	end
 	if viewing ~= nil and player == viewing then
@@ -7467,7 +7469,7 @@ end)
 
 addcmd('noesp',{'unesp'},function(args, speaker)
 	ESPenabled = false
-	for i,c in pairs(PARENT:GetChildren()) do
+	for i,c in pairs(game:GetService("CoreGui"):GetChildren()) do
 		if string.sub(c.Name, -4) == '_ESP' then
 			c:Destroy()
 		end
@@ -7556,7 +7558,7 @@ addcmd('nochams',{'unchams'},function(args, speaker)
 	CHMSenabled = false
 	for i,v in pairs(Players:GetChildren()) do
 		local chmsplr = v
-		for i,c in pairs(PARENT:GetChildren()) do
+		for i,c in pairs(game:GetService("CoreGui"):GetChildren()) do
 			if c.Name == chmsplr.Name..'_CHMS' then
 				c:Destroy()
 			end
@@ -7575,14 +7577,14 @@ addcmd('nolocate',{'unlocate'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if args[1] then
 		for i,v in pairs(players) do
-			for i,c in pairs(PARENT:GetChildren()) do
+			for i,c in pairs(game:GetService("CoreGui"):GetChildren()) do
 				if c.Name == Players[v].Name..'_LC' then
 					c:Destroy()
 				end
 			end
 		end
 	else
-		for i,c in pairs(PARENT:GetChildren()) do
+		for i,c in pairs(game:GetService("CoreGui"):GetChildren()) do
 			if string.sub(c.Name, -3) == '_LC' then
 				c:Destroy()
 			end
@@ -9739,7 +9741,7 @@ addcmd('bringpartclass',{'bpc'},function(args, speaker)
 end)
 
 gotopartDelay = 0.1
-addcmd('gotopart',{},function(args, speaker)
+addcmd('gotopart',{'topart'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChild("Humanoid") then
@@ -9751,7 +9753,7 @@ addcmd('gotopart',{},function(args, speaker)
 	end
 end)
 
-addcmd('tweengotopart',{'tgotopart'},function(args, speaker)
+addcmd('tweengotopart',{'tgotopart','ttopart'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChild("Humanoid") then
@@ -9787,7 +9789,7 @@ addcmd('tweengotopartclass',{'tgpc'},function(args, speaker)
 	end
 end)
 
-addcmd('gotomodel',{},function(args, speaker)
+addcmd('gotomodel',{'tomodel'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("Model") then
 			if speaker.Character:FindFirstChild("Humanoid") then
@@ -9799,7 +9801,7 @@ addcmd('gotomodel',{},function(args, speaker)
 	end
 end)
 
-addcmd('tweengotomodel',{'tgotomodel'},function(args, speaker)
+addcmd('tweengotomodel',{'tgotomodel','ttomodel'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("Model") then
 			if speaker.Character:FindFirstChild("Humanoid") then
