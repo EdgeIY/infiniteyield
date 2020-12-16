@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.8.2'
+ver = '4.8.3'
 
 Players = game:GetService("Players")
 
@@ -10161,18 +10161,20 @@ addcmd('dupetools',{'clonetools'},function(args, speaker)
 	end
 end)
 
-addcmd('touchinterests',{'touchinterest','firetouchinterests','firetouchinterest'},function(args, speaker)
-	if type(firetouchinterest) == "function" then
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("TouchTransmitter") or v:IsA('TouchInterest') then
-				firetouchinterest(getRoot(speaker.Character).CFrame, v:FindFirstAncestorWhichIsA('BasePart'), 0)
-			end
+addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
+	local Root = getRoot(speaker.Character)
+	local function Touch(x)
+		if firetouchinterest then
+			return firetouchinterest(Root, x, 1, firetouchinterest(Root, x, 0))
 		end
-	else
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("TouchTransmitter") or v:IsA('TouchInterest') then
-				v.Parent.CFrame = getRoot(speaker.Character).CFrame
-			end
+		x = x.FirstFirstAncestorWhichIsA(x, "Part")
+		if x then
+			x.CFrame = Root.CFrame
+		end
+	end
+	for _, v in ipairs(workspace:GetDescendants()) do
+		if v.IsA(v, "TouchTransmitter") then
+			Touch(v)
 		end
 	end
 end)
