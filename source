@@ -10162,19 +10162,18 @@ addcmd('dupetools',{'clonetools'},function(args, speaker)
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
-	local Root = getRoot(speaker.Character)
-	local function Touch(x)
-		if firetouchinterest then
-			return firetouchinterest(Root, x, 1, firetouchinterest(Root, x, 0))
+	if type(firetouchinterest) == 'function' then
+		for _, v in pairs(game.Workspace:GetDescendants()) do
+			if v:IsA('TouchTransmitter') or v:IsA('TouchInterest') then
+				firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart or game.Players.LocalPlayer.Character.Torso, v:FindFirstAncestorWhichIsA('Part'), 0)
+			end
 		end
-		x = x.FirstFirstAncestorWhichIsA(x, "Part")
-		if x then
-			x.CFrame = Root.CFrame
-		end
-	end
-	for _, v in ipairs(workspace:GetDescendants()) do
-		if v.IsA(v, "TouchTransmitter") then
-			Touch(v)
+	else		
+		for i,c in pairs(workspace:GetDescendants()) do
+			if c:IsA("TouchTransmitter") then
+				local part = c:FindFirstAncestorWhichIsA('Part')
+				part.CFrame = Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+			end
 		end
 	end
 end)
