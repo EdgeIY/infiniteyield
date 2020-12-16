@@ -10162,7 +10162,7 @@ addcmd('dupetools',{'clonetools'},function(args, speaker)
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
-	if type(firetouchinterest) == 'function' then
+	if firetouchinterest and type(firetouchinterest) == 'function' then
 		for _, v in pairs(game.Workspace:GetDescendants()) do
 			if v:IsA('TouchTransmitter') or v:IsA('TouchInterest') then
 				firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart or game.Players.LocalPlayer.Character.Torso, v:FindFirstAncestorWhichIsA('Part'), 0)
