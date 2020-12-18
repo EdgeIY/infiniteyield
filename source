@@ -10522,7 +10522,7 @@ addcmd('invisfling',{},function(args, speaker)
 	z1.Anchored = true
 	local z2 = Instance.new("Part")
 	z2.Name="Head"
-	z2.Name = prt
+	z2.Parent = prt
 	z2.Anchored = true
 	z2.CanCollide = false
 	local z3 =Instance.new("Humanoid")
