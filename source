@@ -5169,12 +5169,12 @@ SpecialPlayerCases = {
 		end
 		return returns
 	end,
-	["nearest"] = function(speaker,args)
+	["nearest"] = function(speaker,args,currentList)
 		local speakerChar = speaker.Character
 		if not speakerChar or not getRoot(speakerChar) then return end
 		local lowest = math.huge
 		local NearestPlayer = nil
-		for _,plr in pairs(Players:GetPlayers()) do
+		for _,plr in pairs(currentList) do
 			if plr ~= speaker and plr.Character then
 				local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
 				if distance < lowest then
@@ -5185,12 +5185,12 @@ SpecialPlayerCases = {
 		end
 		return NearestPlayer
 	end,
-	["farthest"] = function(speaker,args)
+	["farthest"] = function(speaker,args,currentList)
 		local speakerChar = speaker.Character
 		if not speakerChar or not getRoot(speakerChar) then return end
 		local highest = math.huge
 		local FarthestPlayer = nil
-		for _,plr in pairs(Players:GetPlayers()) do
+		for _,plr in pairs(currentList) do
 			if plr ~= speaker and plr.Character then
 				local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
 				if distance > highest then
