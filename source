@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.8.5'
+ver = '4.9'
 
 Players = game:GetService("Players")
 
@@ -214,7 +214,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "🎄 Infinite Yield FE v"..ver.." 🎁"
+Title.Text = "🎄 Infinite Yield FE v"..ver.."  🎁"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 table.insert(shade1,Title)
@@ -3339,6 +3339,8 @@ IYMouse.KeyDown:Connect(function(Key)
 			repeat Cmdbar.Text = '' until Cmdbar.Text == ''
 		end)
 		maximizeHolder()
+	elseif infJump == true and Key == " " then
+		Players.LocalPlayer.Character.Humanoid:ChangeState(3)
 	end
 end)
 
@@ -4052,7 +4054,7 @@ selected.Parent = PARENT
 
 local ActivateHighlight = nil
 local ClickSelect = nil
-Part.MouseButton1Click:Connect(function()
+function selectPart()
 	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, 335), "InOut", "Quart", 0.5, true, nil)
 	local function HighlightPart()
 		if selected.Adornee ~= IYMouse.Target then
@@ -4069,6 +4071,10 @@ Part.MouseButton1Click:Connect(function()
 		end
 	end
 	ClickSelect = IYMouse.Button1Down:Connect(SelectPart)
+end
+
+Part.MouseButton1Click:Connect(function()
+	selectPart()
 end)
 
 Exit_4.MouseButton1Click:Connect(function()
@@ -4284,55 +4290,57 @@ end
 
 PlayerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
 local chatbox
-if pcall(function() chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end) then	
-	local function chatboxFocused()
-		canvasPos = CMDsF.CanvasPosition
-	end
-	local chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
+spawn(function()
+	if pcall(function() chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end) then	
+		local function chatboxFocused()
+			canvasPos = CMDsF.CanvasPosition
+		end
+		local chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
 
-	local function Index()
-		if chatbox.Text:lower():sub(1,1) == prefix then
-			if SettingsOpen == true then
-				wait(0.2)
-				CMDsF.Visible = true
-				Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+		local function Index()
+			if chatbox.Text:lower():sub(1,1) == prefix then
+				if SettingsOpen == true then
+					wait(0.2)
+					CMDsF.Visible = true
+					Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+				end
+				IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
+			else
+				minimizeHolder()
+				if SettingsOpen == true then
+					wait(0.2)
+					Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
+					CMDsF.Visible = false
+				end
 			end
-			IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
-		else
+		end
+		local chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+
+		function chatboxFocusLost(enterpressed)
+			if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
+				IndexContents('',true)
+			end
+			CMDsF.CanvasPosition = canvasPos
 			minimizeHolder()
-			if SettingsOpen == true then
-				wait(0.2)
-				Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
-				CMDsF.Visible = false
+		end
+		local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
+
+		PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
+			wait()
+			if newbar:FindFirstChild('BoxFrame') then
+				chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+				if chatboxFocusedC then chatboxFocusedC:Disconnect() end
+				chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
+				if chatboxFunc then chatboxFunc:Disconnect() end
+				chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+				if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
+				chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
 			end
-		end
+		end)
+		--else
+		--print('Custom chat detected. Will not provide suggestions for commands typed in the chat.')
 	end
-	local chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
-
-	function chatboxFocusLost(enterpressed)
-		if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
-			IndexContents('',true)
-		end
-		CMDsF.CanvasPosition = canvasPos
-		minimizeHolder()
-	end
-	local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-
-	Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
-		wait()
-		if newbar:FindFirstChild('BoxFrame') then
-			chatbox = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui").Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-			if chatboxFocusedC then chatboxFocusedC:Disconnect() end
-			chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
-			if chatboxFunc then chatboxFunc:Disconnect() end
-			chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
-			if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
-			chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-		end
-	end)
-	--else
-	--print('Custom chat detected. Will not provide suggestions for commands typed in the chat.')
-end
+end)
 
 function autoComplete(str,curText)
 	local endingChar = {"[", "/", "(", " "}
@@ -4364,6 +4372,7 @@ CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens FrostHook Spy'}
+CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
@@ -4378,8 +4387,8 @@ CMDs[#CMDs + 1] = {NAME = 'replicationlag / backtrack [num]', DESC = 'Set Incomm
 CMDs[#CMDs + 1] = {NAME = 'creatorid / creator', DESC = 'Notifies you the creators ID'}
 CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the creators ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
-CMDs[#CMDs + 1] = {NAME = 'nopurchaseprompts / noprompts', DESC = 'Prevents the game from showing you purchase prompts'}
-CMDs[#CMDs + 1] = {NAME = 'showpurchaseprompts / showprompts', DESC = 'Allows the game to show purchase prompts again'}
+CMDs[#CMDs + 1] = {NAME = 'noprompts', DESC = 'Prevents the game from showing you purchase/premium prompts'}
+CMDs[#CMDs + 1] = {NAME = 'showprompts', DESC = 'Allows the game to show purchase/premium prompts again'}
 CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
@@ -4498,6 +4507,7 @@ CMDs[#CMDs + 1] = {NAME = 'lookat [plr]', DESC = 'Moves your camera view to a pl
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'partname / partpath', DESC = 'Allows you to click a part to see its path & name'}
 CMDs[#CMDs + 1] = {NAME = 'delete [instance name] (CLIENT)', DESC = 'Removes any part with a certain name from the workspace (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Removes any part with a certain classname from the workspace (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
@@ -4580,8 +4590,10 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
+CMDs[#CMDs + 1] = {NAME = 'god', DESC = 'Makes your character difficult to kill in most games'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
+CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
 CMDs[#CMDs + 1] = {NAME = 'speed / ws [num]', DESC = 'Change your walkspeed'}
 CMDs[#CMDs + 1] = {NAME = 'loopspeed / loopws [num]', DESC = 'Loops your walkspeed'}
 CMDs[#CMDs + 1] = {NAME = 'unloopspeed / unloopws', DESC = 'Turns off loopspeed'}
@@ -4598,6 +4610,8 @@ CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'Disables nosit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
 CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
 CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
+CMDs[#CMDs + 1] = {NAME = 'flyjump', DESC = 'Allows you to hold space to fly up'}
+CMDs[#CMDs + 1] = {NAME = 'unflyjump', DESC = 'Disables flyjump'}
 CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when you run into an object'}
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
 CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
@@ -4643,6 +4657,7 @@ CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'
 CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
 CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
@@ -5096,7 +5111,7 @@ SpecialPlayerCases = {
 		local returns = {}
 		local team = speaker.Team
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Team ~= team then
+			if plr.Team == team then
 				table.insert(returns,plr)
 			end
 		end
@@ -5116,7 +5131,7 @@ SpecialPlayerCases = {
 		local returns = {}
 		local team = speaker.Team
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Team ~= team then
+			if plr.Team == team then
 				table.insert(returns,plr)
 			end
 		end
@@ -5188,18 +5203,18 @@ SpecialPlayerCases = {
 	["farthest"] = function(speaker,args,currentList)
 		local speakerChar = speaker.Character
 		if not speakerChar or not getRoot(speakerChar) then return end
-		local highest = math.huge
-		local FarthestPlayer = nil
+		local highest = 0
+		local Farthest = nil
 		for _,plr in pairs(currentList) do
 			if plr ~= speaker and plr.Character then
 				local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
 				if distance > highest then
 					highest = distance
-					FarthestPlayer = {plr}
+					Farthest = {plr}
 				end
 			end
 		end
-		return FarthestPlayer
+		return Farthest
 	end,
 	["group(%d+)"] = function(speaker,args)
 		local returns = {}
@@ -6897,7 +6912,9 @@ end
 function NOFLY()
 	FLYING = false
 	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
-	Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	end
 end
 
 addcmd('fly',{},function(args, speaker)
@@ -8142,6 +8159,10 @@ addcmd('f3x',{'fex'},function(args, speaker)
 	loadstring(game:GetObjects("rbxassetid://4698064966")[1].Source)()
 end)
 
+addcmd('partpath',{'partname'},function(args, speaker)
+	selectPart()
+end)
+
 addcmd('antiafk',{'antiidle'},function(args, speaker)
 	local GC = getconnections or get_signal_cons
 	if GC then
@@ -8170,12 +8191,14 @@ addcmd('replicationlag',{'backtrack'},function(args, speaker)
 	end
 end)
 
-addcmd('nopurchaseprompts',{'noprompts'},function(args, speaker)
+addcmd('noprompts',{'nopurchaseprompts'},function(args, speaker)
 	COREGUI.PurchasePromptApp.PurchasePromptUI.Visible = false
+	COREGUI.PurchasePromptApp.PremiumPromptUI.Visible = false
 end)
 
-addcmd('showpurchaseprompts',{'showprompts'},function(args, speaker)
+addcmd('showprompts',{'showpurchaseprompts'},function(args, speaker)
 	COREGUI.PurchasePromptApp.PurchasePromptUI.Visible = true
+	COREGUI.PurchasePromptApp.PremiumPromptUI.Visible = false
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -8592,6 +8615,27 @@ addcmd('refresh',{'re'},function(args, speaker)
 	refresh(speaker)
 end)
 
+addcmd('god',{},function(args, speaker)
+	local Cam = workspace.CurrentCamera
+	local Pos, Char = Cam.CFrame, speaker.Character
+	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
+	local nHuman = Human.Clone(Human)
+	nHuman.Parent, speaker.Character = Char, nil
+	nHuman.SetStateEnabled(nHuman, 15, false)
+	nHuman.SetStateEnabled(nHuman, 1, false)
+	nHuman.SetStateEnabled(nHuman, 0, false)
+	nHuman.BreakJointsOnDeath, Human = true, Human.Destroy(Human)
+	speaker.Character, Cam.CameraSubject, Cam.CFrame = Char, nHuman, wait() and Pos
+	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	local Script = Char.FindFirstChild(Char, "Animate")
+	if Script then
+		Script.Disabled = true
+		wait()
+		Script.Disabled = false
+	end
+	nHuman.Health = nHuman.MaxHealth
+end)
+
 invisRunning = false
 addcmd('invisible',{'invis'},function(args, speaker)
 	if invisRunning then return end
@@ -8724,6 +8768,45 @@ addcmd('toggleinvis',{},function(args, speaker)
 	else
 		execCmd('invisible')
 	end
+end)
+
+addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
+	local Char  = Players.LocalPlayer.Character
+	local touched = false
+	local tpdback = false
+	local box = Instance.new('Part')
+	box.Anchored = true
+	box.CanCollide = true
+	box.Size = Vector3.new(10,1,10)
+	box.Position = Vector3.new(0,10000,0)
+	box.Parent = workspace
+	local boxTouched = box.Touched:connect(function(part)
+		if (part.Parent.Name == Players.LocalPlayer.Name) then
+			if touched == false then
+				touched = true
+				local function apply()
+					local no = Char.HumanoidRootPart:Clone()
+					wait(.25)
+					Char.HumanoidRootPart:Destroy()
+					no.Parent = Char
+					Char:MoveTo(loc)
+					touched = false
+				end
+				if Char then
+					apply()
+				end
+			end
+		end
+	end)
+	repeat wait() until Char
+	local cleanUp
+	cleanUp = Players.LocalPlayer.CharacterAdded:connect(function(char)
+		boxTouched:Disconnect()
+		box:Destroy()
+		cleanUp:Disconnect()
+	end)
+	loc = Char.HumanoidRootPart.Position
+	Char:MoveTo(box.Position + Vector3.new(0,.5,0))
 end)
 
 addcmd('strengthen',{},function(args, speaker)
@@ -8979,16 +9062,24 @@ addcmd('jump',{},function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
 end)
 
-local infjump
 addcmd('infjump',{'infinitejump'},function(args, speaker)
-	if infJump then infJump:Disconnect() end
-	infJump = game:GetService("UserInputService").JumpRequest:Connect(function(Jump)
+	infJump = true
+end)
+
+addcmd('uninfjump',{'uninfinitejump','noinfjump','noinfinitejump'},function(args, speaker)
+	infJump = false
+end)
+
+local flyjump
+addcmd('flyjump',{},function(args, speaker)
+	if flyjump then flyjump:Disconnect() end
+	flyjump = UserInputService.JumpRequest:Connect(function(Jump)
 		game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
 	end)
 end)
 
-addcmd('uninfjump',{'uninfinitejump','noinfjump','noinfinitejump'},function(args, speaker)
-	if infJump then infJump:Disconnect() end
+addcmd('unflyjump',{'noflyjump'},function(args, speaker)
+	if flyjump then flyjump:Disconnect() end
 end)
 
 local HumanModCons = {}
@@ -9443,6 +9534,11 @@ end)
 addcmd('remotespy',{'rspy'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Nootchtai/FrostHook_Spy/master/Spy.lua"))()
+end)
+
+addcmd('audiologger',{'alogger'},function(args, speaker)
+	notify("Loading",'Hold on a sec')
+	loadstring(game:HttpGet(('https://pastebin.com/raw/GmbrsEjM'),true))()
 end)
 
 local loopgoto = nil
@@ -9921,7 +10017,7 @@ addcmd('grabtools',{},function(args, speaker)
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
-	grabtoolsFunc:Disconnect()
+	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
 	notify('Grabtools','Grabtools has been disabled')
 end)
 
@@ -10118,6 +10214,10 @@ addcmd('replaceroot',{'replacerootpart'},function(args, speaker)
 		HRP1.CFrame = OldPos
 		Char.Parent = OldParent
 	end
+end)
+
+addcmd('clearcharappearance',{'clearchar','clrchar'},function(args, speaker)
+	speaker:ClearCharacterAppearance()
 end)
 
 addcmd('equiptools',{},function(args, speaker)
