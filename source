@@ -5111,7 +5111,7 @@ SpecialPlayerCases = {
 		local returns = {}
 		local team = speaker.Team
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Team == team then
+			if plr.Team ~= team then
 				table.insert(returns,plr)
 			end
 		end
@@ -5131,7 +5131,7 @@ SpecialPlayerCases = {
 		local returns = {}
 		local team = speaker.Team
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Team == team then
+			if plr.Team ~= team then
 				table.insert(returns,plr)
 			end
 		end
