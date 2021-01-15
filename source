@@ -4712,7 +4712,7 @@ CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your invent
 CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
-CMDs[#CMDs + 1] = {NAME = 'usetools [delay]', DESC = 'Activates all tools in your backpack at the same time'}
+CMDs[#CMDs + 1] = {NAME = 'usetools [ammount] [delay]', DESC = 'Activates all tools in your backpack at the same time'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
 CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
@@ -10528,12 +10528,21 @@ addcmd('grippos',{},function(args, speaker)
 	end
 end)
 
-addcmd('usetools',{},function(args, speaker)
-	for _, v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
-		if args[1] and isNumber(args[1]) then wait(args[1]) end
-		v.Parent = game.Players.LocalPlayer.Character
-		v:Activate()
-		v.Parent = speaker:FindFirstChildOfClass("Backpack")
+addcmd('usetools', {}, function(args, speaker)
+	local Backpack = speaker:FindFirstChildOfClass("Backpack")
+	local ammount = tonumber(args[1]) or 1
+	local delay_ = tonumber(args[2]) or false
+	for _, v in ipairs(Backpack:GetChildren()) do
+		v.Parent = speaker.Character
+		coroutine.wrap(function()
+			for _ = 1, ammount do
+				v:Activate()
+				if delay_ then
+					wait(delay_)
+				end
+			end
+			v.Parent = Backpack
+		end)()
 	end
 end)
 
