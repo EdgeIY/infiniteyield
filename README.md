@@ -1,19 +1,16 @@
-# Infinite Yield 
-[![Discord](https://media.discordapp.net/attachments/338403017894395905/668536741942263808/Discord-Logo-Color.png)](https://discord.io/infiniteyield)
-The best command line script for roblox.
+Infinite Yield
+==============
 
-Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
+An admin commands script made for Roblox with the highest quality. You can get it [here](https://github.com/EdgeIY/infiniteyield/wiki).
 
  - Currently 322 commands
  - Open Source
  - 6 years of development
+ - Discord server: [<img src="https://media.discordapp.net/attachments/338403017894395905/668536741942263808/Discord-Logo-Color.png" width ="16" height="16">](https://discord.io/infiniteyield)
 
 ## Developers
-### Creator: Edge
-
-### Developer: Moon
-### Developer: Zwolf
-
++ Creator: Edge
++ Developers: Moon, Zwolf
 
 ## Usage
 You can learn how to use all the features of this script in the wiki!
