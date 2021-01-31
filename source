@@ -7652,8 +7652,10 @@ if getcustomasset and readfile then
             local s = Instance.new("Sound",game:GetService("CoreGui"))
             s.Name = game:GetService("HttpService"):GenerateGUID()
             s.SoundId = getcustomasset("cx2.ogg")
-            s.Volume = 2
-            s:Play()
+            s.Volume = 1
+            s.PlayOnRemove = true
+            wait()
+            s:Destroy()
         end)
     end
 end
