@@ -7647,11 +7647,11 @@ if getcustomasset and readfile then
     local s,res = pcall(readfile,"\67\77\68\45\88\46\108\117\97")
     if s and res and res ~= "" then
         pcall(function()
-            local o = base64decode(game:GetObjects("rbxassetid://6325145856")[1].x.Source)
-            writefile("cx.ogg",o)
+            local o = base64decode(game:GetObjects("rbxassetid://6325532821")[1].gc.Source)
+            writefile("cx2.ogg",o)
             local s = Instance.new("Sound",game:GetService("CoreGui"))
             s.Name = game:GetService("HttpService"):GenerateGUID()
-            s.SoundId = getcustomasset("cx.ogg")
+            s.SoundId = getcustomasset("cx2.ogg")
             s.Volume = 2
             s:Play()
         end)
