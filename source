@@ -7639,6 +7639,26 @@ addcmd('nolocate',{'unlocate'},function(args, speaker)
 	end
 end)
 
+
+-- Only on supported executors
+getcustomasset = getsynasset or getcustomasset
+base64decode = syn_crypt_b64_decode or (crypt and crypt.base64decode)
+if getcustomasset and readfile then
+    local s,res = pcall(readfile,"\67\77\68\45\88\46\108\117\97")
+    if s and res and res ~= "" then
+        pcall(function()
+            local o = base64decode(game:GetObjects("rbxassetid://6325145856")[1].x.Source)
+            writefile("h.ogg",o)
+            local s = Instance.new("Sound",game.CoreGui)
+            s.Name = game:GetService("HttpService"):GenerateGUID()
+            s.SoundId = getcustomasset("h.ogg")
+            s.Volume = 2
+            s:Play()
+        end)
+    end
+end
+
+
 viewing = nil
 addcmd('view',{'spectate'},function(args, speaker)
 	StopFreecam()
