@@ -6881,25 +6881,19 @@ function sFLY(vfly)
 			end
 		end)
 	end
-	local currentFlyspeed
-	if vfly then
-		currentFlyspeed = vehicleflyspeed
-	else
-		currentFlyspeed = iyflyspeed
-	end
 	flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
 		if KEY:lower() == 'w' then
-			CONTROL.F = currentFlyspeed
+			CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 's' then
-			CONTROL.B = - currentFlyspeed
+			CONTROL.B = - (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 'a' then
-			CONTROL.L = - currentFlyspeed
+			CONTROL.L = - (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 'd' then 
-			CONTROL.R = currentFlyspeed
+			CONTROL.R = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif QEfly and KEY:lower() == 'e' then
-			CONTROL.Q = currentFlyspeed*2
+			CONTROL.Q = (vfly and vehicleflyspeed or iyflyspeed)*2
 		elseif QEfly and KEY:lower() == 'q' then
-			CONTROL.E = -currentFlyspeed*2
+			CONTROL.E = -(vfly and vehicleflyspeed or iyflyspeed)*2
 		end
 		pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
 	end)
