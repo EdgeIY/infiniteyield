@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '4.9.2'
+ver = '5.0'
 
 Players = game:GetService("Players")
 
@@ -596,7 +596,7 @@ Credits.Position = UDim2.new(0, 0, 0.9, 30)
 Credits.Size = UDim2.new(0, 250, 0, 20)
 Credits.Font = Enum.Font.SourceSansLight
 Credits.FontSize = Enum.FontSize.Size18
-Credits.Text = "Edge // Zwolf // Moon"
+Credits.Text = "Edge // Zwolf // Moon // Hunter"
 Credits.TextColor3 = Color3.new(1, 1, 1)
 Credits.ZIndex = 10
 
@@ -4412,6 +4412,8 @@ CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
 CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
 CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
+CMDs[#CMDs + 1] = {NAME = 'guidelete', DESC = 'Enables backspace to delete GUI'}
+CMDs[#CMDs + 1] = {NAME = 'unguidelete / noguidelete', DESC = 'Disables guidelete'}
 CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
 CMDs[#CMDs + 1] = {NAME = 'showiy', DESC = 'Shows IY again'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
@@ -4419,19 +4421,22 @@ CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
+CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality to boost FPS'}
-CMDs[#CMDs + 1] = {NAME = 'fpscap [num / none]', DESC = 'Caps FPS'}
+CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts roblox recorder'}
+CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
+CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
 CMDs[#CMDs + 1] = {NAME = 'unnoclip / clip', DESC = 'Disables noclip'}
-CMDs[#CMDs + 1] = {NAME = 'fly', DESC = 'Makes you fly'}
+CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Makes you fly'}
 CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
 CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20)'}
-CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly', DESC = 'Makes you fly in a vehicle'}
+CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly [speed]', DESC = 'Makes you fly in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
 CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'enables or disables the Q and E hotkeys for fly'}
@@ -4474,6 +4479,7 @@ CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom 
 CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where you last died'}
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
+CMDs[#CMDs + 1] = {NAME = 'teleporttool / tptool', DESC = 'Gives you a teleport tool'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
@@ -4565,6 +4571,7 @@ CMDs[#CMDs + 1] = {NAME = 'restorelighting / rlighting', DESC = 'Restores Lighti
 CMDs[#CMDs + 1] = {NAME = 'light [radius] [brightness] (CLIENT)', DESC = 'Gives your player dynamic light'}
 CMDs[#CMDs + 1] = {NAME = 'nolight / unlight', DESC = 'Removes dynamic light from your player'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'inspect / examine [plr]', DESC = 'Opens InspectMenu for a certain player'}
 CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'chatage [plr]', DESC = 'Chats the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
@@ -4685,6 +4692,7 @@ CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'
 CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
+CMDs[#CMDs + 1] = {NAME = 'copyanimation / copyanim / copyemote [plr]', DESC = 'Copies someone elses animation'}
 CMDs[#CMDs + 1] = {NAME = 'loopanimation / loopanim', DESC = 'Loops your current animation'}
 CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
 CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims / reanim', DESC = 'Refreshes animations'}
@@ -6928,6 +6936,9 @@ addcmd('fly',{},function(args, speaker)
 	NOFLY()
 	wait()
 	sFLY()
+	if args[1] and isNumber(args[1]) then
+		iyflyspeed = args[1]
+	end
 end)
 
 addcmd('flyspeed',{'flysp'},function(args, speaker)
@@ -6945,6 +6956,9 @@ addcmd('vfly',{'vehiclefly'},function(args, speaker)
 	NOFLY()
 	wait()
 	sFLY(true)
+	if args[1] and isNumber(args[1]) then
+		vehicleflyspeed = args[1]
+	end
 end)
 
 addcmd('togglevfly',{},function(args, speaker)
@@ -7336,6 +7350,34 @@ addcmd('unhideguis',{},function(args, speaker)
 	hiddenGUIS = {}
 end)
 
+function deleteGuisAtPos()
+	pcall(function()
+		local guisAtPosition = game.Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
+		for _, gui in pairs(guisAtPosition) do
+			if gui.Visible == true then
+				gui:Destroy()
+			end
+		end
+	end)
+end
+
+local deleteGuiInput
+addcmd('guidelete',{},function(args, speaker)
+	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if not gameProcessedEvent then
+			if input.KeyCode == Enum.KeyCode.Backspace then
+				deleteGuisAtPos()
+			end
+		end
+	end)
+	notify('GUI Delete Enabled','Hover over a GUI and press backspace to delete it')
+end)
+
+addcmd('unguidelete',{'noguidelete'},function(args, speaker)
+	if deleteGuiInput then deleteGuiInput:Disconnect() end
+	notify('GUI Delete Disabled','GUI backspace delete has been disabled')
+end)
+
 local wasStayOpen = StayOpen
 addcmd('hideiy',{},function(args, speaker)
 	wasStayOpen = StayOpen
@@ -7355,6 +7397,26 @@ addcmd('showiy',{},function(args, speaker)
 		On.BackgroundTransparency = 0
 	else
 		minimizeHolder()
+	end
+end)
+
+addcmd('rec', {'record'}, function(args, speaker)
+	return game:GetService("CoreGui"):ToggleRecording()
+end)
+
+addcmd('screenshot', {'scrnshot'}, function(args, speaker)
+	return game:GetService("CoreGui"):TakeScreenshot()
+end)
+
+addcmd('togglefs', {'togglefullscreen'}, function(args, speaker)
+	return game:GetService("GuiService"):ToggleFullscreen()
+end)
+
+addcmd('inspect', {'examine'}, function(args, speaker)
+	local GuiService = game:GetService("GuiService")
+	for _, v in ipairs(getPlayer(args[1], speaker)) do
+		GuiService:CloseInspectMenu()
+		GuiService:InspectPlayerFromUserId(Players[v].UserId)
 	end
 end)
 
@@ -7433,6 +7495,10 @@ addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 		allow_rj = true
 		notify('Client AntiTP','Allow rejoin set to true')
 	end
+end)
+
+addcmd('cancelteleport',{'canceltp'},function(args, speaker)
+	game:GetService("TeleportService"):TeleportCancel()
 end)
 
 addcmd('volume',{'vol'},function(args, speaker)
@@ -8850,21 +8916,19 @@ addcmd('unweaken',{'unstrengthen'},function(args, speaker)
 	end
 end)
 
-addcmd('breakvelocity',{},function(args, speaker)
-	local BeenASecond = false
-	spawn(function()
-		repeat wait()
-			for i,v in pairs(speaker:GetDescendants()) do
-				if v:IsA("BasePart") then
-					v.Velocity = Vector3.new(0, 0, 0)
-				end
-			end
-		until BeenASecond
-	end)
-	spawn(function()
-		wait(1)
+addcmd('breakvelocity', {}, function(args, speaker)
+	local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
+	delay(1, function()
 		BeenASecond = true
 	end)
+	while not BeenASecond do
+		for _, v in ipairs(speaker.Character:GetDescendants()) do
+			if v.IsA(v, "BasePart") then
+				v.Velocity, v.RotVelocity = V3, V3
+			end
+		end
+		wait()
+	end
 end)
 
 addcmd('jpower',{'jumppower','jp'},function(args, speaker)
@@ -9247,7 +9311,7 @@ addcmd('reanim',{},function(args, speaker)
 	speaker.Character.Animate.Disabled = false
 end)
 
-addcmd('animspeed', {},function(args, speaker)
+addcmd('animspeed',{},function(args, speaker)
 	local Char = speaker.Character
 	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
 
@@ -9256,7 +9320,29 @@ addcmd('animspeed', {},function(args, speaker)
 	end
 end)
 
-addcmd('stopanimations', {'stopanims','stopanim'},function(args, speaker)
+addcmd('copyanimation',{'copyanim','copyemote'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for _,v in ipairs(players)do
+		local char = Players[v].Character
+		for _, v1 in pairs(speaker.Character.Humanoid:GetPlayingAnimationTracks()) do
+			v1:Stop()
+		end
+		for _, v1 in pairs(Players[v].Character.Humanoid:GetPlayingAnimationTracks()) do
+			if not string.find(v1.Animation.AnimationId, "507768375") then
+				local ANIM = speaker.Character.Humanoid:LoadAnimation(v1.Animation)
+				ANIM:Play(.1, 1, v1.Speed)
+				ANIM.TimePosition = v1.TimePosition
+				spawn(function()
+					v1.Stopped:Wait()
+					ANIM:Stop()
+					ANIM:Destroy()
+				end)
+			end
+		end
+	end
+end)
+
+addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
 	local Char = speaker.Character
 	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
 
@@ -9303,11 +9389,11 @@ addcmd('tweentpposition',{'ttppos'},function(args, speaker)
 end)
 
 addcmd('offset',{},function(args, speaker)
-	if #args < 3 then return end
-	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
-	local char = speaker.Character
-	if char and getRoot(char) then
-		getRoot(char).CFrame = getRoot(char).CFrame + Vector3.new(tpX,tpY,tpZ)
+	if #args < 3 then
+		return 
+	end
+	if speaker.Character then
+		speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
 	end
 end)
 
@@ -9324,6 +9410,21 @@ addcmd('clickteleport',{},function(args, speaker)
 	if speaker == Players.LocalPlayer then
 		notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
 	end
+end)
+
+addcmd('tptool', {'teleporttool'}, function(args, speaker)
+	local TpTool = Instance.new("Tool")
+	TpTool.Name = "Teleport Tool"
+	TpTool.RequiresHandle = false
+	TpTool.Parent = speaker.Backpack
+	TpTool.Activated:Connect(function()
+		local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
+		local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
+		if not Char or not HRP then
+			return warn("Failed to find HumanoidRootPart")
+		end
+		HRP.CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:components()))
+	end)
 end)
 
 addcmd('clickdelete',{},function(args, speaker)
@@ -10244,57 +10345,72 @@ addcmd('equiptools',{},function(args, speaker)
 	end
 end)
 
-addcmd('dupetools',{'clonetools'},function(args, speaker)
-	local ME = speaker
-	local LOOP_NUM = args[1] or 1
-	local tools, pos, pos1 = {}, ME.Character.HumanoidRootPart.CFrame, CFrame.new(math.random(-2e5, 2e5), 2e5, math.random(-2e5, 2e5))
-	for _ = 1, tonumber(tonumber(LOOP_NUM) or 1) do
-		ME.Character.HumanoidRootPart.CFrame = pos1
-		wait(.2)
-		ME.Character.HumanoidRootPart.Anchored = true
-		wait(.2)
-		ME.Character.Humanoid:UnequipTools()
-		for _, v in pairs(ME:FindFirstChildOfClass("Backpack"):GetChildren()) do
-			if v:IsA("Tool") and v:FindFirstChild("Handle") then
-				v.Parent = ME.Character
-				v.Handle.Anchored = true
-				v.Parent = workspace
-				table.insert(tools, v)
-			end
+local function GetHandleTools(p)
+	p = p or Players.LocalPlayer
+	local r = {}
+	for _, v in ipairs(p.Character and p.Character:GetChildren() or {}) do
+		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
+			r[#r + 1] = v
 		end
-		ME.Character:FindFirstChildOfClass("Humanoid"):ChangeState(15)
-		ME.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = pos
 	end
-	if type(firetouchinterest) == "function" then
-		for _, v in pairs(tools) do
-			pcall(coroutine.wrap(function()
-				v.Handle.Anchored = false
-				firetouchinterest(v.Handle, ME.Character:WaitForChild("HumanoidRootPart"), 0)
-				repeat
-					wait()
-				until v.Parent == ME.Character
-				firetouchinterest(v.Handle, ME.Character.HumanoidRootPart, 1)
-			end))
+	for _, v in ipairs(p.Backpack:GetChildren()) do
+		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
+			r[#r + 1] = v
 		end
-	else
-		ME.Character.HumanoidRootPart.Anchored = true
-		wait(.15)
-		for _, v in pairs(tools) do
-			spawn(function()
-				v.Handle.Anchored = false
-				while v.Parent ~= ME.Character and game:GetService("RunService").RenderStepped:Wait() do
-					v.Handle.CFrame = ME.Character:WaitForChild("HumanoidRootPart").CFrame
-				end
-			end)
-		end
-		wait((function(num)
-			local e = 0
-			for _ = 1, num do
-				e = e + .1
+	end
+	return r
+end
+addcmd('dupetools', {'clonetools'}, function(args, speaker)
+	local LOOP_NUM = tonumber(args[1]) or 1
+	local OrigPos = speaker.Character.HumanoidRootPart.Position
+	local Tools, TempPos = {}, Vector3.new(math.random(-2e5, 2e5), 2e5, math.random(-2e5, 2e5))
+	for i = 1, LOOP_NUM do
+		local Human = speaker.Character:WaitForChild("Humanoid")
+		wait(.1, Human.Parent:MoveTo(TempPos))
+		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
+		local t = GetHandleTools(speaker)
+		while #t > 0 do
+			for _, v in ipairs(t) do
+				coroutine.wrap(function()
+					for _ = 1, 25 do
+						v.Parent = speaker.Character
+						v.Handle.Anchored = true
+					end
+					for _ = 1, 5 do
+						v.Parent = workspace
+					end
+					table.insert(Tools, v.Handle)
+				end)()
 			end
-			return e
-		end)(#tools))
-		ME.Character.HumanoidRootPart.Anchored = false
+			t = GetHandleTools(speaker)
+		end
+		wait(.1)
+		speaker.Character = speaker.Character:Destroy()
+		speaker.CharacterAdded:Wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
+		if i == LOOP_NUM or i % 5 == 0 then
+			local HRP = speaker.Character.HumanoidRootPart
+			if type(firetouchinterest) == "function" then
+				for _, v in ipairs(Tools) do
+					v.Anchored = not firetouchinterest(v, HRP, 1, firetouchinterest(v, HRP, 0)) and false or false
+				end
+			else
+				for _, v in ipairs(Tools) do
+					coroutine.wrap(function()
+						local x = v.CanCollide
+						v.CanCollide = false
+						v.Anchored = false
+						for _ = 1, 10 do
+							v.CFrame = HRP.CFrame
+							wait()
+						end
+						v.CanCollide = x
+					end)()
+				end
+			end
+			wait(.1)
+			Tools = {}
+		end
+		TempPos = TempPos + Vector3.new(10, math.random(-5, 5), 0)
 	end
 end)
 
