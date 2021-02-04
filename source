@@ -10118,6 +10118,7 @@ addcmd('grabtools',{},function(args, speaker)
 			end
 		end)
 	end
+	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
 	grabtoolsFunc = workspace.ChildAdded:Connect(function(part)
 		if part:IsA("Tool") or part:IsA("HopperBin") then
 			if part:FindFirstChild("Handle") then
