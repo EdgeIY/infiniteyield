@@ -10103,35 +10103,20 @@ addcmd('nosimulationradius',{'nosimradius','unsimradius'},function(args, speaker
 	end
 end)
 
-addcmd('grabtools',{},function(args, speaker)
-	for i,v in pairs(workspace:GetChildren()) do
-		spawn(function()
-			if v:IsA("Tool") or v:IsA("HopperBin") then
-				if v:FindFirstChild("Handle") then
-					repeat
-						wait()
-						if getRoot(speaker.Character) then
-							v.Handle.CFrame = getRoot(speaker.Character).CFrame
-						end
-					until v.Parent == speaker.Character
-				end
-			end
-		end)
+addcmd("grabtools", {}, function(args, speaker)
+	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	for _, v in ipairs(workspace:GetChildren()) do
+		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
+			Human:EquipTool(v)
+		end
 	end
 	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
-	grabtoolsFunc = workspace.ChildAdded:Connect(function(part)
-		if part:IsA("Tool") or part:IsA("HopperBin") then
-			if part:FindFirstChild("Handle") then
-				repeat
-					wait()
-					if getRoot(speaker.Character) then
-						part.Handle.CFrame = getRoot(speaker.Character).CFrame
-					end
-				until part.Parent == speaker.Character
-			end
+	grabtoolsFunc = workspace.ChildAdded:Connect(function(v)
+		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
+			speaker.Character:WaitForChild("Humanoid"):EquipTool(v)
 		end
 	end)
-	notify('Grabtools','Picking up any dropped tools')
+	notify("Grabtools", "Picking up any dropped tools")
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
