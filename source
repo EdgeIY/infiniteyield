@@ -7421,18 +7421,13 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 end)
 
 addcmd('savegame',{'saveplace'},function(args, speaker)
-	if syn_checkcaller then
-		notify("Loading","Fetching Moon's SaveInstance")
-		loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/saveinstance/master/source'))()
-		repeat wait() until saveplace
+	if saveinstance then
 		notify("Loading","Downloading game. This will take a while")
-		local placeName = tostring(game.PlaceId).." Map"
-		saveplace(tostring(game.PlaceId).." Map")
-		wait(1)
-		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
-	elseif saveinstance then
-		notify("Loading","Downloading game. This will take a while")
-		saveinstance()
+		if getsynasset then
+			saveinstance()
+		else
+			saveinstance(game)
+		end
 		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
