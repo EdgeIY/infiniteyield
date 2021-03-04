@@ -9112,8 +9112,9 @@ addcmd('sitwalk',{},function(args, speaker)
 	end
 end)
 
-function noSitFunc(Humanoid)
+function noSitFunc()
 	wait()
+	local Humanoid = game:GetService("Players").Character:FindFirstChildOfClass("Humanoid")
 	if Humanoid.Sit then
 		Humanoid.Sit = false
 	end
