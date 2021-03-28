@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '5.0'
+ver = '5.1'
 
 Players = game:GetService("Players")
 
@@ -21,6 +21,7 @@ Title = Instance.new("TextLabel")
 Dark = Instance.new("Frame")
 Cmdbar = Instance.new("TextBox")
 CMDsF = Instance.new("ScrollingFrame")
+cmdListLayout = Instance.new("UIListLayout")
 SettingsButton = Instance.new("ImageButton")
 ColorsButton = Instance.new("ImageButton")
 Settings = Instance.new("Frame")
@@ -250,8 +251,8 @@ CMDsF.Name = "CMDs"
 CMDsF.Parent = Holder
 CMDsF.BackgroundTransparency = 1
 CMDsF.BorderSizePixel = 0
-CMDsF.Position = UDim2.new(0, 0, 0, 45)
-CMDsF.Size = UDim2.new(0, 250, 0, 175)
+CMDsF.Position = UDim2.new(0, 5, 0, 45)
+CMDsF.Size = UDim2.new(0, 245, 0, 175)
 CMDsF.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
 CMDsF.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -261,6 +262,8 @@ CMDsF.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.VerticalScrollBarInset = 'Always'
 CMDsF.ZIndex = 10
 table.insert(scroll,CMDsF)
+
+cmdListLayout.Parent = CMDsF
 
 SettingsButton.Name = "SettingsButton"
 SettingsButton.Parent = Holder
@@ -4255,7 +4258,7 @@ end
 local canvasPos = Vector2.new(0,0)
 local topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
-	local Index,SizeY = 0,0
+	local SizeY = 0
 	local indexnum = 0
 	local frame = CMDsF
 	topCommand = nil
@@ -4267,29 +4270,26 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	if #chunks > 0 then str = chunks[#chunks] end
 	if str:sub(1,1) == "!" then str = str:sub(2) end
 	for i,v in next, frame:GetChildren() do
-		if bool then
-			if Match(v.Text,str) then
-				indexnum = indexnum + 1
-				Index = Index + 1
+		if v:IsA("TextButton") then
+			if bool then
+				if Match(v.Text,str) then
+					indexnum = indexnum + 1
+					v.Visible = true
+					if topCommand == nil then
+						topCommand = v.Text
+					end
+				else
+					v.Visible = false
+				end
+			else
 				v.Visible = true
-				v:TweenPosition(UDim2.new(0,10,0,Index*v.AbsoluteSize.Y-v.AbsoluteSize.Y), "InOut", "Quart", 0.2, true, nil)
-				SizeY = SizeY + v.AbsoluteSize.Y
-				frame.CanvasSize = UDim2.new(0,0,0,SizeY)
 				if topCommand == nil then
 					topCommand = v.Text
 				end
-			else
-				v.Visible = false
-			end
-		else
-			v.Visible = true
-			SizeY = SizeY + v.AbsoluteSize.Y
-			frame.CanvasSize = UDim2.new(0,0,0,SizeY)
-			if topCommand == nil then
-				topCommand = v.Text
 			end
 		end
 	end
+	frame.CanvasSize = UDim2.new(0,0,0,cmdListLayout.AbsoluteContentSize.Y)
 	if not Ianim then
 		if indexnum == 0 or string.find(str, " ") then
 			if not cmdbar then
@@ -4439,6 +4439,9 @@ CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20
 CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly [speed]', DESC = 'Makes you fly in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
+CMDs[#CMDs + 1] = {NAME = 'cframefly / cfly [speed]', DESC = 'Makes you fly in a vehicle'}
+CMDs[#CMDs + 1] = {NAME = 'uncframefly / uncfly', DESC = 'Disables vehicle fly'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Set vehicle fly speed'}
 CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'enables or disables the Q and E hotkeys for fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
@@ -4453,6 +4456,7 @@ CMDs[#CMDs + 1] = {NAME = 'showwaypoints / showwp', DESC = 'Shows all currently 
 CMDs[#CMDs + 1] = {NAME = 'hidewaypoints / hidewp', DESC = 'Hides shown waypoints'}
 CMDs[#CMDs + 1] = {NAME = 'waypoint / wp [name]', DESC = 'Teleports player to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'tweenwaypoint / twp [name]', DESC = 'Tweens player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'walktowaypoint / wtwp [name]', DESC = 'Walks player to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -6993,6 +6997,56 @@ addcmd('togglefly',{},function(args, speaker)
 	end
 end)
 
+Con = nil
+SPI = 1 -- studs per interval
+addcmd('cframefly',{'cfly'},function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		SPI = args[1]
+	end
+	local ME = game:GetService("Players").LocalPlayer
+	local UIS = game:GetService("UserInputService")
+	local RunService = game:GetService("RunService")
+	local Keys, v3, cf = Enum.KeyCode, Vector3.new(), CFrame.new()
+	Con = RunService.Heartbeat:Connect(function()
+		local Camera, Cache = workspace.CurrentCamera, {}
+		local Human = ME.Character and ME.Character:FindFirstChildWhichIsA("Humanoid")
+		local HRP = Human and Human.RootPart or ME.Character.PrimaryPart
+		if not ME.Character or not Human or not HRP or not Camera then
+			return 
+		end
+		local Cache = {}
+		for _, v in ipairs(getconnections(Human.StateChanged)) do
+			Cache[#Cache + 1] = v
+			v:Disable()
+		end
+		for _, v in ipairs(getconnections(HRP.Changed)) do
+			Cache[#Cache + 1] = v
+			v:Disable()
+		end
+		for _, v in ipairs(getconnections(Human.Changed)) do
+			Cache[#Cache + 1] = v
+			v:Disable()
+		end
+		Human:ChangeState(11)
+		HRP.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector) * (UIS:GetFocusedTextBox() and cf or CFrame.new((UIS:IsKeyDown(Keys.D) and SPI) or (UIS:IsKeyDown(Keys.A) and -SPI) or 0, (UIS:IsKeyDown(Keys.E) and SPI / 2) or (UIS:IsKeyDown(Keys.Q) and -SPI / 2) or 0, (UIS:IsKeyDown(Keys.S) and SPI) or (UIS:IsKeyDown(Keys.W) and -SPI) or 0))
+		for _, v in ipairs(Cache) do
+			v:Enable()
+		end
+	end)
+end)
+
+addcmd('uncframefly',{'uncfly'},function(args, speaker)
+	if Con then
+		Con:Disconnect()
+	end
+end)
+
+addcmd('cframeflyspeed',{'cflyspeed'},function(args, speaker)
+	if isNumber(args[1]) then
+		SPI = args[1]
+	end
+end)
+
 Floating = false
 floatName = randomString()
 addcmd('float', {'platform'},function(args, speaker)
@@ -7249,6 +7303,33 @@ addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 		for i,_ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				game:GetService("TweenService"):Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
+			end
+		end
+	end
+end)
+
+addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
+	local WPName = tostring(getstring(1))
+	if speaker.Character then
+		for i,_ in pairs(WayPoints) do
+			local x = WayPoints[i].COORD[1]
+			local y = WayPoints[i].COORD[2]
+			local z = WayPoints[i].COORD[3]
+			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+					wait(.1)
+				end
+				speaker.Character:FindFirstChildOfClass('Humanoid').WalkToPoint = Vector3.new(x,y,z)
+			end
+		end
+		for i,_ in pairs(pWayPoints) do
+			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
+				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+					wait(.1)
+				end
+				speaker.Character:FindFirstChildOfClass('Humanoid').WalkToPoint = Vector3.new(pWayPoints[i].COORD[1].Position)
 			end
 		end
 	end
@@ -7530,7 +7611,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	end
 end)
 
-addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
+addcmd('setfpscap', {'fpscap', 'maxfps'}, function(args, speaker)
 	if setfpscap and type(setfpscap) == "function" then
 		local num = args[1] or 1e6
 		if num == 'none' then
@@ -7538,10 +7619,10 @@ addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
 		elseif num > 0 then
 			return setfpscap(num)
 		else
-			return notify("Invalid argument", "Please provide a number above 0 or 'none'.")
+			return notify('Invalid argument', "Please provide a number above 0 or 'none'.")
 		end
 	else
-		return notify("Incompatible Exploit", "Your exploit does not support this command (missing setfpscap)")
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setfpscap)')
 	end
 end)
 
@@ -9433,10 +9514,13 @@ addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, spea
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		local char = Players[v].Character
-		if char and getRoot(char) then
-			local pos = tostring(getRoot(char).Position)
-			notify('Current Position',pos)
+		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
+		pos = pos and pos.Position
+		if not pos then
+			return notify('Getposition Error','Missing character')
 		end
+		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
+		notify('Current Position',roundedPos)
 	end
 end)
 
@@ -9444,10 +9528,13 @@ addcmd('copyposition',{'copypos'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		local char = Players[v].Character
-		if char and getRoot(char) then
-			local pos = tostring(getRoot(char).Position)
-			toClipboard(pos)
+		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
+		pos = pos and pos.Position
+		if not pos then
+			return notify('Getposition Error','Missing character')
 		end
+		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
+		toClipboard(roundedPos)
 	end
 end)
 
@@ -10099,7 +10186,7 @@ addcmd('nosimulationradius',{'nosimradius','unsimradius'},function(args, speaker
 	end
 end)
 
-addcmd("grabtools", {}, function(args, speaker)
+addcmd('grabtools', {}, function(args, speaker)
 	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	for _, v in ipairs(workspace:GetChildren()) do
 		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
@@ -10112,7 +10199,7 @@ addcmd("grabtools", {}, function(args, speaker)
 			speaker.Character:WaitForChild("Humanoid"):EquipTool(v)
 		end
 	end)
-	notify("Grabtools", "Picking up any dropped tools")
+	notify('Grabtools', 'Picking up any dropped tools')
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
@@ -10533,18 +10620,15 @@ addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},function(args, speaker)
-	if speaker.Character then
-		for _,obj in pairs(speaker.Character:GetChildren()) do
-			if obj:IsA("Tool") then
-				obj.Parent = workspace
-			end
+	for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+		if v:IsA("Tool") then
+			v.Parent = Players.LocalPlayer.Character
 		end
 	end
-	if speaker:FindFirstChildOfClass("Backpack") then
-		for _,obj in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
-			if obj:IsA("Tool") then
-				obj.Parent = workspace
-			end
+	wait()
+	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+		if v:IsA("Tool") then
+			v.Parent = workspace
 		end
 	end
 end)
