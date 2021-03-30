@@ -8197,9 +8197,24 @@ addcmd('thirdp',{},function(args, speaker)
 	speaker.CameraMode = "Classic"
 end)
 
-addcmd('noclipcam',{'nccam'},function(args, speaker)
-	speaker.CameraMinZoomDistance = math.huge - math.huge
-	speaker.CameraMaxZoomDistance = math.huge - math.huge
+addcmd('noclipcam', {'nccam'}, function(args, speaker)
+	local sc = (debug and debug.setconstant) or setconstant
+	local gc = (debug and debug.getconstant) or getconstant
+	if not sc or not getgc or not gc then
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
+	end
+	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
+	for _, v in pairs(getgc()) do
+		if type(v) == 'function' and getfenv(v).script == pop then
+			for i, v1 in pairs(gc(v)) do
+				if tonumber(v1) == .25 then
+					sc(v, i, 0)
+				elseif tonumber(v1) == 0 then
+					sc(v, i, .25)
+				end
+			end
+		end
+	end
 end)
 
 
