@@ -8199,7 +8199,7 @@ end)
 
 addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
-	local gc = (debug and debug.getconstant) or getconstant
+	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
 		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
 	end
