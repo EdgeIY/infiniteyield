@@ -1,1 +1,66 @@
 Version = '5.1'
+
+local kick = game:GetObjects("rbxassetid://6595034466")[1]
+kick.Parent = game.CoreGui
+local blur = Instance.new("BlurEffect", game.Lighting)
+blur.Size = 25
+kick.promptOverlay.ErrorPrompt.PromptScale.Scale = 0
+wait()
+kick.Enabled = true
+
+if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") then
+	game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = 0
+end
+
+game:GetService("TweenService"):Create(kick.promptOverlay.ErrorPrompt.PromptScale,TweenInfo.new(0.1,Enum.EasingStyle.Sine,Enum.EasingDirection.Out,0,false,0),
+{Scale = 1}):Play()
+
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+
+kick.promptOverlay.BackgroundTransparency = 0.75
+
+local button = kick.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame.ButtonArea.LeaveButton
+button.ButtonText.Text = "April Fools!"
+
+local pass = false
+
+button.MouseButton1Click:Connect(function()
+	pass = true
+end)
+
+spawn(function()
+	wait(10)
+	pass = true
+end)
+
+spawn(function()
+	for _, gui in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetDescendants()) do
+		if gui:IsA("ScreenGui") then
+			local og = gui.Enabled
+			gui.Enabled = false
+			repeat wait() until pass
+			gui.Enabled = og
+		end
+	end
+end)
+
+repeat wait() until pass
+
+button:Destroy()
+
+kick.promptOverlay.BackgroundTransparency = 1
+
+blur:Destroy()
+
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
+
+game:GetService("TweenService"):Create(kick.promptOverlay.ErrorPrompt.PromptScale,TweenInfo.new(0.1,Enum.EasingStyle.Sine,Enum.EasingDirection.Out,0,false,0),
+{Scale = 0}):Play()
+
+if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") then
+	game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = 16
+end
+
+wait(0.5)
+
+kick:Destroy()
