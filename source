@@ -6999,33 +6999,35 @@ end)
 
 Con = nil
 SPI = 1 -- studs per interval
-addcmd('cframefly',{'cfly'},function(args, speaker)
+addcmd('cframefly', {'cfly'}, function(args, ME)
 	if args[1] and isNumber(args[1]) then
 		SPI = args[1]
 	end
-	local ME = game:GetService("Players").LocalPlayer
-	local UIS = game:GetService("UserInputService")
-	local RunService = game:GetService("RunService")
+	local UIS = game:GetService('UserInputService')
+	local RunService = game:GetService('RunService')
 	local Keys, v3, cf = Enum.KeyCode, Vector3.new(), CFrame.new()
 	Con = RunService.Heartbeat:Connect(function()
 		local Camera, Cache = workspace.CurrentCamera, {}
-		local Human = ME.Character and ME.Character:FindFirstChildWhichIsA("Humanoid")
+		local Human = ME.Character and ME.Character:FindFirstChildWhichIsA('Humanoid')
 		local HRP = Human and Human.RootPart or ME.Character.PrimaryPart
 		if not ME.Character or not Human or not HRP or not Camera then
 			return 
 		end
 		local Cache = {}
-		for _, v in ipairs(getconnections(Human.StateChanged)) do
-			Cache[#Cache + 1] = v
-			v:Disable()
+		local Cons = {game.ItemChanged, Human.StateChanged, Human.Changed, ME.Character.Changed}
+		for _, v in ipairs(ME.Character:GetChildren()) do
+			if v:IsA('BasePart') then
+				Cons[#Cons + 1] = v.Changed
+				Cons[#Cons + 1] = v:GetPropertyChangedSignal('CFrame')
+			end
 		end
-		for _, v in ipairs(getconnections(HRP.Changed)) do
-			Cache[#Cache + 1] = v
-			v:Disable()
-		end
-		for _, v in ipairs(getconnections(Human.Changed)) do
-			Cache[#Cache + 1] = v
-			v:Disable()
+		for _, v in ipairs(Cons) do
+			for _, v1 in ipairs(getconnections(v)) do
+				if not rawget(v1, '__OBJECT_ENABLED') then
+					Cache[#Cache + 1] = v1
+					v1:Disable()
+				end
+			end
 		end
 		Human:ChangeState(11)
 		HRP.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector) * (UIS:GetFocusedTextBox() and cf or CFrame.new((UIS:IsKeyDown(Keys.D) and SPI) or (UIS:IsKeyDown(Keys.A) and -SPI) or 0, (UIS:IsKeyDown(Keys.E) and SPI / 2) or (UIS:IsKeyDown(Keys.Q) and -SPI / 2) or 0, (UIS:IsKeyDown(Keys.S) and SPI) or (UIS:IsKeyDown(Keys.W) and -SPI) or 0))
