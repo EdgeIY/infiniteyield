@@ -4680,7 +4680,6 @@ CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhy
 CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
-CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
 CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
@@ -8323,7 +8322,7 @@ addcmd('btools',{},function(args, speaker)
 end)
 
 addcmd('f3x',{'fex'},function(args, speaker)
-	loadstring(game:GetObjects("rbxassetid://4698064966")[1].Source)()
+	loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)()
 end)
 
 addcmd('partpath',{'partname'},function(args, speaker)
@@ -9677,7 +9676,7 @@ addcmd('console',{},function(args, speaker)
 	-- Thanks wally!!
 	notify("Loading",'Hold on a sec')
 	local _, str = pcall(function()
-		return game:HttpGet("https://pastebin.com/raw/i35eCznS", true)
+		return game:HttpGet("https://gist.githubusercontent.com/luatsuki/a1b48e02d5710ebff8fe1ffb1fc5ea38/raw/055143d9238eb6645fbb1f5c4a9a0122ca90c8f4/Console", true)
 	end)
 
 	local s, e = loadstring(str)
@@ -9744,7 +9743,7 @@ end)
 addcmd('remotespy',{'rspy'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
 	-- Full credit to exx, creator of SimpleSpy
-	loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
+	loadstring(game:HttpGet("https://gist.githubusercontent.com/luatsuki/c75a272fb67bccc22bd1b6add92ee267/raw/56375f8536aeca0cc84b44032312efb0fa5b7fa0/Spy"))()
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
@@ -10366,13 +10365,6 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing firetouchinterest)')
 	end
-end)
-
-
-addcmd('vr',{},function(args, speaker)
-	-- Full credit to Abacaxl @V3rmillion
-	-- Free for all thanks to Zinnia
-	loadstring(game:HttpGet('https://ghostbin.co/paste/yb288/raw'))()
 end)
 
 addcmd('split',{},function(args, speaker)
