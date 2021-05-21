@@ -7444,6 +7444,16 @@ function deleteGuisAtPos()
 	end)
 end
 
+function antiInf()
+    if SENTINEL_LOADED and islclosure(saveinstance) and debug.getconstants(saveinstance)[1] == "spawn" then
+        return true
+    end
+end
+
+if antiInf then
+    getgenv().saveinstance = function() end
+end
+
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
