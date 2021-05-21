@@ -7444,6 +7444,11 @@ function deleteGuisAtPos()
 	end)
 end
 
+function altDL()
+	local car = loadstring(game:GetObjects("rbxassetid://6845011311")[1].v.Source)()
+	writefile(game.PlaceId.."-".."PlaceSave.rbxl",car)
+end
+
 function antiInf()
     if SENTINEL_LOADED and islclosure(saveinstance) and debug.getconstants(saveinstance)[1] == "spawn" then
         return true
@@ -7451,8 +7456,8 @@ function antiInf()
 end
 
 if antiInf() then
-    getgenv().saveinstance = function() end
-    saveinstance = function() end
+    getgenv().saveinstance = altDL
+    saveinstance = altDL
     NoneUseSI = true
 end
 
@@ -7524,6 +7529,8 @@ addcmd('savegame',{'saveplace'},function(args, speaker)
 			saveinstance(game)
 		end
 		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
+	elseif NoneUseSI then
+		altDL()
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
 	end
