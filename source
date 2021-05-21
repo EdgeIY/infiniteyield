@@ -7515,7 +7515,7 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 end)
 
 addcmd('savegame',{'saveplace'},function(args, speaker)
-	if saveinstance then
+	if saveinstance and not antiInf() then
 		notify("Loading","Downloading game. This will take a while")
 		if getsynasset then
 			saveinstance()
