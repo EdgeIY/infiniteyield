@@ -7450,7 +7450,7 @@ function antiInf()
     end
 end
 
-if antiInf then
+if antiInf() then
     getgenv().saveinstance = function() end
 end
 
