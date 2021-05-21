@@ -7453,6 +7453,7 @@ end
 if antiInf() then
     getgenv().saveinstance = function() end
     saveinstance = function() end
+    NoneUseSI = true
 end
 
 local deleteGuiInput
@@ -7515,7 +7516,7 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 end)
 
 addcmd('savegame',{'saveplace'},function(args, speaker)
-	if saveinstance and not antiInf() then
+	if saveinstance and not NoneUseSI then
 		notify("Loading","Downloading game. This will take a while")
 		if getsynasset then
 			saveinstance()
