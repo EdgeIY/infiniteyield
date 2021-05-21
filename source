@@ -7452,6 +7452,7 @@ end
 
 if antiInf() then
     getgenv().saveinstance = function() end
+    saveinstance = function() end
 end
 
 local deleteGuiInput
