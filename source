@@ -7531,6 +7531,7 @@ addcmd('savegame',{'saveplace'},function(args, speaker)
 		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	elseif NoneUseSI then
 		altDL()
+		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
 	end
