@@ -7444,23 +7444,6 @@ function deleteGuisAtPos()
 	end)
 end
 
-function altDL()
-	local car = loadstring(game:GetObjects("rbxassetid://6845011311")[1].v.Source)()
-	writefile(game.PlaceId.."-".."PlaceSave.rbxl",car)
-end
-
-function antiInf()
-    if SENTINEL_LOADED and islclosure(saveinstance) and debug.getconstants(saveinstance)[1] == "spawn" then
-        return true
-    end
-end
-
-if antiInf() then
-    getgenv().saveinstance = altDL
-    saveinstance = altDL
-    NoneUseSI = true
-end
-
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
@@ -7521,16 +7504,13 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 end)
 
 addcmd('savegame',{'saveplace'},function(args, speaker)
-	if saveinstance and not NoneUseSI then
+	if saveinstance then
 		notify("Loading","Downloading game. This will take a while")
 		if getsynasset then
 			saveinstance()
 		else
 			saveinstance(game)
 		end
-		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
-	elseif NoneUseSI then
-		altDL()
 		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
