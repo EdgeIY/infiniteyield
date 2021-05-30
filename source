@@ -4736,6 +4736,8 @@ CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
+CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk', DESC = 'Teleports you to your move direction'}
+CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 wait()
 
 for i = 1, #CMDs do
@@ -10967,6 +10969,21 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequiped the tool!")
 		end)
 	end
+end)
+
+local hb = game:GetService("RunService").Heartbeat
+addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
+	tpwalking = true
+	local chr = speaker.Character
+	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+	while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+		if hum.MoveDirection.Magnitude > 0 then
+			chr:TranslateBy(hum.MoveDirection)
+		end
+	end
+end)
+addcmd('untpwalk', {'unteleportwalk'}, function(args, speaker)
+	tpwalking = false
 end)
 
 addcmd('fastkill',{'fastfekill'},function(args, speaker)
