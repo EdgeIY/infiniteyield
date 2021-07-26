@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '5.2'
+ver = '5.2.5'
 
 Players = game:GetService("Players")
 
@@ -4415,7 +4415,7 @@ CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'guidelete', DESC = 'Enables backspace to delete GUI'}
 CMDs[#CMDs + 1] = {NAME = 'unguidelete / noguidelete', DESC = 'Disables guidelete'}
 CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
-CMDs[#CMDs + 1] = {NAME = 'showiy', DESC = 'Shows IY again'}
+CMDs[#CMDs + 1] = {NAME = 'showiy / unhideiy', DESC = 'Shows IY again'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
@@ -5316,14 +5316,20 @@ function removeTableMatches(tab,matches)
 	return resultTable
 end
 
-function getPlayersByName(name)
-	local found = {}
-	for i,v in pairs(Players:GetChildren()) do
-		if string.sub(string.lower(v.Name),1,#name) == string.lower(name) then
-			table.insert(found,v)
+function getPlayersByName(Name)
+	local Name,Len,Found = string.lower(Name),#Name,{}
+	for _,v in pairs(Players:GetPlayers()) do
+		if Name:sub(0,1) == '@' then
+			if string.sub(string.lower(v.Name),1,Len-1) == Name:sub(2) then
+				table.insert(Found,v)
+			end
+		else
+			if string.sub(string.lower(v.Name),1,Len) == Name or string.sub(string.lower(v.DisplayName),1,Len) == Name then
+				table.insert(Found,v)
+			end
 		end
 	end
-	return found
+	return Found
 end
 
 function getPlayer(list,speaker)
@@ -7474,7 +7480,7 @@ addcmd('hideiy',{},function(args, speaker)
 	notify('IY Hidden','You can press the prefix key to access the command bar')
 end)
 
-addcmd('showiy',{},function(args, speaker)
+addcmd('showiy',{'unhideiy'},function(args, speaker)
 	minimizeNum = -20
 	if wasStayOpen then
 		maximizeHolder()
@@ -9027,7 +9033,11 @@ end)
 addcmd('jpower',{'jumppower','jp'},function(args, speaker)
 	local jpower = args[1] or 50
 	if isNumber(jpower) then
-		speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
+		if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
+			speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
+		else
+			speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight  = jpower
+		end
 	end
 end)
 
@@ -9288,7 +9298,7 @@ addcmd('edgejump',{'ejump'},function(args, speaker)
 			state = Human:GetState()
 			if laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping then
 				Char.HumanoidRootPart.CFrame = lastcf
-				Char.HumanoidRootPart.Velocity = Vector3.new(Char.HumanoidRootPart.Velocity.X, Human.JumpPower, Char.HumanoidRootPart.Velocity.Z)
+				Char.HumanoidRootPart.Velocity = Vector3.new(Char.HumanoidRootPart.Velocity.X, Human.JumpPower or Human.JumpHeight, Char.HumanoidRootPart.Velocity.Z)
 			end
 			lastcf = Char.HumanoidRootPart.CFrame
 		end
@@ -9611,7 +9621,11 @@ addcmd('loopjumppower',{'loopjp','loopjpower'},function(args, speaker)
 		local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
 		local function JumpPowerChange()
 			if Char and Human then
-				Human.JumpPower = jpower
+				if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
+					speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
+				else
+					speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight  = jpower
+				end
 			end
 		end
 		JumpPowerChange()
@@ -11712,7 +11726,7 @@ IYMouse.Move:Connect(checkTT)
 spawn(function()
 	if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
 		if ver ~= Version then
-			notify('Outdated','Get the new version at infyield.yolasite.com')
+			notify('Outdated','Get the new version at github.com/EdgeIY/infiniteyield')
 		end
 		if Announcement and Announcement ~= '' then
 			local AnnGUI = Instance.new("Frame")
