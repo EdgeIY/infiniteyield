@@ -1,1 +1,3 @@
-Version = '5.2'
+Version = '5.2.5'
+
+Announcement = 'We are aware the website is down and we will be moving everything to our github page. \n\n github.com/EdgeIY/infiniteyield'
