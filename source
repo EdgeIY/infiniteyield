@@ -10437,16 +10437,24 @@ addcmd('equiptools',{},function(args, speaker)
 	end
 end)
 
-local function GetHandleTools(p)
+function NoVelocity()
+	local v3 = Vector3.new()
+	for _, v in ipairs(Players.LocalPlayer.Character:GetDescendants()) do
+		if v:IsA('BasePart') then
+			v.Velocity, v.RotVelocity = v3, v3
+		end
+	end
+end
+function GetHandleTools(p)
 	p = p or Players.LocalPlayer
 	local r = {}
 	for _, v in ipairs(p.Character and p.Character:GetChildren() or {}) do
-		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
+		if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
 			r[#r + 1] = v
 		end
 	end
 	for _, v in ipairs(p.Backpack:GetChildren()) do
-		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
+		if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
 			r[#r + 1] = v
 		end
 	end
@@ -10457,31 +10465,35 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 	local OrigPos = speaker.Character.HumanoidRootPart.Position
 	local Tools, TempPos = {}, Vector3.new(math.random(-2e5, 2e5), 2e5, math.random(-2e5, 2e5))
 	for i = 1, LOOP_NUM do
-		local Human = speaker.Character:WaitForChild("Humanoid")
-		wait(.1, Human.Parent:MoveTo(TempPos))
-		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
-		local t = GetHandleTools(speaker)
+		local Human = speaker.Character:WaitForChild('Humanoid')
+		for _ = 1, 10 do
+			Human.Parent:MoveTo(TempPos)
+			NoVelocity()
+			wait()
+		end
+		Human.RootPart.Anchored = true
+		local t = GetHandleTools()
 		while #t > 0 do
 			for _, v in ipairs(t) do
-				coroutine.wrap(function()
-					for _ = 1, 25 do
-						v.Parent = speaker.Character
-						v.Handle.Anchored = true
-					end
-					for _ = 1, 5 do
-						v.Parent = workspace
-					end
-					table.insert(Tools, v.Handle)
-				end)()
+				for _ = 1, 5 do
+					v.Parent = speaker.Character
+					v.Handle.Anchored = true
+				end
+				for _ = 1, 5 do
+					v.Parent = workspace
+				end
+				if not table.find(Tools, v.Handle) then
+					Tools[#Tools + 1] = v.Handle
+				end
 			end
-			t = GetHandleTools(speaker)
+			t = GetHandleTools()
 		end
 		wait(.1)
 		speaker.Character = speaker.Character:Destroy()
-		speaker.CharacterAdded:Wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
+		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
 		if i == LOOP_NUM or i % 5 == 0 then
 			local HRP = speaker.Character.HumanoidRootPart
-			if type(firetouchinterest) == "function" then
+			if type(firetouchinterest) == 'function' then
 				for _, v in ipairs(Tools) do
 					v.Anchored = not firetouchinterest(v, HRP, 1, firetouchinterest(v, HRP, 0)) and false or false
 				end
@@ -10500,10 +10512,12 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 				end
 			end
 			wait(.1)
+			Human:UnequipTools()
 			Tools = {}
 		end
-		TempPos = TempPos + Vector3.new(10, math.random(-5, 5), 0)
+		TempPos = TempPos + Vector3.new(3, 0, 0)
 	end
+	-- print('Hunter was here ;)')
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
