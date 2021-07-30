@@ -10519,10 +10519,16 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		speaker.Character = speaker.Character:Destroy()
 		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
 		if i == LOOP_NUM or i % 5 == 0 then
-			local HRP = speaker.Character.HumanoidRootPart
-			if type(firetouchinterest) == 'function' then
+			local Root = speaker.Character.HumanoidRootPart
+			if type(firetouchinterest) == "function" and (function()
+				if not identifyexecutor then
+					return true
+				end
+				return identifyexecutor() ~= "ScriptWare"
+			end)() then
 				for _, v in ipairs(Tools) do
-					v.Anchored = not firetouchinterest(v, HRP, 1, firetouchinterest(v, HRP, 0)) and false or false
+					v.Anchored = false
+					firetouchinterest(v, Root, 1, firetouchinterest(v, Root, 0))
 				end
 			else
 				for _, v in ipairs(Tools) do
@@ -10531,7 +10537,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 						v.CanCollide = false
 						v.Anchored = false
 						for _ = 1, 10 do
-							v.CFrame = HRP.CFrame
+							v.CFrame = Root.CFrame
 							wait()
 						end
 						v.CanCollide = x
