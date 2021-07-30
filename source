@@ -6737,17 +6737,44 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 	notify('Auto Rejoin','Auto rejoin enabled')
 end)
 
-addcmd('serverhop',{'shop'},function(args, speaker)
-	local x = {}
-	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
-		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
-			x[#x + 1] = v.id
+local Mem = game:GetService('MemStorageService')
+local TP = game:GetService('TeleportService')
+local Http = game:GetService('HttpService')
+function GetPublicServers(a)
+	a = tonumber(a) or game.PlaceId
+	local b, c = {}, ''
+	while c do
+		local d = 'https://games.roblox.com/v1/games/' .. a .. '/servers/Public?sortOrder=Asc&limit=100' .. ((#c <= 0 and '') or ('&cursor=' .. c))
+		local e = Http:JSONDecode(game:HttpGet(d))
+		for _, v in ipairs(e.data) do
+			b[#b + 1] = v
+		end
+		c = e.nextPageCursor
+	end
+	return b
+end
+addcmd('serverhop', {'shop'}, function(args, speaker)
+	local Cache = Mem:HasItem('JobId_CACHE_IY') and Http:JSONDecode(Mem:GetItem('JobId_CACHE_IY')) or {}
+	if not table.find(Cache, game.JobId) then
+		Cache[#Cache + 1] = game.JobId
+	end
+	Mem:RemoveItem('JobId_CACHE_IY')
+	Mem:SetItem('JobId_CACHE_IY', Http:JSONEncode(Cache))
+	local Servers = {}
+	for _, v in ipairs(GetPublicServers(game.PlaceId)) do
+		if type(v) == 'table' and v.maxPlayers > v.playing and not table.find(Cache, v.id) then
+			Servers[#Servers + 1] = v
 		end
 	end
-	if #x > 0 then
-		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+	table.sort(Servers, function(a, b)
+		return a.ping < b.ping
+	end)
+	if #Servers > 0 then
+		notify('Server Hop', 'Teleporting to a new server!')
+		TP:TeleportToPlaceInstance(game.PlaceId, Servers[1].id, speaker)
 	else
-		return notify("Serverhop","Couldn't find a server.")
+		Mem:RemoveItem('JobId_CACHE_IY')
+		notify('Server Hop', 'Failed to find a new server. Try again.')
 	end
 end)
 
