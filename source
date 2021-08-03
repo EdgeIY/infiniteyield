@@ -6,13 +6,13 @@ end
 pcall(function() getgenv().IY_LOADED  = true end)
 
 if not game:IsLoaded() then
-	local notLoaded = Instance.new("Message",workspace)
+	local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
 	game.Loaded:Wait()
 	notLoaded:Destroy()
 end
 
-ver = '5.2.5'
+ver = '5.3'
 
 Players = game:GetService("Players")
 
@@ -2677,6 +2677,8 @@ eventEditor = (function()
 						v:Destroy()
 					end
 				end
+				
+				eventF.EventName.Text = name..(#event.commands > 0 and " ("..#event.commands..")" or "")
 
 				for i,cmd in pairs(event.commands) do
 					local cmdF = cmdTemplate:Clone()
@@ -4466,6 +4468,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweenspeed / tspeed [num]', DESC = 'Sets how fast all
 CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [plr]', DESC = 'Go to a player while in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
 CMDs[#CMDs + 1] = {NAME = 'unloopgoto', DESC = 'Stops teleporting you to a player'}
+CMDs[#CMDs + 1] = {NAME = 'pulsetp / ptp [plr] [seconds]', DESC = 'Teleports you to a player for a specified ammount of time'}
 CMDs[#CMDs + 1] = {NAME = 'clientbring / cbring [plr] (CLIENT)', DESC = 'Bring a player'}
 CMDs[#CMDs + 1] = {NAME = 'loopbring [plr] [distance] [delay] (CLIENT)', DESC = 'Loop brings a player to you (useful for killing)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopbring [plr]', DESC = 'Undoes loopbring'}
@@ -6737,44 +6740,17 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 	notify('Auto Rejoin','Auto rejoin enabled')
 end)
 
-local Mem = game:GetService('MemStorageService')
-local TP = game:GetService('TeleportService')
-local Http = game:GetService('HttpService')
-function GetPublicServers(a)
-	a = tonumber(a) or game.PlaceId
-	local b, c = {}, ''
-	while c do
-		local d = 'https://games.roblox.com/v1/games/' .. a .. '/servers/Public?sortOrder=Asc&limit=100' .. ((#c <= 0 and '') or ('&cursor=' .. c))
-		local e = Http:JSONDecode(game:HttpGet(d))
-		for _, v in ipairs(e.data) do
-			b[#b + 1] = v
-		end
-		c = e.nextPageCursor
-	end
-	return b
-end
-addcmd('serverhop', {'shop'}, function(args, speaker)
-	local Cache = Mem:HasItem('JobId_CACHE_IY') and Http:JSONDecode(Mem:GetItem('JobId_CACHE_IY')) or {}
-	if not table.find(Cache, game.JobId) then
-		Cache[#Cache + 1] = game.JobId
-	end
-	Mem:RemoveItem('JobId_CACHE_IY')
-	Mem:SetItem('JobId_CACHE_IY', Http:JSONEncode(Cache))
-	local Servers = {}
-	for _, v in ipairs(GetPublicServers(game.PlaceId)) do
-		if type(v) == 'table' and v.maxPlayers > v.playing and not table.find(Cache, v.id) then
-			Servers[#Servers + 1] = v
+addcmd('serverhop',{'shop'},function(args, speaker)
+	local x = {}
+	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
+		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+			x[#x + 1] = v.id
 		end
 	end
-	table.sort(Servers, function(a, b)
-		return a.ping < b.ping
-	end)
-	if #Servers > 0 then
-		notify('Server Hop', 'Teleporting to a new server!')
-		TP:TeleportToPlaceInstance(game.PlaceId, Servers[1].id, speaker)
+	if #x > 0 then
+		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
 	else
-		Mem:RemoveItem('JobId_CACHE_IY')
-		notify('Server Hop', 'Failed to find a new server. Try again.')
+		return notify("Serverhop","Couldn't find a server.")
 	end
 end)
 
@@ -8565,6 +8541,24 @@ addcmd('vehiclegoto',{'vgoto','vtp','vehicletp'},function(args, speaker)
 			vehicleModel:MoveTo(getRoot(Players[v].Character).Position)
 		end
 	end
+end)
+
+addcmd('pulsetp',{'ptp'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		if Players[v].Character ~= nil then
+			local startPos = getRoot(speaker.Character).CFrame
+			local seconds = args[2] or 1
+			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+				wait(.1)
+			end
+			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
+			wait(seconds)
+			getRoot(speaker.Character).CFrame = startPos
+		end
+	end
+	execCmd('breakvelocity')
 end)
 
 local vnoclipParts = {}
@@ -10464,24 +10458,16 @@ addcmd('equiptools',{},function(args, speaker)
 	end
 end)
 
-function NoVelocity()
-	local v3 = Vector3.new()
-	for _, v in ipairs(Players.LocalPlayer.Character:GetDescendants()) do
-		if v:IsA('BasePart') then
-			v.Velocity, v.RotVelocity = v3, v3
-		end
-	end
-end
-function GetHandleTools(p)
+local function GetHandleTools(p)
 	p = p or Players.LocalPlayer
 	local r = {}
 	for _, v in ipairs(p.Character and p.Character:GetChildren() or {}) do
-		if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
+		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
 			r[#r + 1] = v
 		end
 	end
 	for _, v in ipairs(p.Backpack:GetChildren()) do
-		if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
+		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
 			r[#r + 1] = v
 		end
 	end
@@ -10492,43 +10478,33 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 	local OrigPos = speaker.Character.HumanoidRootPart.Position
 	local Tools, TempPos = {}, Vector3.new(math.random(-2e5, 2e5), 2e5, math.random(-2e5, 2e5))
 	for i = 1, LOOP_NUM do
-		local Human = speaker.Character:WaitForChild('Humanoid')
-		for _ = 1, 10 do
-			Human.Parent:MoveTo(TempPos)
-			NoVelocity()
-			wait()
-		end
-		Human.RootPart.Anchored = true
-		local t = GetHandleTools()
+		local Human = speaker.Character:WaitForChild("Humanoid")
+		wait(.1, Human.Parent:MoveTo(TempPos))
+		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
+		local t = GetHandleTools(speaker)
 		while #t > 0 do
 			for _, v in ipairs(t) do
-				for _ = 1, 5 do
-					v.Parent = speaker.Character
-					v.Handle.Anchored = true
-				end
-				for _ = 1, 5 do
-					v.Parent = workspace
-				end
-				if not table.find(Tools, v.Handle) then
-					Tools[#Tools + 1] = v.Handle
-				end
+				coroutine.wrap(function()
+					for _ = 1, 25 do
+						v.Parent = speaker.Character
+						v.Handle.Anchored = true
+					end
+					for _ = 1, 5 do
+						v.Parent = workspace
+					end
+					table.insert(Tools, v.Handle)
+				end)()
 			end
-			t = GetHandleTools()
+			t = GetHandleTools(speaker)
 		end
 		wait(.1)
 		speaker.Character = speaker.Character:Destroy()
-		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
+		speaker.CharacterAdded:Wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
 		if i == LOOP_NUM or i % 5 == 0 then
-			local Root = speaker.Character.HumanoidRootPart
-			if type(firetouchinterest) == "function" and (function()
-				if not identifyexecutor then
-					return true
-				end
-				return identifyexecutor() ~= "ScriptWare"
-			end)() then
+			local HRP = speaker.Character.HumanoidRootPart
+			if type(firetouchinterest) == "function" then
 				for _, v in ipairs(Tools) do
-					v.Anchored = false
-					firetouchinterest(v, Root, 1, firetouchinterest(v, Root, 0))
+					v.Anchored = not firetouchinterest(v, HRP, 1, firetouchinterest(v, HRP, 0)) and false or false
 				end
 			else
 				for _, v in ipairs(Tools) do
@@ -10537,7 +10513,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 						v.CanCollide = false
 						v.Anchored = false
 						for _ = 1, 10 do
-							v.CFrame = Root.CFrame
+							v.CFrame = HRP.CFrame
 							wait()
 						end
 						v.CanCollide = x
@@ -10545,12 +10521,10 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 				end
 			end
 			wait(.1)
-			Human:UnequipTools()
 			Tools = {}
 		end
-		TempPos = TempPos + Vector3.new(3, 0, 0)
+		TempPos = TempPos + Vector3.new(10, math.random(-5, 5), 0)
 	end
-	-- print('Hunter was here ;)')
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
@@ -11773,7 +11747,7 @@ IYMouse.Move:Connect(checkTT)
 spawn(function()
 	if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
 		if ver ~= Version then
-			notify('Outdated','Get the new version at github.com/EdgeIY/infiniteyield')
+			notify('Outdated','Get the new version at infinite.yiff.gg')
 		end
 		if Announcement and Announcement ~= '' then
 			local AnnGUI = Instance.new("Frame")
