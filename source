@@ -2413,7 +2413,7 @@ eventEditor = (function()
 		for i,v in pairs(eventListHolder:GetChildren()) do
 			if v.Name == "EventTemplate" then
 				size = size + 20
-				if v.Expand.Text == "V" then
+				if v.Expand.Text == "v" then
 					size = size + 20*(1+(#events[v.EventName.Text].commands or 0))
 				end
 			end
@@ -2667,7 +2667,7 @@ eventEditor = (function()
 			eventF.Expand.MouseButton1Down:Connect(function()
 				expanded = not expanded
 				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
-				eventF.Expand.Text = expanded and "V" or ">"
+				eventF.Expand.Text = expanded and "v" or ">"
 				resizeList()
 			end)
 
