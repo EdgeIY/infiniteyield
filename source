@@ -4721,6 +4721,7 @@ CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are 
 CMDs[#CMDs + 1] = {NAME = 'ungrabtools / nograbtools', DESC = 'Disables grabtools'}
 CMDs[#CMDs + 1] = {NAME = 'copytools [plr] (CLIENT)', DESC = 'Copies a players tools'}
 CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [num]', DESC = 'Duplicates your inventory tools a set ammount of times'}
+CMDs[#CMDs + 1] = {NAME = 'givetool / givetools', DESC = 'Gives all the tools you\'re holding to [plr] using the attach method.'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
 CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
@@ -10525,6 +10526,40 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		end
 		TempPos = TempPos + Vector3.new(10, math.random(-5, 5), 0)
 	end
+end)
+
+local RS = game:GetService('RunService').RenderStepped
+addcmd('givetool', {'givetools'}, function(args, speaker)
+	local v = Players[getPlayer(args[1], speaker)[1]].Character
+	workspace.CurrentCamera.CameraSubject = v
+	local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
+	local hum = Char and Char:FindFirstChildWhichIsA('Humanoid')
+	local hrp = hum and hum.RootPart
+	local hrppos = hrp.CFrame
+	hum = hum:Destroy() or hum:Clone()
+	hum.Parent = Char
+	hum:ClearAllChildren()
+	speaker:ClearCharacterAppearance()
+	coroutine.wrap(function()
+		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').RootPart.CFrame = wait() and hrppos
+	end)()
+	local vHRP = getRoot(v)
+	while Char and Char.Parent and vHRP and vHRP.Parent do
+		local Tools = false
+		for _, v in ipairs(Char:GetChildren()) do
+			if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
+				Tools = true
+				firetouchinterest(v.Handle, vHRP, 0)
+				firetouchinterest(v.Handle, vHRP, 1)
+			end
+		end
+		if not Tools then
+			break
+		end
+		hrp.CFrame = vHRP.CFrame
+		RS:Wait()
+	end
+	execCmd('re')
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
