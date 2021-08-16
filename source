@@ -9990,7 +9990,11 @@ addcmd('bang',{'rape'},function(args, speaker)
 			end)
 			bangLoop = game:GetService('RunService').Stepped:Connect(function()
 				pcall(function()
-					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[bangplr].Character).CFrame - getRoot(Players[bangplr].Character).CFrame.lookVector
+					if Players[bangplr] == game:GetService('Players').LocalPlayer then
+						getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[bangplr].Character).CFrame
+					else
+						getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[bangplr].Character).CFrame - getRoot(Players[bangplr].Character).CFrame.lookVector
+					end
 				end)
 			end)
 		end
