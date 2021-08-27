@@ -9966,6 +9966,11 @@ addcmd('creeper',{},function(args, speaker)
 	end
 end)
 
+function getTorso(x)
+	x = x or Players.LocalPlayer.Character
+	return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
+end
+
 addcmd('bang',{'rape'},function(args, speaker)
 	if not r15(speaker) then
 		execCmd('unbang')
@@ -9991,7 +9996,7 @@ addcmd('bang',{'rape'},function(args, speaker)
 			local bangOffet = CFrame.new(0, 0, 1.1)
 			bangLoop = game:GetService('RunService').Stepped:Connect(function()
 				pcall(function()
-					local otherRoot = getRoot(Players[bangplr].Character)
+					local otherRoot = getTorso(Players[bangplr].Character)
 					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
 				end)
 			end)
