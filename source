@@ -9983,14 +9983,16 @@ addcmd('bang',{'rape'},function(args, speaker)
 			end
 			local bangplr = Players[v].Name
 			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
-				bangLoop:Disconnect()
+				bangLoop = bangLoop:Disconnect()
 				bang:Stop()
 				bangAnim:Destroy()
 				bangDied:Disconnect()
 			end)
+			local bangOffet = CFrame.new(0, 0, 1.1)
 			bangLoop = game:GetService('RunService').Stepped:Connect(function()
 				pcall(function()
-					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[bangplr].Character).CFrame
+					local otherRoot = getRoot(Players[bangplr].Character)
+					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
 				end)
 			end)
 		end
@@ -10001,7 +10003,7 @@ end)
 
 addcmd('unbang',{'unrape'},function(args, speaker)
 	if bangLoop then
-		bangLoop:Disconnect()
+		bangLoop = bangLoop:Disconnect()
 		bangDied:Disconnect()
 		bang:Stop()
 		bangAnim:Destroy()
