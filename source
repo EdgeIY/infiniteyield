@@ -203,6 +203,8 @@ else
 	elseif success and not err then -- for COREGUI:FindFirstChild('RobloxGui')
 		if COREGUI:FindFirstChild('RobloxGui') then
 			PARENT = COREGUI.RobloxGui
+		else
+            PARENT = COREGUI
 		end
 	end
 	PARENT = Main
