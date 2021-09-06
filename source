@@ -4641,6 +4641,7 @@ CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp [num]', DESC = 'Turns off 
 CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
+CMDs[#CMDs + 1] = {NAME = 'lay / laydown', DESC = 'Makes your character lay down'}
 CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while still being able to walk'}
 CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'Disables nosit'}
@@ -9224,6 +9225,19 @@ end)
 
 addcmd('sit',{},function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid").Sit = true
+end)
+
+addcmd('lay', {'laydown'}, function(args, speaker)
+	local Human = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+	if not Human then
+		return
+	end
+	Human.Sit = true
+	task.wait(.1)
+	Human.RootPart.CFrame = Human.RootPart.CFrame * CFrame.Angles(math.pi * .5, 0, 0)
+	for _, v in ipairs(Human:GetPlayingAnimationTracks()) do
+		v:Stop()
+	end
 end)
 
 addcmd('sitwalk',{},function(args, speaker)
