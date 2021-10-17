@@ -11383,21 +11383,21 @@ addcmd('unhovername',{'nohovername'},function(args, speaker)
 end)
 
 addcmd('hitbox',{},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		if Players[v]~= speaker and Players[v].Character:FindFirstChild('Head') then
-			local sizeArg = tonumber(args[2])
-			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
-			local Head = Players[v].Character:FindFirstChild('Head')
-			if Head:IsA("BasePart") then
-				if not args[2] or sizeArg == 1 then
-					Head.Size = Vector3.new(2,1,1)
-				else
-					Head.Size = Size
-				end
-			end
-		end
-	end
+    local players = getPlayer(args[1], speaker)
+    for i,v in pairs(players) do
+        if Players[v]~= speaker and Players[v].Character:FindFirstChild('HumanoidRootPart') then
+            local sizeArg = tonumber(args[2])
+            local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
+            local Head = Players[v].Character:FindFirstChild('HumanoidRootPart')
+            if Head:IsA("BasePart") then
+                if not args[2] or sizeArg == 1 then
+                    Head.Size = Vector3.new(2,1,1)
+                else
+                    Head.Size = Size
+                end
+            end
+        end
+    end
 end)
 
 addcmd('stareat',{'stare'},function(args, speaker)
