@@ -4275,6 +4275,7 @@ Match = function(name,str)
 	return name:lower():find(str:lower()) and true
 end
 
+local matchSearch = function(str1,str2) return str1 == string.sub(str2,1,#str1) end
 local canvasPos = Vector2.new(0,0)
 local topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
@@ -4293,7 +4294,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	for i,v in next, frame:GetChildren() do
 		if v:IsA("TextButton") then
 			if bool then
-				if Match(v.Text,str) then
+				if matchSearch(str,v.Text) then
 					indexnum = indexnum + 1
 					v.Visible = true
 					if topCommand == nil then
@@ -5440,10 +5441,6 @@ Players.LocalPlayer.Chatted:Connect(function()
 		do_exec(message, Players.LocalPlayer)
 	end
 end)
-
-local matchSearch = function(str1, str2)
-	return str1 == string.sub(str2,1,#str1)
-end
 
 local stringFind = function(tbl, str)
 	if tbl == nil then return end
