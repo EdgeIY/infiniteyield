@@ -6,7 +6,15 @@ end
 pcall(function() getgenv().IY_LOADED  = true end)
 
 if not game:IsLoaded() then
-	local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
+	local notLoaded
+	local success, err = pcall(function()
+		notLoaded = Instance.new("Message", game:GetService("CoreGui"))
+	end)
+	if not success and err then
+		notLoaded = Instance.new("Message", game:GetService('Workspace'))
+	else
+		notLoaded = Instance.new("Message", game:GetService("CoreGui"))
+	end
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
 	game.Loaded:Wait()
 	notLoaded:Destroy()
@@ -184,12 +192,22 @@ elseif get_hidden_gui or gethui then
 	Main.Name = randomString()
 	Main.Parent = hiddenUI()
 	PARENT = Main
-elseif COREGUI:FindFirstChild('RobloxGui') then
-	PARENT = COREGUI.RobloxGui
 else
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
-	Main.Parent = COREGUI
+	local success, err = pcall(function()
+		Main.Parent = COREGUI
+	end)
+	if not success and err then
+		COREGUI = Players.LocalPlayer.PlayerGui
+		Main.Parent = COREGUI
+	elseif success and not err then -- for COREGUI:FindFirstChild('RobloxGui')
+		if COREGUI:FindFirstChild('RobloxGui') then
+			PARENT = COREGUI.RobloxGui
+		else
+            PARENT = COREGUI
+		end
+	end
 	PARENT = Main
 end
 
