@@ -6,21 +6,13 @@ end
 pcall(function() getgenv().IY_LOADED  = true end)
 
 if not game:IsLoaded() then
-	local notLoaded
-	local success, err = pcall(function()
-		notLoaded = Instance.new("Message", game:GetService("CoreGui"))
-	end)
-	if not success and err then
-		notLoaded = Instance.new("Message", game:GetService('Workspace'))
-	else
-		notLoaded = Instance.new("Message", game:GetService("CoreGui"))
-	end
+	local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
 	game.Loaded:Wait()
 	notLoaded:Destroy()
 end
 
-ver = '5.3.3'
+ver = '5.3.4'
 
 Players = game:GetService("Players")
 
@@ -28,7 +20,6 @@ Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
 Dark = Instance.new("Frame")
 Cmdbar = Instance.new("TextBox")
-CmdSuggestion = Instance.new("TextLabel")
 CMDsF = Instance.new("ScrollingFrame")
 cmdListLayout = Instance.new("UIListLayout")
 SettingsButton = Instance.new("ImageButton")
@@ -192,22 +183,12 @@ elseif get_hidden_gui or gethui then
 	Main.Name = randomString()
 	Main.Parent = hiddenUI()
 	PARENT = Main
+elseif COREGUI:FindFirstChild('RobloxGui') then
+	PARENT = COREGUI.RobloxGui
 else
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
-	local success, err = pcall(function()
-		Main.Parent = COREGUI
-	end)
-	if not success and err then
-		COREGUI = Players.LocalPlayer.PlayerGui
-		Main.Parent = COREGUI
-	elseif success and not err then -- for COREGUI:FindFirstChild('RobloxGui')
-		if COREGUI:FindFirstChild('RobloxGui') then
-			PARENT = COREGUI.RobloxGui
-		else
-            PARENT = COREGUI
-		end
-	end
+	Main.Parent = COREGUI
 	PARENT = Main
 end
 
@@ -265,19 +246,6 @@ Cmdbar.TextColor3 = Color3.new(1, 1, 1)
 Cmdbar.Text = ""
 Cmdbar.ZIndex = 10
 Cmdbar.PlaceholderText = "Command Bar"
-
-CmdSuggestion.Name = "CmdSuggestion"
-CmdSuggestion.Parent = Cmdbar
-CmdSuggestion.BackgroundTransparency = 1
-CmdSuggestion.BorderSizePixel = 0
-CmdSuggestion.Position = UDim2.new(0, 0, 0, 0)
-CmdSuggestion.Size = UDim2.new(0, 240, 0, 25)
-CmdSuggestion.Font = Enum.Font.SourceSans
-CmdSuggestion.TextSize = 18
-CmdSuggestion.TextXAlignment = Enum.TextXAlignment.Left
-CmdSuggestion.TextColor3 = Color3.fromRGB(171, 171, 171)
-CmdSuggestion.Text = ""
-CmdSuggestion.ZIndex = 10
 
 CMDsF.Name = "CMDs"
 CMDsF.Parent = Holder
@@ -4293,7 +4261,6 @@ Match = function(name,str)
 	return name:lower():find(str:lower()) and true
 end
 
-local matchSearch = function(str1,str2) return str1 == string.sub(str2,1,#str1) end
 local canvasPos = Vector2.new(0,0)
 local topCommand = nil
 IndexContents = function(str,bool,cmdbar,Ianim)
@@ -4312,7 +4279,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	for i,v in next, frame:GetChildren() do
 		if v:IsA("TextButton") then
 			if bool then
-				if matchSearch(str,v.Text) then
+				if Match(v.Text,str) then
 					indexnum = indexnum + 1
 					v.Visible = true
 					if topCommand == nil then
@@ -4657,8 +4624,7 @@ CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
 CMDs[#CMDs + 1] = {NAME = 'muteboombox [plr]', DESC = 'Mutes someones boombox'}
 CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [plr]', DESC = 'Unmutes someones boombox'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
-CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players HumanoidRootPart (default is 1)'}
-CMDs[#CMDs + 1] = {NAME = 'headsize [plr] [size]', DESC = 'Expands the head size for players Head (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players heads (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
@@ -5461,74 +5427,10 @@ Players.LocalPlayer.Chatted:Connect(function()
 	end
 end)
 
-local stringFind = function(tbl, str)
-	if tbl == nil then return end
-	if type(tbl) == "table" then
-		for _, v in ipairs(tbl) do
-			if matchSearch(str,v) then return v end
-		end
-	end
-end
-
-local getPlrArguments = function(argument)
-	local arg = string.lower(argument)
-	local specialcases = {"all", "others", "random", "me", "nearest", "farthest", "allies", "enemies", "team", "nonteam", "friends", "nonfriends", "bacons", "nearest", "farthest", "alive", "dead"}
-	return stringFind(specialcases, arg) or (function()
-		for _, v in ipairs(Players:GetPlayers()) do
-			local Name = string.lower(v.Name)
-			if matchSearch(arg, Name) then return Name end
-		end
-	end)()
-end
-
 Cmdbar.PlaceholderText = "Command Bar ("..prefix..")"
 Cmdbar:GetPropertyChangedSignal("Text"):Connect(function()
 	if Cmdbar:IsFocused() then
-		spawn(function()
-			IndexContents(Cmdbar.Text,true,true)
-		end)
-		CmdSuggestion.Text = ""
-		local InputText = Cmdbar.Text
-		local Args = string.split(InputText, " ")
-		local CmdArgs = cargs or {}
-		if InputText == "" then return end
-		for _, v in next, cmds do
-			local Name = v.NAME
-			local Aliases = v.ALIAS
-			local FoundAlias = false
-			if matchSearch(InputText, Name) then
-				CmdSuggestion.Text = Name
-				break
-			end
-			for _, v2 in next, Aliases do
-				if matchSearch(InputText, v2) then
-					FoundAlias = true
-					CmdSuggestion.Text = v2
-					break
-				end
-				if FoundAlias then break end
-			end
-		end
-		for i,v in next, Args do
-			if i > 1 and v ~= "" then
-				local Predict = ""
-				if #CmdArgs >= 1 then
-					Predict = getPlrArguments(v) or Predict
-				else
-					Predict = getPlrArguments(v) or Predict
-				end
-				CmdSuggestion.Text = string.sub(InputText, 1, #InputText - #Args[#Args]) .. Predict
-				local split = v:split(",")
-				if next(split) then
-					for i2, v2 in next, split do
-						if i2 > 1 and v2 ~= "" then
-							local PlayerName = getPlrArguments(v2)
-							CmdSuggestion.Text = string.sub(InputText, 1, #InputText - #split[#split]) .. (PlayerName or "")
-						end
-					end
-				end
-			end
-		end
+		IndexContents(Cmdbar.Text,true,true)
 	end
 end)
 
@@ -5542,7 +5444,6 @@ Cmdbar.FocusLost:Connect(function(enterpressed)
 	wait()
 	if not Cmdbar:IsFocused() then
 		Cmdbar.Text = ""
-		CmdSuggestion.Text = ""
 		IndexContents('',true,false,true)
 		if SettingsOpen == true then
 			wait(0.2)
@@ -5561,23 +5462,10 @@ Cmdbar.Focused:Connect(function()
 		CMDsF.Visible = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 	end
-	tabComplete = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
 		if Cmdbar:IsFocused() then
-			if input.KeyCode == Enum.KeyCode.Tab then
-				if CmdSuggestion.Text == ("" or " ") then
-				else
-					if string.match(CmdSuggestion.Text, " ") then
-						Cmdbar.Text = CmdSuggestion.Text
-						wait()
-						Cmdbar.Text = Cmdbar.Text:gsub("\t", "")
-						Cmdbar.CursorPosition = #Cmdbar.Text + 1
-					else
-						Cmdbar.Text = CmdSuggestion.Text .. " "
-						wait()
-						Cmdbar.Text = Cmdbar.Text:gsub("\t", "")
-						Cmdbar.CursorPosition = #Cmdbar.Text + 1
-					end
-				end
+			if input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
+				autoComplete(topCommand)
 			end
 		else
 			tabComplete:Disconnect()
@@ -7147,23 +7035,23 @@ addcmd('cframefly', {'cfly'}, function(args, ME)
 		-- local Cache = {}
 		-- local Cons = {game.ItemChanged, Human.StateChanged, Human.Changed, ME.Character.Changed}
 		-- for _, v in ipairs(ME.Character:GetChildren()) do
-			-- if v:IsA('BasePart') then
-				-- Cons[#Cons + 1] = v.Changed
-				-- Cons[#Cons + 1] = v:GetPropertyChangedSignal('CFrame')
-			-- end
+		-- if v:IsA('BasePart') then
+		-- Cons[#Cons + 1] = v.Changed
+		-- Cons[#Cons + 1] = v:GetPropertyChangedSignal('CFrame')
+		-- end
 		-- end
 		-- for _, v in ipairs(Cons) do
-			-- for _, v1 in ipairs(getconnections(v)) do
-				-- if not rawget(v1, '__OBJECT_ENABLED') then
-					-- Cache[#Cache + 1] = v1
-					-- v1:Disable()
-				-- end
-			-- end
+		-- for _, v1 in ipairs(getconnections(v)) do
+		-- if not rawget(v1, '__OBJECT_ENABLED') then
+		-- Cache[#Cache + 1] = v1
+		-- v1:Disable()
+		-- end
+		-- end
 		-- end
 		Human:ChangeState(11)
 		HRP.CFrame = CFrame.new(HRP.Position, HRP.Position + Camera.CFrame.LookVector) * (UIS:GetFocusedTextBox() and cf or CFrame.new((UIS:IsKeyDown(Keys.D) and SPI) or (UIS:IsKeyDown(Keys.A) and -SPI) or 0, (UIS:IsKeyDown(Keys.E) and SPI / 2) or (UIS:IsKeyDown(Keys.Q) and -SPI / 2) or 0, (UIS:IsKeyDown(Keys.S) and SPI) or (UIS:IsKeyDown(Keys.W) and -SPI) or 0))
 		-- for _, v in ipairs(Cache) do
-			-- v:Enable()
+		-- v:Enable()
 		-- end
 	end)
 end)
@@ -11510,7 +11398,7 @@ addcmd('unhovername',{'nohovername'},function(args, speaker)
 	end
 end)
 
-addcmd('headsize',{},function(args, speaker)
+addcmd('hitbox',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		if Players[v]~= speaker and Players[v].Character:FindFirstChild('Head') then
@@ -11522,26 +11410,6 @@ addcmd('headsize',{},function(args, speaker)
 					Head.Size = Vector3.new(2,1,1)
 				else
 					Head.Size = Size
-				end
-			end
-		end
-	end
-end)
-
-addcmd('hitbox',{},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		if Players[v]~= speaker and Players[v].Character:FindFirstChild('HumanoidRootPart') then
-			local sizeArg = tonumber(args[2])
-			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
-			local Root = Players[v].Character:FindFirstChild('HumanoidRootPart')
-			if Root:IsA("BasePart") then
-				if not args[2] or sizeArg == 1 then
-					Root.Size = Vector3.new(2,1,1)
-					Root.Transparency = 0.4
-				else
-					Root.Size = Size
-					Root.Transparency = 0.4
 				end
 			end
 		end
