@@ -11175,7 +11175,7 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 					v1 = ((v1.IsA(v1, "BasePart") and firetouchinterest(Handle, v1, 1, (RS.Wait(RS) and nil) or firetouchinterest(Handle, v1, 0)) and nil) or v1) or v1
 				end
 			end
-			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequiped the tool!")
+			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
 		end)
 	end
 end)
