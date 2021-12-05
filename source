@@ -11790,6 +11790,7 @@ keycodeMap = {
 	["pause"] = 0x13,
 	["capslock"] = 0x14,
 	["spacebar"] = 0x20,
+	["space"] = 0x20,
 	["pageup"] = 0x21,
 	["pagedown"] = 0x22,
 	["end"] = 0x23,
