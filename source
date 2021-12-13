@@ -4619,6 +4619,9 @@ CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]'
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'stareat / stare [plr]', DESC = 'Stare / look at a player'}
 CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [plr]', DESC = 'Disables stareat'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'Notify if someone from a watched group joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatchstop', DESC = 'Disable Rolewatch'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatchleave', DESC = 'Toggle if you should leave the game if someone from a watched group joins the server'}
 CMDs[#CMDs + 1] = {NAME = 'attach [plr] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'kill [plr] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastkill [plr] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
@@ -4681,7 +4684,7 @@ CMDs[#CMDs + 1] = {NAME = 'nohead / headless', DESC = 'Removes your head (uses s
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
-CMDs[#CMDs + 1] = {NAME = 'naked', DESC = 'Removes your clothing'}
+CMDs[#CMDs + 1] = {NAME = 'naked (CLIENT)', DESC = 'Removes your clothing'}
 CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
 CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
 CMDs[#CMDs + 1] = {NAME = 'blockhats', DESC = 'Turns your hats into blocks'}
@@ -11599,6 +11602,41 @@ addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
 	if stareLoop then
 		stareLoop:Disconnect()
 	end
+end)
+
+local RolewatchData = {["Group"]=0,["Role"]="",["Leave"]=false}
+local RolewatchConnection = Players.PlayerAdded:Connect(function(player)
+	if RolewatchData.Group == 0 then return end
+	if player:IsInGroup(RolewatchData.Group) then
+		if tostring(player:GetRoleInGroup(RolewatchData.Group)):lower() == RolewatchData.Role:lower() then
+			if RolewatchData.Leave == true then
+				Players.LocalPlayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
+			else
+				notify("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
+			end
+		end
+	end
+end)
+
+addcmd('rolewatch',{},function(args, speaker)
+	local groupid = args[1] or 0
+	if isNumber(groupid) then
+		if args[2] then
+			local rolename = tostring(getstring(2))
+			RolewatchData.Group = tonumber(groupid)
+			RolewatchData.Role = rolename
+			notify("Rolewatch", "Watching Group ID \"" .. tostring(groupid) .. "\" for Role \"" .. rolename .. "\"")
+		end
+	end
+end)
+
+addcmd('rolewatchstop',{},function(args, speaker)
+	RolewatchData = {["Group"]=0,["Role"]="",["Leave"]=false}
+end)
+
+addcmd('rolewatchleave',{},function(args, speaker)
+	RolewatchData.Leave = not RolewatchData.Leave
+	notify("Rolewatch", RolewatchData.Leave and "Leave has been Enabled" or "Leave has been Disabled")
 end)
 
 addcmd('removeterrain',{'rterrain','noterrain'},function(args, speaker)
