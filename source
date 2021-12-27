@@ -4767,6 +4767,7 @@ CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cm
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
+CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
 wait()
 
 for i = 1, #CMDs do
@@ -7702,6 +7703,20 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.Enabled = false
 		end
 	end
+	workspace.DescendantAdded:Connect(function(child)
+		coroutine.wrap(function()
+			if child:IsA('ForceField') then
+				game:GetService('RunService').Heartbeat:Wait()
+				child:Destroy()
+			elseif child:IsA('Sparkles') then
+				game:GetService('RunService').Heartbeat:Wait()
+				child:Destroy()
+			elseif child:IsA('Smoke') or child:IsA('Fire') then
+				game:GetService('RunService').Heartbeat:Wait()
+				child:Destroy()
+			end
+		end)()
+	end)
 end)
 
 addcmd('setfpscap', {'fpscap', 'maxfps'}, function(args, speaker)
@@ -10408,6 +10423,11 @@ addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
 	end
+end)
+
+addcmd('notifyping',{'ping'},function(args, speaker)
+	local Current_Ping = string.split(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString(), " ")[1] .. "ms"
+	notify("Ping", tostring(Current_Ping))
 end)
 
 simRadius = false
