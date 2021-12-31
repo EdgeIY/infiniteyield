@@ -10416,9 +10416,9 @@ end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
 	if fireproximityprompt then
-		for i, v in pairs(workspace:GetDescendants()) do
-			if v:FindFirstChild("ProximityPrompt") then
-				fireproximityprompt(v.ProximityPrompt)
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("ProximityPrompt") then
+				fireproximityprompt(v)
 			end
 		end
 	else
