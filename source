@@ -599,7 +599,7 @@ Credits.Position = UDim2.new(0, 0, 0.9, 30)
 Credits.Size = UDim2.new(0, 250, 0, 20)
 Credits.Font = Enum.Font.SourceSansLight
 Credits.FontSize = Enum.FontSize.Size18
-Credits.Text = "Edge // Zwolf // Moon // Hunter"
+Credits.Text = "Edge // Zwolf // Moon // Toon"
 Credits.TextColor3 = Color3.new(1, 1, 1)
 Credits.ZIndex = 10
 
@@ -3952,11 +3952,24 @@ JoinLog = function(plr)
 	end
 end
 
+local CleanFileName = function(str)
+	str = tostring(str)
+	str = str:gsub("*", "")
+	str = str:gsub("\"", "")
+	str = str:gsub("\\", "")
+	str = str:gsub("?", "")
+	str = str:gsub(":", "")
+	str = str:gsub("<", "")
+	str = str:gsub(">", "")
+	str = str:gsub("|", "")
+	return str
+end
+
 SaveChatlogs.MouseButton1Down:Connect(function()
 	if writefileExploit() then
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
-			local placeName = game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name
+			local placeName = CleanFileName(game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name)
 			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
@@ -4478,6 +4491,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweenwaypoint / twp [name]', DESC = 'Tweens player to
 CMDs[#CMDs + 1] = {NAME = 'walktowaypoint / wtwp [name]', DESC = 'Walks player to a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'cleargamewaypoints / cgamewp', DESC = 'Clears all waypoints for the game you are in'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [plr]', DESC = 'Tween to a player (bypasses some anti cheats)'}
@@ -4540,6 +4554,8 @@ CMDs[#CMDs + 1] = {NAME = 'freecamwaypoint / fcwp [name]', DESC = 'Moves / opens
 CMDs[#CMDs + 1] = {NAME = 'freecamgoto / fcgoto / fctp [plr]', DESC = 'Moves / opens freecam to a player'}
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
 CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'notifyfreecamposition / notifyfcpos', DESC = 'Noitifies you your freecam coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'copyfreecamposition / copyfcpos', DESC = 'Copies your freecam coordinates to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
 CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the location of your camera'}
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
@@ -4652,6 +4668,7 @@ CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to ot
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
 CMDs[#CMDs + 1] = {NAME = 'speed / ws [num]', DESC = 'Change your walkspeed'}
+CMDs[#CMDs + 1] = {NAME = 'spoofspeed / spoofws [num]', DESC = 'Spoofs your WalkSpeed on the Client'}
 CMDs[#CMDs + 1] = {NAME = 'loopspeed / loopws [num]', DESC = 'Loops your walkspeed'}
 CMDs[#CMDs + 1] = {NAME = 'unloopspeed / unloopws', DESC = 'Turns off loopspeed'}
 CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip height'}
@@ -6456,7 +6473,10 @@ addcmd('toggleunkeepiy', {}, function(args, speaker)
 	end
 end)
 
+local canOpenServerinfo = true
 addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
+	if not canOpenServerinfo then return end
+	canOpenServerinfo = false
 	task.spawn(function()
 		local FRAME = Instance.new("Frame")
 		local shadow = Instance.new("Frame")
@@ -6724,6 +6744,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil) 
 			wait(0.6)
 			FRAME:Destroy()
+			canOpenServerinfo = true
 		end)
 		local Asset = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
 		SINFOGUI.name.Text = "Place Name: " .. Asset.Name
@@ -7465,6 +7486,29 @@ addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'},function(args
 	updatesaves()
 	AllWaypoints = {}
 	notify('Modified Waypoints','Removed all waypoints')
+end)
+
+addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
+	for i,v in pairs(WayPoints) do
+		if v.GAME == game.PlaceId then
+			table.remove(WayPoints, i)
+		end
+	end
+	if AllWaypoints ~= nil and #AllWaypoints > 0 then
+		for i,v in pairs(AllWaypoints) do
+			if v.GAME == game.PlaceId then
+				table.remove(AllWaypoints, i)
+			end
+		end
+	end
+	for i,v in pairs(pWayPoints) do
+		if v.GAME == game.PlaceId then
+			table.remove(pWayPoints, i)
+		end
+	end
+	refreshwaypoints()
+	updatesaves()
+	notify('Modified Waypoints','Deleted game waypoints')
 end)
 
 addcmd('enable',{},function(args, speaker)
@@ -8241,6 +8285,22 @@ addcmd('freecamspeed',{'fcspeed'},function(args, speaker)
 	local FCspeed = args[1] or 1
 	if isNumber(FCspeed) then
 		NAV_KEYBOARD_SPEED = Vector3.new(FCspeed, FCspeed, FCspeed)
+	end
+end)
+
+addcmd('notifyfreecamposition',{'notifyfcpos'},function(args, speaker)
+	if fcRunning then
+		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
+		local Format, Round = string.format, math.round
+		notify("Current Position", Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
+	end
+end)
+
+addcmd('copyfreecamposition',{'copyfcpos'},function(args, speaker)
+	if fcRunning then
+		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
+		local Format, Round = string.format, math.round
+		toClipboard(Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
 	end
 end)
 
@@ -9799,6 +9859,27 @@ addcmd('speed',{'ws','walkspeed'},function(args, speaker)
 		local speed = args[1] or 16
 		if isNumber(speed) then
 			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
+		end
+	end
+end)
+
+addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		local getrawmt = (debug and debug.getmetatable) or getrawmetatable
+		local setReadOnly = setreadonly or (make_writeable and function(table, readonly) if readonly then make_readonly(table) else make_writeable(table) end end)
+		local gameMt = getrawmt(game)
+		if gameMt then
+			local OldIndex = gameMt.__index
+			setReadOnly(gameMt, false)
+			gameMt.__index = newcclosure(function(Self, Self2)
+				if Self:IsA('Humanoid') and string.lower(tostring(Self2)) == 'walkspeed' then
+					return args[1]
+				end
+				return OldIndex(Self, Self2)
+			end)
+			setReadOnly(gameMt, true)
+		else
+			notify('Incompatible Exploit','Your exploit does not support this command (missing getrawmetatable)')
 		end
 	end
 end)
