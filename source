@@ -4504,6 +4504,8 @@ CMDs[#CMDs + 1] = {NAME = 'clientbring / cbring [plr] (CLIENT)', DESC = 'Bring a
 CMDs[#CMDs + 1] = {NAME = 'loopbring [plr] [distance] [delay] (CLIENT)', DESC = 'Loop brings a player to you (useful for killing)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopbring [plr]', DESC = 'Undoes loopbring'}
 CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player'}
+CMDs[#CMDs + 1] = {NAME = 'unfreezeanims', DESC = 'Unfreezes your animations / plays your animations'}
+CMDs[#CMDs + 1] = {NAME = 'freezeanims', DESC = 'Freezes your animations / pauses your animations - Does not work on default animations'}
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'tweentpposition / ttppos [X Y Z]', DESC = 'Tween to coordinates (bypasses some anti cheats)'}
@@ -4592,8 +4594,6 @@ CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd', DESC = 'Uses all click 
 CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests', DESC = 'Uses all touchinterests in a game'}
 CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp', DESC = 'Uses all proximity prompts in a game'}
-CMDs[#CMDs + 1] = {NAME = 'simulationradius / simradius', DESC = 'Sets your SimulationRadius to math.huge'}
-CMDs[#CMDs + 1] = {NAME = 'nosimulationradius / nosimradius', DESC = 'Turns off the SimulationRadius loop and restores values to default'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
@@ -8957,6 +8957,7 @@ addcmd('freeze',{'fr'},function(args, speaker)
 	end
 end)
 
+
 addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
@@ -9031,6 +9032,25 @@ end)
 addcmd('reset',{},function(args, speaker)
 	speaker.Character:BreakJoints()
 end)
+
+addcmd('freezeanims',{},function(args, speaker)
+    Humanoid = speaker.Character:FindFirstChild("Humanoid") or speaker.Character:FindFirstChildOfClass("AnimationController")
+	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+	for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(0)
+	end
+end)
+
+addcmd('unfreezeanims',{},function(args, speaker)
+    Humanoid = speaker.Character:FindFirstChild("Humanoid") or speaker.Character:FindFirstChildOfClass("AnimationController")
+	local ActiveTracks = Humanoid:GetPlayingAnimationTracks()
+	for _, v in pairs(ActiveTracks) do
+        v:AdjustSpeed(1)
+	end
+end)
+
+
+
 
 addcmd('respawn',{},function(args, speaker)
 	respawn(speaker)
@@ -9366,7 +9386,6 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 
 		local speaker = Players.LocalPlayer
 
-		sethidden(speaker, "SimulationRadius", math.huge)
 
 		local test = Instance.new("Model")
 		local hum  = Instance.new("Humanoid")
@@ -10128,6 +10147,7 @@ addcmd('chat',{'say'},function(args, speaker)
 	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
 end)
 
+
 spamming = false
 spamspeed = 1
 addcmd('spam',{},function(args, speaker)
@@ -10522,38 +10542,6 @@ addcmd('notifyping',{'ping'},function(args, speaker)
 	notify("Ping", tostring(Current_Ping))
 end)
 
-simRadius = false
-addcmd('simulationradius',{'simradius'},function(args, speaker)
-	if sethidden then		
-		simRadLoop = game:GetService('RunService').Stepped:Connect(function()
-			if setsimulation then
-				setsimulation(1e308, 1/0)
-			else	
-				sethidden(speaker,"MaximumSimulationRadius",1/0)
-				sethidden(speaker,"SimulationRadius", 1e308)
-			end
-		end)
-		simRadius = true
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
-end)
-
-addcmd('nosimulationradius',{'nosimradius','unsimradius'},function(args, speaker)
-	if sethidden then		
-		if simRadLoop then simRadLoop:Disconnect() end
-		wait()
-		if setsimulation then
-			setsimulation(139,139)
-		else	
-			sethidden(speaker,"MaximumSimulationRadius",139)
-			sethidden(speaker,"SimulationRadius", 139)
-		end
-		simRadius = false
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
-end)
 
 addcmd('grabtools', {}, function(args, speaker)
 	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
@@ -11850,9 +11838,6 @@ addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
 							c:Destroy()
 						end
 					end
-					if not simRadius then
-						execCmd('simulationradius')
-					end
 					local bodypos = Instance.new("BodyPosition")
 					bodypos.Parent = v
 					bodypos.Position = v.Position
@@ -11880,9 +11865,6 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(ar
 	if sethidden then
 		if freezingua then
 			freezingua:Disconnect()
-		end
-		if not simRadius then
-			execCmd('simulationradius')
 		end
 		for i,v in pairs(frozenParts) do
 			for i,c in pairs(v:GetChildren()) do
@@ -11917,9 +11899,6 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
 						table.insert(frozenParts,part)
 					end
 				end
-			end
-			if not simRadius then
-				execCmd('simulationradius')
 			end
 			for i,c in pairs(Forces) do
 				c.Position = Players[v].Character.Head.Position
