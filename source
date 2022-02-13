@@ -10194,37 +10194,12 @@ addcmd('spamspeed',{},function(args, speaker)
 	end
 end)
 
-bubblechatting = false
-local getBubblechat
 addcmd('bubblechat',{},function(args, speaker)
-	if bubblechatting then return end
-	bubblechatting = true
-	if getBubblechat then getBubblechat:Disconnect() end
-	getBubblechat = Players.PlayerAdded:Connect(function(plr)
-		local chatfunc
-		chatfunc = plr.Chatted:Connect(function(chat)
-			if bubblechatting == true then
-				game:GetService("Chat"):Chat(plr.Character.Head,chat,Enum.ChatColor.White)
-			else
-				chatfunc:Disconnect()
-			end
-		end)
-	end)
-	for i,v in pairs(Players:GetPlayers()) do
-		local chatfunc
-		chatfunc = v.Chatted:Connect(function(chat)
-			if bubblechatting == true then
-				game:GetService("Chat"):Chat(v.Character.Head,chat,Enum.ChatColor.White)
-			else
-				chatfunc:Disconnect()
-			end
-		end)
-	end
+	game:GetService("Chat").BubbleChatEnabled = true
 end)
 
 addcmd('unbubblechat',{'nobubblechat'},function(args, speaker)
-	bubblechatting = false
-	if getBubblechat then getBubblechat:Disconnect() end
+	game:GetService("Chat").BubbleChatEnabled = false
 end)
 
 addcmd('safechat',{},function(args, speaker)
