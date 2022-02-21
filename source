@@ -10261,7 +10261,7 @@ addcmd('bang',{'rape'},function(args, speaker)
 		execCmd('unbang')
 		wait()
 		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players)do
+		for i,v in pairs(players) do
 			bangAnim = Instance.new("Animation")
 			bangAnim.AnimationId = "rbxassetid://148840371"
 			bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
@@ -10287,7 +10287,34 @@ addcmd('bang',{'rape'},function(args, speaker)
 			end)
 		end
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		execCmd('unbang')
+		wait()
+		local players = getPlayer(args[1], speaker)
+		for i,v in pairs(players) do
+			bangAnim = Instance.new("Animation")
+			bangAnim.AnimationId = "rbxassetid://5918726674"
+			bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
+			bang:Play(.1, 1, 1)
+			if args[2] then
+				bang:AdjustSpeed(args[2])
+			else
+				bang:AdjustSpeed(3)
+			end
+			local bangplr = Players[v].Name
+			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+				bangLoop = bangLoop:Disconnect()
+				bang:Stop()
+				bangAnim:Destroy()
+				bangDied:Disconnect()
+			end)
+			local bangOffet = CFrame.new(0, 0, 1.1)
+			bangLoop = game:GetService('RunService').Stepped:Connect(function()
+				pcall(function()
+					local otherRoot = getTorso(Players[bangplr].Character)
+					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
+				end)
+			end)
+		end
 	end
 end)
 
