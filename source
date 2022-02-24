@@ -8389,7 +8389,6 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	end
 end)
 
-
 addcmd('maxzoom',{},function(args, speaker)
 	speaker.CameraMaxZoomDistance = args[1]
 end)
@@ -10257,64 +10256,37 @@ function getTorso(x)
 end
 
 addcmd('bang',{'rape'},function(args, speaker)
-	if not r15(speaker) then
-		execCmd('unbang')
-		wait()
-		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players) do
-			bangAnim = Instance.new("Animation")
+	execCmd('unbang')
+	wait()
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		bangAnim = Instance.new("Animation")
+		if not r15(speaker) then
 			bangAnim.AnimationId = "rbxassetid://148840371"
-			bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
-			bang:Play(.1, 1, 1)
-			if args[2] then
-				bang:AdjustSpeed(args[2])
-			else
-				bang:AdjustSpeed(3)
-			end
-			local bangplr = Players[v].Name
-			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
-				bangLoop = bangLoop:Disconnect()
-				bang:Stop()
-				bangAnim:Destroy()
-				bangDied:Disconnect()
-			end)
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = game:GetService('RunService').Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
-			end)
-		end
-	else
-		execCmd('unbang')
-		wait()
-		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players) do
-			bangAnim = Instance.new("Animation")
+		else
 			bangAnim.AnimationId = "rbxassetid://5918726674"
-			bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
-			bang:Play(.1, 1, 1)
-			if args[2] then
-				bang:AdjustSpeed(args[2])
-			else
-				bang:AdjustSpeed(3)
-			end
-			local bangplr = Players[v].Name
-			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
-				bangLoop = bangLoop:Disconnect()
-				bang:Stop()
-				bangAnim:Destroy()
-				bangDied:Disconnect()
-			end)
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = game:GetService('RunService').Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
-			end)
 		end
+		bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
+		bang:Play(.1, 1, 1)
+		if args[2] then
+			bang:AdjustSpeed(args[2])
+		else
+			bang:AdjustSpeed(3)
+		end
+		local bangplr = Players[v].Name
+		bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			bangLoop = bangLoop:Disconnect()
+			bang:Stop()
+			bangAnim:Destroy()
+			bangDied:Disconnect()
+		end)
+		local bangOffet = CFrame.new(0, 0, 1.1)
+		bangLoop = game:GetService('RunService').Stepped:Connect(function()
+			pcall(function()
+				local otherRoot = getTorso(Players[bangplr].Character)
+				getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
+			end)
+		end)
 	end
 end)
 
