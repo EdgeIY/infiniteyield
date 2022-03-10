@@ -11058,8 +11058,14 @@ addcmd('drophats',{'drophat'},function(args, speaker)
 end)
 
 addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
-	if speaker.Character then
-		speaker.Character:FindFirstChildOfClass("Humanoid"):RemoveAccessories()
+	 for i,v in next, speaker.Character:GetDescendants() do
+	    if v:IsA("Accessory") then
+		for i,p in next, v:GetDescendants() do
+		    if p:IsA("Weld") then
+			p:Destroy()
+		    end
+		end
+	    end
 	end
 end)
 
