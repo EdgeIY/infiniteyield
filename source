@@ -2971,13 +2971,22 @@ defaults = game:GetService("HttpService"):JSONEncode(defaultsettings)
 local KeepInfYield = false
 nosaves = false
 
+local fileExtension = "iy"
+local utility, utilityVer = identifyexecutor()
+
+if utility == 'Synapse' then
+    if string.sub(utilityVer, 1, 1) == '3' then
+        fileExtension = .iy
+    end
+end
+
 local loadedEventData = nil
 function saves()
 	if writefileExploit() then
-		if pcall(function() readfile("IY_FE.iy") end) then
-			if readfile("IY_FE.iy") ~= nil then
+		if pcall(function() readfile("IY_FE." .. fileExtension) end) then
+			if readfile("IY_FE." .. fileExtension) ~= nil then
 				local success, response = pcall(function()
-					local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE.iy"))
+					local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE." .. fileExtension))
 					if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 					if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
 					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = false end
@@ -2999,19 +3008,19 @@ function saves()
 				if not success then
 					warn("Save Json Error:", response)
 					warn("Overwriting Save File")
-					writefileCooldown("IY_FE.iy", defaults)
+					writefileCooldown("IY_FE" .. fileExtension, defaults)
 					wait()
 					saves()
 				end
 			else
-				writefileCooldown("IY_FE.iy", defaults)
+				writefileCooldown("IY_FE" .. fileExtension, defaults)
 				wait()
 				saves()
 			end
 		else
-			writefileCooldown("IY_FE.iy", defaults)
+			writefileCooldown("IY_FE" .. fileExtension, defaults)
 			wait()
-			if pcall(function() readfile("IY_FE.iy") end) then
+			if pcall(function() readfile("IY_FE" .. fileExtension) end) then
 				saves()
 			else
 				nosaves = true
@@ -3139,7 +3148,7 @@ function updatesaves()
 			currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 			eventBinds = eventEditor.SaveData()
 		}
-		writefileCooldown("IY_FE.iy", game:GetService("HttpService"):JSONEncode(update))
+		writefileCooldown("IY_FE" .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
 	end
 end
 
