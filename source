@@ -2972,12 +2972,13 @@ local KeepInfYield = false
 nosaves = false
 
 local fileExtension = "iy"
-local utility, utilityVer = identifyexecutor()
-
-if utility and utility == "Synapse" then
-    if string.sub(utilityVer, 1, 1) == "3" then
-        fileExtension = "txt"
-    end
+if identifyexecutor then
+	local utility, utilityVer = identifyexecutor()
+	if utility == "Synapse" then
+		if string.sub(utilityVer, 1, 1) == "3" then
+			fileExtension = "txt"
+		end
+	end
 end
 
 local loadedEventData = nil
