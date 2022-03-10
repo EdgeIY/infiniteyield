@@ -2976,7 +2976,7 @@ local utility, utilityVer = identifyexecutor()
 
 if utility == 'Synapse' then
     if string.sub(utilityVer, 1, 1) == '3' then
-        fileExtension = .iy
+        fileExtension = "txt"
     end
 end
 
