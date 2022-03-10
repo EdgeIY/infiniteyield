@@ -2974,8 +2974,8 @@ nosaves = false
 local fileExtension = "iy"
 local utility, utilityVer = identifyexecutor()
 
-if utility == 'Synapse' then
-    if string.sub(utilityVer, 1, 1) == '3' then
+if utility and utility == "Synapse" then
+    if string.sub(utilityVer, 1, 1) == "3" then
         fileExtension = "txt"
     end
 end
