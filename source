@@ -2980,6 +2980,7 @@ if identifyexecutor then
 		end
 	end
 end
+local fileExLen = #fileExtension + 1
 
 local loadedEventData = nil
 function saves()
@@ -6196,7 +6197,7 @@ function addPlugin(name)
 	else
 		local file
 		local fileName
-		if name:sub(-3) == '.' .. fileExtension then
+		if name:sub(-fileExLen) == '.' .. fileExtension then
 			pcall(function() file = readfile(name) end)
 			fileName = name
 		else
@@ -6220,7 +6221,7 @@ end
 
 function deletePlugin(name)
 	local pName = name..'.' .. fileExtension
-	if name:sub(-3) == '.' .. fileExtension then
+	if name:sub(-fileExLen) == '.' .. fileExtension then
 		pName = name
 	end
 	for i = #cmds,1,-1 do
