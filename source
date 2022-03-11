@@ -6191,17 +6191,17 @@ end)
 PluginsGUI = PluginEditor.background
 
 function addPlugin(name)
-	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.iy' or name == 'iy_fe' then
+	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.' .. fileExtension or name == 'iy_fe' then
 		notify('Plugin Error','Please enter a valid plugin')
 	else
 		local file
 		local fileName
-		if name:sub(-3) == '.iy' then
+		if name:sub(-3) == '.' .. fileExtension then
 			pcall(function() file = readfile(name) end)
 			fileName = name
 		else
-			pcall(function() file = readfile(name..'.iy') end)
-			fileName = name..'.iy'
+			pcall(function() file = readfile(name..'.'..fileExtension) end)
+			fileName = name..'.' .. fileExtension
 		end
 		if file then
 			if not FindInTable(PluginsTable, fileName) then
@@ -6219,8 +6219,8 @@ function addPlugin(name)
 end
 
 function deletePlugin(name)
-	local pName = name..'.iy'
-	if name:sub(-3) == '.iy' then
+	local pName = name..'.' .. fileExtension
+	if name:sub(-3) == '.' .. fileExtension then
 		pName = name
 	end
 	for i = #cmds,1,-1 do
