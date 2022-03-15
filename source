@@ -10806,11 +10806,7 @@ addcmd('equiptools',{},function(args, speaker)
 end)
 
 addcmd('unequiptools',{},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetChildren()) do
-		if v:IsA("Tool") or v:IsA("HopperBin") then
-			v.Parent = speaker:FindFirstChildOfClass("Backpack")
-		end
-	end
+	speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
 end)
 
 local function GetHandleTools(p)
