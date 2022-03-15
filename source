@@ -3010,19 +3010,19 @@ function saves()
 				if not success then
 					warn("Save Json Error:", response)
 					warn("Overwriting Save File")
-					writefileCooldown("IY_FE" .. fileExtension, defaults)
+					writefileCooldown("IY_FE." .. fileExtension, defaults)
 					wait()
 					saves()
 				end
 			else
-				writefileCooldown("IY_FE" .. fileExtension, defaults)
+				writefileCooldown("IY_FE." .. fileExtension, defaults)
 				wait()
 				saves()
 			end
 		else
-			writefileCooldown("IY_FE" .. fileExtension, defaults)
+			writefileCooldown("IY_FE." .. fileExtension, defaults)
 			wait()
-			if pcall(function() readfile("IY_FE" .. fileExtension) end) then
+			if pcall(function() readfile("IY_FE." .. fileExtension) end) then
 				saves()
 			else
 				nosaves = true
@@ -3150,7 +3150,7 @@ function updatesaves()
 			currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 			eventBinds = eventEditor.SaveData()
 		}
-		writefileCooldown("IY_FE" .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
+		writefileCooldown("IY_FE." .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
 	end
 end
 
