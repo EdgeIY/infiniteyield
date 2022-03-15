@@ -2971,13 +2971,24 @@ defaults = game:GetService("HttpService"):JSONEncode(defaultsettings)
 local KeepInfYield = false
 nosaves = false
 
+local fileExtension = "iy"
+if identifyexecutor then
+	local utility, utilityVer = identifyexecutor()
+	if utility == "Synapse" then
+		if string.sub(utilityVer, 1, 1) == "3" then
+			fileExtension = "txt"
+		end
+	end
+end
+local fileExLen = #fileExtension + 1
+
 local loadedEventData = nil
 function saves()
 	if writefileExploit() then
-		if pcall(function() readfile("IY_FE.iy") end) then
-			if readfile("IY_FE.iy") ~= nil then
+		if pcall(function() readfile("IY_FE." .. fileExtension) end) then
+			if readfile("IY_FE." .. fileExtension) ~= nil then
 				local success, response = pcall(function()
-					local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE.iy"))
+					local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE." .. fileExtension))
 					if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 					if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
 					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = false end
@@ -2999,19 +3010,19 @@ function saves()
 				if not success then
 					warn("Save Json Error:", response)
 					warn("Overwriting Save File")
-					writefileCooldown("IY_FE.iy", defaults)
+					writefileCooldown("IY_FE" .. fileExtension, defaults)
 					wait()
 					saves()
 				end
 			else
-				writefileCooldown("IY_FE.iy", defaults)
+				writefileCooldown("IY_FE" .. fileExtension, defaults)
 				wait()
 				saves()
 			end
 		else
-			writefileCooldown("IY_FE.iy", defaults)
+			writefileCooldown("IY_FE" .. fileExtension, defaults)
 			wait()
-			if pcall(function() readfile("IY_FE.iy") end) then
+			if pcall(function() readfile("IY_FE" .. fileExtension) end) then
 				saves()
 			else
 				nosaves = true
@@ -3139,7 +3150,7 @@ function updatesaves()
 			currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 			eventBinds = eventEditor.SaveData()
 		}
-		writefileCooldown("IY_FE.iy", game:GetService("HttpService"):JSONEncode(update))
+		writefileCooldown("IY_FE" .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
 	end
 end
 
@@ -4592,6 +4603,8 @@ CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd', DESC = 'Uses all click 
 CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests', DESC = 'Uses all touchinterests in a game'}
 CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp', DESC = 'Uses all proximity prompts in a game'}
+CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
+CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'simulationradius / simradius', DESC = 'Sets your SimulationRadius to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'nosimulationradius / nosimradius', DESC = 'Turns off the SimulationRadius loop and restores values to default'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
@@ -4770,6 +4783,10 @@ CMDs[#CMDs + 1] = {NAME = 'givetool / givetools', DESC = 'Gives all the tools yo
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
 CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
+CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are currently holding at once'}
+CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically remove a specific tool from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
@@ -5115,7 +5132,7 @@ function addcmdtext(text,name,desc)
 end
 
 SpecialPlayerCases = {
-	["all"] = function(speaker)return Players:GetPlayers() end,
+	["all"] = function(speaker) return Players:GetPlayers() end,
 	["others"] = function(speaker)
 		local plrs = {}
 		for i,v in pairs(Players:GetPlayers()) do
@@ -5140,6 +5157,7 @@ SpecialPlayerCases = {
 	end,
 	["random"] = function(speaker,args,currentList)
 		local players = currentList
+		table.remove(players, speaker)
 		return {players[math.random(1,#players)]}
 	end,
 	["%%(.+)"] = function(speaker,args)
@@ -6174,17 +6192,17 @@ end)
 PluginsGUI = PluginEditor.background
 
 function addPlugin(name)
-	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.iy' or name == 'iy_fe' then
+	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.' .. fileExtension or name == 'iy_fe' then
 		notify('Plugin Error','Please enter a valid plugin')
 	else
 		local file
 		local fileName
-		if name:sub(-3) == '.iy' then
+		if name:sub(-fileExLen) == '.' .. fileExtension then
 			pcall(function() file = readfile(name) end)
 			fileName = name
 		else
-			pcall(function() file = readfile(name..'.iy') end)
-			fileName = name..'.iy'
+			pcall(function() file = readfile(name..'.'..fileExtension) end)
+			fileName = name..'.' .. fileExtension
 		end
 		if file then
 			if not FindInTable(PluginsTable, fileName) then
@@ -6202,8 +6220,8 @@ function addPlugin(name)
 end
 
 function deletePlugin(name)
-	local pName = name..'.iy'
-	if name:sub(-3) == '.iy' then
+	local pName = name..'.' .. fileExtension
+	if name:sub(-fileExLen) == '.' .. fileExtension then
 		pName = name
 	end
 	for i = #cmds,1,-1 do
@@ -8371,7 +8389,6 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	end
 end)
 
-
 addcmd('maxzoom',{},function(args, speaker)
 	speaker.CameraMaxZoomDistance = args[1]
 end)
@@ -10239,37 +10256,37 @@ function getTorso(x)
 end
 
 addcmd('bang',{'rape'},function(args, speaker)
-	if not r15(speaker) then
-		execCmd('unbang')
-		wait()
-		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players)do
-			bangAnim = Instance.new("Animation")
+	execCmd('unbang')
+	wait()
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		bangAnim = Instance.new("Animation")
+		if not r15(speaker) then
 			bangAnim.AnimationId = "rbxassetid://148840371"
-			bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
-			bang:Play(.1, 1, 1)
-			if args[2] then
-				bang:AdjustSpeed(args[2])
-			else
-				bang:AdjustSpeed(3)
-			end
-			local bangplr = Players[v].Name
-			bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
-				bangLoop = bangLoop:Disconnect()
-				bang:Stop()
-				bangAnim:Destroy()
-				bangDied:Disconnect()
-			end)
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = game:GetService('RunService').Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
-			end)
+		else
+			bangAnim.AnimationId = "rbxassetid://5918726674"
 		end
-	else
-		notify('R6 Required','This command requires the r6 rig type')
+		bang = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(bangAnim)
+		bang:Play(.1, 1, 1)
+		if args[2] then
+			bang:AdjustSpeed(args[2])
+		else
+			bang:AdjustSpeed(3)
+		end
+		local bangplr = Players[v].Name
+		bangDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			bangLoop = bangLoop:Disconnect()
+			bang:Stop()
+			bangAnim:Destroy()
+			bangDied:Disconnect()
+		end)
+		local bangOffet = CFrame.new(0, 0, 1.1)
+		bangLoop = game:GetService('RunService').Stepped:Connect(function()
+			pcall(function()
+				local otherRoot = getTorso(Players[bangplr].Character)
+				getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
+			end)
+		end)
 	end
 end)
 
@@ -10475,6 +10492,26 @@ addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
 	end
 end)
 
+local PromptButtonHoldBegan = nil
+addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
+	if fireproximityprompt then
+		execCmd("uninstantproximityprompts")
+		wait(0.1)
+		PromptButtonHoldBegan = game:GetService("ProximityPromptService").PromptButtonHoldBegan:Connect(function(prompt)
+			fireproximityprompt(prompt)
+		end)
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
+	end
+end)
+
+addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
+	if PromptButtonHoldBegan ~= nil then
+		PromptButtonHoldBegan:Disconnect()
+		PromptButtonHoldBegan = nil
+	end
+end)
+
 addcmd('notifyping',{'ping'},function(args, speaker)
 	local Current_Ping = string.split(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString(), " ")[1] .. "ms"
 	notify("Ping", tostring(Current_Ping))
@@ -10532,6 +10569,40 @@ end)
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
 	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
 	notify('Grabtools','Grabtools has been disabled')
+end)
+
+local specifictoolremoval = {}
+addcmd('removespecifictool',{},function(args, speaker)
+	if args[1] and speaker:FindFirstChildOfClass("Backpack") then
+		local tool = string.lower(getstring(1))
+		local RST = game:GetService("RunService").RenderStepped:Connect(function()
+			if speaker:FindFirstChildOfClass("Backpack") then
+				for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
+					if v.Name:lower() == tool then
+						v:Remove()
+					end
+				end
+			end
+		end)
+		specifictoolremoval[tool] = RST
+	end
+end)
+
+addcmd('unremovespecifictool',{},function(args, speaker)
+	if args[1] then
+		local tool = string.lower(getstring(1))
+		if specifictoolremoval[tool] ~= nil then
+			specifictoolremoval[tool]:Disconnect()
+			specifictoolremoval[tool] = nil
+		end
+	end
+end)
+
+addcmd('clearremovespecifictool',{},function(args, speaker)
+	for obj in pairs(specifictoolremoval) do
+		specifictoolremoval[obj]:Disconnect()
+		specifictoolremoval[obj] = nil
+	end
 end)
 
 addcmd('light',{},function(args, speaker)
@@ -10730,6 +10801,14 @@ addcmd('equiptools',{},function(args, speaker)
 	for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 		if v:IsA("Tool") or v:IsA("HopperBin") then
 			v.Parent = speaker.Character
+		end
+	end
+end)
+
+addcmd('unequiptools',{},function(args, speaker)
+	for i,v in pairs(speaker.Character:GetChildren()) do
+		if v:IsA("Tool") or v:IsA("HopperBin") then
+			v.Parent = speaker:FindFirstChildOfClass("Backpack")
 		end
 	end
 end)
@@ -10973,8 +11052,14 @@ addcmd('drophats',{'drophat'},function(args, speaker)
 end)
 
 addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
-	if speaker.Character then
-		speaker.Character:FindFirstChildOfClass("Humanoid"):RemoveAccessories()
+	for i,v in next, speaker.Character:GetDescendants() do
+		if v:IsA("Accessory") then
+			for i,p in next, v:GetDescendants() do
+				if p:IsA("Weld") then
+					p:Destroy()
+				end
+			end
+		end
 	end
 end)
 
