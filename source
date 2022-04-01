@@ -217,7 +217,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = string.reverse("Infinite Yield FE v"..ver)
+Title.Text = "Infinite Yield FE v"..ver
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 table.insert(shade1,Title)
@@ -4805,7 +4805,6 @@ CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command unt
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
-CMDs[#CMDs + 1] = {NAME = 'disablefe', DESC = 'Disable FE'}
 wait()
 
 for i = 1, #CMDs do
@@ -10604,16 +10603,6 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 		specifictoolremoval[obj]:Disconnect()
 		specifictoolremoval[obj] = nil
 	end
-end)
-
-addcmd('disablefe',{},function(args, speaker)
-    if sethidden then
-        notify("Disabler", "Loading...")    
-        wait(math.random(1, 4))
-        notify("Disabler", "Disabled FE")
-    else
-        notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-    end
 end)
 
 addcmd('light',{},function(args, speaker)
