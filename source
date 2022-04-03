@@ -2104,6 +2104,7 @@ UserInputService = game:GetService("UserInputService")
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local setsimulation = setsimulationradius or set_simulation_radius
+local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
 
 function writefileExploit()
 	if writefile then
@@ -2950,7 +2951,7 @@ currentScroll = Color3.fromRGB(78,78,79)
 defaultsettings = {
 	prefix = ';';
 	StayOpen = false;
-	keepIY = false;
+	keepIY = true;
 	logsEnabled = false;
 	jLogsEnabled = false;
 	aliases = {};
@@ -2968,7 +2969,7 @@ defaultsettings = {
 
 defaults = game:GetService("HttpService"):JSONEncode(defaultsettings)
 
-local KeepInfYield = false
+local KeepInfYield = true
 nosaves = false
 
 local fileExtension = "iy"
@@ -2991,7 +2992,7 @@ function saves()
 					local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE." .. fileExtension))
 					if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 					if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
-					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = false end
+					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
 					if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
@@ -3028,7 +3029,7 @@ function saves()
 				nosaves = true
 				prefix = ';'
 				StayOpen = false
-				KeepInfYield = false
+				KeepInfYield = true
 				logsEnabled = false
 				jLogsEnabled = false
 				aliases = {}
@@ -3118,7 +3119,7 @@ function saves()
 	else
 		prefix = ';'
 		StayOpen = false
-		KeepInfYield = false
+		KeepInfYield = true
 		logsEnabled = false
 		jLogsEnabled = false
 		aliases = {}
@@ -5156,8 +5157,9 @@ SpecialPlayerCases = {
 		return returns
 	end,
 	["random"] = function(speaker,args,currentList)
-		local players = currentList
-		table.remove(players, speaker)
+		local players = Players:GetPlayers()
+		local localplayer = Players.LocalPlayer
+		table.remove(players, table.find(players, localplayer))
 		return {players[math.random(1,#players)]}
 	end,
 	["%%(.+)"] = function(speaker,args)
@@ -6383,13 +6385,10 @@ Close_4.MouseButton1Click:Connect(function()
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
+Players.LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
-		if KeepInfYield == true then
-			local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
-			if queueteleport then
-				queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
-			end
+		if KeepInfYield and queueteleport then
+			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
 		end
 	end
 end)
@@ -6462,7 +6461,6 @@ addcmd('discord', {'support', 'help'}, function(args, speaker)
 end)
 
 addcmd('keepiy', {}, function(args, speaker)
-	local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
 	if queueteleport then
 		KeepInfYield = true
 		updatesaves()
@@ -6472,7 +6470,6 @@ addcmd('keepiy', {}, function(args, speaker)
 end)
 
 addcmd('unkeepiy', {}, function(args, speaker)
-	local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
 	if queueteleport then
 		KeepInfYield = false
 		updatesaves()
@@ -6482,7 +6479,6 @@ addcmd('unkeepiy', {}, function(args, speaker)
 end)
 
 addcmd('toggleunkeepiy', {}, function(args, speaker)
-	local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
 	if queueteleport then
 		KeepInfYield = not KeepInfYield
 		updatesaves()
