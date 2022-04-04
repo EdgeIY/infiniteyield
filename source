@@ -6281,10 +6281,23 @@ end
 local PluginCache
 function LoadPlugin(val,startup)
 	local plugin
+    local pluginfunc
 
 	function CatchedPluginLoad()
-		plugin = loadfile(val)()
+        pluginfunc = loadfile(val)
+		plugin = pluginfunc()
 	end
+
+    local pluginsource = readfile(val)
+
+    local bannedkeywords = {"loadstring"}
+
+    for i,v in pairs(bannedkeywords) do
+        if pluginsource:match(v) then
+            notify('Plugin Error', 'Banned keywords found in plugin. For safety reasons the plugin will not be loaded. Check the discord for more information.')
+            return false
+        end
+    end
 
 	function handlePluginError(plerror)
 		notify('Plugin Error','An error occurred with the plugin, "'..val..'" and it could not be loaded')
@@ -6308,6 +6321,8 @@ function LoadPlugin(val,startup)
 	xpcall(CatchedPluginLoad, handlePluginError)
 
 	if plugin ~= nil then
+        getfenv(pluginfunc).loadstring = function() return nil, '' end
+        
 		if not startup then
 			notify('Loaded Plugin',"Name: "..plugin["PluginName"].."\n".."Description: "..plugin["PluginDescription"])
 		end
