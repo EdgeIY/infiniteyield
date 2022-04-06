@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '5.6'
+ver = '5.7'
 
 Players = game:GetService("Players")
 
@@ -6435,7 +6435,7 @@ addcmd('clraliases',{},function(args, speaker)
 end)
 
 addcmd('discord', {'support', 'help'}, function(args, speaker)
-	local http = game:GetService('HttpService') 
+	local rhttp = game:GetService('HttpService') 
 	if toClipboard then
 		toClipboard('https://discord.com/invite/dYHag43eeU')
 		notify('Discord Invite', 'Copied to clipboard!\ndiscord.gg/dYHag43eeU')
@@ -6451,9 +6451,9 @@ addcmd('discord', {'support', 'help'}, function(args, speaker)
 				['Content-Type'] = 'application/json',
 				Origin = 'https://discord.com'
 			},
-			Body = http:JSONEncode({
+			Body = rhttp:JSONEncode({
 				cmd = 'INVITE_BROWSER',
-				nonce = http:GenerateGUID(false),
+				nonce = rhttp:GenerateGUID(false),
 				args = {code = 'dYHag43eeU'}
 			})
 		})
