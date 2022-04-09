@@ -6283,7 +6283,7 @@ function LoadPlugin(val,startup)
 	local plugin
 
 	function CatchedPluginLoad()
-		plugin = loadfile(val)()
+		plugin = coroutine.wrap(loadfile(val))()
 	end
 
 	function handlePluginError(plerror)
