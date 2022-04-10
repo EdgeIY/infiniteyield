@@ -116,7 +116,7 @@ coroutine.resume(coroutine.create(function()
             if checkcaller() and Self == Table and NamecallMethod == key then
               local URL = scanner(...);
               if not URL then
-                return OldNameCall(...)
+                return OldNameCall(Self,...)
               else
                 warn(
                     'HTTP Request to ' .. (URL or '<Scan did not return URL>') ..
