@@ -1,20 +1,133 @@
+
+-- Define Version
+local ver = '5.7'
+
+-- Ensure IY isn't already running (debounce check)
 if IY_LOADED and not _G.IY_DEBUG == true then
-	error("Infinite Yield is already running!",0)
-	return
+  error('Infinite Yield is already running!', 0)
+  return
 end
 
+-- Define Environment Getter Funtion
+local getgenv = getgenv or getfenv or function()
+  return
+      _ENV --[[ for lua5.3 executors which I was told exist for some reason ]] or
+          {} --[[ for executors with no env functions (just incase) ]]
+end
+
+-- Ensure IY wont run again (debounce set)
 pcall(function() getgenv().IY_LOADED = true end)
 
+-- Ensure game is loaded
 if not game:IsLoaded() then
-	local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
-	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
-	game.Loaded:Wait()
-	notLoaded:Destroy()
+  local notLoaded = Instance.new('Message', game:GetService('CoreGui'))
+  notLoaded.Text = 'Infinite Yield is waiting for the game to load'
+  game.Loaded:Wait()
+  notLoaded:Destroy()
 end
 
-ver = '5.7'
+-- Debug Logging
+local DebugLog = _G.IY_DEBUG and (function()
+  local CreateConsole = env.consolecreate or env.rconsolecreate;
+  local PrintConsole = env.consoleprint or env.rconsoleprint or
+                           function( ... ) print('IY_DEBUG:', ...) end
+  local SetConsoleTitle = env.consolesettitle or env.rconsolesettitle or
+                              function() end
+  return function( ... )
+    if CreateConsole then
+      CreateConsole();
+      SetConsoleTitle('Infinite Yield Debug Log');
+      CreateConsole = nil
+    end
+    PrintConsole(...)
+  end
+end)() or function() end
 
-Players = game:GetService("Players")
+-- Hook HTTP
+local BlacklistedKeywords = {
+  -- List of blacklisted strings for URLs
+  'ligma.wtf'; 'blocked.example.com'; 'malplugin.yieldingcoder.repl.co'
+}
+local IsKRNL = KRNL_LOADED -- left over from previous itterations of http hooks, left in for future use in other things
+local IsMakeCClosure = typeof(newcclosure) == 'function'
+
+-- Run HTTP hooks in seperate thread (dw coroutines are roblox globals, all executors *should* support them)
+coroutine.resume(coroutine.create(function()
+  local env = getgenv();
+  local MakeCClosure = IsMakeCClosure and newcclosure or function() end
+  local IsCClosure = env.iscclosure or
+                         (env.islclosure and
+                             function( v ) return not islclosure(v) end) or
+                         function() return true end
+  -- Function to hook HTTP Requests
+  local HookFunction = function( table, key, scanner )
+    if not table or not key or not table.key then return false end
+    local OldMethod
+    OldMethod = hookfunction(table.key,
+                             (IsCClosure(table[key]) and MakeCClosure or
+                                 function( v ) return v; end)(function( ... )
+      local URL = scanner(...);
+      if not URL then
+        return OldMethod(...)
+      else
+        warn('HTTP Request to ' .. (URL or '<Scan did not return URL>') ..
+                 ' Blocked by Infinite Yield.')
+        return nil, 'HTTP request blocked by Infinite Yield'
+      end
+    end))
+    return true;
+  end
+  -- Utility Function; Removes the k in a k,v pair
+  local RemoveKey = function( t )
+    local t2 = {};
+    for _, v in pairs(t) do table.insert(t2, v) end
+    return t2
+  end
+  -- Scanner function; checks all strings - if is a table, recursively scans, otherwise checks for blacklisted strings
+  local Scanner = function( ... )
+    local Args = { ... }
+    for i, v in pairs(Args) do
+      if typeof(v) == 'table' then
+        Scanner(unpack(unorder(v)))
+      else
+        v = string.lower(tostring(v))
+        for _, searchFor in pairs(BlacklistedKeywords) do
+          if v:find(searchFor) then return v end
+        end
+      end
+    end
+  end
+  -- Format:
+  -- k,v where k is the table, and v contains CClosure (if we should convert to cclosures) and Attr (a list of attributes)
+  local HTTPFunctions = {
+    [game] = {
+      'HttpGetAsync'; 'HttpPostAsync'; 'HttpRequestAsync'; 'HttpGet';
+      'HttpPost'; 'HttpRequest';
+    };
+    [game:GetService('HttpService')] = { 'GetAsync'; 'PostAsync';
+                                         'RequestAsync' };
+    [env.syn or {}] = {
+      'Request'; -- weird attempts at compatability be like
+      'request';
+    };
+    [env.http or {}] = { 'request' };
+    [env] = { 'http_request'; 'request' };
+  };
+  for table, props in pairs(HTTPFunctions) do
+    for _, prop in pairs(props) do
+      if HookFunction(table, prop, Scanner) then
+        DebugLog('Infinite Yield has hooked ' .. prop .. ' in ' ..
+                     tostring(table))
+      else
+        DebugLog('Infinite Yield did not hook ' .. prop .. ' in ' ..
+                     tostring(table))
+      end
+    end
+  end
+end))
+
+-- Load IY
+local Players = game:GetService('Players')
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
