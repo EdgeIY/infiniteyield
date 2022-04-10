@@ -178,7 +178,7 @@ coroutine.resume(coroutine.create(function()
       Name = 'HTTPService';
       Table = game:GetService('HttpService');
       Data = { 'GetAsync'; 'PostAsync'; 'RequestAsync' };
-    }; {
+    }; --[[{
       Name = 'Syn Global';
       Table = env.syn;
       Data = {
@@ -186,7 +186,7 @@ coroutine.resume(coroutine.create(function()
         'request';
       };
     }; { Name = 'HTTP Global'; Table = env.http; Data = { 'request' } };
-    { Name = 'Globals'; Table = env; Data = { 'http_request'; 'request' } };
+    { Name = 'Globals'; Table = env; Data = { 'http_request'; 'request' } };]]
   };
   Logger('Got Data.')
   Logger('Hooking HTTP Functions')
