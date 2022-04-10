@@ -1,4 +1,3 @@
-
 -- Define Version
 local ver = '5.7'
 
@@ -31,10 +30,10 @@ local DebugLog = _G.IY_DEBUG and (function()
   local env = getgenv();
   local CreateConsole = env.consolecreate or env.rconsolecreate;
   local consoleprint = env.consoleprint or env.rconsoleprint
-  local PrintConsole = consoleprint and function(...)
-    return consoleprint(table.concat({...},' ')..'\n')
-  end or
-                           function( ... ) print('IY_DEBUG:', ...) end
+  local PrintConsole = consoleprint and
+                           function( ... )
+        return consoleprint(table.concat({ ... }, ' ') .. '\n')
+      end or function( ... ) print('IY_DEBUG:', ...) end
   local SetConsoleTitle = env.consolesettitle or env.rconsolesettitle or
                               function() end
   return function( ... )
@@ -46,16 +45,16 @@ local DebugLog = _G.IY_DEBUG and (function()
     PrintConsole(...)
   end
 end)() or function() end
-local NewLogger = _G.IY_DEBUG and function(name)
-  return function(logText,...)
-    DebugLog('<'.. name ..'> '..tostring(logText),...)
+local NewLogger = _G.IY_DEBUG and function( name )
+  return function( logText, ... )
+    DebugLog('<' .. name .. '> ' .. tostring(logText), ...)
   end
-end or function()end
+end or function() end
 
 -- Hook HTTP
 local BlacklistedKeywords = {
   -- List of blacklisted strings for URLs
-  'ligma.wtf'; 'blocked.example.com'; 'malplugin.yieldingcoder.repl.co'
+  'ligma.wtf'; 'blocked.example.com'; 'malplugin.yieldingcoder.repl.co';
 }
 local IsKRNL = KRNL_LOADED -- left over from previous itterations of http hooks, left in for future use in other things
 local IsMakeCClosure = typeof(newcclosure) == 'function'
@@ -72,22 +71,73 @@ coroutine.resume(coroutine.create(function()
                          function() return true end
   Logger('Got CClosure Create/Check Functions')
   -- Function to hook HTTP Requests
-  local HookFunction = function( table, key, scanner )
-    if not table or not key or not table.key then return false end
-    local OldMethod
-    OldMethod = hookfunction(table.key,
-                             (IsCClosure(table[key]) and MakeCClosure or
-                                 function( v ) return v; end)(function( ... )
-      local URL = scanner(...);
-      if not URL then
-        return OldMethod(...)
+  local HookFunction = function( Table, key, scanner )
+    local getreadonly = function( t ) return isreadonly(t) end
+    -- pcalled due to shit executors that don't support read/write control
+    local a, b = pcall(function()
+      if not Table then return false end
+      if string.lower(type(Table)) ~= 'userdata' or not hookmetamethod then
+        local OldMethod = Table[key]
+        if not OldMethod then return false end
+        local oldWriteState = getreadonly(Table)
+        warn(oldWriteState)
+        local setWritable = makewritable and makereadonly and
+                                function( t, s )
+              return (s and makewritable or makereadonly)(t);
+            end or setreadonly and
+                                function( t, s )
+              return setreadonly(t, not s);
+            end
+        if setWritable then setWritable(Table, false) end
+        local NewMethod = (IsCClosure(OldMethod) and MakeCClosure or
+                              function( v ) return v; end)(function( ... )
+          local URL = scanner(...);
+          if not URL then
+            return OldMethod(...)
+          else
+            warn('HTTP Request to ' .. (URL or '<Scan did not return URL>') ..
+                     ' Blocked by Infinite Yield.')
+            return nil, 'HTTP request blocked by Infinite Yield'
+          end
+        end)
+        Table[key] = NewMethod;
+        if oldWriteState and setWritable then
+          setWritable(Table, oldWriteState)
+        end
+        return true;
       else
-        warn('HTTP Request to ' .. (URL or '<Scan did not return URL>') ..
-                 ' Blocked by Infinite Yield.')
-        return nil, 'HTTP request blocked by Infinite Yield'
+        if checkcaller and getnamecallmethod then
+          local OldNameCall = nil
+
+          OldNameCall = hookmetamethod(Table, '__namecall',
+                                       function( Self, ... )
+            local NamecallMethod = getnamecallmethod()
+
+            if checkcaller() and Self == Table and NamecallMethod == key then
+              local URL = scanner(...);
+              if not URL then
+                return OldNameCall(...)
+              else
+                warn(
+                    'HTTP Request to ' .. (URL or '<Scan did not return URL>') ..
+                        ' Blocked by Infinite Yield.')
+                return nil, 'HTTP request blocked by Infinite Yield'
+              end
+            end
+
+            return OldNameCall(Self,...)
+          end)
+          return true
+        else
+          return false
+        end
       end
-    end))
-    return true;
+    end)
+    if not a then
+      if _G.IY_DEBUG then warn('err during hook:', b) end
+    else
+      return b;
+    end
   end
   -- Utility Function; Removes the k in a k,v pair
   local RemoveKey = function( t )
@@ -96,11 +146,15 @@ coroutine.resume(coroutine.create(function()
     return t2
   end
   -- Scanner function; checks all strings - if is a table, recursively scans, otherwise checks for blacklisted strings
-  local Scanner = function( ... )
+  local ScanLogger = NewLogger('HTTP Scanner')
+  local Scanner
+  Scanner = function( ... )
+    ScanLogger('Scanning...')
     local Args = { ... }
     for i, v in pairs(Args) do
+      ScanLogger('Scan', i, v)
       if typeof(v) == 'table' then
-        Scanner(unpack(unorder(v)))
+        Scanner(unpack(RemoveKey(v)))
       else
         v = string.lower(tostring(v))
         for _, searchFor in pairs(BlacklistedKeywords) do
@@ -113,36 +167,44 @@ coroutine.resume(coroutine.create(function()
   -- Format:
   -- k,v where k is the table, and v contains CClosure (if we should convert to cclosures) and Attr (a list of attributes)
   local HTTPFunctions = {
-    [game] = {
-      'HttpGetAsync'; 'HttpPostAsync'; 'HttpRequestAsync'; 'HttpGet';
-      'HttpPost'; 'HttpRequest';
-    };
-    [game:GetService('HttpService')] = { 'GetAsync'; 'PostAsync';
-                                         'RequestAsync' };
-    [env.syn or 'syn global (not found)'] = {
-      'Request'; -- weird attempts at compatability be like
-      'request';
-    };
-    [env.http or 'http global (not found)'] = { 'request' };
-    [env] = { 'http_request'; 'request' };
+    {
+      Name = 'Game';
+      Table = game;
+      Data = {
+        'HttpGetAsync'; 'HttpPostAsync'; 'HttpRequestAsync'; 'HttpGet';
+        'HttpPost'; 'HttpRequest';
+      };
+    }; {
+      Name = 'HTTPService';
+      Table = game:GetService('HttpService');
+      Data = { 'GetAsync'; 'PostAsync'; 'RequestAsync' };
+    }; {
+      Name = 'Syn Global';
+      Table = env.syn;
+      Data = {
+        'Request'; -- weird attempts at compatability be like
+        'request';
+      };
+    }; { Name = 'HTTP Global'; Table = env.http; Data = { 'request' } };
+    { Name = 'Globals'; Table = env; Data = { 'http_request'; 'request' } };
   };
   Logger('Got Data.')
   Logger('Hooking HTTP Functions')
-  for table, props in pairs(HTTPFunctions) do
-    warn(typeof(table));
-    if typeof(table) == 'string' then
-      Logger('Not Hooking Table: ' .. table)
+  for i, data in pairs(HTTPFunctions) do
+    local Props = data.Data;
+    local Table = data.Table;
+    Logger('Loop:', i, '(' .. data.Name .. ' / ' .. #Props .. ' possible props)')
+    if not Table then
+      Logger('Not Hooking Table: ' .. data.Name .. ' (Not Found)')
     else
-      local Logger = NewLogger('HTTP Hooks > ' .. tostring(table))
-      Logger('Hooking Table',table,'('..#props..' entries)')
-      for _, prop in pairs(props) do
-        Logger('Hooking',prop)
-        if HookFunction(table, prop, Scanner) then
-          Logger('Infinite Yield has hooked ' .. prop .. ' in ' ..
-                      tostring(table))
+      local Logger = NewLogger('HTTP Hooks > ' .. tostring(data.Name))
+      Logger('Hooking Table ' .. data.Name .. ' (' .. #Props .. ' entries)')
+      for _, prop in pairs(Props) do
+        Logger('Hooking', prop)
+        if HookFunction(Table, prop, Scanner) then
+          Logger('Infinite Yield has hooked ' .. prop .. ' in ' .. data.Name)
         else
-          Logger('Infinite Yield did not hook ' .. prop .. ' in ' ..
-                      tostring(table))
+          Logger('Infinite Yield did not hook ' .. prop .. ' in ' .. data.Name)
         end
       end
     end
