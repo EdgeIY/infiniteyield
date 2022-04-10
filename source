@@ -28,6 +28,7 @@ end
 
 -- Debug Logging
 local DebugLog = _G.IY_DEBUG and (function()
+  local env = getgenv();
   local CreateConsole = env.consolecreate or env.rconsolecreate;
   local PrintConsole = env.consoleprint or env.rconsoleprint or
                            function( ... ) print('IY_DEBUG:', ...) end
