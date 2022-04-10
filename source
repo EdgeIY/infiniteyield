@@ -49,7 +49,7 @@ local NewLogger = _G.IY_DEBUG and function( name )
   return function( logText, ... )
     DebugLog('<' .. name .. '> ' .. tostring(logText), ...)
   end
-end or function() end
+end or function() return function()end end
 
 -- Hook HTTP
 local BlacklistedKeywords = {
@@ -80,7 +80,7 @@ coroutine.resume(coroutine.create(function()
         local OldMethod = Table[key]
         if not OldMethod then return false end
         local oldWriteState = getreadonly(Table)
-        warn(oldWriteState)
+        -- warn(oldWriteState)
         local setWritable = makewritable and makereadonly and
                                 function( t, s )
               return (s and makewritable or makereadonly)(t);
