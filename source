@@ -30,7 +30,10 @@ end
 local DebugLog = _G.IY_DEBUG and (function()
   local env = getgenv();
   local CreateConsole = env.consolecreate or env.rconsolecreate;
-  local PrintConsole = env.consoleprint or env.rconsoleprint or
+  local consoleprint = env.consoleprint or env.rconsoleprint
+  local PrintConsole = consoleprint and function(...)
+    return consoleprint(table.concat({...},' ')..'\n')
+  end or
                            function( ... ) print('IY_DEBUG:', ...) end
   local SetConsoleTitle = env.consolesettitle or env.rconsolesettitle or
                               function() end
@@ -43,6 +46,11 @@ local DebugLog = _G.IY_DEBUG and (function()
     PrintConsole(...)
   end
 end)() or function() end
+local NewLogger = _G.IY_DEBUG and function(name)
+  return function(logText,...)
+    DebugLog('<'.. name ..'> '..tostring(logText),...)
+  end
+end or function()end
 
 -- Hook HTTP
 local BlacklistedKeywords = {
@@ -54,12 +62,15 @@ local IsMakeCClosure = typeof(newcclosure) == 'function'
 
 -- Run HTTP hooks in seperate thread (dw coroutines are roblox globals, all executors *should* support them)
 coroutine.resume(coroutine.create(function()
+  local Logger = NewLogger('HTTP Hooks')
+  Logger('Created Logger')
   local env = getgenv();
   local MakeCClosure = IsMakeCClosure and newcclosure or function() end
   local IsCClosure = env.iscclosure or
                          (env.islclosure and
                              function( v ) return not islclosure(v) end) or
                          function() return true end
+  Logger('Got CClosure Create/Check Functions')
   -- Function to hook HTTP Requests
   local HookFunction = function( table, key, scanner )
     if not table or not key or not table.key then return false end
@@ -98,6 +109,7 @@ coroutine.resume(coroutine.create(function()
       end
     end
   end
+  Logger('Got Scanner')
   -- Format:
   -- k,v where k is the table, and v contains CClosure (if we should convert to cclosures) and Attr (a list of attributes)
   local HTTPFunctions = {
@@ -107,24 +119,35 @@ coroutine.resume(coroutine.create(function()
     };
     [game:GetService('HttpService')] = { 'GetAsync'; 'PostAsync';
                                          'RequestAsync' };
-    [env.syn or {}] = {
+    [env.syn or 'syn global (not found)'] = {
       'Request'; -- weird attempts at compatability be like
       'request';
     };
-    [env.http or {}] = { 'request' };
+    [env.http or 'http global (not found)'] = { 'request' };
     [env] = { 'http_request'; 'request' };
   };
+  Logger('Got Data.')
+  Logger('Hooking HTTP Functions')
   for table, props in pairs(HTTPFunctions) do
-    for _, prop in pairs(props) do
-      if HookFunction(table, prop, Scanner) then
-        DebugLog('Infinite Yield has hooked ' .. prop .. ' in ' ..
-                     tostring(table))
-      else
-        DebugLog('Infinite Yield did not hook ' .. prop .. ' in ' ..
-                     tostring(table))
+    warn(typeof(table));
+    if typeof(table) == 'string' then
+      Logger('Not Hooking Table: ' .. table)
+    else
+      local Logger = NewLogger('HTTP Hooks > ' .. tostring(table))
+      Logger('Hooking Table',table,'('..#props..' entries)')
+      for _, prop in pairs(props) do
+        Logger('Hooking',prop)
+        if HookFunction(table, prop, Scanner) then
+          Logger('Infinite Yield has hooked ' .. prop .. ' in ' ..
+                      tostring(table))
+        else
+          Logger('Infinite Yield did not hook ' .. prop .. ' in ' ..
+                      tostring(table))
+        end
       end
     end
   end
+  Logger('Done Hooking!')
 end))
 
 -- Load IY
