@@ -1,5 +1,5 @@
 -- Define Version
-local ver = '5.7'
+local ver = '5.7.1'
 
 -- Ensure IY isn't already running (debounce check)
 if IY_LOADED and not _G.IY_DEBUG == true then
