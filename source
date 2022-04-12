@@ -14,6 +14,17 @@ end
 
 local ver = '5.7.1'
 
+-- Replace wait with custom implemenation
+local renderStepped = game:GetService('RunService').RenderStepped; -- Define the RenderStepped Event globally, so we don't need to index it nearly as often (improve performance)
+local os_clock = os.clock; -- Simple lua optimization
+local wait = function(t)
+  t=t or 1/144 -- Default to 1/144th of a second
+  local startTime = os_clock(); -- Get the current time
+  local endTime = startTime + t; -- It should return <t> seconds after <now>
+  repeat renderStepped:Wait() until os_clock()>=endTime; -- Wait until endTime
+  return os_clock()-startTime; -- Return Delta Time
+end;
+
 local Players = game:GetService("Players")
 
 Holder = Instance.new("Frame")
