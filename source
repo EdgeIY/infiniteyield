@@ -9860,7 +9860,7 @@ addcmd('copycframe', {'copycf'}, function(args, speaker)
             return notify('GetCFrame Error','Missing character')
         end
         local roundedCf = cfToString(cfr.CFrame, 2);
-        toClipboard(roundedPos)
+        toClipboard(roundedCf)
     end
 end)
 
