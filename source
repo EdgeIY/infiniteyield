@@ -12,7 +12,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-local ver = '5.7'
+local ver = '5.7.1'
 
 local Players = game:GetService("Players")
 
