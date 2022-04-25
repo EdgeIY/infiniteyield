@@ -3365,7 +3365,7 @@ function CreateJoinLabel(plr,ID)
 	ImageLabel_3.BackgroundTransparency = 1
 	ImageLabel_3.BorderSizePixel = 0
 	ImageLabel_3.Size = UDim2.new(0, 45, 1, 0)
-	ImageLabel_3.Image = game.Players:GetUserThumbnailAsync(ID, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
+	ImageLabel_3.Image = Players:GetUserThumbnailAsync(ID, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
 	scroll_3.CanvasSize = UDim2.new(0, 0, 0, listlayout.AbsoluteContentSize.Y)
 	scroll_3.CanvasPosition = Vector2.new(0,scroll_2.CanvasPosition.Y+infoFrame.AbsoluteSize.Y)
 	wait()
@@ -6830,12 +6830,12 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 		if Err.Name == "ErrorTitle" then
 			Err:GetPropertyChangedSignal("Text"):Connect(function()
 				if Err.Text:sub(0, 12) == "Disconnected" then
-					if #game.Players:GetPlayers() <= 1 then
-						game.Players.LocalPlayer:Kick("\nRejoining...")
+					if #Players:GetPlayers() <= 1 then
+						Players.LocalPlayer:Kick("\nRejoining...")
 						wait()
-						game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+						game:GetService("TeleportService"):Teleport(game.PlaceId, Players.LocalPlayer)
 					else
-						game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+						game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
 					end
 				end
 			end)
@@ -6894,7 +6894,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 
 					if GUID ~= nil then
 						notify('Join Player','Joining '..User)
-						game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,game.Players.LocalPlayer)
+						game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,Players.LocalPlayer)
 					else
 						notify('Join Error','Unable to join user.')
 					end
@@ -7572,7 +7572,7 @@ end)
 
 function deleteGuisAtPos()
 	pcall(function()
-		local guisAtPosition = game.Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
+		local guisAtPosition = Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 		for _, gui in pairs(guisAtPosition) do
 			if gui.Visible == true then
 				gui:Destroy()
@@ -8832,7 +8832,7 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	wait()
 	local players = getPlayer(args[1], speaker)
 	local PathService = game:GetService("PathfindingService")
-	local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
@@ -9380,7 +9380,7 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 
 		char.Head:Destroy()
 		wait(5)
-		game.Players.LocalPlayer.Character = char
+		Players.LocalPlayer.Character = char
 
 		local hum2 = Instance.new("Humanoid")
 		hum2.Parent = char
