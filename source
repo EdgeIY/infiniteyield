@@ -12,9 +12,20 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '5.7'
+local ver = '5.7.1'
 
-Players = game:GetService("Players")
+-- Replace wait with custom implemenation
+local renderStepped = game:GetService('RunService').RenderStepped; -- Define the RenderStepped Event globally, so we don't need to index it nearly as often (improve performance)
+local os_clock = os.clock; -- Simple lua optimization
+local wait = function(t)
+  t=t or 1/144 -- Default to 1/144th of a second
+  local startTime = os_clock(); -- Get the current time
+  local endTime = startTime + t; -- It should return <t> seconds after <now>
+  repeat renderStepped:Wait() until os_clock()>=endTime; -- Wait until endTime
+  return os_clock()-startTime; -- Return Delta Time
+end;
+
+local Players = game:GetService("Players")
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -3365,7 +3376,7 @@ function CreateJoinLabel(plr,ID)
 	ImageLabel_3.BackgroundTransparency = 1
 	ImageLabel_3.BorderSizePixel = 0
 	ImageLabel_3.Size = UDim2.new(0, 45, 1, 0)
-	ImageLabel_3.Image = game.Players:GetUserThumbnailAsync(ID, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
+	ImageLabel_3.Image = Players:GetUserThumbnailAsync(ID, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
 	scroll_3.CanvasSize = UDim2.new(0, 0, 0, listlayout.AbsoluteContentSize.Y)
 	scroll_3.CanvasPosition = Vector2.new(0,scroll_2.CanvasPosition.Y+infoFrame.AbsoluteSize.Y)
 	wait()
@@ -4523,6 +4534,7 @@ CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coord
 CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copycframe / copycf [plr]', DESC = 'Copies the CFrame of the current player to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'walktoposition / walktopos [X Y Z]', DESC = 'Makes you walk to a coordinate'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn [delay]', DESC = 'Sets a position where you will spawn'}
 CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
@@ -6830,12 +6842,12 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 		if Err.Name == "ErrorTitle" then
 			Err:GetPropertyChangedSignal("Text"):Connect(function()
 				if Err.Text:sub(0, 12) == "Disconnected" then
-					if #game.Players:GetPlayers() <= 1 then
-						game.Players.LocalPlayer:Kick("\nRejoining...")
+					if #Players:GetPlayers() <= 1 then
+						Players.LocalPlayer:Kick("\nRejoining...")
 						wait()
-						game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+						game:GetService("TeleportService"):Teleport(game.PlaceId, Players.LocalPlayer)
 					else
-						game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+						game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
 					end
 				end
 			end)
@@ -6894,7 +6906,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 
 					if GUID ~= nil then
 						notify('Join Player','Joining '..User)
-						game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,game.Players.LocalPlayer)
+						game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId,GUID,Players.LocalPlayer)
 					else
 						notify('Join Error','Unable to join user.')
 					end
@@ -7572,7 +7584,7 @@ end)
 
 function deleteGuisAtPos()
 	pcall(function()
-		local guisAtPosition = game.Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
+		local guisAtPosition = Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 		for _, gui in pairs(guisAtPosition) do
 			if gui.Visible == true then
 				gui:Destroy()
@@ -8832,7 +8844,7 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	wait()
 	local players = getPlayer(args[1], speaker)
 	local PathService = game:GetService("PathfindingService")
-	local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
@@ -9380,7 +9392,7 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 
 		char.Head:Destroy()
 		wait(5)
-		game.Players.LocalPlayer.Character = char
+		Players.LocalPlayer.Character = char
 
 		local hum2 = Instance.new("Humanoid")
 		hum2.Parent = char
@@ -9834,6 +9846,31 @@ addcmd('copyposition',{'copypos'},function(args, speaker)
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
 		toClipboard(roundedPos)
+	end
+end)
+
+local cfToString = function( CFrame, round )
+  local v3ToString = function( Vector3, round )
+    local r = round and
+                  function( k )
+          return tostring(math.round(tonumber(k or '0') or 0))
+        end or tostring
+    return 'Vector3.new(' .. r(Vector3.X) .. ', ' .. r(Vector3.Y) .. ', ' ..
+                r(Vector3.Z) .. ')'
+  end
+  return 'CFrame.lookAt(' .. v3ToString(CFrame.Position, round) .. ', ' ..
+              v3ToString(CFrame.LookVector + CFrame.Position, round) .. ')'
+end
+addcmd('copycframe',{'copycf'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		local char = Players[tostring(v)].Character
+		local primaryPart = char and (char:IsA('Model') and char.PrimaryPart or char:FindFirstChildWhichIsA("BasePart"))
+		if not primaryPart then
+			return notify('GetCFrame Error','Missing character')
+		end
+		local cframe = primaryPart.CFrame
+		toClipboard(cfToString(cframe, 2))
 	end
 end)
 
@@ -12215,7 +12252,7 @@ task.spawn(function()
 		if ver ~= Version then
 			notify('Outdated','Get the new version at infinite.yiff.gg')
 		end
-		if Announcement and Announcement ~= '' then
+		if Announcement ~= '' then
 			local AnnGUI = Instance.new("Frame")
 			local background = Instance.new("Frame")
 			local TextBox = Instance.new("TextLabel")
