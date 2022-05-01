@@ -2973,14 +2973,7 @@ local KeepInfYield = true
 nosaves = false
 
 local fileExtension = "iy"
-if identifyexecutor then
-	local utility, utilityVer = identifyexecutor()
-	if utility == "Synapse" then
-		if string.sub(utilityVer, 1, 1) == "3" then
-			fileExtension = "txt"
-		end
-	end
-end
+if syn and DrawingImmediate then fileExtension = "txt" end
 local fileExLen = #fileExtension + 1
 
 local loadedEventData = nil
