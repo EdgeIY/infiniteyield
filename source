@@ -7653,43 +7653,51 @@ addcmd('clearerror',{'clearerrors'},function(args, speaker)
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
-	local mt = getrawmetatable(game)
-	local old = mt.__namecall
-	local protect = newcclosure or protect_function
-
-	if not protect then
-		notify("Incompatible Exploit Warning", "Your exploit does not support protection against stack trace errors, resulting to fallback function")
-		protect = function(f) return f end
+	if not hookmetamethod then 
+		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
-
-	setreadonly(mt, false)
-	mt.__namecall = protect(function(self, ...)
-		local method = getnamecallmethod()
-		if method == "Kick" then
-			wait(9e9)
-			return
-		end
-		return old(self, ...)
-	end)
-	hookfunction(Players.LocalPlayer.Kick,protect(function() wait(9e9) end))
+local LocalPlayer = Players.LocalPlayer
+local oldhmmi
+local oldhmmnc
+    oldhmmi = hookmetamethod(game, "__index", function(self, method)
+        if self == LocalPlayer and method:lower() == "kick" then
+            return error("Expected ':' not '.' calling member function Kick", 2)
+        end
+        return oldhmmi(self, method)
+    end)
+    oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
+        if self == LocalPlayer and getnamecallmethod():lower() == "kick" then
+            return
+        end
+        return oldhmmnc(self, ...)
+    end)
 
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
 
 allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
-	local TeleportService, tp, tptpi = game:GetService("TeleportService")
-	tp = hookfunction(TeleportService.Teleport, function(id, ...)
-		if allow_rj and id == game.Placeid then
-			return tp(id, ...)
+	if not hookmetamethod then 
+		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+	end
+	local TeleportService = game:GetService('TeleportService')
+	local oldhmmi
+	local oldhmmnc
+	oldhmmi = hookmetamethod(game, "__index", function(self, method)
+		if self == TeleportService then
+			if method:lower() == "teleport" then
+				return error("Expected ':' not '.' calling member function Kick", 2)
+			elseif method == "TeleportToPlaceInstance" then
+				return error("Expected ':' not '.' calling member function TeleportToPlaceInstance", 2)
+			end
 		end
-		return wait(9e9)
+		return oldhmmi(self, method)
 	end)
-	tptpi = hookfunction(TeleportService.TeleportToPlaceInstance, function(id, server, ...)
-		if allow_rj and id == game.Placeid and server == game.JobId then
-			return tp(id, server, ...)
+	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
+		if self == TeleportService and getnamecallmethod():lower() == "teleport" or getnamecallmethod() == "TeleportToPlaceInstance" then
+			return
 		end
-		return wait(9e9)
+		return oldhmmnc(self, ...)
 	end)
 
 	notify('Client AntiTP','Client anti teleport is now active (only effective on localscript teleport)')
