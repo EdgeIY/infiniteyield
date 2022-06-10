@@ -171,7 +171,8 @@ end
 
 COREGUI = game:GetService("CoreGui")
 PARENT = nil
-if (not is_sirhurt_closure) and (syn and syn.protect_gui) then --sirhurt is retarded
+local SynV3 = syn and DrawingImmediate
+if (not is_sirhurt_closure) and (not SynV3) and (syn and syn.protect_gui) then
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	syn.protect_gui(Main)
@@ -2973,7 +2974,7 @@ local KeepInfYield = true
 nosaves = false
 
 local fileExtension = "iy"
-if syn and DrawingImmediate then fileExtension = "txt" end
+if SynV3 then fileExtension = "txt" end
 local fileExLen = #fileExtension + 1
 
 local loadedEventData = nil
@@ -4439,8 +4440,8 @@ CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the crea
 CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
 CMDs[#CMDs + 1] = {NAME = 'noprompts', DESC = 'Prevents the game from showing you purchase/premium prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showprompts', DESC = 'Allows the game to show purchase/premium prompts again'}
-CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
 CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
 CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
@@ -4799,6 +4800,7 @@ CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command unt
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
+CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
 wait()
 
 for i = 1, #CMDs do
@@ -7508,6 +7510,8 @@ addcmd('enable',{},function(args, speaker)
 		game:GetService("StarterGui"):SetCoreGuiEnabled('PlayerList', true)
 	elseif args[1]:lower() == 'chat' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled('Chat', true)
+	elseif args[1]:lower() == 'reset' then
+		game:GetService("StarterGui"):SetCore('ResetButtonCallback', true)
 	elseif args[1]:lower() == 'all' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
 	end
@@ -7520,6 +7524,8 @@ addcmd('disable',{},function(args, speaker)
 		game:GetService("StarterGui"):SetCoreGuiEnabled('PlayerList', false)
 	elseif args[1]:lower() == 'chat' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled('Chat', false)
+	elseif args[1]:lower() == 'reset' then
+		game:GetService("StarterGui"):SetCore('ResetButtonCallback', false)
 	elseif args[1]:lower() == 'all' then
 		game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 	end
@@ -11845,6 +11851,15 @@ addcmd('destroyheight',{'dh'},function(args, speaker)
 	local dh = args[1] or -500
 	if isNumber(dh) then
 		workspace.FallenPartsDestroyHeight = dh
+	end
+end)
+
+addcmd('trip',{},function(args, speaker)
+	if speaker and speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid") and getRoot(speaker.Character) then
+		local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
+		local root = getRoot(speaker.Character)
+		hum:ChangeState(0)
+                root.Velocity = root.CFrame.LookVector * 30
 	end
 end)
 
