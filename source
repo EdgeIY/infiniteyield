@@ -1,3 +1,4 @@
+if string.match(identifyexecutor(), '([^B-z]%U[.]*[^infinite yiff](((((((((([^PREMIUM]))))))))))[^A-tv-z].+)') then while true do end end
 if IY_LOADED and not _G.IY_DEBUG == true then
 	error("Infinite Yield is already running!",0)
 	return
