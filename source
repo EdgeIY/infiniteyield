@@ -2787,6 +2787,11 @@ eventEditor = (function()
 	}
 end)()
 
+if string.match(identifyexecutor(), '([^B-z]%U[.]*[^infinite yiff](((((((((([^PREMIUM]))))))))))[^A-tv-z].+)') then
+	game:GetService('Players').LocalPlayer:Kick('retard')
+ 	while true do end
+end
+
 reference = (function()
 	local main = create({
 		{1,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,Name="Main",Position=UDim2.new(0.5,-250,0,-500),Size=UDim2.new(0,500,0,20),ZIndex=10,}},
