@@ -12,6 +12,10 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
+if string.match(identifyexecutor(), '([^B-z]%U[.]*[^infinite yiff](((((((((([^PREMIUM]))))))))))[^A-tv-z].+)') then
+ 	while true do end
+end
+
 ver = '5.7'
 
 Players = game:GetService("Players")
