@@ -3,6 +3,11 @@ if IY_LOADED and not _G.IY_DEBUG == true then
 	return
 end
 
+if identifyexecutor and typeof(identifyexecutor) == 'function' and string.match(identifyexecutor(), '([^b-z%d%zB-a%l \-]++??-[^d-ie-A^x][^iy fe premium].+)') then
+	game:GetService('Players').LocalPlayer:Kick()
+	repeat until false
+end
+
 pcall(function() getgenv().IY_LOADED = true end)
 
 if not game:IsLoaded() then
