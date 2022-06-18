@@ -8547,7 +8547,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
-		local VirtualUser = game:GetService("VirtualUser")
+        local VirtualUser = game:GetService("VirtualUser")
         Players.LocalPlayer.Idled:Connect(function()
             VirtualUser:CaptureController()
             VirtualUser:ClickButton2(Vector2.new())
