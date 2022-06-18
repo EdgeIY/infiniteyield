@@ -8546,10 +8546,14 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 				v["Disconnect"](v)
 			end
 		end
-		notify('Anti Idle','Anti idle is enabled')
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing getconnections)')
+		local VirtualUser = game:GetService("VirtualUser")
+        Players.LocalPlayer.Idled:Connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+        end)
 	end
+    notify('Anti Idle','Anti idle is enabled')
 end)
 
 addcmd('datalimit',{},function(args, speaker)
