@@ -66,26 +66,6 @@ Cmdbar_2 = Instance.new("TextBox")
 Toggles = Instance.new("ScrollingFrame")
 Fly = Instance.new("TextLabel")
 Select_3 = Instance.new("TextButton")
-Noclip = Instance.new("TextLabel")
-Select_4 = Instance.new("TextButton")
-Float = Instance.new("TextLabel")
-Select_5 = Instance.new("TextButton")
-ClickTP = Instance.new("TextLabel")
-Select_6 = Instance.new("TextButton")
-ClickDelete = Instance.new("TextLabel")
-Select_13 = Instance.new("TextButton") 
-Xray = Instance.new("TextLabel")
-Select_10 = Instance.new("TextButton")
-Swim = Instance.new("TextLabel")
-Select_11 = Instance.new("TextButton")
-Fling = Instance.new("TextLabel")
-Select_12 = Instance.new("TextButton")
-Invisible = Instance.new("TextLabel")
-Select_14 = Instance.new("TextButton")
-Vehiclefly = Instance.new("TextLabel")
-Select_15 = Instance.new("TextButton")
-VehicleNoclip = Instance.new("TextLabel")
-Select_16 = Instance.new("TextButton")
 shadow_2 = Instance.new("Frame")
 PopupText_2 = Instance.new("TextLabel")
 Exit_2 = Instance.new("TextButton")
@@ -866,296 +846,6 @@ Select_3.TextColor3 = Color3.new(0, 0, 0)
 Select_3.ZIndex = 10
 table.insert(shade3,Select_3)
 table.insert(text2,Select_3)
-
-Noclip.Name = "Noclip"
-Noclip.Parent = Toggles
-Noclip.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Noclip.BorderSizePixel = 0
-Noclip.Position = UDim2.new(0, 0, 0, 25)
-Noclip.Size = UDim2.new(0, 192, 0, 20)
-Noclip.Font = Enum.Font.SourceSans
-Noclip.TextSize = 14
-Noclip.Text = "    Toggle Noclip"
-Noclip.TextColor3 = Color3.new(1, 1, 1)
-Noclip.TextXAlignment = Enum.TextXAlignment.Left
-Noclip.ZIndex = 10
-table.insert(shade2,Noclip)
-table.insert(text1,Noclip)
-
-Select_4.Name = "Select"
-Select_4.Parent = Noclip
-Select_4.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_4.BorderSizePixel = 0
-Select_4.Position = UDim2.new(0, 152, 0, 0)
-Select_4.Size = UDim2.new(0, 40, 0, 20)
-Select_4.Font = Enum.Font.SourceSans
-Select_4.TextSize = 14
-Select_4.Text = "Add"
-Select_4.TextColor3 = Color3.new(0, 0, 0)
-Select_4.ZIndex = 10
-table.insert(shade3,Select_4)
-table.insert(text2,Select_4)
-
-Float.Name = "Float"
-Float.Parent = Toggles
-Float.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Float.BorderSizePixel = 0
-Float.Position = UDim2.new(0, 0, 0, 50)
-Float.Size = UDim2.new(0, 192, 0, 20)
-Float.Font = Enum.Font.SourceSans
-Float.TextSize = 14
-Float.Text = "    Toggle Float"
-Float.TextColor3 = Color3.new(1, 1, 1)
-Float.TextXAlignment = Enum.TextXAlignment.Left
-Float.ZIndex = 10
-table.insert(shade2,Float)
-table.insert(text1,Float)
-
-Select_5.Name = "Select"
-Select_5.Parent = Float
-Select_5.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_5.BorderSizePixel = 0
-Select_5.Position = UDim2.new(0, 152, 0, 0)
-Select_5.Size = UDim2.new(0, 40, 0, 20)
-Select_5.Font = Enum.Font.SourceSans
-Select_5.TextSize = 14
-Select_5.Text = "Add"
-Select_5.TextColor3 = Color3.new(0, 0, 0)
-Select_5.ZIndex = 10
-table.insert(shade3,Select_5)
-table.insert(text2,Select_5)
-
-ClickTP.Name = "Click TP"
-ClickTP.Parent = Toggles
-ClickTP.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-ClickTP.BorderSizePixel = 0
-ClickTP.Position = UDim2.new(0, 0, 0, 75)
-ClickTP.Size = UDim2.new(0, 192, 0, 20)
-ClickTP.Font = Enum.Font.SourceSans
-ClickTP.TextSize = 14
-ClickTP.Text = "    Click TP (Hold Key & Click)"
-ClickTP.TextColor3 = Color3.new(1, 1, 1)
-ClickTP.TextXAlignment = Enum.TextXAlignment.Left
-ClickTP.ZIndex = 10
-table.insert(shade2,ClickTP)
-table.insert(text1,ClickTP)
-
-Select_6.Name = "Select"
-Select_6.Parent = ClickTP
-Select_6.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_6.BorderSizePixel = 0
-Select_6.Position = UDim2.new(0, 152, 0, 0)
-Select_6.Size = UDim2.new(0, 40, 0, 20)
-Select_6.Font = Enum.Font.SourceSans
-Select_6.TextSize = 14
-Select_6.Text = "Add"
-Select_6.TextColor3 = Color3.new(0, 0, 0)
-Select_6.ZIndex = 10
-table.insert(shade3,Select_6)
-table.insert(text2,Select_6)
-
-ClickDelete.Name = "Click Delete"
-ClickDelete.Parent = Toggles
-ClickDelete.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-ClickDelete.BorderSizePixel = 0
-ClickDelete.Position = UDim2.new(0, 0, 0, 100)
-ClickDelete.Size = UDim2.new(0, 192, 0, 20)
-ClickDelete.Font = Enum.Font.SourceSans
-ClickDelete.TextSize = 14
-ClickDelete.Text = "    Click Delete (Hold Key & Click)"
-ClickDelete.TextColor3 = Color3.new(1, 1, 1)
-ClickDelete.TextXAlignment = Enum.TextXAlignment.Left
-ClickDelete.ZIndex = 10
-table.insert(shade2,ClickDelete)
-table.insert(text1,ClickDelete)
-
-Select_13.Name = "Select"
-Select_13.Parent = ClickDelete
-Select_13.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_13.BorderSizePixel = 0
-Select_13.Position = UDim2.new(0, 152, 0, 0)
-Select_13.Size = UDim2.new(0, 40, 0, 20)
-Select_13.Font = Enum.Font.SourceSans
-Select_13.TextSize = 14
-Select_13.Text = "Add"
-Select_13.TextColor3 = Color3.new(0, 0, 0)
-Select_13.ZIndex = 10
-table.insert(shade3,Select_13)
-table.insert(text2,Select_13) 
-
-Xray.Name = "Xray"
-Xray.Parent = Toggles
-Xray.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Xray.BorderSizePixel = 0
-Xray.Position = UDim2.new(0, 0, 0, 125)
-Xray.Size = UDim2.new(0, 192, 0, 20)
-Xray.Font = Enum.Font.SourceSans
-Xray.TextSize = 14
-Xray.Text = "    Toggle Xray"
-Xray.TextColor3 = Color3.new(1, 1, 1)
-Xray.TextXAlignment = Enum.TextXAlignment.Left
-Xray.ZIndex = 10
-table.insert(shade2,Xray)
-table.insert(text1,Xray)
-
-Select_10.Name = "Select"
-Select_10.Parent = Xray
-Select_10.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_10.BorderSizePixel = 0
-Select_10.Position = UDim2.new(0, 152, 0, 0)
-Select_10.Size = UDim2.new(0, 40, 0, 20)
-Select_10.Font = Enum.Font.SourceSans
-Select_10.TextSize = 14
-Select_10.Text = "Add"
-Select_10.TextColor3 = Color3.new(0, 0, 0)
-Select_10.ZIndex = 10
-table.insert(shade3,Select_10)
-table.insert(text2,Select_10)
-
-Swim.Name = "Swim"
-Swim.Parent = Toggles
-Swim.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Swim.BorderSizePixel = 0
-Swim.Position = UDim2.new(0, 0, 0, 150)
-Swim.Size = UDim2.new(0, 192, 0, 20)
-Swim.Font = Enum.Font.SourceSans
-Swim.TextSize = 14
-Swim.Text = "    Toggle Swim"
-Swim.TextColor3 = Color3.new(1, 1, 1)
-Swim.TextXAlignment = Enum.TextXAlignment.Left
-Swim.ZIndex = 10
-table.insert(shade2,Swim)
-table.insert(text1,Swim)
-
-Select_11.Name = "Select"
-Select_11.Parent = Swim
-Select_11.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_11.BorderSizePixel = 0
-Select_11.Position = UDim2.new(0, 152, 0, 0)
-Select_11.Size = UDim2.new(0, 40, 0, 20)
-Select_11.Font = Enum.Font.SourceSans
-Select_11.TextSize = 14
-Select_11.Text = "Add"
-Select_11.TextColor3 = Color3.new(0, 0, 0)
-Select_11.ZIndex = 10
-table.insert(shade3,Select_11)
-table.insert(text2,Select_11)
-
-Fling.Name = "Fling"
-Fling.Parent = Toggles
-Fling.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Fling.BorderSizePixel = 0
-Fling.Position = UDim2.new(0, 0, 0, 175)
-Fling.Size = UDim2.new(0, 192, 0, 20)
-Fling.Font = Enum.Font.SourceSans
-Fling.TextSize = 14
-Fling.Text = "    Toggle Fling"
-Fling.TextColor3 = Color3.new(1, 1, 1)
-Fling.TextXAlignment = Enum.TextXAlignment.Left
-Fling.ZIndex = 10
-table.insert(shade2,Fling)
-table.insert(text1,Fling)
-
-Select_12.Name = "Select"
-Select_12.Parent = Fling
-Select_12.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_12.BorderSizePixel = 0
-Select_12.Position = UDim2.new(0, 152, 0, 0)
-Select_12.Size = UDim2.new(0, 40, 0, 20)
-Select_12.Font = Enum.Font.SourceSans
-Select_12.TextSize = 14
-Select_12.Text = "Add"
-Select_12.TextColor3 = Color3.new(0, 0, 0)
-Select_12.ZIndex = 10
-table.insert(shade3,Select_12)
-table.insert(text2,Select_12)
-
-Invisible.Name = "Invisible"
-Invisible.Parent = Toggles
-Invisible.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Invisible.BorderSizePixel = 0
-Invisible.Position = UDim2.new(0, 0, 0, 200)
-Invisible.Size = UDim2.new(0, 192, 0, 20)
-Invisible.Font = Enum.Font.SourceSans
-Invisible.TextSize = 14
-Invisible.Text = "    Toggle Invisible"
-Invisible.TextColor3 = Color3.new(1, 1, 1)
-Invisible.TextXAlignment = Enum.TextXAlignment.Left
-Invisible.ZIndex = 10
-table.insert(shade2,Invisible)
-table.insert(text1,Invisible)
-
-Select_14.Name = "Select"
-Select_14.Parent = Invisible
-Select_14.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_14.BorderSizePixel = 0
-Select_14.Position = UDim2.new(0, 152, 0, 0)
-Select_14.Size = UDim2.new(0, 40, 0, 20)
-Select_14.Font = Enum.Font.SourceSans
-Select_14.TextSize = 14
-Select_14.Text = "Add"
-Select_14.TextColor3 = Color3.new(0, 0, 0)
-Select_14.ZIndex = 10
-table.insert(shade3,Select_14)
-table.insert(text2,Select_14)
-
-Vehiclefly.Name = "VehicleFly"
-Vehiclefly.Parent = Toggles
-Vehiclefly.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-Vehiclefly.BorderSizePixel = 0
-Vehiclefly.Position = UDim2.new(0, 0, 0, 225)
-Vehiclefly.Size = UDim2.new(0, 192, 0, 20)
-Vehiclefly.Font = Enum.Font.SourceSans
-Vehiclefly.TextSize = 14
-Vehiclefly.Text = "    Toggle VehicleFly"
-Vehiclefly.TextColor3 = Color3.new(1, 1, 1)
-Vehiclefly.TextXAlignment = Enum.TextXAlignment.Left
-Vehiclefly.ZIndex = 10
-table.insert(shade2,Vehiclefly)
-table.insert(text1,Vehiclefly)
-
-Select_15.Name = "Select"
-Select_15.Parent = Vehiclefly
-Select_15.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_15.BorderSizePixel = 0
-Select_15.Position = UDim2.new(0, 152, 0, 0)
-Select_15.Size = UDim2.new(0, 40, 0, 20)
-Select_15.Font = Enum.Font.SourceSans
-Select_15.TextSize = 14
-Select_15.Text = "Add"
-Select_15.TextColor3 = Color3.new(0, 0, 0)
-Select_15.ZIndex = 10
-table.insert(shade3,Select_15)
-table.insert(text2,Select_15)
-
-VehicleNoclip.Name = "VehicleNoclip"
-VehicleNoclip.Parent = Toggles
-VehicleNoclip.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
-VehicleNoclip.BorderSizePixel = 0
-VehicleNoclip.Position = UDim2.new(0, 0, 0, 250)
-VehicleNoclip.Size = UDim2.new(0, 192, 0, 20)
-VehicleNoclip.Font = Enum.Font.SourceSans
-VehicleNoclip.TextSize = 14
-VehicleNoclip.Text = "    Toggle VehicleNoclip"
-VehicleNoclip.TextColor3 = Color3.new(1, 1, 1)
-VehicleNoclip.TextXAlignment = Enum.TextXAlignment.Left
-VehicleNoclip.ZIndex = 10
-table.insert(shade2,VehicleNoclip)
-table.insert(text1,VehicleNoclip)
-
-Select_16.Name = "Select"
-Select_16.Parent = VehicleNoclip
-Select_16.BackgroundColor3 = Color3.fromRGB(78, 78, 79)
-Select_16.BorderSizePixel = 0
-Select_16.Position = UDim2.new(0, 152, 0, 0)
-Select_16.Size = UDim2.new(0, 40, 0, 20)
-Select_16.Font = Enum.Font.SourceSans
-Select_16.TextSize = 14
-Select_16.Text = "Add"
-Select_16.TextColor3 = Color3.new(0, 0, 0)
-Select_16.ZIndex = 10
-table.insert(shade3,Select_16)
-table.insert(text2,Select_16)
 
 shadow_2.Name = "shadow"
 shadow_2.Parent = KeybindEditor
@@ -5815,6 +5505,46 @@ local bindsGUI = KeybindEditor
 local awaitingInput = false
 local keySelected = false
 
+local positionbind = 0
+makeBindsButton = function(text, cmd, to)
+	local tog = Fly:Clone()
+	tog.Name = text
+	tog.Parent = Toggles
+	tog.Text = "    " .. text
+	positionbind = positionbind + 25
+	tog.Position = UDim2.new(0, 0, 0, positionbind)
+	table.insert(shade2, tog)
+	table.insert(text1, tog)
+	local togsel = Select_3:Clone()
+	togsel.Parent = tog
+	table.insert(shade3, togsel)
+	table.insert(text2, togsel)
+	togsel.MouseButton1Click:Connect(function()
+		if keySelected then
+			addbind(cmd,keyPressed,bindChosenKeyUp)
+			refreshbinds()
+			updatesaves()
+			if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
+				notify('Keybinds Updated','Binded '..keyPressed..' to '..to)
+			else
+				notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to '..to)
+			end
+		end
+	end)
+end
+
+makeBindsButton("Toggle Noclip", "togglenoclip", "toggle noclip")
+makeBindsButton("Toggle Float", "togglefloat", "toggle float")
+makeBindsButton("Click TP (Hold Key & Click)", "clicktp", "click tp")
+makeBindsButton("Click Delete (Hold Key & Click)", "clickdel", "click delete")
+makeBindsButton("Toggle Xray", "togglexray", "toggle xray")
+makeBindsButton("Toggle Swim", "toggleswim", "toggle swim")
+makeBindsButton("Toggle Fling", "togglefling", "toggle fling")
+makeBindsButton("Toggle Invisible", "toggleinvis", "toggle invisible")
+makeBindsButton("Toggle VehicleFly", "togglevfly", "toggle vehiclefly")
+makeBindsButton("Toggle VehicleNoclip", "togglevnoclip", "toggle vehiclenoclip")
+Toggles.CanvasSize = UDim2.new(0, 0, 0, positionbind + 20)
+
 function unkeybind(cmd,key)
 	for i = #binds,1,-1 do
 		if binds[i].COMMAND == cmd and binds[i].KEY == key then
@@ -6052,136 +5782,6 @@ Fly.Select.MouseButton1Click:Connect(function()
 			notify('Keybinds Updated','Binded '..keyPressed..' to toggle fly')
 		else
 			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle fly')
-		end
-	end
-end)
-
-Noclip.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglenoclip',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle noclip')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle noclip')
-		end
-	end
-end)
-
-Float.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglefloat',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle float')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle float')
-		end
-	end
-end)
-
-ClickTP.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('clicktp',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to click tp')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click tp')
-		end
-	end
-end)
-
-ClickDelete.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('clickdel',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to click delete')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
-		end
-	end
-end)
-
-Xray.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglexray',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle xray')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle xray')
-		end
-	end
-end)
-
-Swim.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('toggleswim',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle swim')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle swim')
-		end
-	end
-end)
-
-Fling.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglefling',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle fling')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle fling')
-		end
-	end
-end)
-
-Invisible.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('toggleinvis',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle invisible')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle invisible')
-		end
-	end
-end)
-
-Vehiclefly.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglevfly',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle vehiclefly')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle vehiclefly')
-		end
-	end
-end)
-
-VehicleNoclip.Select.MouseButton1Click:Connect(function()
-	if keySelected then
-		addbind('togglevnoclip',keyPressed,bindChosenKeyUp)
-		refreshbinds()
-		updatesaves()
-		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to toggle vehiclenoclip')
-		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to toggle vehiclenoclip')
 		end
 	end
 end)
@@ -7186,10 +6786,9 @@ addcmd('float', {'platform'},function(args, speaker)
 			Float.Name = floatName
 			Float.Parent = pchar
 			Float.Transparency = 1
-			Float.Size = Vector3.new(6,1,6)
+			Float.Size = Vector3.new(2,0.2,1.5)
 			Float.Anchored = true
-			local FloatValue = -3.5
-			if r15(speaker) then FloatValue = -3.65 end
+			local FloatValue = -3.1
 			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 			notify('Float','Float Enabled (Q = down & E = up)')
 			qUp = IYMouse.KeyUp:Connect(function(KEY)
@@ -7212,7 +6811,7 @@ addcmd('float', {'platform'},function(args, speaker)
 					FloatValue = FloatValue + 0.5
 				end
 			end)
-			floatDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 				FloatingFunc:Disconnect()
 				Float:Destroy()
 				qUp:Disconnect()
@@ -7265,56 +6864,51 @@ addcmd('togglefloat',{},function(args, speaker)
 end)
 
 swimming = false
+local oldgrav = workspace.Gravity
+local swimbeat = nil
 addcmd('swim',{},function(args, speaker)
-	workspace.Gravity = 0
-	local function swimDied()
-		workspace.Gravity = 198.2
-		swimming = false
+	if not swimming and speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
+		oldgrav = workspace.Gravity
+		workspace.Gravity = 0
+		local swimDied = function()
+			workspace.Gravity = oldgrav
+			swimming = false
+		end
+		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+		gravReset = Humanoid.Died:Connect(swimDied)
+		local enums = Enum.HumanoidStateType:GetEnumItems()
+		table.remove(enums, table.find(enums, Enum.HumanoidStateType.None))
+		for i, v in pairs(enums) do
+			Humanoid:SetStateEnabled(v, false)
+		end
+		Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+		swimbeat = game:GetService("RunService").Heartbeat:Connect(function()
+			pcall(function()
+				speaker.Character.HumanoidRootPart.Velocity = ((Humanoid.MoveDirection ~= Vector3.new() or Humanoid.Jump) and speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
+			end)
+		end)
+		swimming = true
 	end
-	local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	gravReset = Humanoid.Died:Connect(swimDied)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
-	Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-	swimming = true
 end)
 
 addcmd('unswim',{'noswim'},function(args, speaker)
-	workspace.Gravity = 198.2
-	swimming = false
-	if gravReset then
-		gravReset:Disconnect()
+	if speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
+		workspace.Gravity = oldgrav
+		swimming = false
+		if gravReset then
+			gravReset:Disconnect()
+		end
+		if swimbeat ~= nil then
+			swimbeat:Disconnect()
+			swimbeat = nil
+		end
+		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+		local enums = Enum.HumanoidStateType:GetEnumItems()
+		table.remove(enums, table.find(enums, Enum.HumanoidStateType.None))
+		for i, v in pairs(enums) do
+			Humanoid:SetStateEnabled(v, true)
+		end
 	end
-	local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
-	Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
 end)
 
 addcmd('toggleswim',{},function(args, speaker)
