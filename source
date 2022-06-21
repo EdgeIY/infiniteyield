@@ -1,3 +1,7 @@
+if game:GetService("Players").LocalPlayer:GetUnder13() == true then
+	return task.wait(math.huge)
+end
+
 if IY_LOADED and not _G.IY_DEBUG == true then
 	error("Infinite Yield is already running!",0)
 	return
