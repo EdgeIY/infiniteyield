@@ -6884,7 +6884,7 @@ addcmd('swim',{},function(args, speaker)
 		Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
 		swimbeat = game:GetService("RunService").Heartbeat:Connect(function()
 			pcall(function()
-				speaker.Character.HumanoidRootPart.Velocity = ((Humanoid.MoveDirection ~= Vector3.new() or Humanoid.Jump) and speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
+				speaker.Character.HumanoidRootPart.Velocity = ((Humanoid.MoveDirection ~= Vector3.new() or UserInputService:IsKeyDown(Enum.KeyCode.Space)) and speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
 			end)
 		end)
 		swimming = true
