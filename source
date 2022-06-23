@@ -8598,7 +8598,7 @@ addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 		for i,v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
-					if x:IsA("BasePart") and x.Anchored then
+					if x.Name ~= floatName and x:IsA("BasePart") and x.Anchored then
 						x.Anchored = false
 					end
 				end
