@@ -9653,7 +9653,7 @@ addcmd('console',{},function(args, speaker)
 end)
 
 addcmd('explorer',{'dex'},function(args, speaker)
-	notify("Loading",'Hold on a sec')
+    notify("Loading",'Hold on a sec')
     local getobjects = function(a)
         local Objects = {}
         if a then
@@ -9665,7 +9665,7 @@ addcmd('explorer',{'dex'},function(args, speaker)
         return Objects
     end
     
-    local Dex = getobjects("rbxassetid://5475777257")[1]
+    local Dex = getobjects("rbxassetid://10055842438")[1]
     Dex.Parent = PARENT
     
     local function Load(Obj, Url)
