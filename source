@@ -9973,11 +9973,11 @@ addcmd('unbubblechat',{'nobubblechat'},function(args, speaker)
 end)
 
 addcmd('safechat',{},function(args, speaker)
-	speaker.SetSuperSafeChat(true)
+	speaker:SetSuperSafeChat(true)
 end)
 
 addcmd('nosafechat',{'disablesafechat','unsafechat'},function(args, speaker)
-	speaker.SetSuperSafeChat(false)
+	speaker:SetSuperSafeChat(false)
 end)
 
 addcmd('blockhead',{},function(args, speaker)
