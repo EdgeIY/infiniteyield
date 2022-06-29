@@ -9609,22 +9609,24 @@ end)
 addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
+			local char = speaker.Character
 			local setspeed;
-			hookmetamethod(game, "__index", function(self, key)
-				local keyclean = string.gsub(key, "\0", "")
-				if (keyclean == "Walkspeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(game.Players.LocalPlayer.Character)  then
-					return setspeed or 16
+			local index; index = hookmetamethod(game, "__index", function(self, key)
+				local keyclean = key:gsub("\0", "")
+				if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
+					return setspeed or args[1]
 				end
+                return index(self, key)
 			end)
 
-			hookmetamethod(game, "__newindex", function(self, key, value)
-				local keyclean = string.gsub(key, "\0", "")
-				if (keyclean == "Walkspeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(game.Players.LocalPlayer.Character)  then
+		    local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			    local keyclean = string.gsub(key, "\0", "")
+				if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
 					setspeed = tonumber(value)
 					return setspeed
 				end
-			end)
-
+                return newindex(self, key, value)
+		    end)
 		else
 			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
