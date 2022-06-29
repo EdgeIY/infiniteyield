@@ -9516,24 +9516,29 @@ end)
 
 addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
-		local getrawmt = (debug and debug.getmetatable) or getrawmetatable
-		local setReadOnly = setreadonly or (make_writeable and function(table, readonly) if readonly then make_readonly(table) else make_writeable(table) end end)
-		local gameMt = getrawmt(game)
-		if gameMt then
-			local OldIndex = gameMt.__index
-			setReadOnly(gameMt, false)
-			gameMt.__index = newcclosure(function(Self, Self2)
-				if Self:IsA('Humanoid') and string.lower(tostring(Self2)) == 'walkspeed' then
-					return args[1]
+		if hookmetamethod then
+			local setspeed;
+			hookmetamethod(game, "__index", function(self, key)
+				local keyclean = string.gsub(key, "\0", "")
+				if (keyclean == "Walkspeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(game.Players.LocalPlayer.Character)  then
+					return setspeed or 16
 				end
-				return OldIndex(Self, Self2)
 			end)
-			setReadOnly(gameMt, true)
+
+			hookmetamethod(game, "__newindex", function(self, key, value)
+				local keyclean = string.gsub(key, "\0", "")
+				if (keyclean == "Walkspeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(game.Players.LocalPlayer.Character)  then
+					setspeed = tonumber(value)
+					return setspeed
+				end
+			end)
+
 		else
-			notify('Incompatible Exploit','Your exploit does not support this command (missing getrawmetatable)')
+			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
+
 
 addcmd('loopspeed',{'loopws'},function(args, speaker)
 	local speed = args[1] or 16
