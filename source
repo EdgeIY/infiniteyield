@@ -5327,6 +5327,7 @@ Cmdbar:GetPropertyChangedSignal("Text"):Connect(function()
 end)
 
 local tabComplete = nil
+tabAllowed = true
 Cmdbar.FocusLost:Connect(function(enterpressed)
 	if enterpressed then
 		local cmdbarText = Cmdbar.Text:gsub("^"..'%'..prefix,"")
@@ -5356,7 +5357,7 @@ Cmdbar.Focused:Connect(function()
 	end
 	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
 		if Cmdbar:IsFocused() then
-			if input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
+			if tabAllowed == true and input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
 				autoComplete(topCommand)
 			end
 		else
