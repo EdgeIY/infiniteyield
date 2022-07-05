@@ -472,6 +472,7 @@ Title_2.Font = Enum.Font.SourceSans
 Title_2.TextSize = 14
 Title_2.Text = "Notification Title"
 Title_2.TextColor3 = Color3.new(1, 1, 1)
+Title_2.RichText = true
 Title_2.ZIndex = 10
 table.insert(shade2,Title_2)
 table.insert(text1,Title_2)
@@ -487,6 +488,7 @@ Text_2.TextSize = 16
 Text_2.Text = "Notification Text"
 Text_2.TextColor3 = Color3.new(1, 1, 1)
 Text_2.TextWrapped = true
+Text_2.RichText = true
 Text_2.ZIndex = 10
 table.insert(text1,Text_2)
 
@@ -3031,9 +3033,7 @@ function notify(text,text2,length)
 		wait(0.6)
 		local closepressed = false
 		if text2 then
-			Title_2.RichText = true
 			Title_2.Text = text
-			Text_2.RichText = true
 			Text_2.Text = text2
 		else
 			Title_2.Text = 'Notification'
