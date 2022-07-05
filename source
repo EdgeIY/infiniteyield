@@ -4532,6 +4532,7 @@ CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhy
 CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
+CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
 CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
 CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
@@ -10546,6 +10547,12 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing firetouchinterest)')
 	end
+end)
+
+addcmd('vr',{},function(args, speaker)
+	-- Full credit to Abacaxl @V3rmillion
+	notify("Loading", "Hold on a sec")
+	loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/9b118500cc792514a3048ffa723b7666/raw/bed5f399b252c75e58a9eec70634f6636ac8ac78/vr"))()
 end)
 
 addcmd('split',{},function(args, speaker)
