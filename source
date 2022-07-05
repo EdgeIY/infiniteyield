@@ -3031,7 +3031,9 @@ function notify(text,text2,length)
 		wait(0.6)
 		local closepressed = false
 		if text2 then
+			Title_2.RichText = true
 			Title_2.Text = text
+			Text_2.RichText = true
 			Text_2.Text = text2
 		else
 			Title_2.Text = 'Notification'
