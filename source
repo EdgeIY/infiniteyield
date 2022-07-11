@@ -1903,7 +1903,7 @@ local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local setsimulation = setsimulationradius or set_simulation_radius
 local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
-
+local messagePostedTBL
 function writefileExploit()
 	if writefile then
 		return true
@@ -4600,6 +4600,8 @@ CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you t
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
+CMDs[#CMDs + 1] = {NAME = 'antichatban / anticban', DESC = 'Prevents ROBLOX from seeing your messages (only works if message was sent after running command)'}
+CMDs[#CMDs + 1] = {NAME = 'unantichatban / unanticban', DESC = 'Reverses the effects of antichatban'}
 wait()
 
 for i = 1, #CMDs do
@@ -8278,6 +8280,38 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
         end)
 	end
     notify('Anti Idle','Anti idle is enabled')
+end)
+
+addcmd('antichatban',{'anticban'},function(args, speaker)
+	local PlayerScripts = Players.LocalPlayer:FindFirstChild("PlayerScripts")
+	local ChatScript = PlayerScripts:FindFirstChild("ChatScript")
+
+
+if ChatScript then
+    	local ChatMain = require(ChatScript.ChatMain)
+    	messagePostedTBL = rawget(ChatMain, "MessagePosted")
+    	rawset(ChatMain, "MessagePosted", {
+   		["fire"] = function() return end,
+    	["wait"] = function() return end,
+    	["connect"] = function() return end
+	    })
+        notify('Anti Chat Ban', "Enabled")
+   else
+    notify('Anti Chat Ban','Anti chat ban is not supported on this game.')
+   end
+end)
+
+addcmd('unantichatban',{'unanticban'},function(args, speaker)
+	local PlayerScripts = Players.LocalPlayer:FindFirstChild("PlayerScripts")
+	local ChatScript = PlayerScripts:FindFirstChild("ChatScript")
+	
+	if typeof(messagePostedTBL) == "table" and ChatScript then
+		local ChatMain = require(ChatScript.ChatMain)
+		rawset(ChatMain, "MessagePosted", messagePostedTBL)
+        notify('Anti Chat Ban', "Disabled")
+	else --anti retard measures
+	    notify('Anti Chat Ban', 'You need to run the command antichatban first')
+	end
 end)
 
 addcmd('datalimit',{},function(args, speaker)
