@@ -1902,7 +1902,8 @@ StatsService = game:GetService("Stats")
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local setsimulation = setsimulationradius or set_simulation_radius
-local queueteleport = syn and syn.queue_on_teleport or queue_on_teleport or fluxus and fluxus.queue_on_teleport
+local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+local httprequest = (syn and syn.request) or http and http.request or http_request or (fluxus and fluxus.request) or request
 
 function writefileExploit()
 	if writefile then
@@ -6193,9 +6194,8 @@ addcmd('discord', {'support', 'help'}, function(args, speaker)
 	else
 		notify('Discord Invite', 'discord.gg/dYHag43eeU')
 	end
-	local req = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
-	if req then
-		req({
+	if httprequest then
+		httprequest({
 			Url = 'http://127.0.0.1:6463/rpc?v=1',
 			Method = 'POST',
 			Headers = {
@@ -6596,16 +6596,29 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 end)
 
 addcmd('serverhop',{'shop'},function(args, speaker)
-	local x = {}
-	for _, v in ipairs(HttpService:JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
-		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
-			x[#x + 1] = v.id
+	-- thanks to NoobSploit for fixing
+    if httprequest then
+		local servers = {}
+		local cursor = ""
+		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100&cursor=%s", game.PlaceId, cursor)})
+		local body = HttpService:JSONDecode(req.Body)
+		if body and body.data then
+			task.spawn(function()
+				for i, v in next, body.data do
+					if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers then
+						table.insert(servers, 1, v.id)
+					end 
+				end
+			end)
+			if body.nextPageCursor then
+				cursor = body.nextPageCursor
+			end
 		end
-	end
-	if #x > 0 then
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
-	else
-		return notify("Serverhop","Couldn't find a server.")
+		if #servers > 0 then
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+		else
+			return notify("Serverhop", "Couldn't find a server.")
+		end
 	end
 end)
 
@@ -9863,7 +9876,7 @@ end)
 addcmd('remotespy',{'rspy'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
 	-- Full credit to exx, creator of SimpleSpy
-        -- also thanks to NoobSploit for fixing
+    -- also thanks to NoobSploit for fixing
 	loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/8f5af8403ca5dabad30763ab2b1cf8d0/raw/87d9847dd85850777e691e46d0c52f9020b42ee2/spy"))()
 end)
 
