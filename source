@@ -3794,7 +3794,12 @@ task.spawn(function()
         local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
         local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge).OnClientEvent:Connect(function(data)
             if logsEnabled == true and data ~= nil then
-                CreateLabel(tostring(data.FromSpeaker), tostring(data.Message))
+                if data.MessageType == "Whisper" then
+                    local ToSpeakerWhisper = "/w " .. string.gsub(data.OriginalChannel, "To ", "") .. " "
+                    CreateLabel(tostring(data.FromSpeaker), ToSpeakerWhisper .. tostring(data.Message))
+                else
+                    CreateLabel(tostring(data.FromSpeaker), tostring(data.Message))
+                end
             end
         end)
     end))
