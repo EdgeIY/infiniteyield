@@ -3793,18 +3793,21 @@ task.spawn(function()
     coroutine.resume(coroutine.create(function()
         local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
         local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge).OnClientEvent:Connect(function(data)
--- eventEditor.FireEvent("OnChatted",tostring(plr),msg)
--- I'll fix event binds when I'm on pc
-            if logsEnabled == true and data ~= nil then
-                if data.MessageType == "Whisper" then
-                    local ToSpeakerWhisper = "/w " .. string.gsub(data.OriginalChannel, "To ", "") .. " "
-                    CreateLabel(tostring(data.FromSpeaker), ToSpeakerWhisper .. tostring(data.Message))
-                elseif data.MessageType == "Team" then
-                    CreateLabel(tostring(data.FromSpeaker), "/team " .. tostring(data.Message))
-                else
-                    CreateLabel(tostring(data.FromSpeaker), tostring(data.Message))
-                end
-            end
+			if data ~= nil then
+				local player = tostring(data.FromSpeaker)
+				local message = tostring(data.Message)
+				local originalchannel = tostring(data.OriginalChannel)
+				if string.find(originalchannel, "To ") then
+					message = "/w " .. string.gsub(originalchannel, "To ", "") .. " " .. message
+				end
+				if originalchannel == "Team" then
+					message = "/team " .. message
+				end
+				eventEditor.FireEvent(player, message)
+				if logsEnabled then
+					CreateLabel(player, message)
+				end
+			end
         end)
     end))
 end)
@@ -11994,7 +11997,6 @@ end
 
 Players.PlayerAdded:Connect(function(plr)
 	eventEditor.FireEvent("OnJoin",plr.Name)
-	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
 	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 	JoinLog(plr)
 	if ESPenabled then
@@ -12009,7 +12011,6 @@ end)
 
 for _,plr in pairs(Players:GetPlayers()) do
 	pcall(function()
-		plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
 		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 		hookCharEvents(plr)
 	end)
