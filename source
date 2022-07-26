@@ -6611,22 +6611,16 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 end)
 
 addcmd('serverhop',{'shop'},function(args, speaker)
-	-- thanks to NoobSploit for fixing
+    -- thanks to NoobSploit for fixing
     if httprequest then
 		local servers = {}
-		local cursor = ""
-		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100&cursor=%s", game.PlaceId, cursor)})
+		local req = httprequest({Url = string.format('https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100&cursor=""', game.PlaceId)})
 		local body = HttpService:JSONDecode(req.Body)
 		if body and body.data then
-			task.spawn(function()
-				for i, v in next, body.data do
-					if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers then
-						table.insert(servers, 1, v.id)
-					end 
-				end
-			end)
-			if body.nextPageCursor then
-				cursor = body.nextPageCursor
+			for i, v in next, body.data do
+				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers then
+					table.insert(servers, 1, v.id)
+				end 
 			end
 		end
 		if #servers > 0 then
@@ -8275,10 +8269,12 @@ addcmd('uninvisibleparts',{'uninvisparts'},function(args, speaker)
 end)
 
 addcmd('btools',{},function(args, speaker)
-	Instance.new("HopperBin", speaker:FindFirstChildOfClass("Backpack")).BinType = 1
-	Instance.new("HopperBin", speaker:FindFirstChildOfClass("Backpack")).BinType = 2
-	Instance.new("HopperBin", speaker:FindFirstChildOfClass("Backpack")).BinType = 3
-	Instance.new("HopperBin", speaker:FindFirstChildOfClass("Backpack")).BinType = 4
+	for i = 1, 4 do
+		local Tool = Instance.new("HopperBin")
+		Tool.BinType = i
+		Tool.Name = randomString()
+		Tool.Parent = speaker:FindFirstChildOfClass("Backpack")
+	end
 end)
 
 addcmd('f3x',{'fex'},function(args, speaker)
