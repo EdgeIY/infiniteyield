@@ -2972,6 +2972,7 @@ end
 
 PrefixBox.Text = prefix
 local SettingsOpen = false
+local isHidden = false
 
 if StayOpen == false then
 	On.BackgroundTransparency = 1
@@ -3675,12 +3676,16 @@ SettingsButton.MouseButton1Click:Connect(function()
 end)
 
 On.MouseButton1Click:Connect(function()
-	if StayOpen == false then StayOpen = true
-		On.BackgroundTransparency = 0
-	else StayOpen = false
-		On.BackgroundTransparency = 1
+	if isHidden == false then
+		if StayOpen == false then
+			StayOpen = true
+			On.BackgroundTransparency = 0
+		else
+			StayOpen = false
+			On.BackgroundTransparency = 1
+		end
+		updatesaves()
 	end
-	updatesaves()
 end)
 
 Clear.MouseButton1Down:Connect(function()
@@ -7367,8 +7372,10 @@ end)
 
 local wasStayOpen = StayOpen
 addcmd('hideiy',{},function(args, speaker)
+	isHidden = true
 	wasStayOpen = StayOpen
-	if StayOpen == true then StayOpen = false
+	if StayOpen == true then
+		StayOpen = false
 		On.BackgroundTransparency = 1
 	end
 	minimizeNum = 0
@@ -7377,6 +7384,7 @@ addcmd('hideiy',{},function(args, speaker)
 end)
 
 addcmd('showiy',{'unhideiy'},function(args, speaker)
+	isHidden = false
 	minimizeNum = -20
 	if wasStayOpen then
 		maximizeHolder()
