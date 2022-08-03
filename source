@@ -6618,11 +6618,11 @@ addcmd('serverhop',{'shop'},function(args, speaker)
     -- thanks to NoobSploit for fixing
     if httprequest then
 		local servers = {}
-		local req = httprequest({Url = string.format('https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100', game.PlaceId)})
+		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", game.PlaceId)})
 		local body = HttpService:JSONDecode(req.Body)
 		if body and body.data then
 			for i, v in next, body.data do
-				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers then
+				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
 					table.insert(servers, 1, v.id)
 				end 
 			end
