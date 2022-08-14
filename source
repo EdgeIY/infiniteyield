@@ -6085,33 +6085,35 @@ function LoadPlugin(val,startup)
 		end
 		addcmdtext('',val)
 		addcmdtext(string.upper('--'..plugin["PluginName"]),val,plugin["PluginDescription"])
-		for i,v in pairs(plugin["Commands"]) do 
-			local cmdExt = ''
-			local cmdName = i
-			local function handleNames()
-				cmdName = i
-				if findCmd(cmdName..cmdExt) then
-					if isNumber(cmdExt) then
-						cmdExt = cmdExt+1
+		if plugin["Commands"] ~= nil then
+			for i,v in pairs(plugin["Commands"]) do 
+				local cmdExt = ''
+				local cmdName = i
+				local function handleNames()
+					cmdName = i
+					if findCmd(cmdName..cmdExt) then
+						if isNumber(cmdExt) then
+							cmdExt = cmdExt+1
+						else
+							cmdExt = 1
+						end
+						handleNames()
 					else
-						cmdExt = 1
+						cmdName = cmdName..cmdExt
 					end
-					handleNames()
+				end
+				handleNames()
+				addcmd(cmdName, v["Aliases"], v["Function"], val)
+				if v["ListName"] then
+					local newName = v.ListName
+					local cmdNames = {i,unpack(v.Aliases)}
+					for i,v in pairs(cmdNames) do
+						newName = newName:gsub(v,v..cmdExt)
+					end
+					addcmdtext(newName,val,v["Description"])
 				else
-					cmdName = cmdName..cmdExt
+					addcmdtext(cmdName,val,v["Description"])
 				end
-			end
-			handleNames()
-			addcmd(cmdName, v["Aliases"], v["Function"], val)
-			if v["ListName"] then
-				local newName = v.ListName
-				local cmdNames = {i,unpack(v.Aliases)}
-				for i,v in pairs(cmdNames) do
-					newName = newName:gsub(v,v..cmdExt)
-				end
-				addcmdtext(newName,val,v["Description"])
-			else
-				addcmdtext(cmdName,val,v["Description"])
 			end
 		end
 		IndexContents('',true)
