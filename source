@@ -6085,7 +6085,7 @@ function LoadPlugin(val,startup)
 		end
 		addcmdtext('',val)
 		addcmdtext(string.upper('--'..plugin["PluginName"]),val,plugin["PluginDescription"])
-		if plugin["Commands"] ~= nil then
+		if plugin["Commands"] then
 			for i,v in pairs(plugin["Commands"]) do 
 				local cmdExt = ''
 				local cmdName = i
