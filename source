@@ -3801,9 +3801,9 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 end)
 
 task.spawn(function()
-    coroutine.resume(coroutine.create(function()
-        local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
-        local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge).OnClientEvent:Connect(function(data)
+	coroutine.resume(coroutine.create(function()
+		local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
+		local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge).OnClientEvent:Connect(function(data)
 			if data ~= nil then
 				local player = tostring(data.FromSpeaker)
 				local message = tostring(data.Message)
@@ -3819,8 +3819,8 @@ task.spawn(function()
 					CreateLabel(player, message)
 				end
 			end
-        end)
-    end))
+		end)
+	end))
 end)
 
 Players.PlayerRemoving:Connect(function(player)
@@ -4919,20 +4919,20 @@ end
 
 function addbind(cmd,key,iskeyup,toggle)
 	if toggle then
-	binds[#binds+1]=
-	{
-		COMMAND=cmd;
-		KEY=key;
-		ISKEYUP=iskeyup;
-		TOGGLE = toggle;
-	}
+		binds[#binds+1]=
+			{
+				COMMAND=cmd;
+				KEY=key;
+				ISKEYUP=iskeyup;
+				TOGGLE = toggle;
+			}
 	else
 		binds[#binds+1]=
-		{
-			COMMAND=cmd;
-			KEY=key;
-			ISKEYUP=iskeyup;
-		}
+			{
+				COMMAND=cmd;
+				KEY=key;
+				ISKEYUP=iskeyup;
+			}
 	end
 end
 
@@ -4969,10 +4969,10 @@ end
 
 local GetClosestPlayerFromCursor = function()
 	local found = nil
-    local ClosestDistance = math.huge
-    for i, v in pairs(Players:GetPlayers()) do
-        if v ~= Players.LocalPlayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
-            for k, x in pairs(v.Character:GetChildren()) do
+	local ClosestDistance = math.huge
+	for i, v in pairs(Players:GetPlayers()) do
+		if v ~= Players.LocalPlayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
+			for k, x in pairs(v.Character:GetChildren()) do
 				if string.find(x.Name, "Torso") then
 					local Distance = (WTS(x) - MousePositionToVector2()).Magnitude
 					if Distance < ClosestDistance then
@@ -4980,9 +4980,9 @@ local GetClosestPlayerFromCursor = function()
 						found = v
 					end
 				end
-            end
-        end
-    end
+			end
+		end
+	end
 	return found
 end
 
@@ -6619,8 +6619,8 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 end)
 
 addcmd('serverhop',{'shop'},function(args, speaker)
-    -- thanks to NoobSploit for fixing
-    if httprequest then
+	-- thanks to NoobSploit for fixing
+	if httprequest then
 		local servers = {}
 		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", game.PlaceId)})
 		local body = HttpService:JSONDecode(req.Body)
@@ -7440,21 +7440,21 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
-local LocalPlayer = Players.LocalPlayer
-local oldhmmi
-local oldhmmnc
-    oldhmmi = hookmetamethod(game, "__index", function(self, method)
-        if self == LocalPlayer and method:lower() == "kick" then
-            return error("Expected ':' not '.' calling member function Kick", 2)
-        end
-        return oldhmmi(self, method)
-    end)
-    oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
-        if self == LocalPlayer and getnamecallmethod():lower() == "kick" then
-            return
-        end
-        return oldhmmnc(self, ...)
-    end)
+	local LocalPlayer = Players.LocalPlayer
+	local oldhmmi
+	local oldhmmnc
+	oldhmmi = hookmetamethod(game, "__index", function(self, method)
+		if self == LocalPlayer and method:lower() == "kick" then
+			return error("Expected ':' not '.' calling member function Kick", 2)
+		end
+		return oldhmmi(self, method)
+	end)
+	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
+		if self == LocalPlayer and getnamecallmethod():lower() == "kick" then
+			return
+		end
+		return oldhmmnc(self, ...)
+	end)
 
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
@@ -7880,14 +7880,14 @@ Input = {} do
 
 		function Input.StartCapture()
 			ContextActionService:BindActionAtPriority("FreecamKeyboard",Keypress,false,INPUT_PRIORITY,
-			Enum.KeyCode.W,
-			Enum.KeyCode.A,
-			Enum.KeyCode.S,
-			Enum.KeyCode.D,
-			Enum.KeyCode.E,
-			Enum.KeyCode.Q,
-			Enum.KeyCode.Up,
-			Enum.KeyCode.Down
+				Enum.KeyCode.W,
+				Enum.KeyCode.A,
+				Enum.KeyCode.S,
+				Enum.KeyCode.D,
+				Enum.KeyCode.E,
+				Enum.KeyCode.Q,
+				Enum.KeyCode.Up,
+				Enum.KeyCode.Down
 			)
 			ContextActionService:BindActionAtPriority("FreecamMousePan",MousePan,false,INPUT_PRIORITY,Enum.UserInputType.MouseMovement)
 		end
@@ -8307,13 +8307,13 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
-        Players.LocalPlayer.Idled:Connect(function()
-            local VirtualUser = game:GetService("VirtualUser")
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
-        end)
+		Players.LocalPlayer.Idled:Connect(function()
+			local VirtualUser = game:GetService("VirtualUser")
+			VirtualUser:CaptureController()
+			VirtualUser:ClickButton2(Vector2.new())
+		end)
 	end
-    notify('Anti Idle','Anti idle is enabled')
+	notify('Anti Idle','Anti idle is enabled')
 end)
 
 addcmd('datalimit',{},function(args, speaker)
@@ -9700,16 +9700,16 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 				if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
 					return setspeed or args[1]
 				end
-                return index(self, key)
+				return index(self, key)
 			end)
-		    local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
-			    local keyclean = string.gsub(key, "\0", "")
+			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+				local keyclean = string.gsub(key, "\0", "")
 				if (keyclean == "WalkSpeed" or keyclean == "walkSpeed") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
 					setspeed = tonumber(value)
 					return setspeed
 				end
-                return newindex(self, key, value)
-		    end)
+				return newindex(self, key, value)
+			end)
 		else
 			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
@@ -9754,16 +9754,16 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 				if (keyclean == "JumpPower" or keyclean == "jumpPower") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
 					return setpower or args[1]
 				end
-                return index(self, key)
+				return index(self, key)
 			end)
-		    local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
-			    local keyclean = string.gsub(key, "\0", "")
+			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+				local keyclean = string.gsub(key, "\0", "")
 				if (keyclean == "JumpPower" or keyclean == "jumpPower") and self:IsA("Humanoid") and self:IsDescendantOf(char) and not checkcaller() then
 					setpower = tonumber(value)
 					return setpower
 				end
-                return newindex(self, key, value)
-		    end)
+				return newindex(self, key, value)
+			end)
 		else
 			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
@@ -9876,58 +9876,58 @@ addcmd('console',{},function(args, speaker)
 end)
 
 addcmd('explorer',{'dex'},function(args, speaker)
-    notify("Loading",'Hold on a sec')
-    local getobjects = function(a)
-        local Objects = {}
-        if a then
-            local b = InsertService:LoadLocalAsset(a)
-            if b then 
-                table.insert(Objects, b) 
-            end
-        end
-        return Objects
-    end
-    
-    local Dex = getobjects("rbxassetid://10055842438")[1]
-    Dex.Parent = PARENT
-    
-    local function Load(Obj, Url)
-        local function GiveOwnGlobals(Func, Script)
-            local Fenv, RealFenv, FenvMt = {}, {script = Script}, {}
-            FenvMt.__index = function(a,b)
-                return RealFenv[b] == nil and getgenv()[b] or RealFenv[b]
-            end
-            FenvMt.__newindex = function(a, b, c)
-                if RealFenv[b] == nil then 
-                    getgenv()[b] = c 
-                else 
-                    RealFenv[b] = c 
-                end
-            end
-            setmetatable(Fenv, FenvMt)
-            pcall(setfenv, Func, Fenv)
-            return Func
-        end
-    
-        local function LoadScripts(_, Script)
-            if Script:IsA("LocalScript") then
-                coroutine.wrap(function()
-                    GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
-                end)()
-            end
-            table.foreach(Script:GetChildren(), LoadScripts)
-        end
-    
-        LoadScripts(nil, Obj)
-    end
-    
-    Load(Dex)
+	notify("Loading",'Hold on a sec')
+	local getobjects = function(a)
+		local Objects = {}
+		if a then
+			local b = InsertService:LoadLocalAsset(a)
+			if b then 
+				table.insert(Objects, b) 
+			end
+		end
+		return Objects
+	end
+
+	local Dex = getobjects("rbxassetid://10055842438")[1]
+	Dex.Parent = PARENT
+
+	local function Load(Obj, Url)
+		local function GiveOwnGlobals(Func, Script)
+			local Fenv, RealFenv, FenvMt = {}, {script = Script}, {}
+			FenvMt.__index = function(a,b)
+				return RealFenv[b] == nil and getgenv()[b] or RealFenv[b]
+			end
+			FenvMt.__newindex = function(a, b, c)
+				if RealFenv[b] == nil then 
+					getgenv()[b] = c 
+				else 
+					RealFenv[b] = c 
+				end
+			end
+			setmetatable(Fenv, FenvMt)
+			pcall(setfenv, Func, Fenv)
+			return Func
+		end
+
+		local function LoadScripts(_, Script)
+			if Script:IsA("LocalScript") then
+				coroutine.wrap(function()
+					GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
+				end)()
+			end
+			table.foreach(Script:GetChildren(), LoadScripts)
+		end
+
+		LoadScripts(nil, Obj)
+	end
+
+	Load(Dex)
 end)
 
 addcmd('remotespy',{'rspy'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
 	-- Full credit to exx, creator of SimpleSpy
-    -- also thanks to NoobSploit for fixing
+	-- also thanks to NoobSploit for fixing
 	loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/8f5af8403ca5dabad30763ab2b1cf8d0/raw/87d9847dd85850777e691e46d0c52f9020b42ee2/spy"))()
 end)
 
@@ -11213,7 +11213,6 @@ function kill(speaker,target,fast)
 				wait()
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
 			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -11297,7 +11296,6 @@ function bring(speaker,target,fast)
 				wait()
 				hrp.CFrame = NormPos
 			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			wait(1)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
@@ -11689,7 +11687,7 @@ addcmd('trip',{},function(args, speaker)
 		local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
 		local root = getRoot(speaker.Character)
 		hum:ChangeState(0)
-        root.Velocity = root.CFrame.LookVector * 30
+		root.Velocity = root.CFrame.LookVector * 30
 	end
 end)
 
