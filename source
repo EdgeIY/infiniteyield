@@ -160,18 +160,17 @@ function randomString()
 end
 
 PARENT = nil
-local SynV3 = syn and DrawingImmediate
-if (not is_sirhurt_closure) and (not SynV3) and (syn and syn.protect_gui) then
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	syn.protect_gui(Main)
-	Main.Parent = COREGUI
-	PARENT = Main
-elseif get_hidden_gui or gethui then
+if get_hidden_gui or gethui then
 	local hiddenUI = get_hidden_gui or gethui
 	local Main = Instance.new("ScreenGui")
 	Main.Name = randomString()
 	Main.Parent = hiddenUI()
+	PARENT = Main
+elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	syn.protect_gui(Main)
+	Main.Parent = COREGUI
 	PARENT = Main
 elseif COREGUI:FindFirstChild('RobloxGui') then
 	PARENT = COREGUI.RobloxGui
@@ -2769,17 +2768,13 @@ defaults = HttpService:JSONEncode(defaultsettings)
 local KeepInfYield = true
 nosaves = false
 
-local fileExtension = "iy"
-if SynV3 then fileExtension = "txt" end
-local fileExLen = #fileExtension + 1
-
 local loadedEventData = nil
 function saves()
 	if writefileExploit() then
-		if pcall(function() readfile("IY_FE." .. fileExtension) end) then
-			if readfile("IY_FE." .. fileExtension) ~= nil then
+		if pcall(function() readfile("IY_FE.iy") end) then
+			if readfile("IY_FE.iy") ~= nil then
 				local success, response = pcall(function()
-					local json = HttpService:JSONDecode(readfile("IY_FE." .. fileExtension))
+					local json = HttpService:JSONDecode(readfile("IY_FE.iy"))
 					if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 					if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
 					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
@@ -2801,19 +2796,19 @@ function saves()
 				if not success then
 					warn("Save Json Error:", response)
 					warn("Overwriting Save File")
-					writefileCooldown("IY_FE." .. fileExtension, defaults)
+					writefileCooldown("IY_FE.iy", defaults)
 					wait()
 					saves()
 				end
 			else
-				writefileCooldown("IY_FE." .. fileExtension, defaults)
+				writefileCooldown("IY_FE.iy", defaults)
 				wait()
 				saves()
 			end
 		else
-			writefileCooldown("IY_FE." .. fileExtension, defaults)
+			writefileCooldown("IY_FE.iy", defaults)
 			wait()
-			if pcall(function() readfile("IY_FE." .. fileExtension) end) then
+			if pcall(function() readfile("IY_FE.iy") end) then
 				saves()
 			else
 				nosaves = true
@@ -2941,7 +2936,7 @@ function updatesaves()
 			currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 			eventBinds = eventEditor.SaveData()
 		}
-		writefileCooldown("IY_FE." .. fileExtension, HttpService:JSONEncode(update))
+		writefileCooldown("IY_FE.iy", HttpService:JSONEncode(update))
 	end
 end
 
@@ -5968,17 +5963,17 @@ end)
 PluginsGUI = PluginEditor.background
 
 function addPlugin(name)
-	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.' .. fileExtension or name == 'iy_fe' then
+	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.iy' or name == 'iy_fe' then
 		notify('Plugin Error','Please enter a valid plugin')
 	else
 		local file
 		local fileName
-		if name:sub(-fileExLen) == '.' .. fileExtension then
+		if name:sub(-3) == '.iy' then
 			pcall(function() file = readfile(name) end)
 			fileName = name
 		else
-			pcall(function() file = readfile(name..'.'..fileExtension) end)
-			fileName = name..'.' .. fileExtension
+			pcall(function() file = readfile(name..'.iy') end)
+			fileName = name..'.iy'
 		end
 		if file then
 			if not FindInTable(PluginsTable, fileName) then
@@ -5996,8 +5991,8 @@ function addPlugin(name)
 end
 
 function deletePlugin(name)
-	local pName = name..'.' .. fileExtension
-	if name:sub(-fileExLen) == '.' .. fileExtension then
+	local pName = name..'.iy'
+	if name:sub(-3) == '.iy' then
 		pName = name
 	end
 	for i = #cmds,1,-1 do
