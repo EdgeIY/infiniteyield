@@ -1,4 +1,4 @@
-if IY_LOADED and not _G.IY_DEBUG == true then
+if IY_LOADED and not _G.IY_DEBUG then
 	-- error("Infinite Yield is already running!",0)
 	return
 end
@@ -3169,7 +3169,7 @@ IYMouse.KeyDown:Connect(function(Key)
 			repeat Cmdbar.Text = '' until Cmdbar.Text == ''
 		end)
 		maximizeHolder()
-	elseif infJump == true and Key == " " then
+	elseif infJump and Key == " " then
 		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState(3)
 	end
 end)
@@ -3748,7 +3748,7 @@ if not writefileExploit() then
 end
 
 JoinLog = function(plr)
-	if jLogsEnabled == true then
+	if jLogsEnabled then
 		CreateJoinLabel(plr,plr.UserId)
 	end
 end
@@ -4153,7 +4153,7 @@ task.spawn(function()
 
 		local function Index()
 			if chatbox.Text:lower():sub(1,1) == prefix then
-				if SettingsOpen == true then
+				if SettingsOpen then
 					wait(0.2)
 					CMDsF.Visible = true
 					Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
@@ -4161,7 +4161,7 @@ task.spawn(function()
 				IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
 			else
 				minimizeHolder()
-				if SettingsOpen == true then
+				if SettingsOpen then
 					wait(0.2)
 					Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
 					CMDsF.Visible = false
@@ -5349,7 +5349,7 @@ Cmdbar.FocusLost:Connect(function(enterpressed)
 	if not Cmdbar:IsFocused() then
 		Cmdbar.Text = ""
 		IndexContents('',true,false,true)
-		if SettingsOpen == true then
+		if SettingsOpen then
 			wait(0.2)
 			Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
 			CMDsF.Visible = false
@@ -5361,14 +5361,14 @@ end)
 Cmdbar.Focused:Connect(function()
 	historyCount = 0
 	canvasPos = CMDsF.CanvasPosition
-	if SettingsOpen == true then
+	if SettingsOpen then
 		wait(0.2)
 		CMDsF.Visible = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 	end
 	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
 		if Cmdbar:IsFocused() then
-			if tabAllowed == true and input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
+			if tabAllowed and input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
 				autoComplete(topCommand)
 			end
 		else
@@ -5861,7 +5861,7 @@ function onInputBegan(input,gameProcessed)
 			if not v.ISKEYUP then
 				if (input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower()) or (input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick') or (input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick') then
 					if v.TOGGLE then
-						local isOn = toggleOn[v] == true
+						local isOn = toggleOn[v]
 						toggleOn[v] = not isOn
 						if isOn then
 							execCmd(v.TOGGLE,Players.LocalPlayer)
@@ -6693,7 +6693,7 @@ addcmd('noclip',{},function(args, speaker)
 	local function NoclipLoop()
 		if Clip == false and speaker.Character ~= nil then
 			for _, child in pairs(speaker.Character:GetDescendants()) do
-				if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+				if child:IsA("BasePart") and child.CanCollide and child.Name ~= floatName then
 					child.CanCollide = false
 				end
 			end
@@ -7336,7 +7336,7 @@ function deleteGuisAtPos()
 	pcall(function()
 		local guisAtPosition = Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 		for _, gui in pairs(guisAtPosition) do
-			if gui.Visible == true then
+			if gui.Visible then
 				gui:Destroy()
 			end
 		end
@@ -7364,7 +7364,7 @@ local wasStayOpen = StayOpen
 addcmd('hideiy',{},function(args, speaker)
 	isHidden = true
 	wasStayOpen = StayOpen
-	if StayOpen == true then
+	if StayOpen then
 		StayOpen = false
 		On.BackgroundTransparency = 1
 	end
@@ -8794,12 +8794,12 @@ addcmd('muteboombox',{},function(args, speaker)
 		for i,v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
-					if x:IsA("Sound") and x.Playing == true then
+					if x:IsA("Sound") and x.Playing then
 						x.Playing = false
 					end
 				end
 				for i, x in next, Players[v]:FindFirstChildOfClass("Backpack"):GetDescendants() do
-					if x:IsA("Sound") and x.Playing == true then
+					if x:IsA("Sound") and x.Playing then
 						x.Playing = false
 					end
 				end
@@ -8907,7 +8907,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 			local X = tonumber(Pos_Seperate[1])
 			local Y = tonumber(Pos_Seperate[2])
 			local Z = tonumber(Pos_Seperate[3])
-			if IsInteger == true then
+			if IsInteger then
 				if Y <= Void then
 					Respawn()
 				end
@@ -8931,7 +8931,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 
 	function Respawn()
 		IsRunning = false
-		if IsInvis == true then
+		if IsInvis then
 			pcall(function()
 				Player.Character = Character
 				wait()
@@ -8958,7 +8958,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		invisDied:Disconnect()
 	end)
 
-	if IsInvis == true then return end
+	if IsInvis then return end
 	IsInvis = true
 	CF = workspace.CurrentCamera.CFrame
 	local CF_1 = Player.Character.HumanoidRootPart.CFrame
@@ -9964,7 +9964,7 @@ addcmd('headsit',{},function(args, speaker)
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
 		headSit = RunService.Heartbeat:Connect(function()
 			if Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) then
-				if Players:FindFirstChild(Players[v].Name) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
+				if Players:FindFirstChild(Players[v].Name) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit then
 					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
 				else
 					headSit:Disconnect()
@@ -11618,7 +11618,7 @@ local RolewatchConnection = Players.PlayerAdded:Connect(function(player)
 	if RolewatchData.Group == 0 then return end
 	if player:IsInGroup(RolewatchData.Group) then
 		if tostring(player:GetRoleInGroup(RolewatchData.Group)):lower() == RolewatchData.Role:lower() then
-			if RolewatchData.Leave == true then
+			if RolewatchData.Leave then
 				Players.LocalPlayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
 			else
 				notify("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
