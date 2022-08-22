@@ -3754,15 +3754,10 @@ JoinLog = function(plr)
 end
 
 local CleanFileName = function(str)
-	str = tostring(str)
-	str = str:gsub("*", "")
-	str = str:gsub("\"", "")
-	str = str:gsub("\\", "")
-	str = str:gsub("?", "")
-	str = str:gsub(":", "")
-	str = str:gsub("<", "")
-	str = str:gsub(">", "")
-	str = str:gsub("|", "")
+	local gsub = string.gsub
+	for _, v in pairs({"*", "\\", "?", ":", "<", ">", "|"}) do
+		str = gsub(str, v, "")
+	end
 	return str
 end
 
