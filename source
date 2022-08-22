@@ -5,7 +5,7 @@ end
 
 pcall(function() getgenv().IY_LOADED = true end)
 
-COREGUI = game:GetService("CoreGui")
+COREGUI = game:FindService("CoreGui")
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message")
 	notLoaded.Parent = COREGUI
@@ -16,7 +16,7 @@ end
 
 ver = '5.9'
 
-Players = game:GetService("Players")
+Players = game:FindService("Players")
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -1795,7 +1795,7 @@ function create(data)
 	return insts[1]
 end
 
-local textService = game:GetService("TextService")
+local textService = game:FindService("TextService")
 ViewportTextBox = (function()
 
 	local funcs = {}
@@ -1875,27 +1875,27 @@ ViewportTextBox.convert(Cmdbar_2).View.ZIndex = 10
 ViewportTextBox.convert(Cmdbar_3).View.ZIndex = 10
 
 IYMouse = Players.LocalPlayer:GetMouse()
-UserInputService = game:GetService("UserInputService")
-TweenService = game:GetService("TweenService")
-HttpService = game:GetService("HttpService")
-MarketplaceService = game:GetService("MarketplaceService")
-RunService = game:GetService("RunService")
-TeleportService = game:GetService("TeleportService")
-StarterGui = game:GetService("StarterGui")
-GuiService = game:GetService("GuiService")
-Lighting = game:GetService("Lighting")
-ContextActionService = game:GetService("ContextActionService")
-NetworkClient = game:GetService("NetworkClient")
-ReplicatedStorage = game:GetService("ReplicatedStorage")
-GroupService = game:GetService("GroupService")
-PathService = game:GetService("PathfindingService")
-SoundService = game:GetService("SoundService")
-Teams = game:GetService("Teams")
-StarterPlayer = game:GetService("StarterPlayer")
-InsertService = game:GetService("InsertService")
-ChatService = game:GetService("Chat")
-ProximityPromptService = game:GetService("ProximityPromptService")
-StatsService = game:GetService("Stats")
+UserInputService = game:FindService("UserInputService")
+TweenService = game:FindService("TweenService")
+HttpService = game:FindService("HttpService")
+MarketplaceService = game:FindService("MarketplaceService")
+RunService = game:FindService("RunService")
+TeleportService = game:FindService("TeleportService")
+StarterGui = game:FindService("StarterGui")
+GuiService = game:FindService("GuiService")
+Lighting = game:FindService("Lighting")
+ContextActionService = game:FindService("ContextActionService")
+NetworkClient = game:FindService("NetworkClient")
+ReplicatedStorage = game:FindService("ReplicatedStorage")
+GroupService = game:FindService("GroupService")
+PathService = game:FindService("PathfindingService")
+SoundService = game:FindService("SoundService")
+Teams = game:FindService("Teams")
+StarterPlayer = game:FindService("StarterPlayer")
+InsertService = game:FindService("InsertService")
+ChatService = game:FindService("Chat")
+ProximityPromptService = game:FindService("ProximityPromptService")
+StatsService = game:FindService("Stats")
 
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -1990,9 +1990,9 @@ function getHierarchy(obj)
 	end
 
 	if period then
-		return 'game:GetService("'..service..'").'..fullname
+		return 'game:FindService("'..service..'").'..fullname
 	else
-		return 'game:GetService("'..service..'")'..fullname
+		return 'game:FindService("'..service..'")'..fullname
 	end
 end
 
@@ -7490,7 +7490,7 @@ end)
 
 addcmd('volume',{'vol'},function(args, speaker)
 	local level = args[1]/10
-	UserSettings():GetService("UserGameSettings").MasterVolume = level
+	UserSettings():FindService("UserGameSettings").MasterVolume = level
 end)
 
 addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
@@ -8295,7 +8295,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 		end
 	else
 		Players.LocalPlayer.Idled:Connect(function()
-			local VirtualUser = game:GetService("VirtualUser")
+			local VirtualUser = game:FindService("VirtualUser")
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
 		end)
@@ -8311,7 +8311,7 @@ end)
 
 addcmd('replicationlag',{'backtrack'},function(args, speaker)
 	if tonumber(args[1]) then
-		settings():GetService("NetworkSettings").IncomingReplicationLag = args[1]
+		settings():FindService("NetworkSettings").IncomingReplicationLag = args[1]
 	end
 end)
 
