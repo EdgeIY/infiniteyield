@@ -3755,10 +3755,7 @@ end
 
 local CleanFileName = function(str)
 	local gsub = string.gsub
-	for _, v in pairs({"*", "\\", "?", ":", "<", ">", "|"}) do
-		str = gsub(str, v, "")
-	end
-	return str
+	return gsub(str, "[*\\?:<>|]+", "")
 end
 
 SaveChatlogs.MouseButton1Down:Connect(function()
