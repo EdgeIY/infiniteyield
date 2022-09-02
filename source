@@ -5407,7 +5407,7 @@ function ESP(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = 0.7
 					a.Color = plr.TeamColor
 				end
 			end
@@ -5499,7 +5499,7 @@ function CHMS(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = 0.7
 					a.Color = plr.TeamColor
 				end
 			end
@@ -5560,7 +5560,7 @@ function Locate(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = 0.7
 					a.Color = plr.TeamColor
 				end
 			end
@@ -7595,7 +7595,7 @@ function partAdded(part)
 			a.AlwaysOnTop = true
 			a.ZIndex = 0
 			a.Size = part.Size
-			a.Transparency = 0.3
+			a.Transparency = 0.7
 			a.Color = BrickColor.new("Lime green")
 		end
 	else
@@ -7617,7 +7617,7 @@ addcmd('partesp',{},function(args, speaker)
 				a.AlwaysOnTop = true
 				a.ZIndex = 0
 				a.Size = v.Size
-				a.Transparency = 0.3
+				a.Transparency = 0.7
 				a.Color = BrickColor.new("Lime green")
 			end
 		end
