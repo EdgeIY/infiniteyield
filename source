@@ -9858,8 +9858,6 @@ end)
 
 addcmd('explorer',{'dex'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
-	-- Has v3 support
-	-- Faster loading
 	-- https://v3rmillion.net/showthread.php?tid=1185004
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Lazy_Dex.lua"))()
 end)
