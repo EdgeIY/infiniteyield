@@ -154,9 +154,9 @@ function randomString()
 	local length = math.random(10,20)
 	local array = {}
 	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
+		array[i] = math.random(32, 126)
 	end
-	return table.concat(array)
+	return string.char(unpack(array))
 end
 
 PARENT = nil
