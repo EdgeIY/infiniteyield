@@ -9950,6 +9950,13 @@ end)
 local loopgoto = nil
 addcmd('loopgoto',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
+	if #players==0 then
+		local msg_args
+		for i,arg in ipairs(args) do
+			msg_args = (msg_args and (msg_args..' \n') or '')..'Arg['..tostring(i)..']: '..arg
+		end
+		notify('LoopGoto','No Player Match! \n'..msg_args)
+	end
 	for i,v in pairs(players)do
 		loopgoto = nil
 		if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
@@ -9957,7 +9964,8 @@ addcmd('loopgoto',{},function(args, speaker)
 			wait(.1)
 		end
 		loopgoto = Players[v]
-		local distance = 3
+		local p = loopgoto
+		local distance = 0
 		if args[2] and isNumber(args[2]) then
 			distance = args[2]
 		end
@@ -9965,16 +9973,21 @@ addcmd('loopgoto',{},function(args, speaker)
 		if args[3] and isNumber(args[3]) then
 			lDelay = args[3]
 		end
+		notify('LoopGoto','Started For... \nPlayer: '..v..' \nDistance: '..tostring(distance)..' \nDelay: '..tostring(lDelay))
 		repeat
-			if Players:FindFirstChild(v) then
-				if Players[v].Character ~= nil then
-					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(distance,1,0)
+			p = Players:FindFirstChild(v)
+			if p then
+				local target_root = p.Character and getRoot(p.Character)
+				if target_root then
+					local target_cf = target_root.CFrame
+					getRoot(speaker.Character).CFrame = target_cf + target_cf.LookVector * distance
 				end
 				wait(lDelay)
 			else
 				loopgoto = nil
 			end
-		until loopgoto ~= Players[v]
+		until not loopgoto or loopgoto ~= p
+		notify('LoopGoto','Finished For... \nPlayer: '..v..' \nDistance: '..tostring(distance)..' \nDelay: '..tostring(lDelay))
 	end
 end)
 
