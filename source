@@ -9307,7 +9307,7 @@ addcmd('unnosit',{},function(args, speaker)
 end)
 
 addcmd('jump',{},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass("Humanoid").Jump = true
+	speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
 addcmd('infjump',{'infinitejump'},function(args, speaker)
