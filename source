@@ -1,11 +1,11 @@
 if IY_LOADED and not _G.IY_DEBUG == true then
-	-- error("Infinite Yield is already running!",0)
-	return
+    return
 end
 
 pcall(function() getgenv().IY_LOADED = true end)
 
 COREGUI = game:GetService("CoreGui")
+
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message")
 	notLoaded.Parent = COREGUI
@@ -1916,20 +1916,34 @@ function isNumber(str)
 end
 
 function getRoot(char)
-	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-	return rootPart
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if typeof(hum) == 'Instance' then
+        return hum.RootPart
+    end
+    for _, v in pairs(char:GetChildren()) do
+        if v:IsA("BasePart") and (v.Name == 'HumanoidRootPart' or v.Name == 'Torso' or v.Name == 'UpperTorso') then
+            return v
+        end
+    end
 end
 
 function tools(plr)
-	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
-		return true
-	end
+    local backpack = plr:FindFirstChildWhichIsA("Backpack")
+    if typeof(backpack) == 'Instance' and backpack:FindFirstChildWhichIsA("BackpackItem") then
+        return true
+    end
+    local character = plr.Character
+    if typeof(character) == 'Instance' and character:FindFirstChildWhichIsA("BackpackItem") then
+        return true
+    end
 end
 
 function r15(plr)
-	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
-		return true
-	end
+    local character = plr.Character
+    local humanoid = typeof(character) == 'Instance' and character:FindFirstChildWhichIsA("Humanoid")
+    if typeof(humanoid) == 'Instance' and humanoid.RigType == Enum.HumanoidRigType.R15 then
+        return true
+    end
 end
 
 function toClipboard(String)
@@ -9517,13 +9531,20 @@ addcmd('copyanimation',{'copyanim','copyemote'},function(args, speaker)
 	end
 end)
 
-addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
-	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
-		v:Stop()
-	end
+addcmd("stopanimations", {"stopanims", "stopanim"}, function(args, speaker)
+    local character = speaker.Character
+    local controller = character:FindFirstChildWhichIsA("AnimationController")
+    if typeof(controller) == 'Instance' then
+        if controller:IsA("Humanoid") then
+            controller = controller:FindFirstChildWhichIsA("Animator")
+        end
+        if typeof(controller) ~= 'Instance' then
+            return
+        end
+        for _, track in pairs(controller:GetPlayingAnimationTracks()) do
+            track:Stop(0)
+        end
+    end
 end)
 
 addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'}, function(args, speaker)
@@ -9600,75 +9621,94 @@ addcmd('clickteleport',{},function(args, speaker)
 	end
 end)
 
-addcmd('tptool', {'teleporttool'}, function(args, speaker)
-	local TpTool = Instance.new("Tool")
-	TpTool.Name = "Teleport Tool"
-	TpTool.RequiresHandle = false
-	TpTool.Parent = speaker.Backpack
-	TpTool.Activated:Connect(function()
-		local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
-		local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
-		if not Char or not HRP then
-			return warn("Failed to find HumanoidRootPart")
-		end
-		HRP.CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:components()))
-	end)
+addcmd("tptool", {"teleporttool"}, function(args, speaker)
+    local backpack = speaker:FindFirstChildWhichIsA("Backpack")
+    if typeof(backpack) == 'Instance' then
+        local tool = Instance.new("Tool")
+        tool.Name = 'Teleport Tool'
+        tool.RequiresHandle = false
+        tool.Activated:Connect(function()
+            local root = getRoot(speaker.Character)
+            if typeof(root) ~= 'Instance' then
+                return warn("Failed to find HumanoidRootPart")
+            end
+            root.CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:GetComponents()))
+        end)
+        tool.Parent = backpack
+    end
 end)
 
-addcmd('clickdelete',{},function(args, speaker)
-	if speaker == Players.LocalPlayer then
-		notify('Click Delete','Go to Settings>Keybinds>Add to set up click delete')
-	end
+addcmd("clickdelete", {"clickdel"}, function(args, speaker)
+    if speaker == Players.LocalPlayer then
+        notify("Click Delete", "Go to [Settings > Keybinds > Add] to set up click delete")
+    end
 end)
 
-addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		local char = Players[v].Character
-		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-		pos = pos and pos.Position
-		if not pos then
-			return notify('Getposition Error','Missing character')
-		end
-		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		notify('Current Position',roundedPos)
-	end
+addcmd("getposition", {"getpos", "notifypos", "notifyposition"}, function()
+    local players = getPlayer(args[1], speaker)
+    for _, v in pairs(players) do
+        local character = v.Character
+        if typeof(character) == 'Instance' then
+            local root = getRoot(character)
+            local position
+            if typeof(root) == 'Instance' then
+                position = root.Position
+            end
+            if typeof(position) ~= 'Vector3' and character:IsA("Model") then
+                local pivot = character:GetPivot()
+                if typeof(pivot) == 'CFrame' then
+                    position = pivot.Position
+                end
+            end
+            if typeof(position) == 'Vector3' then
+                return notify("Current Position", math.round(position.X) .. ", " .. math.round(position.Y) .. ", " .. math.round(position.Z))
+            end
+        end
+    end
 end)
 
-addcmd('copyposition',{'copypos'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		local char = Players[v].Character
-		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-		pos = pos and pos.Position
-		if not pos then
-			return notify('Getposition Error','Missing character')
-		end
-		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		toClipboard(roundedPos)
-	end
+addcmd("copyposition", {"copypos"}, function()
+    local players = getPlayer(args[1], speaker)
+    for _, v in pairs(players) do
+        local character = v.Character
+        if typeof(character) == 'Instance' then
+            local root = getRoot(character)
+            local position
+            if typeof(root) == 'Instance' then
+                position = root.Position
+            end
+            if typeof(position) ~= 'Vector3' and character:IsA("Model") then
+                local pivot = character:GetPivot()
+                if typeof(pivot) == 'CFrame' then
+                    position = pivot.Position
+                end
+            end
+            if typeof(position) == 'Vector3' then
+                return toClipboard(position, math.round(position.X) .. ", " .. math.round(position.Y) .. ", " .. math.round(position.Z))
+            end
+        end
+    end
 end)
 
-addcmd('walktopos',{'walktoposition'},function(args, speaker)
-	if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-		wait(.1)
-	end
-	speaker.Character:FindFirstChildOfClass('Humanoid').WalkToPoint = Vector3.new(args[1],args[2],args[3])
+addcmd("walktopos", {"walktoposition"}, function(args, speaker)
+    local character = speaker.Character
+    local humanoid = typeof(character) == 'Instance' and character:FindFirstChildWhichIsA("Humanoid")
+    if typeof(humanoid) == 'Instance' then
+        if humanoid.Sit ~= false then
+            humanoid.Sit = false
+            wait(.1)
+        end
+        humanoid.WalkToPoint = Vector3.new(args[1], args[2], args[3])
+    end
 end)
 
-addcmd('speed',{'ws','walkspeed'},function(args, speaker)
-	if args[2] then
-		local speed = args[2] or 16
-		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
-		end
-	else
-		local speed = args[1] or 16
-		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
-		end
-	end
+addcmd("speed", {"ws", "walkspeed"}, function(args, speaker)
+    local speed = (isNumber(args[2]) and args[2]) or (isNumber(args[1]) == 'number' and args[1]) or 16
+    local character = speaker.Character
+    local humanoid = typeof(character) == 'Instance' and character:FindFirstChildWhichIsA("Humanoid")
+    if typeof(humanoid) == 'Instance' then
+        humanoid.WalkSpeed = speed
+    end
 end)
 
 addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
@@ -11937,8 +11977,11 @@ end
 
 -- Events
 eventEditor.RegisterEvent("OnExecute")
-eventEditor.RegisterEvent("OnSpawn",{
-	{Type="Player",Name="Player Filter ($1)"}
+eventEditor.RegisterEvent("OnSpawn", {
+    {
+        Type = "Player",
+        Name = "Player Filter ($1)"
+    },
 })
 eventEditor.RegisterEvent("OnDied",{
 	{Type="Player",Name="Player Filter ($1)"}
