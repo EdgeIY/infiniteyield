@@ -3790,23 +3790,26 @@ end)
 task.spawn(function()
 	coroutine.resume(coroutine.create(function()
 		local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
-		local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge).OnClientEvent:Connect(function(data)
-			if data ~= nil then
-				local player = tostring(data.FromSpeaker)
-				local message = tostring(data.Message)
-				local originalchannel = tostring(data.OriginalChannel)
-				if string.find(originalchannel, "To ") then
-					message = "/w " .. string.gsub(originalchannel, "To ", "") .. " " .. message
-				end
-				if originalchannel == "Team" then
-					message = "/team " .. message
-				end
-				eventEditor.FireEvent(player, message)
-				if logsEnabled then
-					CreateLabel(player, message)
-				end
-			end
-		end)
+		local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge)
+        if OnMessageEvent:IsA("RemoteEvent") then
+            OnMessageEvent.OnClientEvent:Connect(function(data)
+                if data ~= nil then
+                    local player = tostring(data.FromSpeaker)
+                    local message = tostring(data.Message)
+                    local originalchannel = tostring(data.OriginalChannel)
+                    if string.find(originalchannel, "To ") then
+                        message = "/w " .. string.gsub(originalchannel, "To ", "") .. " " .. message
+                    end
+                    if originalchannel == "Team" then
+                        message = "/team " .. message
+                    end
+                    eventEditor.FireEvent("OnChatted", player, message)
+                    if logsEnabled then
+                        CreateLabel(player, message)
+                    end
+                end
+            end)
+        end
 	end))
 end)
 
