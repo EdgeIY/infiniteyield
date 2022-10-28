@@ -6884,6 +6884,7 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
 	Head.Anchored = true
+	if CFloop then CFloop:Disconnect() end
 	CFloop = RunService.Heartbeat:Connect(function(deltaTime)
 		local moveDirection = speaker.Character:FindFirstChildOfClass('Humanoid').MoveDirection * (CFspeed * deltaTime)
 		local headCFrame = Head.CFrame
