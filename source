@@ -208,9 +208,24 @@ Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
 Title.Text = "Infinite Yield FE v"..ver
 
--- Happy Halloween!
-if tonumber(os.date("%m")) == 10 and tonumber(os.date("%d")) == 31 then 
+do
+	local emoji = ({
+	    ["4 9"] = "🥚", -- this changes based on full moon but too lazy to do it correctly /shrug make a pr if you want to fix
+	    ["10 31"] = "🎃",
+	    ["12 25"] = "🎄"
+	})[os.date("%m %d")]
+
+	if emoji then
+		Title.Text = ("%s %s %s"):format(emoji, Title.Text, emoji)
+	end
+end
+
+if currentDate.month == 4 and currentDate.day == 9 then 
+	Title.Text = "🥚 " .. Title.Text .. " 🥚"
+elseif currentDate.month == 10 and currentDate.day == 31 then
 	Title.Text = "🎃 " .. Title.Text .. " 🎃"
+elseif currentDate.month == 12 and currentDate.day == 25 then
+	Title.Text = "🎄 " .. Title.Text .. " 🎄"
 end
 
 Title.TextColor3 = Color3.new(1, 1, 1)
