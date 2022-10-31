@@ -220,14 +220,6 @@ do
 	end
 end
 
-if currentDate.month == 4 and currentDate.day == 9 then 
-	Title.Text = "🥚 " .. Title.Text .. " 🥚"
-elseif currentDate.month == 10 and currentDate.day == 31 then
-	Title.Text = "🎃 " .. Title.Text .. " 🎃"
-elseif currentDate.month == 12 and currentDate.day == 25 then
-	Title.Text = "🎄 " .. Title.Text .. " 🎄"
-end
-
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.ZIndex = 10
 table.insert(shade1,Title)
