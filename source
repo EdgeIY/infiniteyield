@@ -1915,6 +1915,7 @@ gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 setsimulation = setsimulationradius or set_simulation_radius
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+PlaceId, JobId = game.PlaceId, game.JobId
 
 function writefileExploit()
 	if writefile then
@@ -2960,7 +2961,7 @@ WayPoints = {}
 
 if #AllWaypoints > 0 then
 	for i = 1, #AllWaypoints do
-		if not AllWaypoints[i].GAME or AllWaypoints[i].GAME == game.PlaceId then
+		if not AllWaypoints[i].GAME or AllWaypoints[i].GAME == PlaceId then
 			WayPoints[#WayPoints + 1] = {NAME = AllWaypoints[i].NAME, COORD = {AllWaypoints[i].COORD[1], AllWaypoints[i].COORD[2], AllWaypoints[i].COORD[3]}, GAME = AllWaypoints[i].GAME}
 		end
 	end
@@ -3775,7 +3776,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 	if writefileExploit() then
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
-			local placeName = CleanFileName(MarketplaceService:GetProductInfo(game.PlaceId).Name)
+			local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
 			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
@@ -4961,7 +4962,7 @@ function addcmdtext(text,name,desc)
 	end
 end
 
-local WTS = function(Object)
+local WorldToScreen = function(Object)
 	local ObjectVector = workspace.CurrentCamera:WorldToScreenPoint(Object.Position)
 	return Vector2.new(ObjectVector.X, ObjectVector.Y)
 end
@@ -4977,7 +4978,7 @@ local GetClosestPlayerFromCursor = function()
 		if v ~= Players.LocalPlayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
 			for k, x in pairs(v.Character:GetChildren()) do
 				if string.find(x.Name, "Torso") then
-					local Distance = (WTS(x) - MousePositionToVector2()).Magnitude
+					local Distance = (WorldToScreen(x) - MousePositionToVector2()).Magnitude
 					if Distance < ClosestDistance then
 						ClosestDistance = Distance
 						found = v
@@ -5194,6 +5195,18 @@ SpecialPlayerCases = {
 		local v = GetClosestPlayerFromCursor()
 		if v ~= nil then table.insert(plrs, v) end
 		return plrs
+	end,
+    ["npcs"] = function(speaker,args)
+		local returns = {}
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("Model") and getRoot(v) and v:FindFirstChildWhichIsA("Humanoid") and Players:GetPlayerFromCharacter(v) == nil then
+                local clone = Instance.new("Player")
+                clone.Name = v.Name .. " - " .. v:FindFirstChildWhichIsA("Humanoid").DisplayName
+                clone.Character = v
+                table.insert(returns, v)
+            end
+        end
+		return returns
 	end,
 }
 
@@ -6537,11 +6550,11 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 			FRAME:Destroy()
 			canOpenServerinfo = true
 		end)
-		local Asset = MarketplaceService:GetProductInfo(game.PlaceId)
+		local Asset = MarketplaceService:GetProductInfo(PlaceId)
 		SINFOGUI.name.Text = "Place Name: " .. Asset.Name
 		SINFOGUI.playerid.Text = "Player ID: " ..speaker.UserId
 		SINFOGUI.maxplayers.Text = Players.MaxPlayers.. " Players Max"
-		SINFOGUI.placeid.Text = "Place ID: " ..game.PlaceId
+		SINFOGUI.placeid.Text = "Place ID: " ..PlaceId
 
 		CopyApp.MouseButton1Click:Connect(function()
 			toClipboard(speaker.CharacterAppearanceId)
@@ -6550,7 +6563,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 			toClipboard(speaker.UserId)
 		end)
 		CopyPlcID.MouseButton1Click:Connect(function()
-			toClipboard(game.PlaceId)
+			toClipboard(PlaceId)
 		end)
 
 		repeat
@@ -6575,12 +6588,12 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 end)
 
 addcmd('jobid',{},function(args, speaker)
-	local jobId = 'Roblox.GameLauncher.joinGameInstance('..game.PlaceId..', "'..game.JobId..'")'
+	local jobId = 'Roblox.GameLauncher.joinGameInstance('..PlaceId..', "'..JobId..'")'
 	toClipboard(jobId)
 end)
 
 addcmd('notifyjobid',{},function(args, speaker)
-	notify('JobId / PlaceId',game.JobId..' / '..game.PlaceId)
+	notify('JobId / PlaceId',JobId..' / '..PlaceId)
 end)
 
 addcmd('breakloops',{'break'},function(args, speaker)
@@ -6595,9 +6608,9 @@ addcmd('rejoin',{'rj'},function(args, speaker)
 	if #Players:GetPlayers() <= 1 then
 		Players.LocalPlayer:Kick("\nRejoining...")
 		wait()
-		TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+		TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 	else
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+		TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
 	end
 end)
 
@@ -6610,9 +6623,9 @@ addcmd('autorejoin',{'autorj'},function(args, speaker)
 					if #Players:GetPlayers() <= 1 then
 						Players.LocalPlayer:Kick("\nRejoining...")
 						wait()
-						TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+						TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 					else
-						TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+						TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
 					end
 				end
 			end)
@@ -6625,17 +6638,17 @@ addcmd('serverhop',{'shop'},function(args, speaker)
 	-- thanks to NoobSploit for fixing
 	if httprequest then
 		local servers = {}
-		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", game.PlaceId)})
+		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", PlaceId)})
 		local body = HttpService:JSONDecode(req.Body)
 		if body and body.data then
 			for i, v in next, body.data do
-				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
 					table.insert(servers, 1, v.id)
 				end 
 			end
 		end
 		if #servers > 0 then
-			TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+			TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
 		else
 			return notify("Serverhop", "Couldn't find a server.")
 		end
@@ -6644,8 +6657,8 @@ end)
 
 addcmd('joinplayer',{'joinp'},function(args, speaker)
 	local retries = 0
-	function ToServer(User,PlaceId)	
-		if args[2] == nil then PlaceId = game.PlaceId end
+	function ToServer(User,Place)	
+		if args[2] == nil then Place = PlaceId end
 		if not pcall(function()
 				local FoundUser, UserId = pcall(function()
 					if tonumber(User) then
@@ -6658,7 +6671,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 					notify('Join Error','Username/UserID does not exist')
 				else
 					notify('Join Player','Loading servers. Hold on a second.')
-					local URL2 = ("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
+					local URL2 = ("https://games.roblox.com/v1/games/"..Place.."/servers/Public?sortOrder=Asc&limit=100")
 					local Http = HttpService:JSONDecode(game:HttpGet(URL2))
 					local GUID
 
@@ -6678,7 +6691,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 
 					if GUID ~= nil then
 						notify('Join Player','Joining '..User)
-						TeleportService:TeleportToPlaceInstance(PlaceId,GUID,Players.LocalPlayer)
+						TeleportService:TeleportToPlaceInstance(Place,GUID,Players.LocalPlayer)
 					else
 						notify('Join Error','Unable to join user.')
 					end
@@ -6689,7 +6702,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 				retries = retries + 1
 				print('ERROR retrying '..retries..'/3')
 				notify('Join Error','Error while trying to join. Retrying '..retries..'/3.')
-				ToServer(User,PlaceId)
+				ToServer(User,Place)
 			else
 				notify('Join Error','Error while trying to join.')
 			end
@@ -7076,9 +7089,9 @@ addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(ar
 	if getRoot(speaker.Character) then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
 		local torso = getRoot(speaker.Character)
-		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = game.PlaceId}
+		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
-			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = game.PlaceId}
+			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
 		end
 	end	
 	refreshwaypoints()
@@ -7089,9 +7102,9 @@ addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setway
 	local WPName = tostring(getstring(1))
 	if getRoot(speaker.Character) then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
-		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = game.PlaceId}
+		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
-			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = game.PlaceId}
+			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
 		end
 	end	
 	refreshwaypoints()
@@ -7235,7 +7248,7 @@ addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(arg
 	if AllWaypoints ~= nil and #AllWaypoints > 0 then
 		for i,v in pairs(AllWaypoints) do
 			if v.NAME:lower() == tostring(getstring(1)):lower() then
-				if not v.GAME or v.GAME == game.PlaceId then
+				if not v.GAME or v.GAME == PlaceId then
 					table.remove(AllWaypoints, i)
 				end
 			end
@@ -7262,19 +7275,19 @@ end)
 
 addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 	for i,v in pairs(WayPoints) do
-		if v.GAME == game.PlaceId then
+		if v.GAME == PlaceId then
 			table.remove(WayPoints, i)
 		end
 	end
 	if AllWaypoints ~= nil and #AllWaypoints > 0 then
 		for i,v in pairs(AllWaypoints) do
-			if v.GAME == game.PlaceId then
+			if v.GAME == PlaceId then
 				table.remove(AllWaypoints, i)
 			end
 		end
 	end
 	for i,v in pairs(pWayPoints) do
-		if v.GAME == game.PlaceId then
+		if v.GAME == PlaceId then
 			table.remove(pWayPoints, i)
 		end
 	end
@@ -10151,7 +10164,7 @@ addcmd('bang',{'rape'},function(args, speaker)
 	execCmd('unbang')
 	wait()
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for _, v in pairs(players) do
 		bangAnim = Instance.new("Animation")
 		if not r15(speaker) then
 			bangAnim.AnimationId = "rbxassetid://148840371"
