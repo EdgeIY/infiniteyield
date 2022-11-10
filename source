@@ -2761,6 +2761,7 @@ currentScroll = Color3.fromRGB(78,78,79)
 defaultsettings = {
 	prefix = ';';
 	StayOpen = false;
+	espTransparency = 0.3;
 	keepIY = true;
 	logsEnabled = false;
 	jLogsEnabled = false;
@@ -2778,8 +2779,6 @@ defaultsettings = {
 }
 
 defaults = HttpService:JSONEncode(defaultsettings)
-
-local KeepInfYield = true
 nosaves = false
 
 local loadedEventData = nil
@@ -2792,6 +2791,7 @@ function saves()
 					if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 					if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
 					if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
+					if json.espTransparency ~= nil then espTransparency = json.espTransparency else espTransparency = 0.3 end
 					if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
@@ -2829,6 +2829,7 @@ function saves()
 				prefix = ';'
 				StayOpen = false
 				KeepInfYield = true
+				espTransparency = 0.3
 				logsEnabled = false
 				jLogsEnabled = false
 				aliases = {}
@@ -2919,6 +2920,7 @@ function saves()
 		prefix = ';'
 		StayOpen = false
 		KeepInfYield = true
+		espTransparency = 0.3
 		logsEnabled = false
 		jLogsEnabled = false
 		aliases = {}
@@ -2936,6 +2938,7 @@ function updatesaves()
 			prefix = prefix;
 			StayOpen = StayOpen;
 			keepIY = KeepInfYield;
+			espTransparency = espTransparency;
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
 			aliases = aliases;
@@ -4365,6 +4368,7 @@ CMDs[#CMDs + 1] = {NAME = 'nosafechat / disablesafechat', DESC = 'Disables safec
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
+CMDs[#CMDs + 1] = {NAME = 'esptransparency [number]', DESC = 'Changes the transparency of esp related commands'}
 CMDs[#CMDs + 1] = {NAME = 'partesp [part name]', DESC = 'Highlights a part'}
 CMDs[#CMDs + 1] = {NAME = 'unpartesp / nopartesp [part name]', DESC = 'removes partesp'}
 CMDs[#CMDs + 1] = {NAME = 'chams', DESC = 'ESP but without text in the way'}
@@ -5436,7 +5440,7 @@ function ESP(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = espTransparency
 					a.Color = plr.TeamColor
 				end
 			end
@@ -5528,7 +5532,7 @@ function CHMS(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = espTransparency
 					a.Color = plr.TeamColor
 				end
 			end
@@ -5589,7 +5593,7 @@ function Locate(plr)
 					a.AlwaysOnTop = true
 					a.ZIndex = 10
 					a.Size = n.Size
-					a.Transparency = 0.3
+					a.Transparency = espTransparency
 					a.Color = plr.TeamColor
 				end
 			end
@@ -7613,6 +7617,11 @@ addcmd('noesp',{'unesp'},function(args, speaker)
 	end
 end)
 
+addcmd('esptransparency',{},function(args, speaker)
+    espTransparency = (args[1] and isNumber(args[1]) and args[1]) or 0.3
+    updatesaves()
+end)
+
 local espParts = {}
 local partEspTrigger = nil
 function partAdded(part)
@@ -7625,7 +7634,7 @@ function partAdded(part)
 			a.AlwaysOnTop = true
 			a.ZIndex = 0
 			a.Size = part.Size
-			a.Transparency = 0.3
+			a.Transparency = espTransparency
 			a.Color = BrickColor.new("Lime green")
 		end
 	else
@@ -7647,7 +7656,7 @@ addcmd('partesp',{},function(args, speaker)
 				a.AlwaysOnTop = true
 				a.ZIndex = 0
 				a.Size = v.Size
-				a.Transparency = 0.3
+				a.Transparency = espTransparency
 				a.Color = BrickColor.new("Lime green")
 			end
 		end
@@ -8330,7 +8339,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			VirtualUser:ClickButton2(Vector2.new())
 		end)
 	end
-	notify('Anti Idle','Anti idle is enabled')
+	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('Anti Idle','Anti idle is enabled') end
 end)
 
 addcmd('datalimit',{},function(args, speaker)
