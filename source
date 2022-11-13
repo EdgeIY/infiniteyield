@@ -4245,7 +4245,8 @@ end
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
-CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX explorer'}
+CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens explorer by Light Devs'}
+CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens old explorer DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens FrostHook Spy'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
@@ -9895,8 +9896,14 @@ addcmd('console',{},function(args, speaker)
 	notify('Console','Press F9 to open the console')
 end)
 
-addcmd('explorer',{'dex'},function(args, speaker)
-    notify("Loading",'Hold on a sec')
+addcmd('explorer', {'dex'}, function(args, speaker)
+    notify('Loading', 'Hold on a sec')
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/awesome-explorer/main/source.lua"))()
+end)
+
+addcmd('olddex', {'odex'}, function(args, speaker)
+    notify('Loading old explorer', 'Hold on a sec')
+    
     local getobjects = function(a)
         local Objects = {}
         if a then
