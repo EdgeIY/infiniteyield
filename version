@@ -1,2 +1,4 @@
-Version = '5.9.1'
-Announcement = ''
+{
+	"Version": "5.9.2",
+	"Announcement": ""
+}

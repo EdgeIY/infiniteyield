@@ -14,7 +14,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '5.9.1'
+currentVersion = '5.9.2'
 
 Players = game:GetService("Players")
 
@@ -206,7 +206,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "Infinite Yield FE v"..ver
+Title.Text = "Infinite Yield FE v" .. currentVersion
 
 do
 	local emoji = ({
@@ -12087,11 +12087,17 @@ end
 IYMouse.Move:Connect(checkTT)
 
 task.spawn(function()
-	if pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version'))() end) then
-		if ver ~= Version then
+	local success, latestVersionInfo = pcall(function() 
+		local versionJson = game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version')
+		return HttpService:JSONDecode(versionJson)
+	end)
+	
+	if success then
+		if currentVersion ~= latestVersionInfo.Version then
 			notify('Outdated','Get the new version at infyiff.github.io')
 		end
-		if Announcement and Announcement ~= '' then
+		
+		if latestVersionInfo.Announcement and latestVersionInfo.Announcement ~= '' then
 			local AnnGUI = Instance.new("Frame")
 			local background = Instance.new("Frame")
 			local TextBox = Instance.new("TextLabel")
