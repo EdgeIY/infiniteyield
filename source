@@ -11297,12 +11297,13 @@ addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
 	tpwalking = true
 	local chr = speaker.Character
 	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-	while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+	while tpwalking and chr and hum and hum.Parent do
+		local delta = hb:Wait()
 		if hum.MoveDirection.Magnitude > 0 then
 			if args[1] and isNumber(args[1]) then
-				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]))
+				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta)
 			else
-				chr:TranslateBy(hum.MoveDirection)
+				chr:TranslateBy(hum.MoveDirection * delta)
 			end
 		end
 	end
