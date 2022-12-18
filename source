@@ -14,8 +14,6 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-local wait,spawn,delay = task.wait,task.defer,task.delay -- band-aid fix, replace all references later
-
 currentVersion = '5.9.3'
 
 Players = game:GetService("Players")
