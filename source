@@ -210,11 +210,27 @@ Title.Text = "Infinite Yield FE v" .. currentVersion
 
 do
 	local emoji = ({
-	    ["4 9"] = "🥚", -- this changes based on full moon but too lazy to do it correctly /shrug make a pr if you want to fix
-	    ["10 31"] = "🎃",
-	    ["12 25"] = "🎄"
+		["01 01"] = "🎆",
+		[(function(Year)
+			local A = math.floor(Year/100)
+			local B = math.floor((13+8*A)/25)
+			local C = (15-B+A-math.floor(A/4))%30
+			local D = (4+A-math.floor(A/4))%7
+			local E = (19*(Year%19)+C)%30
+			local F = (2*(Year%4)+4*(Year%7)+6*E+D)%7
+			local G = (22+E+F)
+			if E == 29 and F == 6 then
+				return "04 19"
+			elseif E == 28 and F == 6 then
+				return "04 18"
+			elseif 31 < G then
+				return ("04 %02d"):format(G-31)
+			end
+			return ("03 %02d"):format(G)
+		end)(tonumber(os.date"%Y"))] = "🥚",
+		["10 31"] = "🎃",
+		["12 25"] = "🎄"
 	})[os.date("%m %d")]
-
 	if emoji then
 		Title.Text = ("%s %s %s"):format(emoji, Title.Text, emoji)
 	end
