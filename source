@@ -11317,9 +11317,9 @@ addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
 		local delta = hb:Wait()
 		if hum.MoveDirection.Magnitude > 0 then
 			if args[1] and isNumber(args[1]) then
-				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta)
+				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta * 10)
 			else
-				chr:TranslateBy(hum.MoveDirection * delta)
+				chr:TranslateBy(hum.MoveDirection * delta * 10)
 			end
 		end
 	end
