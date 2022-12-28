@@ -7484,7 +7484,7 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
     for i,v in ipairs(KickFunctions) do --prevents localscripts from sanity checking LocalPlayer.KiCk or some other combination of capitals that aren't an actual function
         local oldkick
         oldkick = hookfunction(LocalPlayer[v], newcclosure(function(self, ...)
-            if self == LocalPlayer then --prevents flags, nuffsaid
+            if self == LocalPlayer then
                 return
             end
             return oldkick(...)
