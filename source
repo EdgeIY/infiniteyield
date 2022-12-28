@@ -7479,20 +7479,25 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
-	local oldhmmi
-	local oldhmmnc
-	oldhmmi = hookmetamethod(game, "__index", function(self, method)
-		if self == LocalPlayer and method:lower() == "kick" then
-			return error("Expected ':' not '.' calling member function Kick", 2)
-		end
-		return oldhmmi(self, method)
-	end)
-	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
-		if self == LocalPlayer and getnamecallmethod():lower() == "kick" then
-			return
-		end
-		return oldhmmnc(self, ...)
-	end)
+    local KickFunctions = {"Kick", "kick"}
+    
+    for i,v in ipairs(KickFunctions) do --prevents localscripts from sanity checking LocalPlayer.KiCk or some other combination of capitals that aren't an actual function
+        local oldkick
+        oldkick = hookfunction(LocalPlayer[v], newcclosure(function(self, ...)
+            if self == LocalPlayer then --prevents flags, nuffsaid
+                return
+            end
+            return oldkick(...)
+        end))
+    end
+    
+    local oldhmmnc
+    oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
+    	if self == LocalPlayer and table.find(KickFunctions, getnamecallmethod()) then
+    		return
+    	end
+    	return oldhmmnc(self, ...)
+    end)
 
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
@@ -7503,20 +7508,22 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local TeleportService = TeleportService
-	local oldhmmi
+	local TeleportFunctions = {"Teleport", "TeleportToPlaceInstance", "TeleportAsync", "teleport", "teleportToPlaceInstance", "teleportAsync"} --WHY ARE THERE SO MANY
+	
+    for i,v in ipairs(TeleportFunctions) do
+        local oldteleport
+        oldteleport = hookfunction(TeleportService[v], newcclosure(function(self, ...)
+            if self == TeleportService then
+                return
+            end
+            return oldteleport(...)
+        end))
+    end
+	
 	local oldhmmnc
-	oldhmmi = hookmetamethod(game, "__index", function(self, method)
-		if self == TeleportService then
-			if method:lower() == "teleport" then
-				return error("Expected ':' not '.' calling member function Kick", 2)
-			elseif method == "TeleportToPlaceInstance" then
-				return error("Expected ':' not '.' calling member function TeleportToPlaceInstance", 2)
-			end
-		end
-		return oldhmmi(self, method)
-	end)
+
 	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
-		if self == TeleportService and getnamecallmethod():lower() == "teleport" or getnamecallmethod() == "TeleportToPlaceInstance" then
+		if self == TeleportService and table.find(TeleportFunctions, getnamecallmethod()) then
 			return
 		end
 		return oldhmmnc(self, ...)
