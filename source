@@ -1925,6 +1925,7 @@ InsertService = game:GetService("InsertService")
 ChatService = game:GetService("Chat")
 ProximityPromptService = game:GetService("ProximityPromptService")
 StatsService = game:GetService("Stats")
+MaterialService = game:GetService("MaterialService")
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -4647,6 +4648,8 @@ CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
 CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease the amount of CPU the client uses'}
 CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
+CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 2022 material textures'}
+CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
 wait()
 
 for i = 1, #CMDs do
@@ -8509,6 +8512,21 @@ addcmd('render',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(true)
 end)
 
+addcmd('2022materials',{'use2022materials'},function(args, speaker)
+	if sethidden then
+		sethidden(MaterialService, "Use2022Materials", true)
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
+
+addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
+	if sethidden then
+		sethidden(MaterialService, "Use2022Materials", false)
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
 
 addcmd('goto',{'to'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
