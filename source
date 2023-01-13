@@ -4282,8 +4282,8 @@ CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the crea
 CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
 CMDs[#CMDs + 1] = {NAME = 'noprompts', DESC = 'Prevents the game from showing you purchase/premium prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showprompts', DESC = 'Allows the game to show purchase/premium prompts again'}
-CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
 CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
 CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
@@ -4440,10 +4440,10 @@ CMDs[#CMDs + 1] = {NAME = 'gotopartdelay / gotomodeldelay [num]', DESC = 'Adjust
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
-CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd', DESC = 'Uses all click detectors in a game'}
-CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests', DESC = 'Uses all touchinterests in a game'}
+CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd [name]', DESC = 'Uses all click detectors in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests [name]', DESC = 'Uses all touchinterests in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
-CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp', DESC = 'Uses all proximity prompts in a game'}
+CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses all proximity prompts in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
@@ -7321,31 +7321,35 @@ addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 end)
 
 addcmd('enable',{},function(args, speaker)
-	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-		StarterGui:SetCoreGuiEnabled('Backpack', true)
-	elseif args[1]:lower() == 'playerlist' then
-		StarterGui:SetCoreGuiEnabled('PlayerList', true)
-	elseif args[1]:lower() == 'chat' then
-		StarterGui:SetCoreGuiEnabled('Chat', true)
-	elseif args[1]:lower() == 'reset' then
-		StarterGui:SetCore('ResetButtonCallback', true)
-	elseif args[1]:lower() == 'all' then
-		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
-	end
+    if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
+        StarterGui:SetCoreGuiEnabled('Backpack', true)
+    elseif args[1]:lower() == 'playerlist' then
+        StarterGui:SetCoreGuiEnabled('PlayerList', true)
+    elseif args[1]:lower() == 'chat' then
+        StarterGui:SetCoreGuiEnabled('Chat', true)
+    elseif args[1]:lower() == 'reset' then
+        StarterGui:SetCore('ResetButtonCallback', true)
+    elseif args[1]:lower() == 'emotes' then
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, true)
+    elseif args[1]:lower() == 'all' then
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
+    end
 end)
 
 addcmd('disable',{},function(args, speaker)
-	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-		StarterGui:SetCoreGuiEnabled('Backpack', false)
-	elseif args[1]:lower() == 'playerlist' then
-		StarterGui:SetCoreGuiEnabled('PlayerList', false)
-	elseif args[1]:lower() == 'chat' then
-		StarterGui:SetCoreGuiEnabled('Chat', false)
-	elseif args[1]:lower() == 'reset' then
-		StarterGui:SetCore('ResetButtonCallback', false)
-	elseif args[1]:lower() == 'all' then
-		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-	end
+    if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
+        StarterGui:SetCoreGuiEnabled('Backpack', false)
+    elseif args[1]:lower() == 'playerlist' then
+        StarterGui:SetCoreGuiEnabled('PlayerList', false)
+    elseif args[1]:lower() == 'chat' then
+        StarterGui:SetCoreGuiEnabled('Chat', false)
+    elseif args[1]:lower() == 'reset' then
+        StarterGui:SetCore('ResetButtonCallback', false)
+    elseif args[1]:lower() == 'emotes' then
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
+    elseif args[1]:lower() == 'all' then
+        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+    end
 end)
 
 local invisGUIS = {}
@@ -10416,15 +10420,24 @@ addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},function(args, sp
 end)
 
 addcmd('fireclickdetectors',{'firecd','firecds'},function(args, speaker)
-	if fireclickdetector then
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("ClickDetector") then
-				fireclickdetector(v)
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing fireclickdetector)')
-	end
+    if fireclickdetector then
+        if args[1] then
+            local name = getstring(1)
+            for _, v in next, workspace:GetDescendants() do
+                if v:IsA("ClickDetector") and v.Name == name then
+                    fireclickdetector(v)
+                end
+            end
+        else
+            for _, v in next, workspace:GetDescendants() do
+                if v:IsA("ClickDetector") then
+                    fireclickdetector(v)
+                end
+            end
+        end
+    else
+        notify('Incompatible Exploit','Your exploit does not support this command (missing fireclickdetector)')
+    end
 end)
 
 addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, speaker)
@@ -10436,15 +10449,24 @@ addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, 
 end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
-	if fireproximityprompt then
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("ProximityPrompt") then
-				fireproximityprompt(v)
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
-	end
+    if fireproximityprompt then
+        if args[1] then
+            local name = getstring(1)
+            for _, v in next, workspace:GetDescendants() do
+                if v:IsA("ProximityPrompt") and v.Name == name then
+                    fireproximityprompt(v)
+                end
+            end
+        else
+            for _, v in next, workspace:GetDescendants() do
+                if v:IsA("ProximityPrompt") then
+                    fireproximityprompt(v)
+                end
+            end
+        end
+    else
+        notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
+    end
 end)
 
 local PromptButtonHoldBegan = nil
@@ -10468,10 +10490,8 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 end)
 
 addcmd('notifyping',{'ping'},function(args, speaker)
-	local Current_Ping = string.split(StatsService.Network.ServerStatsItem["Data Ping"]:GetValueString(), " ")[1] .. "ms"
-	notify("Ping", tostring(Current_Ping))
+    notify("Ping", StatsService.Network.ServerStatsItem["Data Ping"]:GetValueString():split(" ")[1] .. "ms")
 end)
-
 
 addcmd('grabtools', {}, function(args, speaker)
 	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
@@ -10854,11 +10874,20 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 			x.CFrame = Root.CFrame
 		end
 	end
-	for _, v in ipairs(workspace:GetDescendants()) do
-		if v.IsA(v, "TouchTransmitter") then
-			Touch(v)
-		end
-	end
+    if args[1] then
+        local name = getstring(1)
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v.IsA(v, "TouchTransmitter") and v.Name == name then
+                Touch(v)
+            end
+        end
+    else
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v.IsA(v, "TouchTransmitter") then
+                Touch(v)
+            end
+        end
+    end
 end)
 
 addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
