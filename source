@@ -7320,37 +7320,47 @@ addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 	notify('Modified Waypoints','Deleted game waypoints')
 end)
 
+
+local coreGuiTypeNames = {
+	-- predefined aliases
+	["inventory"] = Enum.CoreGuiType.Backpack,
+	["leaderboard"] = Enum.CoreGuiType.PlayerList,
+	["emotes"] = Enum.CoreGuiType.EmotesMenu
+}
+
+-- Load the full list of enums
+for _, enumItem in ipairs(Enum.CoreGuiType:GetEnumItems()) do
+	coreGuiTypeNames[enumItem.Name:lower()] = enumItem
+end
+
 addcmd('enable',{},function(args, speaker)
-    if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-        StarterGui:SetCoreGuiEnabled('Backpack', true)
-    elseif args[1]:lower() == 'playerlist' then
-        StarterGui:SetCoreGuiEnabled('PlayerList', true)
-    elseif args[1]:lower() == 'chat' then
-        StarterGui:SetCoreGuiEnabled('Chat', true)
-    elseif args[1]:lower() == 'reset' then
-        StarterGui:SetCore('ResetButtonCallback', true)
-    elseif args[1]:lower() == 'emotes' then
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, true)
-    elseif args[1]:lower() == 'all' then
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
-    end
+	local input = args[1] and args[1]:lower()
+	if input then
+		if input == "reset" then
+			StarterGui:SetCore("ResetButtonCallback", true)
+		else
+			local coreGuiType = coreGuiTypeNames[input]
+			if coreGuiType then
+				StarterGui:SetCoreGuiEnabled(coreGuiType, true)
+			end
+		end
+	end
 end)
 
 addcmd('disable',{},function(args, speaker)
-    if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-        StarterGui:SetCoreGuiEnabled('Backpack', false)
-    elseif args[1]:lower() == 'playerlist' then
-        StarterGui:SetCoreGuiEnabled('PlayerList', false)
-    elseif args[1]:lower() == 'chat' then
-        StarterGui:SetCoreGuiEnabled('Chat', false)
-    elseif args[1]:lower() == 'reset' then
-        StarterGui:SetCore('ResetButtonCallback', false)
-    elseif args[1]:lower() == 'emotes' then
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
-    elseif args[1]:lower() == 'all' then
-        StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-    end
+	local input = args[1] and args[1]:lower()
+	if input then
+		if input == "reset" then
+			StarterGui:SetCore("ResetButtonCallback", false)
+		else
+			local coreGuiType = coreGuiTypeNames[input]
+			if coreGuiType then
+				StarterGui:SetCoreGuiEnabled(coreGuiType, false)
+			end
+		end
+	end
 end)
+
 
 local invisGUIS = {}
 addcmd('showguis',{},function(args, speaker)
@@ -9249,7 +9259,7 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 		-- Full credit to Thomas_Cornez#0272 @Discord
 		local lplr = Players.LocalPlayer
 		local char = lplr.Character
-		local rig = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
+		local rigType = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
 
 		local speaker = Players.LocalPlayer
 
@@ -10412,31 +10422,31 @@ addcmd('gotopartdelay',{},function(args, speaker)
 end)
 
 addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i,v in ipairs(workspace:GetDescendants()) do
 		if v:IsA("ClickDetector") then
 			v.MaxActivationDistance = math.huge
 		end
 	end
 end)
 
-addcmd('fireclickdetectors',{'firecd','firecds'},function(args, speaker)
+addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
     if fireclickdetector then
         if args[1] then
             local name = getstring(1)
-            for _, v in next, workspace:GetDescendants() do
+            for _, descendant in ipairs(workspace:GetDescendants()) do
                 if v:IsA("ClickDetector") and v.Name == name then
                     fireclickdetector(v)
                 end
             end
         else
-            for _, v in next, workspace:GetDescendants() do
-                if v:IsA("ClickDetector") then
-                    fireclickdetector(v)
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ClickDetector") then
+                    fireclickdetector(descendant)
                 end
             end
         end
     else
-        notify('Incompatible Exploit','Your exploit does not support this command (missing fireclickdetector)')
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
     end
 end)
 
@@ -10449,23 +10459,23 @@ addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, 
 end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
-    if fireproximityprompt then
+    if fireclickdetector then
         if args[1] then
             local name = getstring(1)
-            for _, v in next, workspace:GetDescendants() do
+            for _, descendant in ipairs(workspace:GetDescendants()) do
                 if v:IsA("ProximityPrompt") and v.Name == name then
                     fireproximityprompt(v)
                 end
             end
         else
-            for _, v in next, workspace:GetDescendants() do
-                if v:IsA("ProximityPrompt") then
-                    fireproximityprompt(v)
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ProximityPrompt") then
+                    fireproximityprompt(descendant)
                 end
             end
         end
     else
-        notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
     end
 end)
 
@@ -10490,23 +10500,28 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 end)
 
 addcmd('notifyping',{'ping'},function(args, speaker)
-    notify("Ping", StatsService.Network.ServerStatsItem["Data Ping"]:GetValueString():split(" ")[1] .. "ms")
+    notify("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
 end)
 
 addcmd('grabtools', {}, function(args, speaker)
-	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	for _, v in ipairs(workspace:GetChildren()) do
 		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
-			Human:EquipTool(v)
+			humanoid:EquipTool(v)
 		end
 	end
-	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
+
+	if grabtoolsFunc then 
+		grabtoolsFunc:Disconnect() 
+	end
+
 	grabtoolsFunc = workspace.ChildAdded:Connect(function(v)
 		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
 			speaker.Character:WaitForChild("Humanoid"):EquipTool(v)
 		end
 	end)
-	notify('Grabtools', 'Picking up any dropped tools')
+
+	notify("Grabtools", "Picking up any dropped tools")
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
