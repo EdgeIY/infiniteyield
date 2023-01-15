@@ -10505,9 +10505,9 @@ end)
 
 addcmd('grabtools', {}, function(args, speaker)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	for _, v in ipairs(workspace:GetChildren()) do
-		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
-			humanoid:EquipTool(v)
+	for _, child in ipairs(workspace:GetChildren()) do
+		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
+			humanoid:EquipTool(child)
 		end
 	end
 
@@ -10515,9 +10515,9 @@ addcmd('grabtools', {}, function(args, speaker)
 		grabtoolsFunc:Disconnect() 
 	end
 
-	grabtoolsFunc = workspace.ChildAdded:Connect(function(v)
-		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
-			speaker.Character:WaitForChild("Humanoid"):EquipTool(v)
+	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
+		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
+			humanoid:EquipTool(child)
 		end
 	end)
 
@@ -10525,8 +10525,11 @@ addcmd('grabtools', {}, function(args, speaker)
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
-	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
-	notify('Grabtools','Grabtools has been disabled')
+	if grabtoolsFunc then 
+		grabtoolsFunc:Disconnect() 
+	end
+
+	notify("Grabtools", "Grabtools has been disabled")
 end)
 
 local specifictoolremoval = {}
