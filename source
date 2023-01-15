@@ -10434,8 +10434,8 @@ addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
         if args[1] then
             local name = getstring(1)
             for _, descendant in ipairs(workspace:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Name == name then
-                    fireclickdetector(v)
+                if descendant:IsA("ClickDetector") and descendant.Name == name then
+                    fireclickdetector(descendant)
                 end
             end
         else
@@ -10463,8 +10463,8 @@ addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
         if args[1] then
             local name = getstring(1)
             for _, descendant in ipairs(workspace:GetDescendants()) do
-                if v:IsA("ProximityPrompt") and v.Name == name then
-                    fireproximityprompt(v)
+                if descendant:IsA("ProximityPrompt") and descendant.Name == name then
+                    fireproximityprompt(descendant)
                 end
             end
         else
