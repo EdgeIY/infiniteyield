@@ -10877,29 +10877,38 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
-	local Root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
-	local function Touch(x)
-		x = x.FindFirstAncestorWhichIsA(x, "Part")
+	if not firetouchinterest then
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
+		return
+	end
+
+	local root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
+	
+	local function touch(x)
+		x = x:FindFirstAncestorWhichIsA("Part")
 		if x then
 			if firetouchinterest then
-				return task.spawn(function()
-					firetouchinterest(x, Root, 1, wait() and firetouchinterest(x, Root, 0))
+				task.spawn(function()
+					firetouchinterest(x, root, 1)
+					wait()
+					firetouchinterest(x, root, 0)
 				end)
 			end
-			x.CFrame = Root.CFrame
+			x.CFrame = root.CFrame
 		end
 	end
+
     if args[1] then
         local name = getstring(1)
-        for _, v in ipairs(workspace:GetDescendants()) do
-            if v.IsA(v, "TouchTransmitter") and v.Name == name then
-                Touch(v)
+        for _, descendant in ipairs(workspace:GetDescendants()) do
+            if descendant:IsA("TouchTransmitter") and descendant.Name == name then
+                touch(descendant)
             end
         end
     else
-        for _, v in ipairs(workspace:GetDescendants()) do
-            if v.IsA(v, "TouchTransmitter") then
-                Touch(v)
+        for _, descendant in ipairs(workspace:GetDescendants()) do
+            if descendant:IsA("TouchTransmitter") then
+                touch(descendant)
             end
         end
     end
