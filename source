@@ -2812,7 +2812,7 @@ function saves()
 					if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
-					if json.binds ~= nil then binds = json.binds else binds = {} end
+					if json.binds ~= nil then binds = (json.binds or {}) else binds = {} end
 					if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds end
 					if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
 					if json.PluginsTable ~= nil then PluginsTable = json.PluginsTable else PluginsTable = {} end
@@ -2959,7 +2959,7 @@ function updatesaves()
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
 			aliases = aliases;
-			binds = binds;
+			binds = binds or {};
 			WayPoints = AllWaypoints;
 			PluginsTable = PluginsTable;
 			currentShade1 = {currentShade1.R,currentShade1.G,currentShade1.B};
@@ -2985,6 +2985,10 @@ if #AllWaypoints > 0 then
 			WayPoints[#WayPoints + 1] = {NAME = AllWaypoints[i].NAME, COORD = {AllWaypoints[i].COORD[1], AllWaypoints[i].COORD[2], AllWaypoints[i].COORD[3]}, GAME = AllWaypoints[i].GAME}
 		end
 	end
+end
+
+if type(binds) ~= "table" then
+    binds = {}
 end
 
 function Time()
