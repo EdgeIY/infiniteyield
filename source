@@ -4204,6 +4204,7 @@ task.spawn(function()
 				minimizeHolder()
 				if SettingsOpen == true then
 					wait(0.2)
+					Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
 					CMDsF.Visible = false
 				end
 			end
@@ -7513,6 +7514,8 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 
+    local checkcaller = checkcaller
+
     if not checkcaller then
         notify('Client Antikick', "Because your executor doesn't support checkcaller, scripts run by your executor will still kick you")
         checkcaller = function() return false end
@@ -7521,8 +7524,6 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 
     local AllowExecutorKicks = not (args[1] and args[1]:lower() == "false") -- some silly noobs might use "False" for the argument and then scream because their executor kicked them. also this logic statement sucks.
 
-    print(AllowExecutorKicks, args[1] == "false")
-    
 	local LocalPlayer = Players.LocalPlayer
     local KickFunctions = {"Kick", "kick"}
     
@@ -7560,6 +7561,8 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
+
+    local checkcaller = checkcaller
 
     if not checkcaller then
         notify('Client AntiTP', "Because your executor doesn't support checkcaller, scripts ran by your executor will still teleport you")
