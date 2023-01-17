@@ -5977,18 +5977,23 @@ end)
 
 local function clicktpFunc()
 	pcall(function()
-	    local character = Players.LocalPlayer.Character
-	    local humanoid = character:FindFirstChildOfClass("Humanoid")
+		local character = Players.LocalPlayer.Character
+		local humanoid = character:FindFirstChildOfClass("Humanoid")
 		if humanoid and humanoid.SeatPart then
 			humanoid.Sit = false
 			wait(0.1)
 		end
 		
-		local hipHeight = humanoid and humanoid.HipHeight > 0 and humanoid.HipHeight
+		local hipHeight = humanoid and humanoid.HipHeight > 0 and (humanoid.HipHeight + 1)
 		local rootPart = getRoot(character)
-		local cframe = rootPart.CFrame
-		
-		rootPart.CFrame = CFrame.new(IYMouse.Hit.Position + Vector3.new(0, (hipHeight or 4) + 2, 0)) * (cframe - cframe.Position)
+		local rootPartPosition = rootPart.Position
+		local hitPosition = IYMouse.Hit.Position
+		local newCFrame = CFrame.new(
+			hitPosition, 
+			Vector3.new(rootPartPosition.X, hitPosition.Y, rootPartPosition.Z)
+		) * CFrame.Angles(0, math.pi, 0)
+
+		rootPart.CFrame = newCFrame + Vector3.new(0, hipHeight or 4, 0)
 	end)
 end
 
