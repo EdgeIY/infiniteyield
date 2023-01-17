@@ -1925,6 +1925,7 @@ InsertService = game:GetService("InsertService")
 ChatService = game:GetService("Chat")
 ProximityPromptService = game:GetService("ProximityPromptService")
 StatsService = game:GetService("Stats")
+MaterialService = game:GetService("MaterialService")
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -2811,7 +2812,7 @@ function saves()
 					if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
-					if json.binds ~= nil then binds = json.binds else binds = {} end
+					if json.binds ~= nil then binds = (json.binds or {}) else binds = {} end
 					if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds end
 					if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
 					if json.PluginsTable ~= nil then PluginsTable = json.PluginsTable else PluginsTable = {} end
@@ -2958,7 +2959,7 @@ function updatesaves()
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
 			aliases = aliases;
-			binds = binds;
+			binds = binds or {};
 			WayPoints = AllWaypoints;
 			PluginsTable = PluginsTable;
 			currentShade1 = {currentShade1.R,currentShade1.G,currentShade1.B};
@@ -2984,6 +2985,10 @@ if #AllWaypoints > 0 then
 			WayPoints[#WayPoints + 1] = {NAME = AllWaypoints[i].NAME, COORD = {AllWaypoints[i].COORD[1], AllWaypoints[i].COORD[2], AllWaypoints[i].COORD[3]}, GAME = AllWaypoints[i].GAME}
 		end
 	end
+end
+
+if type(binds) ~= "table" then
+    binds = {}
 end
 
 function Time()
@@ -4281,8 +4286,8 @@ CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the crea
 CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
 CMDs[#CMDs + 1] = {NAME = 'noprompts', DESC = 'Prevents the game from showing you purchase/premium prompts'}
 CMDs[#CMDs + 1] = {NAME = 'showprompts', DESC = 'Allows the game to show purchase/premium prompts again'}
-CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
-CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
 CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
 CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
 CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
@@ -4439,10 +4444,10 @@ CMDs[#CMDs + 1] = {NAME = 'gotopartdelay / gotomodeldelay [num]', DESC = 'Adjust
 CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
 CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
-CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd', DESC = 'Uses all click detectors in a game'}
-CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests', DESC = 'Uses all touchinterests in a game'}
+CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd [name]', DESC = 'Uses all click detectors in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests [name]', DESC = 'Uses all touchinterests in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
-CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp', DESC = 'Uses all proximity prompts in a game'}
+CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses all proximity prompts in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
@@ -4647,6 +4652,8 @@ CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
 CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease the amount of CPU the client uses'}
 CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
+CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 2022 material textures'}
+CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
 wait()
 
 for i = 1, #CMDs do
@@ -5970,11 +5977,23 @@ end)
 
 local function clicktpFunc()
 	pcall(function()
-		if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Sit = false
-			wait(.1)
+		local character = Players.LocalPlayer.Character
+		local humanoid = character:FindFirstChildOfClass("Humanoid")
+		if humanoid and humanoid.SeatPart then
+			humanoid.Sit = false
+			wait(0.1)
 		end
-		getRoot(Players.LocalPlayer.Character).CFrame = IYMouse.Hit + Vector3.new(0,7,0)
+		
+		local hipHeight = humanoid and humanoid.HipHeight > 0 and (humanoid.HipHeight + 1)
+		local rootPart = getRoot(character)
+		local rootPartPosition = rootPart.Position
+		local hitPosition = IYMouse.Hit.Position
+		local newCFrame = CFrame.new(
+			hitPosition, 
+			Vector3.new(rootPartPosition.X, hitPosition.Y, rootPartPosition.Z)
+		) * CFrame.Angles(0, math.pi, 0)
+
+		rootPart.CFrame = newCFrame + Vector3.new(0, hipHeight or 4, 0)
 	end)
 end
 
@@ -7317,33 +7336,47 @@ addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 	notify('Modified Waypoints','Deleted game waypoints')
 end)
 
+
+local coreGuiTypeNames = {
+	-- predefined aliases
+	["inventory"] = Enum.CoreGuiType.Backpack,
+	["leaderboard"] = Enum.CoreGuiType.PlayerList,
+	["emotes"] = Enum.CoreGuiType.EmotesMenu
+}
+
+-- Load the full list of enums
+for _, enumItem in ipairs(Enum.CoreGuiType:GetEnumItems()) do
+	coreGuiTypeNames[enumItem.Name:lower()] = enumItem
+end
+
 addcmd('enable',{},function(args, speaker)
-	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-		StarterGui:SetCoreGuiEnabled('Backpack', true)
-	elseif args[1]:lower() == 'playerlist' then
-		StarterGui:SetCoreGuiEnabled('PlayerList', true)
-	elseif args[1]:lower() == 'chat' then
-		StarterGui:SetCoreGuiEnabled('Chat', true)
-	elseif args[1]:lower() == 'reset' then
-		StarterGui:SetCore('ResetButtonCallback', true)
-	elseif args[1]:lower() == 'all' then
-		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
+	local input = args[1] and args[1]:lower()
+	if input then
+		if input == "reset" then
+			StarterGui:SetCore("ResetButtonCallback", true)
+		else
+			local coreGuiType = coreGuiTypeNames[input]
+			if coreGuiType then
+				StarterGui:SetCoreGuiEnabled(coreGuiType, true)
+			end
+		end
 	end
 end)
 
 addcmd('disable',{},function(args, speaker)
-	if args[1]:lower() == 'inventory' or args[1]:lower() == 'backpack' then
-		StarterGui:SetCoreGuiEnabled('Backpack', false)
-	elseif args[1]:lower() == 'playerlist' then
-		StarterGui:SetCoreGuiEnabled('PlayerList', false)
-	elseif args[1]:lower() == 'chat' then
-		StarterGui:SetCoreGuiEnabled('Chat', false)
-	elseif args[1]:lower() == 'reset' then
-		StarterGui:SetCore('ResetButtonCallback', false)
-	elseif args[1]:lower() == 'all' then
-		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+	local input = args[1] and args[1]:lower()
+	if input then
+		if input == "reset" then
+			StarterGui:SetCore("ResetButtonCallback", false)
+		else
+			local coreGuiType = coreGuiTypeNames[input]
+			if coreGuiType then
+				StarterGui:SetCoreGuiEnabled(coreGuiType, false)
+			end
+		end
 	end
 end)
+
 
 local invisGUIS = {}
 addcmd('showguis',{},function(args, speaker)
@@ -8516,6 +8549,21 @@ addcmd('render',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(true)
 end)
 
+addcmd('2022materials',{'use2022materials'},function(args, speaker)
+	if sethidden then
+		sethidden(MaterialService, "Use2022Materials", true)
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
+
+addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
+	if sethidden then
+		sethidden(MaterialService, "Use2022Materials", false)
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+	end
+end)
 
 addcmd('goto',{'to'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -9234,7 +9282,7 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 		-- Full credit to Thomas_Cornez#0272 @Discord
 		local lplr = Players.LocalPlayer
 		local char = lplr.Character
-		local rig = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
+		local rigType = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
 
 		local speaker = Players.LocalPlayer
 
@@ -10397,23 +10445,32 @@ addcmd('gotopartdelay',{},function(args, speaker)
 end)
 
 addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i,v in ipairs(workspace:GetDescendants()) do
 		if v:IsA("ClickDetector") then
 			v.MaxActivationDistance = math.huge
 		end
 	end
 end)
 
-addcmd('fireclickdetectors',{'firecd','firecds'},function(args, speaker)
-	if fireclickdetector then
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("ClickDetector") then
-				fireclickdetector(v)
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing fireclickdetector)')
-	end
+addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
+    if fireclickdetector then
+        if args[1] then
+            local name = getstring(1)
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ClickDetector") and descendant.Name == name then
+                    fireclickdetector(descendant)
+                end
+            end
+        else
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ClickDetector") then
+                    fireclickdetector(descendant)
+                end
+            end
+        end
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
+    end
 end)
 
 addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, speaker)
@@ -10425,15 +10482,24 @@ addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, 
 end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
-	if fireproximityprompt then
-		for i,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("ProximityPrompt") then
-				fireproximityprompt(v)
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
-	end
+    if fireclickdetector then
+        if args[1] then
+            local name = getstring(1)
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ProximityPrompt") and descendant.Name == name then
+                    fireproximityprompt(descendant)
+                end
+            end
+        else
+            for _, descendant in ipairs(workspace:GetDescendants()) do
+                if descendant:IsA("ProximityPrompt") then
+                    fireproximityprompt(descendant)
+                end
+            end
+        end
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
+    end
 end)
 
 local PromptButtonHoldBegan = nil
@@ -10457,30 +10523,36 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 end)
 
 addcmd('notifyping',{'ping'},function(args, speaker)
-	local Current_Ping = string.split(StatsService.Network.ServerStatsItem["Data Ping"]:GetValueString(), " ")[1] .. "ms"
-	notify("Ping", tostring(Current_Ping))
+    notify("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
 end)
 
-
 addcmd('grabtools', {}, function(args, speaker)
-	local Human = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	for _, v in ipairs(workspace:GetChildren()) do
-		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
-			Human:EquipTool(v)
+	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	for _, child in ipairs(workspace:GetChildren()) do
+		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
+			humanoid:EquipTool(child)
 		end
 	end
-	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
-	grabtoolsFunc = workspace.ChildAdded:Connect(function(v)
-		if speaker.Character and v:IsA("BackpackItem") and v:FindFirstChild("Handle") then
-			speaker.Character:WaitForChild("Humanoid"):EquipTool(v)
+
+	if grabtoolsFunc then 
+		grabtoolsFunc:Disconnect() 
+	end
+
+	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
+		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
+			humanoid:EquipTool(child)
 		end
 	end)
-	notify('Grabtools', 'Picking up any dropped tools')
+
+	notify("Grabtools", "Picking up any dropped tools")
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
-	if grabtoolsFunc then grabtoolsFunc:Disconnect() end
-	notify('Grabtools','Grabtools has been disabled')
+	if grabtoolsFunc then 
+		grabtoolsFunc:Disconnect() 
+	end
+
+	notify("Grabtools", "Grabtools has been disabled")
 end)
 
 local specifictoolremoval = {}
@@ -10831,23 +10903,41 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
-	local Root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
-	local function Touch(x)
-		x = x.FindFirstAncestorWhichIsA(x, "Part")
+	if not firetouchinterest then
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
+		return
+	end
+
+	local root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
+	
+	local function touch(x)
+		x = x:FindFirstAncestorWhichIsA("Part")
 		if x then
 			if firetouchinterest then
-				return task.spawn(function()
-					firetouchinterest(x, Root, 1, wait() and firetouchinterest(x, Root, 0))
+				task.spawn(function()
+					firetouchinterest(x, root, 1)
+					wait()
+					firetouchinterest(x, root, 0)
 				end)
 			end
-			x.CFrame = Root.CFrame
+			x.CFrame = root.CFrame
 		end
 	end
-	for _, v in ipairs(workspace:GetDescendants()) do
-		if v.IsA(v, "TouchTransmitter") then
-			Touch(v)
-		end
-	end
+
+    if args[1] then
+        local name = getstring(1)
+        for _, descendant in ipairs(workspace:GetDescendants()) do
+            if descendant:IsA("TouchTransmitter") and descendant.Name == name then
+                touch(descendant)
+            end
+        end
+    else
+        for _, descendant in ipairs(workspace:GetDescendants()) do
+            if descendant:IsA("TouchTransmitter") then
+                touch(descendant)
+            end
+        end
+    end
 end)
 
 addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
