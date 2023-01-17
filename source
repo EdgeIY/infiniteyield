@@ -4301,8 +4301,8 @@ CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggle keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
-CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
-CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick [checkcaller] (CLIENT)', DESC = 'Prevents localscripts from kicking you, checkcaller (true/false) allows executor scripts to kick you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport [checkcaller] (CLIENT)', DESC = 'Prevents localscripts from teleporting you, checkcaller (true/false) allows executor scripts to teleport you'}
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
@@ -7507,27 +7507,49 @@ addcmd('clearerror',{'clearerrors'},function(args, speaker)
 	GuiService:ClearError()
 end)
 
+local checkcaller = checkcaller
+
 addcmd('clientantikick',{'antikick'},function(args, speaker)
+    print(args[1], typeof(args[1]))
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
+
+    if not checkcaller then
+        notify('Client Antikick', "Because your executor doesn't support checkcaller, scripts run by your executor will still kick you")
+        checkcaller = function() return false end
+        task.wait(2) -- thanks for overlapping, notifs :<
+    end
+
+    local AllowExecutorKicks = not (args[1] and args[1]:lower() == "false") -- some silly noobs might use "False" for the argument and then scream because their executor kicked them. also this logic statement sucks.
+
+    print(AllowExecutorKicks, args[1] == "false")
+    
 	local LocalPlayer = Players.LocalPlayer
     local KickFunctions = {"Kick", "kick"}
     
-    for i,v in ipairs(KickFunctions) do --prevents localscripts from sanity checking LocalPlayer.KiCk or some other combination of capitals that aren't an actual function
+    for i,v in ipairs(KickFunctions) do -- prevents localscripts from sanity checking LocalPlayer.KiCk or some other combination of capitals that aren't an actual function
         local oldkick
         oldkick = hookfunction(LocalPlayer[v], newcclosure(function(self, ...)
             if self == LocalPlayer then
-                return
+                if AllowExecutorKicks and checkcaller() then
+                    return oldkick(self, ...)
+                else
+                    return
+                end
             end
-            return oldkick(...)
+            return oldkick(self, ...)
         end))
     end
     
     local oldhmmnc
     oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
     	if self == LocalPlayer and table.find(KickFunctions, getnamecallmethod()) then
-    		return
+            if AllowExecutorKicks and checkcaller() then
+                return oldhmmnc(self, ...)
+            else
+                return
+            end
     	end
     	return oldhmmnc(self, ...)
     end)
@@ -7540,16 +7562,29 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
+
+    if not checkcaller then
+        notify('Client AntiTP', "Because your executor doesn't support checkcaller, scripts ran by your executor will still teleport you")
+        checkcaller = function() return false end
+        task.wait(2)
+    end
+    
+    local AllowExecutorTeleports = not (args[1] and args[1]:lower() == "false")
+
 	local TeleportService = TeleportService
 	local TeleportFunctions = {"Teleport", "TeleportToPlaceInstance", "TeleportAsync", "teleport", "teleportToPlaceInstance", "teleportAsync"} --WHY ARE THERE SO MANY
-	
+
     for i,v in ipairs(TeleportFunctions) do
         local oldteleport
         oldteleport = hookfunction(TeleportService[v], newcclosure(function(self, ...)
             if self == TeleportService then
-                return
+                if AllowExecutorTeleports and checkcaller() then
+                    return oldteleport(self, ...)
+                else
+                    return
+                end
             end
-            return oldteleport(...)
+            return oldteleport(self, ...)
         end))
     end
 	
@@ -7557,7 +7592,11 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 
 	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
 		if self == TeleportService and table.find(TeleportFunctions, getnamecallmethod()) then
-			return
+            if AllowExecutorTeleports and checkcaller() then
+                return oldhmmnc(self, ...)
+            else
+                return
+            end
 		end
 		return oldhmmnc(self, ...)
 	end)
