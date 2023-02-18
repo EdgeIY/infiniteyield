@@ -3785,6 +3785,14 @@ if not writefileExploit() then
 	notify('Saves','Your exploit does not support read/write file. Your settings will not save.')
 end
 
+ChatLog = function(plr)
+	plr.Chatted:Connect(function(Message)
+		if logsEnabled == true then
+			CreateLabel(plr.Name,Message)
+		end
+	end)
+end
+
 JoinLog = function(plr)
 	if jLogsEnabled == true then
 		CreateJoinLabel(plr,plr.UserId)
@@ -3825,31 +3833,11 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 	end
 end)
 
-task.spawn(function()
-	coroutine.resume(coroutine.create(function()
-		local ChatEvents = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents", math.huge)
-		local OnMessageEvent = ChatEvents:WaitForChild("OnMessageDoneFiltering", math.huge)
-        if OnMessageEvent:IsA("RemoteEvent") then
-            OnMessageEvent.OnClientEvent:Connect(function(data)
-                if data ~= nil then
-                    local player = tostring(data.FromSpeaker)
-                    local message = tostring(data.Message)
-                    local originalchannel = tostring(data.OriginalChannel)
-                    if string.find(originalchannel, "To ") then
-                        message = "/w " .. string.gsub(originalchannel, "To ", "") .. " " .. message
-                    end
-                    if originalchannel == "Team" then
-                        message = "/team " .. message
-                    end
-                    eventEditor.FireEvent("OnChatted", player, message)
-                    if logsEnabled then
-                        CreateLabel(player, message)
-                    end
-                end
-            end)
-        end
-	end))
-end)
+for _, plr in pairs(Players:GetChildren()) do
+	if plr.ClassName == "Player" then
+		ChatLog(plr)
+	end
+end
 
 Players.PlayerRemoving:Connect(function(player)
 	if ESPenabled or CHMSenabled or COREGUI:FindFirstChild(player.Name..'_LC') then
@@ -6678,13 +6666,13 @@ addcmd('serverhop',{'shop'},function(args, speaker)
 	-- thanks to NoobSploit for fixing
 	if httprequest then
 		local servers = {}
-		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100", PlaceId)})
+		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100", PlaceId)})
 		local body = HttpService:JSONDecode(req.Body)
 		if body and body.data then
 			for i, v in next, body.data do
 				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
 					table.insert(servers, 1, v.id)
-				end 
+				end
 			end
 		end
 		if #servers > 0 then
@@ -12142,8 +12130,10 @@ end
 
 Players.PlayerAdded:Connect(function(plr)
 	eventEditor.FireEvent("OnJoin",plr.Name)
+	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
 	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 	JoinLog(plr)
+	ChatLog(plr)
 	if ESPenabled then
 		repeat wait(1) until plr.Character and getRoot(plr.Character)
 		ESP(plr)
