@@ -8909,7 +8909,7 @@ addcmd('unmuteboombox',{},function(args, speaker)
 end)
 
 addcmd('reset',{},function(args, speaker)
-	speaker.Character:BreakJoints()
+	speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead) -- Or  .Health = 0
 end)
 
 addcmd('freezeanims',{},function(args, speaker)
