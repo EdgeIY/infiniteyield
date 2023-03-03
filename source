@@ -10700,7 +10700,7 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
 			repeat RunService.Heartbeat:task.wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
-		Character:BreakJoints()
+		execCmd('reset')
 		Player.CharacterAdded:task.wait()
 		for i = 1,20 do RunService.Heartbeat:task.wait()
 			if Player.Character:FindFirstChild("HumanoidRootPart") then
