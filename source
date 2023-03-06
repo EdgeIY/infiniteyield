@@ -8911,7 +8911,7 @@ addcmd('unmuteboombox',{},function(args, speaker)
 end)
 
 addcmd('reset',{},function(args, speaker)
-	speaker.Character:BreakJoints()
+	speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead) -- Or  .Health = 0
 end)
 
 addcmd('freezeanims',{},function(args, speaker)
@@ -10702,7 +10702,7 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
 			repeat RunService.Heartbeat:wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
-		Character:BreakJoints()
+		execCmd('reset')
 		Player.CharacterAdded:wait()
 		for i = 1,20 do RunService.Heartbeat:wait()
 			if Player.Character:FindFirstChild("HumanoidRootPart") then
