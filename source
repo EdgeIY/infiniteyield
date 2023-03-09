@@ -2822,7 +2822,7 @@ function saves()
 					if json.currentText1 ~= nil then currentText1 = Color3.new(json.currentText1[1],json.currentText1[2],json.currentText1[3]) end
 					if json.currentText2 ~= nil then currentText2 = Color3.new(json.currentText2[1],json.currentText2[2],json.currentText2[3]) end
 					if json.currentScroll ~= nil then currentScroll = Color3.new(json.currentScroll[1],json.currentScroll[2],json.currentScroll[3]) end
-					if json.eventBinds then loadedEventData = json.eventBinds end
+					if json.eventBinds ~= nil then loadedEventData = json.eventBinds end
 				end)
 				if not success then
 					warn("Save Json Error:", response)
@@ -2987,9 +2987,7 @@ if #AllWaypoints > 0 then
 	end
 end
 
-if type(binds) ~= "table" then
-    binds = {}
-end
+if type(binds) ~= "table" then binds = {} end
 
 function Time()
 	local HOUR = math.floor((tick() % 86400) / 3600)
