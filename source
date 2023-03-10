@@ -8907,7 +8907,7 @@ addcmd('unmuteboombox',{},function(args, speaker)
 end)
 
 addcmd('reset',{},function(args, speaker)
-	speaker.Character:BreakJoints()
+	speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead)
 end)
 
 addcmd('freezeanims',{},function(args, speaker)
@@ -10695,30 +10695,37 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 		local Character = Player.Character
 		local Old = Character:FindFirstChild("HumanoidRootPart").CFrame
 		local Hats = {}
-		for _,x in next, workspace:GetChildren() do
-			if x:IsA("Accessory") then
-				table.insert(Hats,x)
+		
+		for _, child in ipairs(workspace:GetChildren()) do
+			if child:IsA("Accessory") then
+				table.insert(Hats, child)
 			end
 		end
-		for _,getacc in next, Character:FindFirstChildOfClass('Humanoid'):GetAccessories() do
-			getacc:Destroy()
+		
+		for _, accessory in ipairs(Character:FindFirstChildOfClass("Humanoid"):GetAccessories()) do
+			accessory:Destroy()
 		end
-		for i = 1,#Hats do
+		
+		for i = 1, #Hats do
 			repeat RunService.Heartbeat:wait() until Hats[i]
 			firetouchinterest(Hats[i].Handle,Character:FindFirstChild("HumanoidRootPart"),0)
 			repeat RunService.Heartbeat:wait() until Character:FindFirstChildOfClass("Accessory")
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
 			repeat RunService.Heartbeat:wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
-		Character:BreakJoints()
-		Player.CharacterAdded:wait()
-		for i = 1,20 do RunService.Heartbeat:wait()
+		
+		execCmd("reset")
+		
+		Player.CharacterAdded:Wait()
+		
+		for i = 1,20 do 
+			RunService.Heartbeat:Wait()
 			if Player.Character:FindFirstChild("HumanoidRootPart") then
 				Player.Character:FindFirstChild("HumanoidRootPart").CFrame = Old
 			end
 		end
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing firetouchinterest)')
+		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
 	end
 end)
 
