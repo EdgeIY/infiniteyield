@@ -3205,8 +3205,6 @@ IYMouse.KeyDown:Connect(function(Key)
 			repeat Cmdbar.Text = '' until Cmdbar.Text == ''
 		end)
 		maximizeHolder()
-	elseif infJump == true and Key == " " then
-		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState(3)
 	end
 end)
 
@@ -9400,19 +9398,31 @@ addcmd('jump',{},function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
+local infJump
+local infJumpDebounce = false
 addcmd('infjump',{'infinitejump'},function(args, speaker)
-	infJump = true
+    if infJump then infJump:Disconnect() end
+    infJumpDebounce = false
+    infJump = UserInputService.JumpRequest:Connect(function()
+        if not infJumpDebounce then
+            infJumpDebounce = true
+            speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            wait()
+            infJumpDebounce = false
+        end
+    end)
 end)
 
 addcmd('uninfjump',{'uninfinitejump','noinfjump','noinfinitejump'},function(args, speaker)
-	infJump = false
+    if infJump then infJump:Disconnect() end
+    infJumpDebounce = false
 end)
 
 local flyjump
 addcmd('flyjump',{},function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
 	flyjump = UserInputService.JumpRequest:Connect(function(Jump)
-		Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+		Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
