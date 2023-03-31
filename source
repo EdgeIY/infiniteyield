@@ -5215,7 +5215,7 @@ SpecialPlayerCases = {
                 local clone = Instance.new("Player")
                 clone.Name = v.Name .. " - " .. v:FindFirstChildWhichIsA("Humanoid").DisplayName
                 clone.Character = v
-                table.insert(returns, v)
+                table.insert(returns, clone)
             end
         end
 		return returns
