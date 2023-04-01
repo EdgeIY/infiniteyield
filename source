@@ -236,10 +236,11 @@ do
 	end
 end
 
+local apfo_t = {"Ricky Wicky Yield 😱", "Infinite Bread", "Egg Admino", "Amity coughed", "Where am I", "Rickity Yieldd", "walter white", "Nick Cage?!?!", "peyton real", "april fool!!"}
+local apfo_i = {"11688231017", "11339922083", "11914981726", "5783845592", "6762179979", "7846015915", "11171958623", "11308149650", "7444547410", "6093472109"}
+
 -- april-fools
 if os.date("%m %d") == "04 01" then
-	local apfo_t = {"Ricky Wicky Yield 😱", "Infinite Bread", "Egg Admino", "Amity coughed", "Where am I", "Rickity Yieldd", "walter white", "Nick Cage?!?!", "peyton real", "april fool!!"}
-	local apfo_i = {"11688231017", "11339922083", "11914981726", "5783845592", "6762179979", "7846015915", "11171958623", "11308149650", "7444547410", "6093472109"}
 	Title.Text = apfo_t[math.random(1, #apfo_t)] .. " v" .. currentVersion
 end
 
