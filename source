@@ -1933,7 +1933,6 @@ setsimulation = setsimulationradius or set_simulation_radius
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 PlaceId, JobId = game.PlaceId, game.JobId
-local tspawn = task.spawn
 
 function writefileExploit()
 	if writefile then
@@ -2128,7 +2127,7 @@ eventEditor = (function()
 				end
 
 				if metCondition then
-					pcall(tspawn(function()
+					pcall(task.spawn(function()
 						local cmdStr = cmd[1]
 						for count,arg in pairs(args) do
 							cmdStr = cmdStr:gsub("%$"..count,arg)
@@ -7590,7 +7589,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 		end
 	end
 	workspace.DescendantAdded:Connect(function(child)
-		tspawn(function()
+		task.spawn(function()
 			if child:IsA('ForceField') then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
@@ -10029,7 +10028,7 @@ addcmd('olddex', {'odex'}, function(args, speaker)
 
         local function LoadScripts(_, Script)
             if Script:IsA("LocalScript") then
-                tspawn(function()
+                task.spawn(function()
                     GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
                 end)()
             end
@@ -10822,7 +10821,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		local t = GetHandleTools(speaker)
 		while #t > 0 do
 			for _, v in ipairs(t) do
-				tspawn(function()
+				task.spawn(function()
 					for _ = 1, 25 do
 						v.Parent = speaker.Character
 						v.Handle.Anchored = true
@@ -10846,7 +10845,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 				end
 			else
 				for _, v in ipairs(Tools) do
-					tspawn(function()
+					task.spawn(function()
 						local x = v.CanCollide
 						v.CanCollide = false
 						v.Anchored = false
@@ -10877,7 +10876,7 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 	hum.Parent = Char
 	hum:ClearAllChildren()
 	speaker:ClearCharacterAppearance()
-	tspawn(function()
+	task.spawn(function()
 		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').RootPart.CFrame = wait() and hrppos
 	end)()
 	local vHRP = getRoot(v)
@@ -11155,7 +11154,7 @@ addcmd('usetools', {}, function(args, speaker)
 	local delay_ = tonumber(args[2]) or false
 	for _, v in ipairs(Backpack:GetChildren()) do
 		v.Parent = speaker.Character
-		tspawn(function()
+		task.spawn(function()
 			for _ = 1, ammount do
 				v:Activate()
 				if delay_ then
@@ -12295,7 +12294,7 @@ task.spawn(function()
 	end
 end)
 
-tspawn(function()
+task.spawn(function()
 	wait()
 	Credits:TweenPosition(UDim2.new(0, 0, 0.9, 0), "Out", "Quart", 0.2)
 	Logo:TweenSizeAndPosition(UDim2.new(0, 175, 0, 175), UDim2.new(0, 37, 0, 45), "Out", "Quart", 0.3)
