@@ -11050,55 +11050,26 @@ addcmd('night',{},function(args, speaker)
 	Lighting.ClockTime = 0
 end)
 
-addcmd('nofog',{},function(args, speaker)
-	Lighting.FogEnd = 100000
-	for i,v in pairs(Lighting:GetDescendants()) do
-		if v:IsA("Atmosphere") then
-			v:Destroy()
-		end
+addcmd("nofog", { "fogoff", "fogremove", "fogdelete", "fogclear" }, function(args)
+	Lighting.FogStart = 1e6
+	Lighting.FogEnd = 1e6
+end)
+
+addcmd("brightness", { "lightness", "gamma" }, function(args)
+	local brightness = tonumber(args[1])
+	if type(brightness) == "number" then
+		Lighting.Brightness = brightness
+	else
+		notify("Invalid Argument", "Argument must be a number")
 	end
 end)
 
-addcmd('brightness',{},function(args, speaker)
-	Lighting.Brightness = args[1]
-end)
-
-addcmd('globalshadows',{'gshadows'},function(args, speaker)
-	Lighting.GlobalShadows = true
-end)
-
-addcmd('unglobalshadows',{'nogshadows','ungshadows','noglobalshadows'},function(args, speaker)
-	Lighting.GlobalShadows = false
-end)
-
-local LightingCFG = {}
-
-function capturelighitng()
-	LightingCFG.Ambient = Lighting.Ambient
-	LightingCFG.OutdoorAmbient = Lighting.OutdoorAmbient
-	LightingCFG.Brightness = Lighting.Brightness
-	LightingCFG.ClockTime = Lighting.ClockTime
-	LightingCFG.FogEnd = Lighting.FogEnd
-	LightingCFG.GlobalShadows = Lighting.GlobalShadows
-	if type(gethidden) == 'function' then
-		LightingCFG.Technology = gethidden(Lighting, "Technology")
+addcmd("shadows", { "shadow", "shadowtoggle", "toggleshadows" }, function(args)
+	local x = tonumber(args[1])
+	if type(x) ~= 'number' then
+		Lighting.GlobalShadows = x > .5
 	end
-end
-
-function restorelighting()
-	Lighting.Ambient = LightingCFG.Ambient
-	Lighting.OutdoorAmbient = LightingCFG.OutdoorAmbient
-	Lighting.Brightness = LightingCFG.Brightness
-	Lighting.ClockTime = LightingCFG.ClockTime
-	Lighting.FogEnd = LightingCFG.FogEnd
-	Lighting.GlobalShadows = LightingCFG.GlobalShadows
-	if type(sethidden) == 'function' then
-		sethidden(Lighting, "Technology", LightingCFG.Technology)
-	end
-end
-
-addcmd("capturelighting", { "caplighting", "caplight" }, capturelighitng)
-addcmd("restorelighting", { "rlighting", "resetlight" }, restorelighting)
+end)
 
 addcmd("unstun", { "nostun", "unplatformstand", "noplatformstand", "unplatstand", "noplatstand" }, function(args)
 	if typeof(humanoid) ~= 'Instance' then
