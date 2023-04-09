@@ -2127,7 +2127,7 @@ eventEditor = (function()
 				end
 
 				if metCondition then
-					pcall(coroutine.wrap(function()
+					pcall(task.spawn(function()
 						local cmdStr = cmd[1]
 						for count,arg in pairs(args) do
 							cmdStr = cmdStr:gsub("%$"..count,arg)
@@ -7589,7 +7589,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 		end
 	end
 	workspace.DescendantAdded:Connect(function(child)
-		coroutine.wrap(function()
+		task.spawn(function()
 			if child:IsA('ForceField') then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
@@ -10028,7 +10028,7 @@ addcmd('olddex', {'odex'}, function(args, speaker)
 
         local function LoadScripts(_, Script)
             if Script:IsA("LocalScript") then
-                coroutine.wrap(function()
+                task.spawn(function()
                     GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
                 end)()
             end
@@ -10821,7 +10821,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		local t = GetHandleTools(speaker)
 		while #t > 0 do
 			for _, v in ipairs(t) do
-				coroutine.wrap(function()
+				task.spawn(function()
 					for _ = 1, 25 do
 						v.Parent = speaker.Character
 						v.Handle.Anchored = true
@@ -10845,7 +10845,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 				end
 			else
 				for _, v in ipairs(Tools) do
-					coroutine.wrap(function()
+					task.spawn(function()
 						local x = v.CanCollide
 						v.CanCollide = false
 						v.Anchored = false
@@ -10876,7 +10876,7 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 	hum.Parent = Char
 	hum:ClearAllChildren()
 	speaker:ClearCharacterAppearance()
-	coroutine.wrap(function()
+	task.spawn(function()
 		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').RootPart.CFrame = wait() and hrppos
 	end)()
 	local vHRP = getRoot(v)
@@ -11154,7 +11154,7 @@ addcmd('usetools', {}, function(args, speaker)
 	local delay_ = tonumber(args[2]) or false
 	for _, v in ipairs(Backpack:GetChildren()) do
 		v.Parent = speaker.Character
-		coroutine.wrap(function()
+		task.spawn(function()
 			for _ = 1, ammount do
 				v:Activate()
 				if delay_ then
@@ -12294,20 +12294,19 @@ task.spawn(function()
 	end
 end)
 
-coroutine.wrap(function()
+task.spawn(function()
 	wait()
 	Credits:TweenPosition(UDim2.new(0, 0, 0.9, 0), "Out", "Quart", 0.2)
 	Logo:TweenSizeAndPosition(UDim2.new(0, 175, 0, 175), UDim2.new(0, 37, 0, 45), "Out", "Quart", 0.3)
 	wait(1)
-	for i = 0, 1, 0.1 do
-		Logo.ImageTransparency = i
-		IntroBackground.BackgroundTransparency = i
-		wait()
-	end
+	local OutInfo = TweenInfo.new(1.6809, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0, false, 0)
+	TweenService:Create(Logo, OutInfo, {ImageTransparency = 1}):Play()
+	TweenService:Create(IntroBackground, OutInfo, {BackgroundTransparency = 1}):Play()
 	Credits:TweenPosition(UDim2.new(0, 0, 0.9, 30), "Out", "Quart", 0.2)
 	wait(0.2)
 	Logo:Destroy()
 	Credits:Destroy()
 	IntroBackground:Destroy()
 	minimizeHolder()
+	if table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform()) then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)()
