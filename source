@@ -1,9 +1,40 @@
-if IY_LOADED and not _G.IY_DEBUG == true then
-	-- error("Infinite Yield is already running!",0)
-	return
+local env
+if type(getgenv) == 'function' then
+	env = getgenv()
 end
-
-pcall(function() getgenv().IY_LOADED = true end)
+if type(env) ~= 'table' and type(_G) == 'table' then
+	env = _G
+end
+if type(env) ~= 'table' then
+	error('Failed to get global environment')
+end
+local wait = task.wait
+local break_all_loops = false
+local instances = {}
+local connections = {}
+if type(env.unload_IY) == 'function' then
+	env.unload_IY()
+end
+--- Stage 1 unloader. It is the initial unloader that is called when the script is called.
+--- This unloader is changed later on once the script is completely loaded.
+function env.unload_IY()
+	for _, instance in pairs(instances) do
+		if typeof(instance) == 'Instance' then
+			instance:Destroy()
+		end
+	end
+	for _, connection in pairs(connections) do
+		if typeof(connection) == 'RBXScriptConnection' then
+			connection:Disconnect()
+		end
+	end
+end
+local createInstance = Instance.new
+local Instance = { new = function(className, parent)
+	local object = createInstance(className, parent)
+	table.insert(instances, object)
+	return object
+end }
 
 COREGUI = game:GetService("CoreGui")
 if not game:IsLoaded() then
@@ -3025,20 +3056,20 @@ end
 
 function maximizeHolder()
 	if StayOpen == false then
-		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, -220), "InOut", "Quart", 0.2, true, nil)
+		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, -220), "InOut", "Quart", 0.2, true, nil)
 	end
 end
 
 local minimizeNum = -20
 function minimizeHolder()
 	if StayOpen == false then
-		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, minimizeNum), "InOut", "Quart", 0.5, true, nil)
+		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, minimizeNum), "InOut", "Quart", 0.5, true, nil)
 	end
 end
 
 function cmdbarHolder()
 	if StayOpen == false then
-		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, -45), "InOut", "Quart", 0.5, true, nil)
+		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, -45), "InOut", "Quart", 0.5, true, nil)
 	end
 end
 
@@ -4031,7 +4062,7 @@ end
 
 function UpdateToViewport()
 	if Holder.Position.X.Offset < -CamViewport() then
-		Holder:TweenPosition(UDim2.new(1, -CamViewport(), Holder.Position.Y.Scale, Holder.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+		pcall(Holder.TweenPosition, Holder, UDim2.new(1, -CamViewport(), Holder.Position.Y.Scale, Holder.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
 		Notification:TweenPosition(UDim2.new(1, -CamViewport() + 250, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
 	end
 end
@@ -4761,27 +4792,43 @@ function onDied()
 	end)
 end
 
+function spawn_point_tp(rootpart)
+	if typeof(rootpart) == 'Instance' and rootpart:IsA("BasePart") and spawnpoint and not refreshCmd and spawnpos then
+		local destination = spawnpos
+		if typeof(spawnpos) == 'CFrame' then
+			destination = spawnpos.Position
+		end
+		if typeof(destination) == 'Vector3' then
+			wait(spDelay)
+			rootpart.CFrame = spawnpos
+		end
+	end
+end
+
 Clip = true
 spDelay = 0.1
-Players.LocalPlayer.CharacterAdded:Connect(function()
+
+function reload_character_IY()
 	NOFLY()
 	Floating = false
-
 	if not Clip then
 		execCmd('clip')
 	end
-
-	repeat wait() until getRoot(Players.LocalPlayer.Character)
-
-	pcall(function()
-		if spawnpoint and not refreshCmd and spawnpos ~= nil then
-			wait(spDelay)
-			getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
+	local rootpart
+	while typeof(rootpart) ~= 'Instance' do
+		if break_all_loops == true then
+			break
 		end
-	end)
-
+		rootpart = select(2, pcall(function()
+			return Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').RootPart
+		end))
+		wait(0)
+	end
+	pcall(spawn_point_tp, rootpart)
 	onDied()
-end)
+end
+
+Players.LocalPlayer.CharacterAdded:Connect(reload_character_IY)
 
 onDied()
 
@@ -4882,6 +4929,9 @@ function execCmd(cmdStr,speaker,store)
 				local cmdStartTime = tick()
 				if infTimes then
 					while lastBreakTime < cmdStartTime do
+						if break_all_loops == true then
+							break
+						end
 						local success,err = pcall(cmd.FUNC,args, speaker)
 						if not success and _G.IY_DEBUG then
 							warn("Command Error:", cmdName, err)
@@ -4889,7 +4939,10 @@ function execCmd(cmdStr,speaker,store)
 						wait(cmdDelay)
 					end
 				else
-					for rep = 1,num do
+					for rep = 1, num do
+						if break_all_loops == true then
+							break
+						end
 						if lastBreakTime > cmdStartTime then break end
 						local success,err = pcall(function()
 							cmd.FUNC(args, speaker)
@@ -6884,7 +6937,7 @@ addcmd('flyspeed',{'flysp'},function(args, speaker)
 	end
 end)
 
-addcmd('unfly',{'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
+addcmd('unfly', {'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
 	NOFLY()
 end)
 
@@ -6930,7 +6983,6 @@ end)
 
 CFspeed = 50
 addcmd('cframefly', {'cfly'}, function(args, speaker)
-	--Full credit to peyton#9148
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
 	Head.Anchored = true
@@ -6949,7 +7001,7 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 	end)
 end)
 
-addcmd('uncframefly',{'uncfly'},function(args, speaker)
+addcmd('uncframefly',{'uncfly'}, function(args, speaker)
 	if CFloop then
 		CFloop:Disconnect()
 		speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
@@ -9169,6 +9221,9 @@ addcmd('breakvelocity', {}, function(args, speaker)
 		BeenASecond = true
 	end)
 	while not BeenASecond do
+		if break_all_loops == true then
+			break
+		end
 		for _, v in ipairs(speaker.Character:GetDescendants()) do
 			if v.IsA(v, "BasePart") then
 				v.Velocity, v.RotVelocity = V3, V3
@@ -10820,6 +10875,9 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
 		local t = GetHandleTools(speaker)
 		while #t > 0 do
+			if break_all_loops == true then
+				break
+			end
 			for _, v in ipairs(t) do
 				task.spawn(function()
 					for _ = 1, 25 do
@@ -10881,6 +10939,9 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 	end)
 	local vHRP = getRoot(v)
 	while Char and Char.Parent and vHRP and vHRP.Parent do
+		if break_all_loops == true then
+			break
+		end
 		local Tools = false
 		for _, v in ipairs(Char:GetChildren()) do
 			if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
@@ -11388,6 +11449,9 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 		v = Players[v]
 		task.spawn(function()
 			while Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
+				if break_all_loops == true then
+					break
+				end
 				local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
 				if not Human or Human.Health <= 0 then
 					break
@@ -11402,12 +11466,16 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 end)
 
 local hb = RunService.Heartbeat
+
 addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
 	tpwalking = true
 	local chr = speaker.Character
 	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 	while tpwalking and chr and hum and hum.Parent do
-		local delta = hb:Wait()
+		if break_all_loops == true then
+			break
+		end
+		local delta = wait()
 		if hum.MoveDirection.Magnitude > 0 then
 			if args[1] and isNumber(args[1]) then
 				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta * 10)
@@ -12310,3 +12378,16 @@ task.spawn(function()
 	minimizeHolder()
 	if table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform()) then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
+
+function env.unload_IY()
+	for _, instance in pairs(instances) do
+		if typeof(instance) == 'Instance' then
+			instance:Destroy()
+		end
+	end
+	for _, connection in pairs(connections) do
+		if typeof(connection) == 'RBXScriptConnection' then
+			connection:Disconnect()
+		end
+	end
+end
