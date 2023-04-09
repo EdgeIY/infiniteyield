@@ -7600,7 +7600,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 				RunService.Heartbeat:Wait()
 				child:Destroy()
 			end
-		end)()
+		end)
 	end)
 end)
 
@@ -10030,7 +10030,7 @@ addcmd('olddex', {'odex'}, function(args, speaker)
             if Script:IsA("LocalScript") then
                 task.spawn(function()
                     GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
-                end)()
+                end)
             end
             table.foreach(Script:GetChildren(), LoadScripts)
         end
@@ -10830,7 +10830,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 						v.Parent = workspace
 					end
 					table.insert(Tools, v.Handle)
-				end)()
+				end)
 			end
 			t = GetHandleTools(speaker)
 		end
@@ -10854,7 +10854,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 							wait()
 						end
 						v.CanCollide = x
-					end)()
+					end)
 				end
 			end
 			wait(.1)
@@ -10878,7 +10878,7 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 	speaker:ClearCharacterAppearance()
 	task.spawn(function()
 		speaker.CharacterAdded:Wait():WaitForChild('Humanoid').RootPart.CFrame = wait() and hrppos
-	end)()
+	end)
 	local vHRP = getRoot(v)
 	while Char and Char.Parent and vHRP and vHRP.Parent do
 		local Tools = false
@@ -11162,7 +11162,7 @@ addcmd('usetools', {}, function(args, speaker)
 				end
 			end
 			v.Parent = Backpack
-		end)()
+		end)
 	end
 end)
 
