@@ -2,68 +2,17 @@ local env
 if type(getgenv) == 'function' then
 	env = getgenv()
 end
-if type(env) ~= 'table' and type(_G) == 'table' then
+if type(env) ~= 'table' then
 	env = _G
 end
 if type(env) ~= 'table' then
-	error('Failed to get global environment')
+	return
 end
-local wait = task.wait
-local break_all_loops = false
-local instances = {}
-local connections = {}
-if type(env.unload_IY) == 'function' then
-	env.unload_IY()
+if type(env.IY) == 'table' and type(env.IY.unload) == 'function' then
+	env.IY.unload()
 end
---- Stage 1 unloader. It is the initial unloader that is called when the script is called.
---- This unloader is changed later on once the script is completely loaded.
-function env.unload_IY()
-	for _, instance in pairs(instances) do
-		if typeof(instance) == 'Instance' then
-			instance:Destroy()
-		end
-	end
-	for _, connection in pairs(connections) do
-		if typeof(connection) == 'RBXScriptConnection' then
-			connection:Disconnect()
-		end
-	end
-end
-local createInstance = Instance.new
-local Instance = { new = function(className, parent)
-	local object = createInstance(className, parent)
-	table.insert(instances, object)
-	return object
-end }
-
-local localplayer = game:GetService("Players").LocalPlayer
-local character, humanoid, rootpart
-
-local function WaitForChildWhichIsA(parent, child, timeout)
-	local child = parent:FindFirstChildWhichIsA(child)
-	if child then
-		return child
-	end
-	local timeout = timeout or 3
-	while typeof(child) ~= 'Instance' and timeout > 0 do
-		child = parent:FindFirstChildWhichIsA(child)
-		timeout = timeout - wait()
-	end
-	return child
-end
-
-function load_character_IY(noyield)
-	character = localplayer.Character
-	if typeof(character) == 'Instance' then
-		humanoid = noyield and character:FindFirstChildWhichIsA("Humanoid") or WaitForChildWhichIsA(character, "Humanoid", 3)
-		if typeof(humanoid) == 'Instance' and humanoid:IsA("Humanoid") then
-			rootpart = humanoid.RootPart
-		end
-	end
-end
-
-localplayer.CharacterAdded:Connect(load_character_IY)
-load_character_IY()
+local IY = {}
+env.IY = IY
 
 COREGUI = game:GetService("CoreGui")
 if not game:IsLoaded() then
@@ -72,6 +21,36 @@ if not game:IsLoaded() then
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
 	game.Loaded:Wait()
 	notLoaded:Destroy()
+end
+
+instances = {}
+connections = {}
+
+local Instance = {}
+
+function Instance.new(className, parent)
+	local object = Instance.new(className, parent)
+	table.insert(instances, object)
+	return object
+end
+
+function connect(signal, callback)
+	local connection = signal:Connect(callback)
+	table.insert(connections, connection)
+	return connection
+end
+
+function IY.unload()
+	for _, object in pairs(instances) do
+		if typeof(object) == 'Instance' then
+			object:Destroy()
+		end
+	end
+	for _, connection in pairs(connections) do
+		if connection and connection.Connected then
+			connection:Disconnect()
+		end
+	end
 end
 
 currentVersion = '5.9.3'
@@ -1942,7 +1921,7 @@ ViewportTextBox = (function()
 
 		obj.View = view
 
-		textbox.Changed:Connect(function(prop)
+		connect(textbox.Changed, function(prop)
 			if prop == "Text" or prop == "CursorPosition" or prop == "AbsoluteSize" then
 				obj:Update()
 			end
@@ -1963,7 +1942,7 @@ ViewportTextBox.convert(Cmdbar).View.ZIndex = 10
 ViewportTextBox.convert(Cmdbar_2).View.ZIndex = 10
 ViewportTextBox.convert(Cmdbar_3).View.ZIndex = 10
 
-IYMouse = localplayer:GetMouse()
+IYMouse = Players.LocalPlayer:GetMouse()
 UserInputService = game:GetService("UserInputService")
 TweenService = game:GetService("TweenService")
 HttpService = game:GetService("HttpService")
@@ -2115,25 +2094,25 @@ function dragGUI(gui)
 			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 			TweenService:Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
 		end
-		gui.InputBegan:Connect(function(input)
+		connect(gui.InputBegan, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = gui.Position
 
-				input.Changed:Connect(function()
+				connect(input.Changed, function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
 					end
 				end)
 			end
 		end)
-		gui.InputChanged:Connect(function(input)
+		connect(gui.InputChanged, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-		UserInputService.InputChanged:Connect(function(input)
+		connect(UserInputService.InputChanged, function(input)
 			if input == dragInput and dragging then
 				update(input)
 			end
@@ -2170,9 +2149,9 @@ eventEditor = (function()
 					local condType = set.Type
 					if condType == "Player" then
 						if cmdSet == 0 then
-							metCondition = metCondition and (tostring(localplayer) == argVal)
+							metCondition = metCondition and (tostring(Players.LocalPlayer) == argVal)
 						elseif cmdSet ~= 1 then
-							metCondition = metCondition and table.find(getPlayer(cmdSet,localplayer),argVal)
+							metCondition = metCondition and table.find(getPlayer(cmdSet,Players.LocalPlayer),argVal)
 						end
 					elseif condType == "String" then
 						if cmdSet ~= 0 then
@@ -2341,7 +2320,7 @@ eventEditor = (function()
 			button.On.BackgroundTransparency = (enabled and 0 or 1)
 		end
 
-		button.On.MouseButton1Click:Connect(function()
+		button.connect(On.MouseButton1Click, function()
 			enabled = not enabled
 			update()
 			if callback then callback(enabled) end
@@ -2361,7 +2340,7 @@ eventEditor = (function()
 		for i,v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
 		local delayEditor = settingsTemplates.DelayEditor:Clone()
-		delayEditor.Secs.FocusLost:Connect(function()
+		delayEditor.connect(Secs.FocusLost, function()
 			cmd[3] = tonumber(delayEditor.Secs.Text) or 0
 			delayEditor.Secs.Text = cmd[3]
 			if onEdited then onEdited() end
@@ -2406,7 +2385,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					if custom:IsEnabled() then
 						cmd[2][i] = customTextBox.Text
 						if onEdited then onEdited() end
@@ -2453,7 +2432,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					if custom:IsEnabled() then
 						cmd[2][i] = customTextBox.Text
 						if onEdited then onEdited() end
@@ -2496,7 +2475,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					cmd[2][i] = tonumber(customTextBox.Text) or 0
 					customTextBox.Text = cmd[2][i]
 					if custom:IsEnabled() then
@@ -2553,7 +2532,7 @@ eventEditor = (function()
 			table.insert(shade1,eventF.Cmds.Add)
 
 			local expanded = false
-			eventF.Expand.MouseButton1Down:Connect(function()
+			eventF.connect(Expand.MouseButton1Down, function()
 				expanded = not expanded
 				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
 				eventF.Expand.Rotation = expanded and 90 or 0
@@ -2579,16 +2558,16 @@ eventEditor = (function()
 					table.insert(shade2,cmdF.Delete)
 					table.insert(shade2,cmdF.Settings)
 
-					cmdTextBox.FocusLost:Connect(function()
+					connect(cmdTextBox.FocusLost, function()
 						event.commands[i] = {cmdTextBox.Text,cmd[2],cmd[3]}
 						if onEdited then onEdited() end
 					end)
 
-					cmdF.Settings.MouseButton1Click:Connect(function()
+					cmdF.connect(Settings.MouseButton1Click, function()
 						openSettingsEditor(event,cmd)
 					end)
 
-					cmdF.Delete.MouseButton1Click:Connect(function()
+					cmdF.connect(Delete.MouseButton1Click, function()
 						table.remove(event.commands,i)
 						refreshCommands()
 						resizeList()
@@ -2607,7 +2586,7 @@ eventEditor = (function()
 
 			local newBox = eventF.Cmds.Add.TextBox
 			ViewportTextBox.convert(newBox)
-			newBox.FocusLost:Connect(function(enter)
+			connect(newBox.FocusLost, function(enter)
 				if enter then
 					event.commands[#event.commands+1] = {newBox.Text,defaultSettings(event),0}
 					newBox.Text = ""
@@ -2655,7 +2634,7 @@ eventEditor = (function()
 		end
 	end
 
-	main.TopBar.Close.MouseButton1Click:Connect(function()
+	main.TopBar.connect(Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-175,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	dragGUI(main)
@@ -2801,12 +2780,12 @@ reference = (function()
 	table.insert(shade1,main.Content)
 	table.insert(shade2,main.TopBar)
 	main.Name = randomString()
-	main.TopBar.Close.MouseButton1Click:Connect(function()
+	main.TopBar.connect(Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-250,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	local inviteButton = main:FindFirstChild("InviteButton",true)
 	local lastPress = nil
-	inviteButton.MouseButton1Click:Connect(function()
+	connect(inviteButton.MouseButton1Click, function()
 		local func = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 		if func then
 			func("https://discord.io/infiniteyield")
@@ -2823,7 +2802,7 @@ reference = (function()
 	dragGUI(main)
 	main.Parent = PARENT
 
-	ReferenceButton.MouseButton1Click:Connect(function()
+	connect(ReferenceButton.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-250,0.5,-150), "InOut", "Quart", 0.5, true, nil)
 	end)
 end)()
@@ -2988,7 +2967,7 @@ function saves()
 				ExitImage.Image = "rbxassetid://5054663650"
 				ExitImage.ZIndex = 10
 
-				Exit.MouseButton1Click:Connect(function()
+				connect(Exit.MouseButton1Click, function()
 					FileError:Destroy()
 				end)
 			end
@@ -3085,20 +3064,20 @@ end
 
 function maximizeHolder()
 	if StayOpen == false then
-		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, -220), "InOut", "Quart", 0.2, true, nil)
+		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, -220), "InOut", "Quart", 0.2, true, nil)
 	end
 end
 
 local minimizeNum = -20
 function minimizeHolder()
 	if StayOpen == false then
-		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, minimizeNum), "InOut", "Quart", 0.5, true, nil)
+		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, minimizeNum), "InOut", "Quart", 0.5, true, nil)
 	end
 end
 
 function cmdbarHolder()
 	if StayOpen == false then
-		pcall(Holder.TweenPosition, Holder, UDim2.new(1, Holder.Position.X.Offset, 1, -45), "InOut", "Quart", 0.5, true, nil)
+		Holder:TweenPosition(UDim2.new(1, Holder.Position.X.Offset, 1, -45), "InOut", "Quart", 0.5, true, nil)
 	end
 end
 
@@ -3110,7 +3089,7 @@ function notify(text,text2,length)
 		local notificationPinned = false
 		notifyCount = notifyCount+1
 		if pinNotification then pinNotification:Disconnect() end
-		pinNotification = PinButton.MouseButton1Click:Connect(function()
+		pinNotification = connect(PinButton.MouseButton1Click, function()
 			task.spawn(function()
 				pinNotification:Disconnect()
 				notificationPinned = true
@@ -3130,7 +3109,7 @@ function notify(text,text2,length)
 			Text_2.Text = text
 		end
 		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -100), "InOut", "Quart", 0.5, true, nil)
-		CloseButton.MouseButton1Click:Connect(function()
+		connect(CloseButton.MouseButton1Click, function()
 			Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			closepressed = true
 			pinNotification:Disconnect()
@@ -3258,7 +3237,7 @@ function CreateJoinLabel(plr,ID)
 	info2.Text = string.gsub(info2.Text, "Loading...",splitDates[2].."/"..splitDates[3].."/"..splitDates[1])
 end
 
-IYMouse.KeyDown:Connect(function(Key)
+connect(IYMouse.KeyDown, function(Key)
 	if (Key==prefix) then
 		Cmdbar:CaptureFocus()
 		spawn(function()
@@ -3269,12 +3248,12 @@ IYMouse.KeyDown:Connect(function(Key)
 end)
 
 local lastMinimizeReq = 0
-Holder.MouseEnter:Connect(function()
+connect(Holder.MouseEnter, function()
 	lastMinimizeReq = 0
 	maximizeHolder()
 end)
 
-Holder.MouseLeave:Connect(function()
+connect(Holder.MouseLeave, function()
 	if not Cmdbar:IsFocused() then
 		local reqTime = tick()
 		lastMinimizeReq = reqTime
@@ -3324,7 +3303,7 @@ function updateColors(color,ctype)
 end
 
 local colorpickerOpen = false
-ColorsButton.MouseButton1Click:Connect(function()
+connect(ColorsButton.MouseButton1Click, function()
 	cache_currentShade1 = currentShade1
 	cache_currentShade2 = currentShade2
 	cache_currentShade3 = currentShade3
@@ -3439,7 +3418,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 				end
 
 				local function hookButtons(frame,func)
-					frame.ArrowFrame.Up.InputBegan:Connect(function(input)
+					frame.ArrowFrame.connect(Up.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3451,7 +3430,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 
 							if not startNum then return end
 
-							releaseEvent = UserInputService.InputEnded:Connect(function(input)
+							releaseEvent = connect(UserInputService.InputEnded, function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -3469,13 +3448,13 @@ ColorsButton.MouseButton1Click:Connect(function()
 						end
 					end)
 
-					frame.ArrowFrame.Up.InputEnded:Connect(function(input)
+					frame.ArrowFrame.connect(Up.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 1
 						end
 					end)
 
-					frame.ArrowFrame.Down.InputBegan:Connect(function(input)
+					frame.ArrowFrame.connect(Down.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3487,7 +3466,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 
 							if not startNum then return end
 
-							releaseEvent = UserInputService.InputEnded:Connect(function(input)
+							releaseEvent = connect(UserInputService.InputEnded, function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -3505,24 +3484,24 @@ ColorsButton.MouseButton1Click:Connect(function()
 						end
 					end)
 
-					frame.ArrowFrame.Down.InputEnded:Connect(function(input)
+					frame.ArrowFrame.connect(Down.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 1
 						end
 					end)
 				end
 
-				colorSpace.InputBegan:Connect(function(input)
+				connect(colorSpace.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 
-						releaseEvent = UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = connect(UserInputService.InputEnded, function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 							releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 
-						mouseEvent = UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = connect(UserInputService.InputChanged, function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorSpaceInput()
 							end
@@ -3532,17 +3511,17 @@ ColorsButton.MouseButton1Click:Connect(function()
 					end
 				end)
 
-				colorStrip.InputBegan:Connect(function(input)
+				connect(colorStrip.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 
-						releaseEvent = UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = connect(UserInputService.InputEnded, function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 							releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 
-						mouseEvent = UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = connect(UserInputService.InputChanged, function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorStripInput()
 							end
@@ -3562,7 +3541,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				hueInput.FocusLost:Connect(function() updateHue(hueInput.Text) end) hookButtons(hueInput,updateHue)
+				connect(hueInput.FocusLost, function() updateHue(hueInput.Text) end) hookButtons(hueInput,updateHue)
 
 				local function updateSat(str)
 					local num = tonumber(str)
@@ -3574,7 +3553,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				satInput.FocusLost:Connect(function() updateSat(satInput.Text) end) hookButtons(satInput,updateSat)
+				connect(satInput.FocusLost, function() updateSat(satInput.Text) end) hookButtons(satInput,updateSat)
 
 				local function updateVal(str)
 					local num = tonumber(str)
@@ -3586,7 +3565,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				valInput.FocusLost:Connect(function() updateVal(valInput.Text) end) hookButtons(valInput,updateVal)
+				connect(valInput.FocusLost, function() updateVal(valInput.Text) end) hookButtons(valInput,updateVal)
 
 				local function updateRed(str)
 					local num = tonumber(str)
@@ -3598,7 +3577,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				redInput.FocusLost:Connect(function() updateRed(redInput.Text) end) hookButtons(redInput,updateRed)
+				connect(redInput.FocusLost, function() updateRed(redInput.Text) end) hookButtons(redInput,updateRed)
 
 				local function updateGreen(str)
 					local num = tonumber(str)
@@ -3610,7 +3589,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				greenInput.FocusLost:Connect(function() updateGreen(greenInput.Text) end) hookButtons(greenInput,updateGreen)
+				connect(greenInput.FocusLost, function() updateGreen(greenInput.Text) end) hookButtons(greenInput,updateGreen)
 
 				local function updateBlue(str)
 					local num = tonumber(str)
@@ -3622,7 +3601,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				blueInput.FocusLost:Connect(function() updateBlue(blueInput.Text) end) hookButtons(blueInput,updateBlue)
+				connect(blueInput.FocusLost, function() updateBlue(blueInput.Text) end) hookButtons(blueInput,updateBlue)
 
 				local colorChoice = Instance.new("TextButton")
 				colorChoice.Name = "Choice"
@@ -3639,7 +3618,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 					newColor.BackgroundColor3 = v
 					newColor.Position = UDim2.new(0,1 + 30*column,0,21 + 23*row)
 
-					newColor.MouseButton1Click:Connect(function()
+					connect(newColor.MouseButton1Click, function()
 						red,green,blue = v.r,v.g,v.b
 						local newColor = Color3.new(red,green,blue)
 						hue,sat,val = Color3.toHSV(newColor)
@@ -3659,14 +3638,14 @@ ColorsButton.MouseButton1Click:Connect(function()
 					newColor.BackgroundColor3 = color
 					newColor.Position = UDim2.new(0,1 + 30*column,0,20 + 23*row)
 
-					newColor.MouseButton1Click:Connect(function()
+					connect(newColor.MouseButton1Click, function()
 						local curColor = customColors[i] or Color3.new(0,0,0)
 						red,green,blue = curColor.r,curColor.g,curColor.b
 						hue,sat,val = Color3.toHSV(curColor)
 						updateColor()
 					end)
 
-					newColor.MouseButton2Click:Connect(function()
+					connect(newColor.MouseButton2Click, function()
 						customColors[i] = chosenColor
 						newColor.BackgroundColor3 = chosenColor
 					end)
@@ -3676,39 +3655,39 @@ ColorsButton.MouseButton1Click:Connect(function()
 					if column == 6 then row = row + 1 column = 0 end
 				end
 
-				shade1Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade1) end end)
-				shade1Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0.4 end end)
-				shade1Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0 end end)
+				connect(shade1Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade1) end end)
+				connect(shade1Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0.4 end end)
+				connect(shade1Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0 end end)
 
-				shade2Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade2) end end)
-				shade2Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0.4 end end)
-				shade2Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0 end end)
+				connect(shade2Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade2) end end)
+				connect(shade2Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0.4 end end)
+				connect(shade2Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0 end end)
 
-				shade3Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade3) end end)
-				shade3Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0.4 end end)
-				shade3Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0 end end)
+				connect(shade3Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade3) end end)
+				connect(shade3Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0.4 end end)
+				connect(shade3Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0 end end)
 
-				text1Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,text1) end end)
-				text1Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0.4 end end)
-				text1Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0 end end)
+				connect(text1Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,text1) end end)
+				connect(text1Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0.4 end end)
+				connect(text1Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0 end end)
 
-				text2Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,text2) end end)
-				text2Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0.4 end end)
-				text2Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0 end end)
+				connect(text2Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,text2) end end)
+				connect(text2Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0.4 end end)
+				connect(text2Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0 end end)
 
-				scrollButton.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,scroll) end end)
-				scrollButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0.4 end end)
-				scrollButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0 end end)
+				connect(scrollButton.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,scroll) end end)
+				connect(scrollButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0.4 end end)
+				connect(scrollButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0 end end)
 
-				cancelButton.MouseButton1Click:Connect(function() if newMt.Cancel then newMt:Cancel() end end)
-				cancelButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0.4 end end)
-				cancelButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0 end end)
+				connect(cancelButton.MouseButton1Click, function() if newMt.Cancel then newMt:Cancel() end end)
+				connect(cancelButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0.4 end end)
+				connect(cancelButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0 end end)
 
-				defaultButton.MouseButton1Click:Connect(function() if newMt.Default then newMt:Default() end end)
-				defaultButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0.4 end end)
-				defaultButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0 end end)
+				connect(defaultButton.MouseButton1Click, function() if newMt.Default then newMt:Default() end end)
+				connect(defaultButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0.4 end end)
+				connect(defaultButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0 end end)
 
-				pickerExit.MouseButton1Click:Connect(function()
+				connect(pickerExit.MouseButton1Click, function()
 					picker:TweenPosition(UDim2.new(0.5, -219, 0, -500), "InOut", "Quart", 0.5, true, nil)
 				end)
 
@@ -3754,7 +3733,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 end)
 
 
-SettingsButton.MouseButton1Click:Connect(function()
+connect(SettingsButton.MouseButton1Click, function()
 	if SettingsOpen == false then SettingsOpen = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.5, true, nil)
 		CMDsF.Visible = false
@@ -3764,7 +3743,7 @@ SettingsButton.MouseButton1Click:Connect(function()
 	end
 end)
 
-On.MouseButton1Click:Connect(function()
+connect(On.MouseButton1Click, function()
 	if isHidden == false then
 		if StayOpen == false then
 			StayOpen = true
@@ -3777,21 +3756,21 @@ On.MouseButton1Click:Connect(function()
 	end
 end)
 
-Clear.MouseButton1Down:Connect(function()
+connect(Clear.MouseButton1Down, function()
 	for _, child in pairs(scroll_2:GetChildren()) do
 		child:Destroy()
 	end
 	scroll_2.CanvasSize = UDim2.new(0, 0, 0, 10)
 end)
 
-Clear_2.MouseButton1Down:Connect(function()
+connect(Clear_2.MouseButton1Down, function()
 	for _, child in pairs(scroll_3:GetChildren()) do
 		child:Destroy()
 	end
 	scroll_3.CanvasSize = UDim2.new(0, 0, 0, 10)
 end)
 
-Toggle.MouseButton1Down:Connect(function()
+connect(Toggle.MouseButton1Down, function()
 	if logsEnabled then
 		logsEnabled = false
 		Toggle.Text = 'Disabled'
@@ -3803,7 +3782,7 @@ Toggle.MouseButton1Down:Connect(function()
 	end
 end)
 
-Toggle_2.MouseButton1Down:Connect(function()
+connect(Toggle_2.MouseButton1Down, function()
 	if jLogsEnabled then
 		jLogsEnabled = false
 		Toggle_2.Text = 'Disabled'
@@ -3815,7 +3794,7 @@ Toggle_2.MouseButton1Down:Connect(function()
 	end
 end)
 
-selectChat.MouseButton1Down:Connect(function()
+connect(selectChat.MouseButton1Down, function()
 	join.Visible = false
 	chat.Visible = true
 	table.remove(shade3,table.find(shade3,selectChat))
@@ -3826,7 +3805,7 @@ selectChat.MouseButton1Down:Connect(function()
 	selectChat.BackgroundColor3 = currentShade2
 end)
 
-selectJoin.MouseButton1Down:Connect(function()
+connect(selectJoin.MouseButton1Down, function()
 	chat.Visible = false
 	join.Visible = true	
 	table.remove(shade3,table.find(shade3,selectJoin))
@@ -3842,7 +3821,7 @@ if not writefileExploit() then
 end
 
 ChatLog = function(plr)
-	plr.Chatted:Connect(function(Message)
+	connect(plr.Chatted, function(Message)
 		if logsEnabled == true then
 			CreateLabel(plr.Name,Message)
 		end
@@ -3860,7 +3839,7 @@ local CleanFileName = function(str)
 	return gsub(str, "[*\\?:<>|]+", "")
 end
 
-SaveChatlogs.MouseButton1Down:Connect(function()
+connect(SaveChatlogs.MouseButton1Down, function()
 	if writefileExploit() then
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
@@ -3895,7 +3874,7 @@ for _, plr in pairs(Players:GetChildren()) do
 	end
 end
 
-Players.PlayerRemoving:Connect(function(player)
+connect(Players.PlayerRemoving, function(player)
 	if ESPenabled or CHMSenabled or COREGUI:FindFirstChild(player.Name..'_LC') then
 		for i,v in pairs(COREGUI:GetChildren()) do
 			if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
@@ -3904,7 +3883,7 @@ Players.PlayerRemoving:Connect(function(player)
 		end
 	end
 	if viewing ~= nil and player == viewing then
-		workspace.CurrentCamera.CameraSubject = localplayer.Character
+		workspace.CurrentCamera.CameraSubject = Players.LocalPlayer.Character
 		viewing = nil
 		if viewDied then
 			viewDied:Disconnect()
@@ -3914,11 +3893,11 @@ Players.PlayerRemoving:Connect(function(player)
 	end
 end)
 
-Exit.MouseButton1Down:Connect(function()
+connect(Exit.MouseButton1Down, function()
 	logs:TweenPosition(UDim2.new(0, 0, 1, 10), "InOut", "Quart", 0.3, true, nil)
 end)
 
-Hide.MouseButton1Down:Connect(function()
+connect(Hide.MouseButton1Down, function()
 	if logs.Position ~= UDim2.new(0, 0, 1, -20) then
 		logs:TweenPosition(UDim2.new(0, 0, 1, -20), "InOut", "Quart", 0.3, true, nil)
 	else
@@ -3926,55 +3905,55 @@ Hide.MouseButton1Down:Connect(function()
 	end
 end)
 
-EventBind.MouseButton1Click:Connect(function()
+connect(EventBind.MouseButton1Click, function()
 	eventEditor.Frame:TweenPosition(UDim2.new(0.5,-175,0.5,-101), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Keybinds.MouseButton1Click:Connect(function()
+connect(Keybinds.MouseButton1Click, function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Close.MouseButton1Click:Connect(function()
+connect(Close.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Keybinds.MouseButton1Click:Connect(function()
+connect(Keybinds.MouseButton1Click, function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Add.MouseButton1Click:Connect(function()
+connect(Add.MouseButton1Click, function()
 	KeybindEditor:TweenPosition(UDim2.new(0.5, -180, 0, 260), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Delete.MouseButton1Click:Connect(function()
+connect(Delete.MouseButton1Click, function()
 	binds = {}
 	refreshbinds()
 	updatesaves()
 	notify('Keybinds Updated','Removed all keybinds')
 end)
 
-Close_2.MouseButton1Click:Connect(function()
+connect(Close_2.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Aliases.MouseButton1Click:Connect(function()
+connect(Aliases.MouseButton1Click, function()
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Close_3.MouseButton1Click:Connect(function()
+connect(Close_3.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Positions.MouseButton1Click:Connect(function()
+connect(Positions.MouseButton1Click, function()
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
@@ -4013,11 +3992,11 @@ function selectPart()
 	ClickSelect = IYMouse.Button1Down:Connect(SelectPart)
 end
 
-Part.MouseButton1Click:Connect(function()
+connect(Part.MouseButton1Click, function()
 	selectPart()
 end)
 
-Exit_4.MouseButton1Click:Connect(function()
+connect(Exit_4.MouseButton1Click, function()
 	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	if ActivateHighlight then
 		ActivateHighlight:Disconnect()
@@ -4030,7 +4009,7 @@ Exit_4.MouseButton1Click:Connect(function()
 	Path.Text = ""
 end)
 
-CopyPath.MouseButton1Click:Connect(function()
+connect(CopyPath.MouseButton1Click, function()
 	if Path.Text ~= "" then
 		toClipboard(Path.Text)
 	else
@@ -4038,7 +4017,7 @@ CopyPath.MouseButton1Click:Connect(function()
 	end
 end)
 
-ChoosePart.MouseButton1Click:Connect(function()
+connect(ChoosePart.MouseButton1Click, function()
 	if Path.Text ~= "" then
 		local tpNameExt = ''
 		local function handleWpNames()
@@ -4069,7 +4048,7 @@ end)
 
 cmds={}
 customAlias = {}
-Delete_3.MouseButton1Click:Connect(function()
+connect(Delete_3.MouseButton1Click, function()
 	customAlias = {}
 	aliases = {}
 	notify('Aliases Modified','Removed all aliases')
@@ -4091,7 +4070,7 @@ end
 
 function UpdateToViewport()
 	if Holder.Position.X.Offset < -CamViewport() then
-		pcall(Holder.TweenPosition, Holder, UDim2.new(1, -CamViewport(), Holder.Position.Y.Scale, Holder.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
+		Holder:TweenPosition(UDim2.new(1, -CamViewport(), Holder.Position.Y.Scale, Holder.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
 		Notification:TweenPosition(UDim2.new(1, -CamViewport() + 250, Notification.Position.Y.Scale, Notification.Position.Y.Offset), "InOut", "Quart", 0.04, true, nil)
 	end
 end
@@ -4142,25 +4121,25 @@ function dragMain(dragpoint,gui)
 				TweenService:Create(Notification, TweenInfo.new(.20), {Position = Position2}):Play()
 			end
 		end
-		dragpoint.InputBegan:Connect(function(input)
+		connect(dragpoint.InputBegan, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = gui.Position
 
-				input.Changed:Connect(function()
+				connect(input.Changed, function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
 					end
 				end)
 			end
 		end)
-		dragpoint.InputChanged:Connect(function(input)
+		connect(dragpoint.InputChanged, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-		UserInputService.InputChanged:Connect(function(input)
+		connect(UserInputService.InputChanged, function(input)
 			if input == dragInput and dragging then
 				update(input)
 			end
@@ -4226,7 +4205,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	end
 end
 
-PlayerGui = localplayer:FindFirstChildOfClass("PlayerGui")
+PlayerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
 local chatbox
 task.spawn(function()
 	local success, result = pcall(function() chatbox = game.WaitForChild(PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end)
@@ -4264,7 +4243,7 @@ task.spawn(function()
 		end
 		local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
 
-		PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
+		PlayerGui:WaitForChild("Chat").Frame.connect(ChatBarParentFrame.ChildAdded, function(newbar)
 			wait()
 			if newbar:FindFirstChild('BoxFrame') then
 				chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
@@ -4304,7 +4283,421 @@ function autoComplete(str,curText)
 	Cmdbar.Text = curText:sub(1,subPos) .. str:sub(1, stop - 1)..' '
 	wait()
 	Cmdbar.Text = Cmdbar.Text:gsub( '\t', '' )
-	Cmdbar.CursorPosition = #Cmdbar.Text + 1
+	Cmdbar.CursorPosition = #Cmdbar.Text+1--1020
+end
+
+CMDs = {}
+CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
+CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
+CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
+CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
+CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
+CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
+CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
+CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
+CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
+CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
+CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
+CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
+CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
+CMDs[#CMDs + 1] = {NAME = 'replicationlag / backtrack [num]', DESC = 'Set IncomingReplicationLag'}
+CMDs[#CMDs + 1] = {NAME = 'creatorid / creator', DESC = 'Notifies you the creators ID'}
+CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the creators ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
+CMDs[#CMDs + 1] = {NAME = 'noprompts', DESC = 'Prevents the game from showing you purchase/premium prompts'}
+CMDs[#CMDs + 1] = {NAME = 'showprompts', DESC = 'Allows the game to show purchase/premium prompts again'}
+CMDs[#CMDs + 1] = {NAME = 'enable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'disable [inventory/playerlist/chat/reset/emotes/all]', DESC = 'Toggles visibility of coregui items'}
+CMDs[#CMDs + 1] = {NAME = 'showguis', DESC = 'Shows any invisible GUIs'}
+CMDs[#CMDs + 1] = {NAME = 'unshowguis', DESC = 'Undoes showguis'}
+CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
+CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
+CMDs[#CMDs + 1] = {NAME = 'guidelete', DESC = 'Enables backspace to delete GUI'}
+CMDs[#CMDs + 1] = {NAME = 'unguidelete / noguidelete', DESC = 'Disables guidelete'}
+CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
+CMDs[#CMDs + 1] = {NAME = 'showiy / unhideiy', DESC = 'Shows IY again'}
+CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport through servers'}
+CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
+CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggle keepiy'}
+CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
+CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
+CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
+CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
+CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
+CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality to boost FPS'}
+CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts roblox recorder'}
+CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
+CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
+CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
+CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
+CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
+CMDs[#CMDs + 1] = {NAME = 'unnoclip / clip', DESC = 'Disables noclip'}
+CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Makes you fly'}
+CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
+CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20)'}
+CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly [speed]', DESC = 'Makes you fly in a vehicle'}
+CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
+CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
+CMDs[#CMDs + 1] = {NAME = 'cframefly / cfly [speed]', DESC = 'Makes you fly, bypassing some anti cheats (works on mobile)'}
+CMDs[#CMDs + 1] = {NAME = 'uncframefly / uncfly', DESC = 'Disables cfly'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Sets cfly speed'}
+CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'enables or disables the Q and E hotkeys for fly'}
+CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
+CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
+CMDs[#CMDs + 1] = {NAME = 'float /  platform', DESC = 'Spawns a platform beneath you causing you to float'}
+CMDs[#CMDs + 1] = {NAME = 'unfloat / noplatform', DESC = 'Removes the platform'}
+CMDs[#CMDs + 1] = {NAME = 'swim', DESC = 'Allows you to swim in the air'}
+CMDs[#CMDs + 1] = {NAME = 'unswim / noswim', DESC = 'Stops you from swimming everywhere'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'setwaypoint / swp [name]', DESC = 'Sets a waypoint at your position'}
+CMDs[#CMDs + 1] = {NAME = 'waypointpos / wpp [name] [X Y Z]', DESC = 'Sets a waypoint with specified coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'waypoints', DESC = 'Shows a list of currently active waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'showwaypoints / showwp', DESC = 'Shows all currently set waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'hidewaypoints / hidewp', DESC = 'Hides shown waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'waypoint / wp [name]', DESC = 'Teleports player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'tweenwaypoint / twp [name]', DESC = 'Tweens player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'walktowaypoint / wtwp [name]', DESC = 'Walks player to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
+CMDs[#CMDs + 1] = {NAME = 'cleargamewaypoints / cgamewp', DESC = 'Clears all waypoints for the game you are in'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'goto [plr]', DESC = 'Go to a player'}
+CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [plr]', DESC = 'Tween to a player (bypasses some anti cheats)'}
+CMDs[#CMDs + 1] = {NAME = 'tweenspeed / tspeed [num]', DESC = 'Sets how fast all tween commands go (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [plr]', DESC = 'Go to a player while in a vehicle'}
+CMDs[#CMDs + 1] = {NAME = 'loopgoto [plr] [distance] [delay]', DESC = 'Loop teleport to a player'}
+CMDs[#CMDs + 1] = {NAME = 'unloopgoto', DESC = 'Stops teleporting you to a player'}
+CMDs[#CMDs + 1] = {NAME = 'pulsetp / ptp [plr] [seconds]', DESC = 'Teleports you to a player for a specified ammount of time'}
+CMDs[#CMDs + 1] = {NAME = 'clientbring / cbring [plr] (CLIENT)', DESC = 'Bring a player'}
+CMDs[#CMDs + 1] = {NAME = 'loopbring [plr] [distance] [delay] (CLIENT)', DESC = 'Loop brings a player to you (useful for killing)'}
+CMDs[#CMDs + 1] = {NAME = 'unloopbring [plr]', DESC = 'Undoes loopbring'}
+CMDs[#CMDs + 1] = {NAME = 'freeze / fr [plr] (CLIENT)', DESC = 'Freezes a player'}
+CMDs[#CMDs + 1] = {NAME = 'freezeanims', DESC = 'Freezes your animations / pauses your animations - Does not work on default animations'}
+CMDs[#CMDs + 1] = {NAME = 'unfreezeanims', DESC = 'Unfreezes your animations / plays your animations'}
+CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [plr] (CLIENT)', DESC = 'Unfreezes a player'}
+CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'tweentpposition / ttppos [X Y Z]', DESC = 'Tween to coordinates (bypasses some anti cheats)'}
+CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
+CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
+CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'walktoposition / walktopos [X Y Z]', DESC = 'Makes you walk to a coordinate'}
+CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn [delay]', DESC = 'Sets a position where you will spawn'}
+CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
+CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where you last died'}
+CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
+CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
+CMDs[#CMDs + 1] = {NAME = 'teleporttool / tptool', DESC = 'Gives you a teleport tool'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
+CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
+CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
+CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
+CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
+CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
+CMDs[#CMDs + 1] = {NAME = 'whisper / pm [plr] [text]', DESC = 'Makes you whisper a string to someone (possible mute bypass)'}
+CMDs[#CMDs + 1] = {NAME = 'pmspam [plr] [text]', DESC = 'Makes you spam a players whispers'}
+CMDs[#CMDs + 1] = {NAME = 'unpmspam [plr]', DESC = 'Turns off pm spam'}
+CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
+CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
+CMDs[#CMDs + 1] = {NAME = 'safechat', DESC = 'Enables safe chat'}
+CMDs[#CMDs + 1] = {NAME = 'nosafechat / disablesafechat', DESC = 'Disables safechat'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
+CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
+CMDs[#CMDs + 1] = {NAME = 'esptransparency [number]', DESC = 'Changes the transparency of esp related commands'}
+CMDs[#CMDs + 1] = {NAME = 'partesp [part name]', DESC = 'Highlights a part'}
+CMDs[#CMDs + 1] = {NAME = 'unpartesp / nopartesp [part name]', DESC = 'removes partesp'}
+CMDs[#CMDs + 1] = {NAME = 'chams', DESC = 'ESP but without text in the way'}
+CMDs[#CMDs + 1] = {NAME = 'nochams / unchams', DESC = 'Removes chams'}
+CMDs[#CMDs + 1] = {NAME = 'locate [plr]', DESC = 'View a single player and their status'}
+CMDs[#CMDs + 1] = {NAME = 'unlocate / nolocate [plr]', DESC = 'Removes locate'}
+CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
+CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'spectate / view [plr]', DESC = 'View a player'}
+CMDs[#CMDs + 1] = {NAME = 'viewpart / viewp [part name]', DESC = 'View a part'}
+CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
+CMDs[#CMDs + 1] = {NAME = 'freecam / fc', DESC = 'Allows you to freely move camera around the game'}
+CMDs[#CMDs + 1] = {NAME = 'freecampos / fcpos [X Y Z]', DESC = 'Moves / opens freecam in a certain position'}
+CMDs[#CMDs + 1] = {NAME = 'freecamwaypoint / fcwp [name]', DESC = 'Moves / opens freecam to a waypoint'}
+CMDs[#CMDs + 1] = {NAME = 'freecamgoto / fcgoto / fctp [plr]', DESC = 'Moves / opens freecam to a player'}
+CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
+CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'notifyfreecamposition / notifyfcpos', DESC = 'Noitifies you your freecam coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'copyfreecamposition / copyfcpos', DESC = 'Copies your freecam coordinates to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the location of your camera'}
+CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
+CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
+CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
+CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
+CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Minimum camera zoom'}
+CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
+CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is 70)'}
+CMDs[#CMDs + 1] = {NAME = 'fixcam / restorecam', DESC = 'Fixes camera'}
+CMDs[#CMDs + 1] = {NAME = 'enableshiftlock / enablesl', DESC = 'Enables the shift lock option'}
+CMDs[#CMDs + 1] = {NAME = 'lookat [plr]', DESC = 'Moves your camera view to a player'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'partname / partpath', DESC = 'Allows you to click a part to see its path & name'}
+CMDs[#CMDs + 1] = {NAME = 'delete [instance name] (CLIENT)', DESC = 'Removes any part with a certain name from the workspace (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'deleteclass / dc [class name] (CLIENT)', DESC = 'Removes any part with a certain classname from the workspace (DOES NOT REPLICATE)'}
+CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole workspace'}
+CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
+CMDs[#CMDs + 1] = {NAME = 'invisibleparts / invisparts (CLIENT)', DESC = 'Shows invisible parts'}
+CMDs[#CMDs + 1] = {NAME = 'uninvisibleparts / uninvisparts (CLIENT)', DESC = 'Makes parts affected by invisparts return to normal'}
+CMDs[#CMDs + 1] = {NAME = 'deleteinvisparts / dip (CLIENT)', DESC = 'Deletes invisible parts'}
+CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotopart / tgotopart [part name]', DESC = 'Tweens your character to a part or multiple parts'}
+CMDs[#CMDs + 1] = {NAME = 'gotopartclass / gpc [class name]', DESC = 'Moves your character to a part or multiple parts based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotopartclass / tgpc [class name]', DESC = 'Tweens your character to a part or multiple parts based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'gotomodel [part name]', DESC = 'Moves your character to a model or multiple models'}
+CMDs[#CMDs + 1] = {NAME = 'tweengotomodel / tgotomodel [part name]', DESC = 'Tweens your character to a model or multiple models'}
+CMDs[#CMDs + 1] = {NAME = 'gotopartdelay / gotomodeldelay [num]', DESC = 'Adjusts how quickly you teleport to each part (default is 0.1)'}
+CMDs[#CMDs + 1] = {NAME = 'bringpart [part name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character'}
+CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = 'Moves a part or multiple parts to your character based on classname'}
+CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
+CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd [name]', DESC = 'Uses all click detectors in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests [name]', DESC = 'Uses all touchinterests in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
+CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses all proximity prompts in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
+CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
+CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [plr]', DESC = 'Teleports unanchored parts to a player'}
+CMDs[#CMDs + 1] = {NAME = 'animsunanchored / freezeua', DESC = 'Freezes unanchored parts'}
+CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
+CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
+CMDs[#CMDs + 1] = {NAME = 'clearnilinstances / nonilinstances / cni', DESC = 'Removes nil instances'}
+CMDs[#CMDs + 1] = {NAME = 'destroyheight / dh [num]', DESC = 'Sets FallenPartsDestroyHeight'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
+CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
+CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops fullbright'}
+CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
+CMDs[#CMDs + 1] = {NAME = 'day (CLIENT)', DESC = 'Changes the time to day for the client'}
+CMDs[#CMDs + 1] = {NAME = 'night (CLIENT)', DESC = 'Changes the time to night for the client'}
+CMDs[#CMDs + 1] = {NAME = 'nofog (CLIENT)', DESC = 'Removes fog'}
+CMDs[#CMDs + 1] = {NAME = 'brightness [num] (CLIENT)', DESC = 'Changes the brightness lighting property'}
+CMDs[#CMDs + 1] = {NAME = 'globalshadows / gshadows (CLIENT)', DESC = 'Enables global shadows'}
+CMDs[#CMDs + 1] = {NAME = 'noglobalshadows / nogshadows (CLIENT)', DESC = 'Disables global shadows'}
+CMDs[#CMDs + 1] = {NAME = 'restorelighting / rlighting', DESC = 'Restores Lighting properties'}
+CMDs[#CMDs + 1] = {NAME = 'light [radius] [brightness] (CLIENT)', DESC = 'Gives your player dynamic light'}
+CMDs[#CMDs + 1] = {NAME = 'nolight / unlight', DESC = 'Removes dynamic light from your player'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'inspect / examine [plr]', DESC = 'Opens InspectMenu for a certain player'}
+CMDs[#CMDs + 1] = {NAME = 'age [plr]', DESC = 'Tells you the age of a player'}
+CMDs[#CMDs + 1] = {NAME = 'chatage [plr]', DESC = 'Chats the age of a player'}
+CMDs[#CMDs + 1] = {NAME = 'joindate / jd [plr]', DESC = 'Tells you the date the player joined Roblox'}
+CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [plr]', DESC = 'Chats the date the player joined Roblox'}
+CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [plr]', DESC = 'Copies a players full username to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'userid / id [plr]', DESC = 'Notifies a players user ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [plr]', DESC = 'Copies a players user ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [plr]', DESC = 'Notifies a players appearance ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [plr]', DESC = 'Copies a players appearance ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'bang [plr] [speed]', DESC = 'owo'}
+CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
+CMDs[#CMDs + 1] = {NAME = 'carpet [plr]', DESC = 'Be someones carpet'}
+CMDs[#CMDs + 1] = {NAME = 'uncarpet', DESC = 'Undoes carpet'}
+CMDs[#CMDs + 1] = {NAME = 'friend [plr]', DESC = 'Sends a friend request to certain players'}
+CMDs[#CMDs + 1] = {NAME = 'unfriend [plr]', DESC = 'Unfriends certain players'}
+CMDs[#CMDs + 1] = {NAME = 'headsit [plr]', DESC = 'Sit on a players head'}
+CMDs[#CMDs + 1] = {NAME = 'walkto / follow [plr]', DESC = 'Follow a player'}
+CMDs[#CMDs + 1] = {NAME = 'pathfindwalkto / pathfindfollow [plr]', DESC = 'Follow a player using pathfinding'}
+CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]', DESC = 'Walk to a waypoint using pathfinding'}
+CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
+CMDs[#CMDs + 1] = {NAME = 'stareat / stare [plr]', DESC = 'Stare / look at a player'}
+CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [plr]', DESC = 'Disables stareat'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'Notify if someone from a watched group joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatchstop / unrolewatch', DESC = 'Disable Rolewatch'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatchleave', DESC = 'Toggle if you should leave the game if someone from a watched group joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'attach [plr] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'kill [plr] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastkill [plr] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [plr] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'bring [plr] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastbring [plr] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'teleport / tp [plr] [plr] (TOOL)', DESC = 'Teleports a player to another player (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [plr] [plr] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
+CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
+CMDs[#CMDs + 1] = {NAME = 'invisfling', DESC = 'Enables invisible fling'}
+CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
+CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
+CMDs[#CMDs + 1] = {NAME = 'muteboombox [plr]', DESC = 'Mutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [plr]', DESC = 'Unmutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'hitbox [plr] [size]', DESC = 'Expands the hitbox for players HumanoidRootPart (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'headsize [plr] [size]', DESC = 'Expands the head size for players Head (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
+CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
+CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
+CMDs[#CMDs + 1] = {NAME = 'god', DESC = 'Makes your character difficult to kill in most games'}
+CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
+CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
+CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
+CMDs[#CMDs + 1] = {NAME = 'speed / ws / walkspeed [num]', DESC = 'Change your walkspeed'}
+CMDs[#CMDs + 1] = {NAME = 'spoofspeed / spoofws [num]', DESC = 'Spoofs your WalkSpeed on the Client'}
+CMDs[#CMDs + 1] = {NAME = 'loopspeed / loopws [num]', DESC = 'Loops your walkspeed'}
+CMDs[#CMDs + 1] = {NAME = 'unloopspeed / unloopws', DESC = 'Turns off loopspeed'}
+CMDs[#CMDs + 1] = {NAME = 'hipheight / hheight [num]', DESC = 'Adjusts hip height'}
+CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower / jp [num]', DESC = 'Change a players jump height'}
+CMDs[#CMDs + 1] = {NAME = 'spoofjumppower / spoofjp [num]', DESC = 'Spoofs your JumpPower on the Client'}
+CMDs[#CMDs + 1] = {NAME = 'loopjumppower / loopjp [num]', DESC = 'Loops your jump height'}
+CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp', DESC = 'Turns off loopjumppower'}
+CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
+CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
+CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
+CMDs[#CMDs + 1] = {NAME = 'lay / laydown', DESC = 'Makes your character lay down'}
+CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while still being able to walk'}
+CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
+CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'Disables nosit'}
+CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
+CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
+CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
+CMDs[#CMDs + 1] = {NAME = 'flyjump', DESC = 'Allows you to hold space to fly up'}
+CMDs[#CMDs + 1] = {NAME = 'unflyjump', DESC = 'Disables flyjump'}
+CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when you run into an object'}
+CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
+CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
+CMDs[#CMDs + 1] = {NAME = 'unedgejump / unejump', DESC = 'Disables edgejump'}
+CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
+CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
+CMDs[#CMDs + 1] = {NAME = 'norotate / noautorotate', DESC = 'Disables AutoRotate'}
+CMDs[#CMDs + 1] = {NAME = 'unnorotate / autorotate', DESC = 'Enables AutoRotate'}
+CMDs[#CMDs + 1] = {NAME = 'enablestate [StateType]', DESC = 'Enables a humanoid state type'}
+CMDs[#CMDs + 1] = {NAME = 'disablestate [StateType]', DESC = 'Disables a humanoid state type'}
+CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team. Sometimes fools localscripts.'}
+CMDs[#CMDs + 1] = {NAME = 'nobillboardgui / nobgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
+CMDs[#CMDs + 1] = {NAME = 'loopnobgui / loopnoname', DESC = 'Loop removes billboard and surface guis from your players (i.e. name guis at cafes)'}
+CMDs[#CMDs + 1] = {NAME = 'unloopnobgui / unloopnoname', DESC = 'Disables loopnobgui'}
+CMDs[#CMDs + 1] = {NAME = 'nohead / headless', DESC = 'Removes your head (uses simulation radius)'}
+CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
+CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
+CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
+CMDs[#CMDs + 1] = {NAME = 'naked (CLIENT)', DESC = 'Removes your clothing'}
+CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
+CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
+CMDs[#CMDs + 1] = {NAME = 'blockhats', DESC = 'Turns your hats into blocks'}
+CMDs[#CMDs + 1] = {NAME = 'blocktool', DESC = 'Turns the currently selected tool into a block'}
+CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
+CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
+CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
+CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
+CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
+CMDs[#CMDs + 1] = {NAME = 'clearhats / cleanhats', DESC = 'Clears hats in the workspace'}
+CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
+CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
+CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
+CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
+CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
+CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
+CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
+CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
+CMDs[#CMDs + 1] = {NAME = 'vr', DESC = 'Loads CLOVR by Abacaxl'}
+CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
+CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
+CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
+CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
+CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
+CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
+CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
+CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
+CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
+CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
+CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
+CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
+CMDs[#CMDs + 1] = {NAME = 'copyanimation / copyanim / copyemote [plr]', DESC = 'Copies someone elses animation'}
+CMDs[#CMDs + 1] = {NAME = 'loopanimation / loopanim', DESC = 'Loops your current animation'}
+CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
+CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims', DESC = 'Refreshes animations'}
+CMDs[#CMDs + 1] = {NAME = 'allowcustomanim / allowcustomanimations', DESC = 'Lets you use custom animation packs instead'}
+CMDs[#CMDs + 1] = {NAME = 'unallowcustomanim / unallowcustomanimations', DESC = 'Doesn\'t let you use custom animation packs instead'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
+CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
+CMDs[#CMDs + 1] = {NAME = 'autokeypress [key] [down delay] [up delay]', DESC = 'Automatically presses a key with a set delay'}
+CMDs[#CMDs + 1] = {NAME = 'unautokeypress', DESC = 'Stops autokeypress'}
+CMDs[#CMDs + 1] = {NAME = 'hovername', DESC = 'Shows a players username when your mouse is hovered over them'}
+CMDs[#CMDs + 1] = {NAME = 'unhovername / nohovername', DESC = 'Turns off hovername'}
+CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mouse sensitivity (affects first person and right click drag) (default is 1)'}
+CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to settings>Keybinds>Add for clicktp'}
+CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for click tp'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
+CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
+CMDs[#CMDs + 1] = {NAME = 'deleteselectedtool / dst', DESC = 'Removes any currently selected tools'}
+CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are dropped'}
+CMDs[#CMDs + 1] = {NAME = 'ungrabtools / nograbtools', DESC = 'Disables grabtools'}
+CMDs[#CMDs + 1] = {NAME = 'copytools [plr] (CLIENT)', DESC = 'Copies a players tools'}
+CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [num]', DESC = 'Duplicates your inventory tools a set ammount of times'}
+CMDs[#CMDs + 1] = {NAME = 'givetool / givetools', DESC = 'Gives all the tools you\'re holding to [plr] using the attach method.'}
+CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
+CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
+CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
+CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are currently holding at once'}
+CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically remove a specific tool from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
+CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
+CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
+CMDs[#CMDs + 1] = {NAME = 'usetools [ammount] [delay]', DESC = 'Activates all tools in your backpack at the same time'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
+CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
+CMDs[#CMDs + 1] = {NAME = 'clraliases', DESC = 'Removes all custom aliases'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
+CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
+CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
+CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
+CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
+CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
+CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
+CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
+CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease the amount of CPU the client uses'}
+CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
+CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 2022 material textures'}
+CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
+wait()
+
+for i = 1, #CMDs do
+	local newcmd = Example:Clone()
+	newcmd.Parent = CMDsF
+	newcmd.Visible = false
+	newcmd.Text = CMDs[i].NAME
+	newcmd.Name = 'CMD'
+	table.insert(text1,newcmd)
+	if CMDs[i].DESC ~= '' then
+		newcmd:SetAttribute("Title", CMDs[i].NAME)
+		newcmd:SetAttribute("Desc", CMDs[i].DESC)
+		connect(newcmd.MouseButton1Down, function()
+			if newcmd.Visible and newcmd.TextTransparency == 0 then
+				local currentText = Cmdbar.Text
+				Cmdbar:CaptureFocus()
+				autoComplete(newcmd.Text,currentText)
+				maximizeHolder()
+			end
+		end)
+	end
 end
 
 IndexContents('',true)
@@ -4394,10 +4787,10 @@ local lastDeath
 
 function onDied()
 	task.spawn(function()
-		if pcall(function() localplayer.Character:FindFirstChildOfClass('Humanoid') end) and localplayer.Character:FindFirstChildOfClass('Humanoid') then
-			localplayer.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-				if getRoot(localplayer.Character) then
-					lastDeath = getRoot(localplayer.Character).CFrame
+		if pcall(function() Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') end) and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
+				if getRoot(Players.LocalPlayer.Character) then
+					lastDeath = getRoot(Players.LocalPlayer.Character).CFrame
 				end
 			end)
 		else
@@ -4407,100 +4800,93 @@ function onDied()
 	end)
 end
 
-function spawn_point_tp(rootpart)
-	if typeof(rootpart) == 'Instance' and rootpart:IsA("BasePart") and spawnpoint and not refreshCmd and spawnpos then
-		local destination = spawnpos
-		if typeof(spawnpos) == 'CFrame' then
-			destination = spawnpos.Position
-		end
-		if typeof(destination) == 'Vector3' then
-			wait(spDelay)
-			rootpart.CFrame = spawnpos
-		end
-	end
-end
-
 Clip = true
 spDelay = 0.1
-
-function reload_character_IY()
+Players.connect(LocalPlayer.CharacterAdded, function()
 	NOFLY()
 	Floating = false
+
 	if not Clip then
 		execCmd('clip')
 	end
-	local rootpart
-	while typeof(rootpart) ~= 'Instance' do
-		if break_all_loops == true then
-			break
-		end
-		rootpart = select(2, pcall(function()
-			return localplayer.Character:FindFirstChildOfClass('Humanoid').RootPart
-		end))
-		wait(0)
-	end
-	pcall(spawn_point_tp, rootpart)
-	onDied()
-end
 
-localplayer.CharacterAdded:Connect(reload_character_IY)
-pcall(onDied)
+	repeat wait() until getRoot(Players.LocalPlayer.Character)
+
+	pcall(function()
+		if spawnpoint and not refreshCmd and spawnpos ~= nil then
+			wait(spDelay)
+			getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
+		end
+	end)
+
+	onDied()
+end)
+
+onDied()
 
 function getstring(begin)
-    return table.concat({unpack(cargs, begin)}, ' ', 1, #cargs - begin + 1)
+	local start = begin-1
+	local AA = '' for i,v in pairs(cargs) do
+		if i > start then
+			if AA ~= '' then
+				AA = AA .. ' ' .. v
+			else
+				AA = AA .. v
+			end
+		end
+	end
+	return AA
 end
 
-function findCmd(cmd_name)
-    for _, cmd in ipairs(cmds) do
-        if string.lower(cmd.NAME) == string.lower(cmd_name) or FindInTable(cmd.ALIAS, string.lower(cmd_name)) then
-            return cmd
-        end
-    end
-    return customAlias[string.lower(cmd_name)]
+findCmd=function(cmd_name)
+	for i,v in pairs(cmds)do
+		if v.NAME:lower()==cmd_name:lower() or FindInTable(v.ALIAS,cmd_name:lower()) then
+			return v
+		end
+	end
+	return customAlias[cmd_name:lower()]
 end
 
-function splitString(str, delim)
+function splitString(str,delim)
 	local broken = {}
-	for w in str:gmatch("[^"..(delim or ",").."]+") do
-		table.insert(broken, w)
+	if delim == nil then delim = "," end
+	for w in string.gmatch(str,"[^"..delim.."]+") do
+		table.insert(broken,w)
 	end
 	return broken
-end  
+end
 
 cmdHistory = {}
-historyCount = 0
-lastBreakTime = 0
-lastCmds = {}
-split = ' '
-
-function execCmd(cmdStr, _, store)
-	print("executing command:", cmdStr)
-	cmdStr = cmdStr:gsub("%s+$", "")
-	coroutine.resume(coroutine.create(function()
+local lastCmds = {}
+local historyCount = 0
+local split=" "
+local lastBreakTime = 0
+function execCmd(cmdStr,speaker,store)
+	cmdStr = cmdStr:gsub("%s+$","")
+	task.spawn(function()
 		local rawCmdStr = cmdStr
-		cmdStr = string.gsub(cmdStr, "\\\\", "%%BackSlash%%")
-		local commandsToRun = splitString(cmdStr, "\\")
-		for i, v in pairs(commandsToRun) do
-			print("processing command:", v)
-			v = string.gsub(v, "%%BackSlash%%", "\\")
-			local x, y, num = v:find("^(%d+)%^")
+		cmdStr = string.gsub(cmdStr,"\\\\","%%BackSlash%%")
+		local commandsToRun = splitString(cmdStr,"\\")
+		for i,v in pairs(commandsToRun) do
+			v = string.gsub(v,"%%BackSlash%%","\\")
+			local x,y,num = v:find("^(%d+)%^")
 			local cmdDelay = 0
 			local infTimes = false
 			if num then
-				v = v:sub(y + 1)
-				local x, y, del = v:find("^([%d%.]+)%^")
+				v = v:sub(y+1)
+				local x,y,del = v:find("^([%d%.]+)%^")
 				if del then
-					v = v:sub(y + 1)
+					v = v:sub(y+1)
 					cmdDelay = tonumber(del) or 0
 				end
 			else
-				local x, y = v:find("^inf%^")
+				local x,y = v:find("^inf%^")
 				if x then
 					infTimes = true
-					v = v:sub(y + 1)
-					local x, y, del = v:find("^([%d%.]+)%^")
+					v = v:sub(y+1)
+					local x,y,del = v:find("^([%d%.]+)%^")
 					if del then
-						v = v:sub(y + 1)
+						v = v:sub(y+1)
 						del = tonumber(del) or 1
 						cmdDelay = (del > 0 and del or 1)
 					else
@@ -4509,44 +4895,42 @@ function execCmd(cmdStr, _, store)
 				end
 			end
 			num = tonumber(num or 1)
-			if v:sub(1, 1) == "!" then
-				local chunks = splitString(v:sub(2), split)
+
+			if v:sub(1,1) == "!" then
+				local chunks = splitString(v:sub(2),split)
 				if chunks[1] and lastCmds[chunks[1]] then v = lastCmds[chunks[1]] end
 			end
-			local args = splitString(v, split)
+
+			local args = splitString(v,split)
 			local cmdName = args[1]
 			local cmd = findCmd(cmdName)
 			if cmd then
-				table.remove(args, 1)
+				table.remove(args,1)
 				cargs = args
+				if not speaker then speaker = Players.LocalPlayer end
 				if store then
-					if cmdHistory[1] ~= rawCmdStr and rawCmdStr:sub(1, 11) ~= 'lastcommand' and rawCmdStr:sub(1, 7) ~= 'lastcmd' then
-						table.insert(cmdHistory, 1, rawCmdStr)
+					if speaker == Players.LocalPlayer then
+						if cmdHistory[1] ~= rawCmdStr and rawCmdStr:sub(1,11) ~= 'lastcommand' and rawCmdStr:sub(1,7) ~= 'lastcmd' then
+							table.insert(cmdHistory,1,rawCmdStr)
+						end
 					end
-					if #cmdHistory > 30 then
-						table.remove(cmdHistory)
-					end
+					if #cmdHistory > 30 then table.remove(cmdHistory) end
+
 					lastCmds[cmdName] = v
 				end
 				local cmdStartTime = tick()
 				if infTimes then
 					while lastBreakTime < cmdStartTime do
-						if break_all_loops == true then
-							break
-						end
-						local success, err = pcall(cmd.FUNC, args, speaker)
+						local success,err = pcall(cmd.FUNC,args, speaker)
 						if not success and _G.IY_DEBUG then
 							warn("Command Error:", cmdName, err)
 						end
 						wait(cmdDelay)
 					end
 				else
-					for rep = 1, num do
-						if break_all_loops == true then
-							break
-						end
+					for rep = 1,num do
 						if lastBreakTime > cmdStartTime then break end
-						local success, err = pcall(function()
+						local success,err = pcall(function()
 							cmd.FUNC(args, speaker)
 						end)
 						if not success and _G.IY_DEBUG then
@@ -4557,48 +4941,21 @@ function execCmd(cmdStr, _, store)
 				end
 			end
 		end
-	end))
-end
+	end)
+end	
 
-function addcmd(name, alias, func, desc, plgn)
-	if type(name) ~= 'string' then
-		error('Command name must be a string')
-	end
-	if type(alias) ~= 'table' then
-		alias = {}
-		warn('Command alias must be a table')
-	end
-	if type(func) ~= 'function' then
-		error('Command function must be a function')
-	end
-	if type(desc) ~= 'string' then
-		desc = ''
-		warn('Command description must be a string')
-	end
+--- Add a new command to the internal command list.
+--- @param name string The name of the command.
+--- @param alias string[] The alias of the command.
+--- @param func function The function to be called when the command is executed.
+--- @param plgn any The plugin that the command belongs to.
+function addcmd(name, alias, func, plgn)
 	table.insert(cmds, {
-        NAME = name,
-        ALIAS = alias,
-        FUNC = func,
-        PLUGIN = plgn
-    })
-    local newcmd = Example:Clone()
-    newcmd.Parent = CMDsF
-    newcmd.Visible = false
-    newcmd.Text = name
-    newcmd.Name = 'CMD'
-    table.insert(text1, newcmd)
-    if desc ~= '' then
-        newcmd:SetAttribute("Title", name)
-        newcmd:SetAttribute("Desc", desc)
-        newcmd.MouseButton1Down:Connect(function()
-            if newcmd.Visible and newcmd.TextTransparency == 0 then
-                local currentText = Cmdbar.Text
-                Cmdbar:CaptureFocus()
-                autoComplete(newcmd.Text, currentText)
-                maximizeHolder()
-            end
-        end)
-    end
+		NAME = name,
+		ALIAS = type(alias) == 'table' and alias or {},
+		FUNC = func,
+		PLUGIN = plgn
+	})
 end
 
 function removecmd(cmd)
@@ -4609,7 +4966,7 @@ function removecmd(cmd)
 				for a,c in pairs(CMDsF:GetChildren()) do
 					if string.find(c.Text, "^"..cmd.."$") or string.find(c.Text, "^"..cmd.." ") or string.find(c.Text, " "..cmd.."$") or string.find(c.Text, " "..cmd.." ") then
 						c.TextTransparency = 0.7
-						c.MouseButton1Click:Connect(function()
+						connect(c.MouseButton1Click, function()
 							notify(c.Text, "Command has been disabled by you or a plugin")
 						end)
 					end
@@ -4619,13 +4976,23 @@ function removecmd(cmd)
 	end
 end
 
-function addbind(cmd, key, iskeyup, toggle)
-    table.insert(binds, {
-        COMMAND = cmd;
-        KEY = key;
-        ISKEYUP = iskeyup;
-        TOGGLE = toggle;
-    })
+function addbind(cmd,key,iskeyup,toggle)
+	if toggle then
+		binds[#binds+1]=
+			{
+				COMMAND=cmd;
+				KEY=key;
+				ISKEYUP=iskeyup;
+				TOGGLE = toggle;
+			}
+	else
+		binds[#binds+1]=
+			{
+				COMMAND=cmd;
+				KEY=key;
+				ISKEYUP=iskeyup;
+			}
+	end
 end
 
 function addcmdtext(text,name,desc)
@@ -4640,7 +5007,7 @@ function addcmdtext(text,name,desc)
 	if desc and desc ~= '' then
 		newcmd:SetAttribute("Title", tooltipText)
 		newcmd:SetAttribute("Desc", tooltipDesc)
-		newcmd.MouseButton1Down:Connect(function()
+		connect(newcmd.MouseButton1Down, function()
 			if newcmd.Visible and newcmd.TextTransparency == 0 then
 				Cmdbar:CaptureFocus()
 				autoComplete(newcmd.Text)
@@ -4663,7 +5030,7 @@ local GetClosestPlayerFromCursor = function()
 	local found = nil
 	local ClosestDistance = math.huge
 	for i, v in pairs(Players:GetPlayers()) do
-		if v ~= localplayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
+		if v ~= Players.LocalPlayer and v.Character and v.Character:FindFirstChildOfClass("Humanoid") then
 			for k, x in pairs(v.Character:GetChildren()) do
 				if string.find(x.Name, "Torso") then
 					local Distance = (WorldToScreen(x) - MousePositionToVector2()).Magnitude
@@ -4704,6 +5071,7 @@ SpecialPlayerCases = {
 	end,
 	["random"] = function(speaker,args,currentList)
 		local players = Players:GetPlayers()
+		local localplayer = Players.LocalPlayer
 		table.remove(players, table.find(players, localplayer))
 		return {players[math.random(1,#players)]}
 	end,
@@ -4987,55 +5355,6 @@ function getPlayer(list,speaker)
 	return foundNames
 end
 
-function getplayers(list, speaker)
-	if list == nil then
-		return { speaker.Name }
-	end
-	local nameList = splitString(list, ",")
-	local foundList = {}
-	for _, name in pairs(nameList) do
-		local operator = string.sub(name, 1, 1)
-		if operator ~= "+" and operator ~= "-" then
-			name = "+" .. name
-			operator = "+"
-		end
-		local tokens = toTokens(name)
-		local initialPlayers = Players:GetPlayers()
-		for _, token in pairs(tokens) do
-			local tokenContent = token.Name
-			local foundCase = false
-			for regex, case in pairs(SpecialPlayerCases) do
-				local matches = { string.match(tokenContent, "^" .. regex .. "$") }
-
-				if #matches > 0 then
-					foundCase = true
-
-					if operator == "+" then
-						initialPlayers = onlyIncludeInTable(initialPlayers, case(speaker, matches, initialPlayers))
-					else
-						initialPlayers = removeTableMatches(initialPlayers, case(speaker, matches, initialPlayers))
-					end
-				end
-			end
-			if not foundCase then
-				if operator == "+" then
-					initialPlayers = onlyIncludeInTable(initialPlayers, getPlayersByName(tokenContent))
-				else
-					initialPlayers = removeTableMatches(initialPlayers, getPlayersByName(tokenContent))
-				end
-			end
-		end
-		for _, player in pairs(initialPlayers) do
-			table.insert(foundList, player)
-		end
-	end
-	local players = {}
-	for _, player in pairs(foundList) do
-		table.insert(players, player)
-	end
-	return players
-end
-
 getprfx=function(strn)
 	if strn:sub(1,string.len(prefix))==prefix then return{'cmd',string.len(prefix)+1}
 	end return
@@ -5055,7 +5374,7 @@ end
 
 lastTextBoxString,lastTextBoxCon,lastEnteredString = nil,nil,nil
 
-UserInputService.TextBoxFocused:Connect(function(obj)
+connect(UserInputService.TextBoxFocused, function(obj)
 	if lastTextBoxCon then lastTextBoxCon:Disconnect() end
 	if obj == Cmdbar then lastTextBoxString = nil return end
 	lastTextBoxString = obj.Text
@@ -5066,7 +5385,7 @@ UserInputService.TextBoxFocused:Connect(function(obj)
 	end)
 end)
 
-UserInputService.InputBegan:Connect(function(input,gameProcessed)
+connect(UserInputService.InputBegan, function(input,gameProcessed)
 	if gameProcessed then
 		if Cmdbar and Cmdbar:IsFocused() then
 			if input.KeyCode == Enum.KeyCode.Up then
@@ -5086,12 +5405,12 @@ UserInputService.InputBegan:Connect(function(input,gameProcessed)
 	end
 end)
 
-localplayer.Chatted:Connect(function()
+Players.connect(LocalPlayer.Chatted, function()
 	wait()
 	if lastEnteredString then
 		local message = lastEnteredString
 		lastEnteredString = nil
-		do_exec(message, localplayer)
+		do_exec(message, Players.LocalPlayer)
 	end
 end)
 
@@ -5104,10 +5423,10 @@ end)
 
 local tabComplete = nil
 tabAllowed = true
-Cmdbar.FocusLost:Connect(function(enterpressed)
+connect(Cmdbar.FocusLost, function(enterpressed)
 	if enterpressed then
 		local cmdbarText = Cmdbar.Text:gsub("^"..'%'..prefix,"")
-		execCmd(cmdbarText,localplayer,true)
+		execCmd(cmdbarText,Players.LocalPlayer,true)
 	end
 	if tabComplete then tabComplete:Disconnect() end
 	wait()
@@ -5123,7 +5442,7 @@ Cmdbar.FocusLost:Connect(function(enterpressed)
 	CMDsF.CanvasPosition = canvasPos
 end)
 
-Cmdbar.Focused:Connect(function()
+connect(Cmdbar.Focused, function()
 	historyCount = 0
 	canvasPos = CMDsF.CanvasPosition
 	if SettingsOpen == true then
@@ -5131,7 +5450,7 @@ Cmdbar.Focused:Connect(function()
 		CMDsF.Visible = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 	end
-	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
+	tabComplete = connect(UserInputService.InputBegan, function(input,gameProcessed)
 		if Cmdbar:IsFocused() then
 			if tabAllowed == true and input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
 				autoComplete(topCommand)
@@ -5158,7 +5477,7 @@ function ESP(plr)
 			end
 		end
 		wait()
-		if plr.Character and plr.Name ~= localplayer.Name and not COREGUI:FindFirstChild(plr.Name..'_ESP') then
+		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not COREGUI:FindFirstChild(plr.Name..'_ESP') then
 			local ESPholder = Instance.new("Folder")
 			ESPholder.Name = plr.Name..'_ESP'
 			ESPholder.Parent = COREGUI
@@ -5199,7 +5518,7 @@ function ESP(plr)
 				local espLoopFunc
 				local teamChange
 				local addedFunc
-				addedFunc = plr.CharacterAdded:Connect(function()
+				addedFunc = connect(plr.CharacterAdded, function()
 					if ESPenabled then
 						espLoopFunc:Disconnect()
 						teamChange:Disconnect()
@@ -5226,8 +5545,8 @@ function ESP(plr)
 				end)
 				local function espLoop()
 					if COREGUI:FindFirstChild(plr.Name..'_ESP') then
-						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid") and localplayer.Character and getRoot(localplayer.Character) and localplayer.Character:FindFirstChildOfClass("Humanoid") then
-							local pos = math.floor((getRoot(localplayer.Character).Position - getRoot(plr.Character).Position).magnitude)
+						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid") and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+							local pos = math.floor((getRoot(Players.LocalPlayer.Character).Position - getRoot(plr.Character).Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
@@ -5250,7 +5569,7 @@ function CHMS(plr)
 			end
 		end
 		wait()
-		if plr.Character and plr.Name ~= localplayer.Name and not COREGUI:FindFirstChild(plr.Name..'_CHMS') then
+		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not COREGUI:FindFirstChild(plr.Name..'_CHMS') then
 			local ESPholder = Instance.new("Folder")
 			ESPholder.Name = plr.Name..'_CHMS'
 			ESPholder.Parent = COREGUI
@@ -5271,7 +5590,7 @@ function CHMS(plr)
 			local addedFunc
 			local teamChange
 			local CHMSremoved
-			addedFunc = plr.CharacterAdded:Connect(function()
+			addedFunc = connect(plr.CharacterAdded, function()
 				if CHMSenabled then
 					ESPholder:Destroy()
 					teamChange:Disconnect()
@@ -5294,7 +5613,7 @@ function CHMS(plr)
 					teamChange:Disconnect()
 				end
 			end)
-			CHMSremoved = ESPholder.AncestryChanged:Connect(function()
+			CHMSremoved = connect(ESPholder.AncestryChanged, function()
 				teamChange:Disconnect()
 				addedFunc:Disconnect()
 				CHMSremoved:Disconnect()
@@ -5311,7 +5630,7 @@ function Locate(plr)
 			end
 		end
 		wait()
-		if plr.Character and plr.Name ~= localplayer.Name and not COREGUI:FindFirstChild(plr.Name..'_LC') then
+		if plr.Character and plr.Name ~= Players.LocalPlayer.Name and not COREGUI:FindFirstChild(plr.Name..'_LC') then
 			local ESPholder = Instance.new("Folder")
 			ESPholder.Name = plr.Name..'_LC'
 			ESPholder.Parent = COREGUI
@@ -5352,7 +5671,7 @@ function Locate(plr)
 				local lcLoopFunc
 				local addedFunc
 				local teamChange
-				addedFunc = plr.CharacterAdded:Connect(function()
+				addedFunc = connect(plr.CharacterAdded, function()
 					if ESPholder ~= nil and ESPholder.Parent ~= nil then
 						lcLoopFunc:Disconnect()
 						teamChange:Disconnect()
@@ -5379,8 +5698,8 @@ function Locate(plr)
 				end)
 				local function lcLoop()
 					if COREGUI:FindFirstChild(plr.Name..'_LC') then
-						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid") and localplayer.Character and getRoot(localplayer.Character) and localplayer.Character:FindFirstChildOfClass("Humanoid") then
-							local pos = math.floor((getRoot(localplayer.Character).Position - getRoot(plr.Character).Position).magnitude)
+						if plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid") and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+							local pos = math.floor((getRoot(Players.LocalPlayer.Character).Position - getRoot(plr.Character).Position).magnitude)
 							TextLabel.Text = 'Name: '..plr.Name..' | Health: '..round(plr.Character:FindFirstChildOfClass('Humanoid').Health, 1)..' | Studs: '..pos
 						end
 					else
@@ -5428,7 +5747,7 @@ function refreshbinds()
 				newbind.Text.Text = key.." > "..binds[i].COMMAND.."  "..(binds[i].ISKEYUP and "(keyup)" or "(keydown)")
 			end
 			Holder_2.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newbind.Text.Delete.MouseButton1Click:Connect(function()
+			newbind.Text.connect(Delete.MouseButton1Click, function()
 				unkeybind(binds[i].COMMAND,binds[i].KEY)
 			end)
 		end
@@ -5455,7 +5774,7 @@ function unkeybind(cmd,key)
 	end
 end
 
-PositionsFrame.Delete.MouseButton1Click:Connect(function()
+PositionsFrame.connect(Delete.MouseButton1Click, function()
 	execCmd('cpos')
 end)
 
@@ -5483,10 +5802,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.Delete.MouseButton1Click:Connect(function()
+			newpoint.Text.connect(Delete.MouseButton1Click, function()
 				execCmd('dpos '..WayPoints[i].NAME)
 			end)
-			newpoint.Text.TP.MouseButton1Click:Connect(function()
+			newpoint.Text.connect(TP.MouseButton1Click, function()
 				execCmd("loadpos "..WayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5506,10 +5825,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.Delete.MouseButton1Click:Connect(function()
+			newpoint.Text.connect(Delete.MouseButton1Click, function()
 				execCmd('dpos '..pWayPoints[i].NAME)
 			end)
-			newpoint.Text.TP.MouseButton1Click:Connect(function()
+			newpoint.Text.connect(TP.MouseButton1Click, function()
 				execCmd("loadpos "..pWayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5540,7 +5859,7 @@ function refreshaliases()
 			table.insert(shade3,newalias.Text.Delete)
 			table.insert(text2,newalias.Text.Delete)
 			Holder_3.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newalias.Text.Delete.MouseButton1Click:Connect(function()
+			newalias.Text.connect(Delete.MouseButton1Click, function()
 				execCmd('removealias '..aliases[i].ALIAS)
 			end)
 		end
@@ -5549,19 +5868,19 @@ end
 
 local bindChosenKeyUp = false
 
-BindTo.MouseButton1Click:Connect(function()
+connect(BindTo.MouseButton1Click, function()
 	awaitingInput = true
 	BindTo.Text = 'Press something'
 end)
 
-BindTriggerSelect.MouseButton1Click:Connect(function()
+connect(BindTriggerSelect.MouseButton1Click, function()
 	bindChosenKeyUp = not bindChosenKeyUp
 	BindTriggerSelect.Text = bindChosenKeyUp and "KeyUp" or "KeyDown"
 end)
 
 newToggle = false
 Cmdbar_3.Parent.Visible = false
-On_2.MouseButton1Click:Connect(function()
+connect(On_2.MouseButton1Click, function()
 	if newToggle == false then newToggle = true
 		On_2.BackgroundTransparency = 0
 		Cmdbar_3.Parent.Visible = true
@@ -5573,7 +5892,7 @@ On_2.MouseButton1Click:Connect(function()
 	end
 end)
 
-Add_2.MouseButton1Click:Connect(function()
+connect(Add_2.MouseButton1Click, function()
 	if keySelected then
 		if string.find(Cmdbar_2.Text, "\\\\") or string.find(Cmdbar_3.Text, "\\\\") then
 			notify('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
@@ -5596,7 +5915,7 @@ Add_2.MouseButton1Click:Connect(function()
 	end
 end)
 
-Exit_2.MouseButton1Click:Connect(function()
+connect(Exit_2.MouseButton1Click, function()
 	Cmdbar_2.Text = 'Command'
 	Cmdbar_3.Text = 'Command 2'
 	BindTo.Text = 'Click to bind'
@@ -5629,12 +5948,12 @@ function onInputBegan(input,gameProcessed)
 						local isOn = toggleOn[v] == true
 						toggleOn[v] = not isOn
 						if isOn then
-							execCmd(v.TOGGLE,localplayer)
+							execCmd(v.TOGGLE,Players.LocalPlayer)
 						else
-							execCmd(v.COMMAND,localplayer)
+							execCmd(v.COMMAND,Players.LocalPlayer)
 						end
 					else
-						execCmd(v.COMMAND,localplayer)
+						execCmd(v.COMMAND,Players.LocalPlayer)
 					end
 				end
 			end
@@ -5647,7 +5966,7 @@ function onInputEnded(input,gameProcessed)
 		for i,v in pairs(binds) do
 			if v.ISKEYUP then
 				if (input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower()) or (input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick') or (input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick') then
-					execCmd(v.COMMAND,localplayer)
+					execCmd(v.COMMAND,Players.LocalPlayer)
 				end
 			end
 		end
@@ -5657,7 +5976,7 @@ end
 UserInputService.InputBegan:Connect(onInputBegan)
 UserInputService.InputEnded:Connect(onInputEnded)
 
-ClickTP.Select.MouseButton1Click:Connect(function()
+ClickTP.connect(Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clicktp',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -5670,7 +5989,7 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 	end
 end)
 
-ClickDelete.Select.MouseButton1Click:Connect(function()
+ClickDelete.connect(Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clickdel',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -5685,7 +6004,7 @@ end)
 
 local function clicktpFunc()
 	pcall(function()
-		local character = localplayer.Character
+		local character = Players.LocalPlayer.Character
 		local humanoid = character:FindFirstChildOfClass("Humanoid")
 		if humanoid and humanoid.SeatPart then
 			humanoid.Sit = false
@@ -5705,15 +6024,15 @@ local function clicktpFunc()
 	end)
 end
 
-IYMouse.Button1Down:Connect(function()
+connect(IYMouse.Button1Down, function()
 	for i,v in pairs(binds) do
 		if v.COMMAND == 'clicktp' then
 			local input = v.KEY
-			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) and localplayer.Character then
+			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) and Players.LocalPlayer.Character then
 				clicktpFunc()
-			elseif input == 'LeftClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and localplayer.Character then
+			elseif input == 'LeftClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and Players.LocalPlayer.Character then
 				clicktpFunc()
-			elseif UserInputService:IsKeyDown(Enum.KeyCode[input:sub(14)]) and localplayer.Character then
+			elseif UserInputService:IsKeyDown(Enum.KeyCode[input:sub(14)]) and Players.LocalPlayer.Character then
 				clicktpFunc()
 			end
 		elseif v.COMMAND == 'clickdel' then
@@ -5806,7 +6125,7 @@ function refreshplugins(dontSave)
 			table.insert(shade3,newplugin.Text.Delete)
 			table.insert(text2,newplugin.Text.Delete)
 			Holder_5.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newplugin.Text.Delete.MouseButton1Click:Connect(function()
+			newplugin.Text.connect(Delete.MouseButton1Click, function()
 				deletePlugin(pName)
 			end)
 		end
@@ -5869,7 +6188,17 @@ function LoadPlugin(val,startup)
 					end
 				end
 				handleNames()
-				addcmd(cmdName, v["Aliases"], v["Function"], v["Description"], val)
+				addcmd(cmdName, v["Aliases"], v["Function"], val)
+				if v["ListName"] then
+					local newName = v.ListName
+					local cmdNames = {i,unpack(v.Aliases)}
+					for i,v in pairs(cmdNames) do
+						newName = newName:gsub(v,v..cmdExt)
+					end
+					addcmdtext(newName,val,v["Description"])
+				else
+					addcmdtext(cmdName,val,v["Description"])
+				end
 			end
 		end
 		IndexContents('',true)
@@ -5887,20 +6216,20 @@ function FindPlugins()
 	end
 end
 
-AddPlugin.MouseButton1Click:Connect(function()
+connect(AddPlugin.MouseButton1Click, function()
 	addPlugin(PluginsGUI.FileName.Text)
 end)
 
-Exit_3.MouseButton1Click:Connect(function()
+connect(Exit_3.MouseButton1Click, function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	FileName.Text = 'Plugin File Name'
 end)
 
-Add_3.MouseButton1Click:Connect(function()
+connect(Add_3.MouseButton1Click, function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, 310), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Plugins.MouseButton1Click:Connect(function()
+connect(Plugins.MouseButton1Click, function()
 	if writefileExploit() then
 		PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 		wait(0.5)
@@ -5910,12 +6239,12 @@ Plugins.MouseButton1Click:Connect(function()
 	end
 end)
 
-Close_4.MouseButton1Click:Connect(function()
+connect(Close_4.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-localplayer.OnTeleport:Connect(function(State)
+Players.connect(LocalPlayer.OnTeleport, function(State)
 	if State == Enum.TeleportState.Started then
 		if KeepInfYield and queueteleport then
 			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
@@ -6282,7 +6611,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		local SINFOGUI = background
 		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
 		wait(0.5)
-		Exit.MouseButton1Click:Connect(function()
+		connect(Exit.MouseButton1Click, function()
 			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil) 
 			wait(0.6)
 			FRAME:Destroy()
@@ -6294,13 +6623,13 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		SINFOGUI.maxplayers.Text = Players.MaxPlayers.. " Players Max"
 		SINFOGUI.placeid.Text = "Place ID: " ..PlaceId
 
-		CopyApp.MouseButton1Click:Connect(function()
+		connect(CopyApp.MouseButton1Click, function()
 			toClipboard(speaker.CharacterAppearanceId)
 		end)
-		CopyPlrID.MouseButton1Click:Connect(function()
+		connect(CopyPlrID.MouseButton1Click, function()
 			toClipboard(speaker.UserId)
 		end)
-		CopyPlcID.MouseButton1Click:Connect(function()
+		connect(CopyPlcID.MouseButton1Click, function()
 			toClipboard(PlaceId)
 		end)
 
@@ -6344,26 +6673,26 @@ end)
 
 addcmd('rejoin',{'rj'},function(args, speaker)
 	if #Players:GetPlayers() <= 1 then
-		localplayer:Kick("\nRejoining...")
+		Players.LocalPlayer:Kick("\nRejoining...")
 		wait()
-		TeleportService:Teleport(PlaceId, localplayer)
+		TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 	else
-		TeleportService:TeleportToPlaceInstance(PlaceId, JobId, localplayer)
+		TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
 	end
 end)
 
 addcmd('autorejoin',{'autorj'},function(args, speaker)
 	local Dir = COREGUI:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
-	Dir.DescendantAdded:Connect(function(Err)
+	connect(Dir.DescendantAdded, function(Err)
 		if Err.Name == "ErrorTitle" then
 			Err:GetPropertyChangedSignal("Text"):Connect(function()
 				if Err.Text:sub(0, 12) == "Disconnected" then
 					if #Players:GetPlayers() <= 1 then
-						localplayer:Kick("\nRejoining...")
+						Players.LocalPlayer:Kick("\nRejoining...")
 						wait()
-						TeleportService:Teleport(PlaceId, localplayer)
+						TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 					else
-						TeleportService:TeleportToPlaceInstance(PlaceId, JobId, localplayer)
+						TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
 					end
 				end
 			end)
@@ -6386,7 +6715,7 @@ addcmd('serverhop',{'shop'},function(args, speaker)
 			end
 		end
 		if #servers > 0 then
-			TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], localplayer)
+			TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
 		else
 			return notify("Serverhop", "Couldn't find a server.")
 		end
@@ -6429,7 +6758,7 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 
 					if GUID ~= nil then
 						notify('Join Player','Joining '..User)
-						TeleportService:TeleportToPlaceInstance(Place,GUID,localplayer)
+						TeleportService:TeleportToPlaceInstance(Place,GUID,Players.LocalPlayer)
 					else
 						notify('Join Error','Unable to join user.')
 					end
@@ -6489,11 +6818,11 @@ QEfly = true
 iyflyspeed = 1
 vehicleflyspeed = 1
 function sFLY(vfly)
-	repeat wait() until localplayer and localplayer.Character and getRoot(localplayer.Character) and localplayer.Character:FindFirstChildOfClass("Humanoid")
+	repeat wait() until Players.LocalPlayer and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	repeat wait() until IYMouse
 	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
 
-	local T = getRoot(localplayer.Character)
+	local T = getRoot(Players.LocalPlayer.Character)
 	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
 	local SPEED = 0
@@ -6511,8 +6840,8 @@ function sFLY(vfly)
 		BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
 		task.spawn(function()
 			repeat wait()
-				if not vfly and localplayer.Character:FindFirstChildOfClass('Humanoid') then
-					localplayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+				if not vfly and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+					Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 				end
 				if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
 					SPEED = 50
@@ -6534,12 +6863,12 @@ function sFLY(vfly)
 			SPEED = 0
 			BG:Destroy()
 			BV:Destroy()
-			if localplayer.Character:FindFirstChildOfClass('Humanoid') then
-				localplayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+			if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+				Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
 			end
 		end)
 	end
-	flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
+	flyKeyDown = connect(IYMouse.KeyDown, function(KEY)
 		if KEY:lower() == 'w' then
 			CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 's' then
@@ -6555,7 +6884,7 @@ function sFLY(vfly)
 		end
 		pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
 	end)
-	flyKeyUp = IYMouse.KeyUp:Connect(function(KEY)
+	flyKeyUp = connect(IYMouse.KeyUp, function(KEY)
 		if KEY:lower() == 'w' then
 			CONTROL.F = 0
 		elseif KEY:lower() == 's' then
@@ -6576,8 +6905,8 @@ end
 function NOFLY()
 	FLYING = false
 	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
-	if localplayer.Character:FindFirstChildOfClass('Humanoid') then
-		localplayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
 	end
 	pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Custom end)
 end
@@ -6598,7 +6927,7 @@ addcmd('flyspeed',{'flysp'},function(args, speaker)
 	end
 end)
 
-addcmd('unfly', {'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
+addcmd('unfly',{'nofly','novfly','unvehiclefly','novehiclefly','unvfly'},function(args, speaker)
 	NOFLY()
 end)
 
@@ -6644,11 +6973,12 @@ end)
 
 CFspeed = 50
 addcmd('cframefly', {'cfly'}, function(args, speaker)
+	--Full credit to peyton#9148
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
 	Head.Anchored = true
 	if CFloop then CFloop:Disconnect() end
-	CFloop = RunService.Heartbeat:Connect(function(deltaTime)
+	CFloop = connect(RunService.Heartbeat, function(deltaTime)
 		local moveDirection = speaker.Character:FindFirstChildOfClass('Humanoid').MoveDirection * (CFspeed * deltaTime)
 		local headCFrame = Head.CFrame
 		local cameraCFrame = workspace.CurrentCamera.CFrame
@@ -6662,7 +6992,7 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 	end)
 end)
 
-addcmd('uncframefly',{'uncfly'}, function(args, speaker)
+addcmd('uncframefly',{'uncfly'},function(args, speaker)
 	if CFloop then
 		CFloop:Disconnect()
 		speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
@@ -6693,22 +7023,22 @@ addcmd('float', {'platform'},function(args, speaker)
 			local FloatValue = -3.1
 			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 			notify('Float','Float Enabled (Q = down & E = up)')
-			qUp = IYMouse.KeyUp:Connect(function(KEY)
+			qUp = connect(IYMouse.KeyUp, function(KEY)
 				if KEY == 'q' then
 					FloatValue = FloatValue + 0.5
 				end
 			end)
-			eUp = IYMouse.KeyUp:Connect(function(KEY)
+			eUp = connect(IYMouse.KeyUp, function(KEY)
 				if KEY == 'e' then
 					FloatValue = FloatValue - 0.5
 				end
 			end)
-			qDown = IYMouse.KeyDown:Connect(function(KEY)
+			qDown = connect(IYMouse.KeyDown, function(KEY)
 				if KEY == 'q' then
 					FloatValue = FloatValue - 0.5
 				end
 			end)
-			eDown = IYMouse.KeyDown:Connect(function(KEY)
+			eDown = connect(IYMouse.KeyDown, function(KEY)
 				if KEY == 'e' then
 					FloatValue = FloatValue + 0.5
 				end
@@ -6784,7 +7114,7 @@ addcmd('swim',{},function(args, speaker)
 			Humanoid:SetStateEnabled(v, false)
 		end
 		Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-		swimbeat = RunService.Heartbeat:Connect(function()
+		swimbeat = connect(RunService.Heartbeat, function()
 			pcall(function()
 				speaker.Character.HumanoidRootPart.Velocity = ((Humanoid.MoveDirection ~= Vector3.new() or UserInputService:IsKeyDown(Enum.KeyCode.Space)) and speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
 			end)
@@ -7115,7 +7445,7 @@ end)
 
 function deleteGuisAtPos()
 	pcall(function()
-		local guisAtPosition = localplayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
+		local guisAtPosition = Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 		for _, gui in pairs(guisAtPosition) do
 			if gui.Visible == true then
 				gui:Destroy()
@@ -7126,7 +7456,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
-	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	deleteGuiInput = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
 				deleteGuisAtPos()
@@ -7208,7 +7538,7 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
-	local LocalPlayer = localplayer
+	local LocalPlayer = Players.LocalPlayer
 	local oldhmmi
 	local oldhmmnc
 	oldhmmi = hookmetamethod(game, "__index", function(self, method)
@@ -7301,7 +7631,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.Enabled = false
 		end
 	end
-	workspace.DescendantAdded:Connect(function(child)
+	connect(workspace.DescendantAdded, function(child)
 		task.spawn(function()
 			if child:IsA('ForceField') then
 				RunService.Heartbeat:Wait()
@@ -7875,8 +8205,8 @@ addcmd('fov',{},function(args, speaker)
 	end
 end)
 
-local preMaxZoom = localplayer.CameraMaxZoomDistance
-local preMinZoom = localplayer.CameraMinZoomDistance
+local preMaxZoom = Players.LocalPlayer.CameraMaxZoomDistance
+local preMinZoom = Players.LocalPlayer.CameraMinZoomDistance
 addcmd('lookat',{},function(args, speaker)
 	if speaker.CameraMaxZoomDistance ~= 0.5 then
 		preMaxZoom = speaker.CameraMaxZoomDistance
@@ -8072,7 +8402,7 @@ end)
 addcmd('antiafk',{'antiidle'},function(args, speaker)
 	local GC = getconnections or get_signal_cons
 	if GC then
-		for i,v in pairs(GC(localplayer.Idled)) do
+		for i,v in pairs(GC(Players.LocalPlayer.Idled)) do
 			if v["Disable"] then
 				v["Disable"](v)
 			elseif v["Disconnect"] then
@@ -8080,7 +8410,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
-		localplayer.Idled:Connect(function()
+		Players.connect(LocalPlayer.Idled, function()
 			local VirtualUser = game:GetService("VirtualUser")
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
@@ -8239,44 +8569,34 @@ addcmd('render',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(true)
 end)
 
-addcmd("newmaterials", nil, function()
-	if type(sethidden) == 'function' then
+addcmd('2022materials',{'use2022materials'},function(args, speaker)
+	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", true)
-		return
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
-	notify("Incompatible Environment", "Missing \'sethiddenproperty\'")
 end)
 
-addcmd("oldmaterials", nil, function()
-	if type(sethidden) == 'function' then
+addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
+	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", false)
-		return
+	else
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
-	notify("Incompatible Environment", "Missing \'sethiddenproperty\'")
 end)
 
-function getrootpart(player)
-	if typeof(player) ~= 'Instance' or not player:IsA("Player") then
-		load_character_IY(true)
-		return rootpart
+addcmd('goto',{'to'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players)do
+		if Players[v].Character ~= nil then
+			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+				wait(.1)
+			end
+			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
+		end
 	end
-	return player.Character:FindFirstChildWhichIsA("Humanoid").RootPart
-end
-
-function getpivot(player)
-	return player.Character:GetPivot()
-end
-
-addcmd("goto", { "to" }, function(args)
-    local players = getplayers(args[1], localplayer)
-    for _, player in pairs(players) do
-        if player ~= localplayer and getrootpart() then
-            local worldpivot = select(2, pcall(getpivot, player))
-            if typeof(worldpivot) == 'CFrame' then
-                rootpart.CFrame = CFrame.new(worldpivot.Position)
-            end
-        end
-    end
+	execCmd('breakvelocity')
 end)
 
 addcmd('tweengoto',{'tgoto','tto','tweento'},function(args, speaker)
@@ -8437,7 +8757,7 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	walkto = false
 	wait()
 	local players = getPlayer(args[1], speaker)
-	local hum = localplayer.Character:FindFirstChildOfClass("Humanoid")
+	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	for i,v in pairs(players)do
 		if Players[v].Character ~= nil then
@@ -8473,7 +8793,7 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 	waypointwalkto = false
 	wait()
 	local WPName = tostring(getstring(1))
-	local hum = localplayer.Character:FindFirstChildOfClass("Humanoid")
+	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	if speaker.Character then
 		for i,_ in pairs(WayPoints) do
@@ -8698,7 +9018,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	InvisibleCharacter.Name = ""
 	local CF
 
-	local invisFix = RunService.Stepped:Connect(function()
+	local invisFix = connect(RunService.Stepped, function()
 		pcall(function()
 			local IsInteger
 			if tostring(Void):find'-' then
@@ -8816,7 +9136,7 @@ addcmd('toggleinvis',{},function(args, speaker)
 end)
 
 addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
-	local Char  = localplayer.Character
+	local Char  = Players.LocalPlayer.Character
 	local touched = false
 	local tpdback = false
 	local box = Instance.new('Part')
@@ -8826,7 +9146,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	box.Position = Vector3.new(0,10000,0)
 	box.Parent = workspace
 	local boxTouched = box.Touched:connect(function(part)
-		if (part.Parent.Name == localplayer.Name) then
+		if (part.Parent.Name == Players.LocalPlayer.Name) then
 			if touched == false then
 				touched = true
 				local function apply()
@@ -8845,7 +9165,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	end)
 	repeat wait() until Char
 	local cleanUp
-	cleanUp = localplayer.CharacterAdded:connect(function(char)
+	cleanUp = Players.LocalPlayer.CharacterAdded:connect(function(char)
 		boxTouched:Disconnect()
 		box:Destroy()
 		cleanUp:Disconnect()
@@ -8892,9 +9212,6 @@ addcmd('breakvelocity', {}, function(args, speaker)
 		BeenASecond = true
 	end)
 	while not BeenASecond do
-		if break_all_loops == true then
-			break
-		end
 		for _, v in ipairs(speaker.Character:GetDescendants()) do
 			if v.IsA(v, "BasePart") then
 				v.Velocity, v.RotVelocity = V3, V3
@@ -8983,11 +9300,11 @@ end)
 addcmd('nohead',{'rhead','headless'},function(args, speaker)
 	if sethidden then
 		-- Full credit to Thomas_Cornez#0272 @Discord
-		local lplr = localplayer
+		local lplr = Players.LocalPlayer
 		local char = lplr.Character
 		local rigType = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
 
-		local speaker = localplayer
+		local speaker = Players.LocalPlayer
 
 
 		local test = Instance.new("Model")
@@ -9006,7 +9323,7 @@ addcmd('nohead',{'rhead','headless'},function(args, speaker)
 
 		char.Head:Destroy()
 		wait(5)
-		localplayer.Character = char
+		Players.LocalPlayer.Character = char
 
 		local hum2 = Instance.new("Humanoid")
 		hum2.Parent = char
@@ -9101,17 +9418,17 @@ end)
 
 function noSitFunc()
 	wait()
-	if localplayer.Character:FindFirstChildOfClass('Humanoid').Sit then
-		localplayer.Character:FindFirstChildOfClass('Humanoid').Sit = false
+	if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Sit then
+		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Sit = false
 	end
 end
 addcmd('nosit',{},function(args, speaker)
 	if noSit then noSit:Disconnect() nositDied:Disconnect() end
-	noSit = localplayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+	noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
 	local function nositDiedFunc()
 		repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChildOfClass("Humanoid")
 		noSit:Disconnect()
-		noSit = localplayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
+		noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
 	end
 	nositDied = speaker.CharacterAdded:Connect(nositDiedFunc)
 end)
@@ -9129,7 +9446,7 @@ local infJumpDebounce = false
 addcmd('infjump',{'infinitejump'},function(args, speaker)
     if infJump then infJump:Disconnect() end
     infJumpDebounce = false
-    infJump = UserInputService.JumpRequest:Connect(function()
+    infJump = connect(UserInputService.JumpRequest, function()
         if not infJumpDebounce then
             infJumpDebounce = true
             speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
@@ -9147,8 +9464,8 @@ end)
 local flyjump
 addcmd('flyjump',{},function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
-	flyjump = UserInputService.JumpRequest:Connect(function(Jump)
-		localplayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+	flyjump = connect(UserInputService.JumpRequest, function(Jump)
+		Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
@@ -9171,7 +9488,7 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	end
 	autoJump()
 	HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
-	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 		Char, Human = nChar, nChar:WaitForChild("Humanoid")
 		autoJump()
 		HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
@@ -9203,7 +9520,7 @@ addcmd('edgejump',{'ejump'},function(args, speaker)
 	end
 	edgejump()
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
-	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 		Char, Human = nChar, nChar:WaitForChild("Humanoid")
 		edgejump()
 		HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
@@ -9421,7 +9738,7 @@ addcmd('tweenoffset',{'toffset'},function(args, speaker)
 end)
 
 addcmd('clickteleport',{},function(args, speaker)
-	if speaker == localplayer then
+	if speaker == Players.LocalPlayer then
 		notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
 	end
 end)
@@ -9431,7 +9748,7 @@ addcmd('tptool', {'teleporttool'}, function(args, speaker)
 	TpTool.Name = "Teleport Tool"
 	TpTool.RequiresHandle = false
 	TpTool.Parent = speaker.Backpack
-	TpTool.Activated:Connect(function()
+	connect(TpTool.Activated, function()
 		local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
 		local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
 		if not Char or not HRP then
@@ -9442,7 +9759,7 @@ addcmd('tptool', {'teleporttool'}, function(args, speaker)
 end)
 
 addcmd('clickdelete',{},function(args, speaker)
-	if speaker == localplayer then
+	if speaker == Players.LocalPlayer then
 		notify('Click Delete','Go to Settings>Keybinds>Add to set up click delete')
 	end
 end)
@@ -9538,7 +9855,7 @@ addcmd('loopspeed',{'loopws'},function(args, speaker)
 		end
 		WalkSpeedChange()
 		HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
-		HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+		HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 			Char, Human = nChar, nChar:WaitForChild("Humanoid")
 			WalkSpeedChange()
 			HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
@@ -9593,7 +9910,7 @@ addcmd('loopjumppower',{'loopjp','loopjpower'},function(args, speaker)
 		end
 		JumpPowerChange()
 		HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
-		HumanModCons.jpCA = (HumanModCons.jpCA and HumanModCons.jpCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+		HumanModCons.jpCA = (HumanModCons.jpCA and HumanModCons.jpCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 			Char, Human = nChar, nChar:WaitForChild("Humanoid")
 			JumpPowerChange()
 			HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
@@ -9819,7 +10136,7 @@ addcmd('headsit',{},function(args, speaker)
 	if headSit then headSit:Disconnect() end
 	for i,v in pairs(players)do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		headSit = RunService.Heartbeat:Connect(function()
+		headSit = connect(RunService.Heartbeat, function()
 			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
 				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
 			else
@@ -9958,7 +10275,7 @@ addcmd('creeper',{},function(args, speaker)
 end)
 
 function getTorso(x)
-	x = x or localplayer.Character
+	x = x or Players.LocalPlayer.Character
 	return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
 end
 
@@ -9988,10 +10305,10 @@ addcmd('bang',{'rape'},function(args, speaker)
 			bangDied:Disconnect()
 		end)
 		local bangOffet = CFrame.new(0, 0, 1.1)
-		bangLoop = RunService.Stepped:Connect(function()
+		bangLoop = connect(RunService.Stepped, function()
 			pcall(function()
 				local otherRoot = getTorso(Players[bangplr].Character)
-				getRoot(localplayer.Character).CFrame = otherRoot.CFrame * bangOffet
+				getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
 			end)
 		end)
 	end
@@ -10023,9 +10340,9 @@ addcmd('carpet',{},function(args, speaker)
 				carpetAnim:Destroy()
 				carpetDied:Disconnect()
 			end)
-			carpetLoop = RunService.Heartbeat:Connect(function()
+			carpetLoop = connect(RunService.Heartbeat, function()
 				pcall(function()
-					getRoot(localplayer.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
+					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
 				end)
 			end)
 		end
@@ -10222,7 +10539,7 @@ addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
 	if fireproximityprompt then
 		execCmd("uninstantproximityprompts")
 		wait(0.1)
-		PromptButtonHoldBegan = ProximityPromptService.PromptButtonHoldBegan:Connect(function(prompt)
+		PromptButtonHoldBegan = connect(ProximityPromptService.PromptButtonHoldBegan, function(prompt)
 			fireproximityprompt(prompt)
 		end)
 	else
@@ -10253,7 +10570,7 @@ addcmd('grabtools', {}, function(args, speaker)
 		grabtoolsFunc:Disconnect() 
 	end
 
-	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
+	grabtoolsFunc = connect(workspace.ChildAdded, function(child)
 		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
 			humanoid:EquipTool(child)
 		end
@@ -10274,7 +10591,7 @@ local specifictoolremoval = {}
 addcmd('removespecifictool',{},function(args, speaker)
 	if args[1] and speaker:FindFirstChildOfClass("Backpack") then
 		local tool = string.lower(getstring(1))
-		local RST = RunService.RenderStepped:Connect(function()
+		local RST = connect(RunService.RenderStepped, function()
 			if speaker:FindFirstChildOfClass("Backpack") then
 				for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 					if v.Name:lower() == tool then
@@ -10391,9 +10708,9 @@ addcmd('hatspin',{'spinhats'},function(args, speaker)
 		end
 		keep.P = 30000
 		keep.D = 50
-		spinhats = RunService.Stepped:Connect(function()
+		spinhats = connect(RunService.Stepped, function()
 			pcall(function()
-				keep.Position = localplayer.Character.Head.Position
+				keep.Position = Players.LocalPlayer.Character.Head.Position
 			end)
 		end)
 	end
@@ -10417,7 +10734,7 @@ end)
 
 addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	if firetouchinterest then
-		local Player = localplayer
+		local Player = Players.LocalPlayer
 		local Character = Player.Character
 		local Old = Character:FindFirstChild("HumanoidRootPart").CFrame
 		local Hats = {}
@@ -10483,7 +10800,7 @@ end)
 
 addcmd('noroot',{'removeroot','rroot'},function(args, speaker)
 	if speaker.Character ~= nil then
-		local char = localplayer.Character
+		local char = Players.LocalPlayer.Character
 		char.Parent = nil
 		char.HumanoidRootPart:Destroy()
 		char.Parent = workspace
@@ -10522,7 +10839,7 @@ addcmd('unequiptools',{},function(args, speaker)
 end)
 
 local function GetHandleTools(p)
-	p = p or localplayer
+	p = p or Players.LocalPlayer
 	local r = {}
 	for _, v in ipairs(p.Character and p.Character:GetChildren() or {}) do
 		if v.IsA(v, "BackpackItem") and v.FindFirstChild(v, "Handle") then
@@ -10546,9 +10863,6 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
 		local t = GetHandleTools(speaker)
 		while #t > 0 do
-			if break_all_loops == true then
-				break
-			end
 			for _, v in ipairs(t) do
 				task.spawn(function()
 					for _ = 1, 25 do
@@ -10610,9 +10924,6 @@ addcmd('givetool', {'givetools'}, function(args, speaker)
 	end)
 	local vHRP = getRoot(v)
 	while Char and Char.Parent and vHRP and vHRP.Parent do
-		if break_all_loops == true then
-			break
-		end
 		local Tools = false
 		for _, v in ipairs(Char:GetChildren()) do
 			if v:IsA('BackpackItem') and v:FindFirstChild('Handle') then
@@ -10710,324 +11021,162 @@ addcmd('night',{},function(args, speaker)
 	Lighting.ClockTime = 0
 end)
 
-addcmd("nofog", { "fogoff", "fogremove", "fogdelete", "fogclear" }, function(args)
-	Lighting.FogStart = 1e6
-	Lighting.FogEnd = 1e6
-end)
-
-addcmd("brightness", { "lightness", "gamma" }, function(args)
-	local brightness = tonumber(args[1])
-	if type(brightness) == "number" then
-		Lighting.Brightness = brightness
-	else
-		notify("Invalid Argument", "Argument must be a number")
+addcmd('nofog',{},function(args, speaker)
+	Lighting.FogEnd = 100000
+	for i,v in pairs(Lighting:GetDescendants()) do
+		if v:IsA("Atmosphere") then
+			v:Destroy()
+		end
 	end
 end)
 
-addcmd("shadows", { "shadow", "shadowtoggle", "toggleshadows" }, function(args)
-	local x = tonumber(args[1])
-	if type(x) ~= 'number' then
-		Lighting.GlobalShadows = x > .5
+addcmd('brightness',{},function(args, speaker)
+	Lighting.Brightness = args[1]
+end)
+
+addcmd('globalshadows',{'gshadows'},function(args, speaker)
+	Lighting.GlobalShadows = true
+end)
+
+addcmd('unglobalshadows',{'nogshadows','ungshadows','noglobalshadows'},function(args, speaker)
+	Lighting.GlobalShadows = false
+end)
+
+origsettings = {abt = Lighting.Ambient, oabt = Lighting.OutdoorAmbient, brt = Lighting.Brightness, time = Lighting.ClockTime, fe = Lighting.FogEnd, fs = Lighting.FogStart, gs = Lighting.GlobalShadows}
+
+addcmd('restorelighting',{'rlighting'},function(args, speaker)
+	Lighting.Ambient = origsettings.abt
+	Lighting.OutdoorAmbient = origsettings.oabt
+	Lighting.Brightness = origsettings.brt
+	Lighting.ClockTime = origsettings.time
+	Lighting.FogEnd = origsettings.fe
+	Lighting.FogStart = origsettings.fs
+	Lighting.GlobalShadows = origsettings.gs
+end)
+
+addcmd('stun',{'platformstand'},function(args, speaker)
+	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+end)
+
+addcmd('unstun',{'nostun','unplatformstand','noplatformstand'},function(args, speaker)
+	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+end)
+
+addcmd('norotate',{'noautorotate'},function(args, speaker)
+	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = false
+end)
+
+addcmd('unnorotate',{'autorotate'},function(args, speaker)
+	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = true
+end)
+
+addcmd('enablestate',{},function(args, speaker)
+	local x = args[1]
+	if not tonumber(x) then
+		local x = Enum.HumanoidStateType[args[1]]
+	end
+	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, true)
+end)
+
+addcmd('disablestate',{},function(args, speaker)
+	local x = args[1]
+	if not tonumber(x) then
+		local x = Enum.HumanoidStateType[args[1]]
+	end
+	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, false)
+end)
+
+addcmd('drophats',{'drophat'},function(args, speaker)
+	if speaker.Character then
+		for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+			v.Parent = workspace
+		end
 	end
 end)
 
-addcmd("unstun", { "nostun", "unplatformstand", "noplatformstand", "unplatstand", "noplatstand" }, function(args)
-	if typeof(humanoid) ~= 'Instance' then
-		if typeof(character) ~= 'Instance' then
-			character = localplayer.Character
-		end
-		if typeof(character) == 'Instance' then
-			humanoid = character:FindFirstChildWhichIsA("Humanoid")
-		end
-	end
-	if typeof(humanoid) == 'Instance' then
-		humanoid.PlatformStand = false
-		notify("Stun", "Stun disabled")
-	else
-		notify("Stun", "No humanoid to disable PlatformStand")
-	end
-end)
-
-addcmd("stun", { "platformstand", "platstand" }, function(args)
-	if typeof(humanoid) ~= 'Instance' then
-		if typeof(character) ~= 'Instance' then
-			character = localplayer.Character
-		end
-		if typeof(character) == 'Instance' then
-			humanoid = character:FindFirstChildWhichIsA("Humanoid")
-		end
-	end
-	if typeof(humanoid) == 'Instance' then
-		humanoid.PlatformStand = true
-		notify("Stun", "Stun enabled")
-	else
-		notify("Stun", "No humanoid to enable PlatformStand")
-	end
-end)
-
-addcmd("autorotate", { "dorotate", "unnorotate", "startrotation", "startrotating" }, function(args, speaker)
-	if typeof(humanoid) ~= 'Instance' then
-		if typeof(character) ~= 'Instance' then
-			character = localplayer.Character
-		end
-		if typeof(character) == 'Instance' then
-			humanoid = character:FindFirstChildWhichIsA("Humanoid")
-		end
-	end
-	if typeof(humanoid) == 'Instance' then
-		humanoid.AutoRotate = true
-		notify("AutoRotate", "AutoRotate enabled")
-	else
-		notify("AutoRotate", "No humanoid to enable AutoRotate")
-	end
-end)
-
-addcmd("norotate", { "unautorotate", "stoprotation", "stoprotating" }, function(args, speaker)
-	if typeof(humanoid) ~= 'Instance' then
-		if typeof(character) ~= 'Instance' then
-			character = localplayer.Character
-		end
-		if typeof(character) == 'Instance' then
-			humanoid = character:FindFirstChildWhichIsA("Humanoid")
-		end
-	end
-	if typeof(humanoid) == 'Instance' then
-		humanoid.AutoRotate = false
-		notify("AutoRotate", "AutoRotate disabled")
-	else
-		notify("AutoRotate", "No humanoid to disable AutoRotate")
-	end
-end)
-
-addcmd("enablestate", { "dostate" }, function(args)
-	local item
-	for _, enumitem in pairs(Enum.HumanoidStateType:GetEnumItems()) do
-		if enumitem.Name:lower() == args[1]:lower() or enumitem.Name:lower():sub(1, #args[1]) == args[1]:lower() then
-			item = enumitem
-			break
-		end
-	end
-	if typeof(item) == 'EnumItem' then
-		if typeof(humanoid) ~= 'Instance' then
-			if typeof(character) ~= 'Instance' then
-				character = localplayer.Character
-			end
-			if typeof(character) == 'Instance' then
-				humanoid = character:FindFirstChildWhichIsA("Humanoid")
-			end
-		end
-		if typeof(humanoid) ~= 'Instance' then
-			notify("Enable State", "Missing a humanoid.")
-			return
-		end
-		humanoid:SetStateEnabled(item, true)
-		notify("Enable State", "Enabled " .. item.Name)
-	else
-		notify("Enable State", "Invalid state.")
-	end
-end)
-
-addcmd("disablestate", { "nostate" }, function(args)
-	local item
-	for _, enumitem in pairs(Enum.HumanoidStateType:GetEnumItems()) do
-		if enumitem.Name:lower() == args[1]:lower() or enumitem.Name:lower():sub(1, #args[1]) == args[1]:lower() then
-			item = enumitem
-			break
-		end
-	end
-	if typeof(item) == 'EnumItem' then
-		if typeof(humanoid) ~= 'Instance' then
-			if typeof(character) ~= 'Instance' then
-				character = localplayer.Character
-			end
-			if typeof(character) == 'Instance' then
-				humanoid = character:FindFirstChildWhichIsA("Humanoid")
-			end
-		end
-		if typeof(humanoid) ~= 'Instance' then
-			notify("Disable State", "Missing a humanoid.")
-			return
-		end
-		humanoid:SetStateEnabled(item.Value, false)
-		notify("Disable State", "Disabled state " .. item.Name .. ".")
-	else
-		notify("Disable State", "Invalid state.")
-	end
-end)
-
-addcmd("drophats", { "drophat" }, function(speaker)
-	local accoutrements = {}
-	if typeof(character) ~= 'Instance' then
-		character = localplayer.Character
-	end
-	if typeof(character) == 'Instance' then
-		for _, instance in pairs(character:GetChildren()) do
-			if instance:IsA("Accoutrement") then
-				table.insert(accoutrements, instance)
-			end
-		end
-		if #accoutrements > 0 then
-			for _, accoutrement in pairs(accoutrements) do
-				accoutrement.Parent = workspace
-			end
-			notify("Drop Hats", "Dropped " .. #accoutrements .. (" hat%s."):format(#accoutrements == 1 and "" or "s"))
-		else
-			notify("Drop Hats", "No hats to drop.")
-		end
-	else
-		notify("Drop Hats", "No character found.")
-	end
-end)
-
-addcmd("deletehats", { "rmhats", "rhats", "nohats", "removehats" }, function(args)
-	if typeof(character) ~= 'Instance' then
-		character = localplayer.Character
-	end
-	if typeof(character) == 'Instance' then
-		local accoutrements = 0
-		for _, instance in pairs(character:GetChildren()) do
-			if instance:IsA("Accoutrement") then
-				instance:Destroy()
-				accoutrements = accoutrements + 1
-			end
-		end
-		if accoutrements > 0 then
-			notify("Remove Hats", "Removed " .. accoutrements .. (" hat%s."):format(accoutrements == 1 and "" or "s"))
-		else
-			notify("Remove Hats", "No hats to remove.")
-		end
-	else
-		notify("Remove Hats", "No character found.")
-	end
-end)
-
-addcmd("droptools", { "droptool" }, function(args)
-	local backpack = localplayer:FindFirstChildWhichIsA("Backpack")
-	local tools = {}
-    if typeof(character) ~= 'Instance' then
-        character = localplayer.Character
-    end
-    if typeof(character) == 'Instance' then
-        for _, instance in pairs(character:GetChildren()) do
-            if instance:IsA("Tool") then
-                table.insert(tools, instance)
-            end
-        end
-		if typeof(backpack) == 'Instance' then
-			for _, instance in pairs(backpack:GetChildren()) do
-				if instance:IsA("Tool") then
-					table.insert(tools, instance)
+addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
+	for i,v in next, speaker.Character:GetDescendants() do
+		if v:IsA("Accessory") then
+			for i,p in next, v:GetDescendants() do
+				if p:IsA("Weld") then
+					p:Destroy()
 				end
 			end
 		end
-		for _, tool in pairs(tools) do
-			if tool.CanBeDropped then
-				if tool.Parent ~= character then
-					tool.Parent = character
-					wait()
-				end
-				tool.Parent = workspace
-			end
-		end
-	else
-		notify("Drop Tools", "No character found.")
-    end
-end)
-
-addcmd("droppabletools", {}, function(args)
-	local backpack = localplayer:FindFirstChildWhichIsA("Backpack")
-	local tools = {}
-	if typeof(character) ~= 'Instance' then
-		character = localplayer.Character
-	end
-	if typeof(character) == 'Instance' then
-		for _, instance in pairs(character:GetChildren()) do
-			if instance:IsA("Tool") then
-				table.insert(tools, instance)
-			end
-		end
-		if typeof(backpack) == 'Instance' then
-			for _, instance in pairs(backpack:GetChildren()) do
-				if instance:IsA("Tool") then
-					table.insert(tools, instance)
-				end
-			end
-		end
-		if #tools < 1 then
-			notify("Droppable Tools", "No tools found.")
-			return
-		end
-		local droppables = 0
-		for _, tool in pairs(tools) do
-			if tool.CanBeDropped ~= true then
-				tool.CanBeDropped = true
-				droppables = droppables + 1
-			end
-		end
-		notify("Droppable Tools", "Keep in mind that this may not replicate to other players. " .. tostring(droppables) .. " tool" .. (droppables == 1 and " is" or "s are") .. " now droppable.")
-	else
-		notify("Droppable Tools", "No character found.")
 	end
 end)
 
-local currentToolSize = ''
-local currentGripPos = ''
+addcmd('droptools',{'droptool'},function(args, speaker)
+	for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+		if v:IsA("Tool") then
+			v.Parent = Players.LocalPlayer.Character
+		end
+	end
+	wait()
+	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+		if v:IsA("Tool") then
+			v.Parent = workspace
+		end
+	end
+end)
 
-addcmd('reach', {}, function(args)
+addcmd('droppabletools',{},function(args, speaker)
+	if speaker.Character then
+		for _,obj in pairs(speaker.Character:GetChildren()) do
+			if obj:IsA("Tool") then
+				obj.CanBeDropped = true
+			end
+		end
+	end
+	if speaker:FindFirstChildOfClass("Backpack") then
+		for _,obj in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
+			if obj:IsA("Tool") then
+				obj.CanBeDropped = true
+			end
+		end
+	end
+end)
+
+local currentToolSize = ""
+local currentGripPos = ""
+addcmd('reach',{},function(args, speaker)
 	execCmd('unreach')
 	wait()
-	for _, tool in pairs(speaker.Character:GetDescendants()) do
-		if tool:IsA("Tool") then
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") then
 			if args[1] then
-				currentToolSize = handle.Size
-				currentGripPos = tool.GripPos
-				local box = Instance.new("SelectionBox")
-				box.Adornee = handle
-				box.Parent = hui
-				handle.Massless = true
-				handle.Size = Vector3.new(0.5, 0.5, args[1])
-				tool.GripPos = Vector3.zero
-				if typeof(humanoid) == 'Instance' then
-					humanoid:UnequipTools()
-				end
+				currentToolSize = v.Handle.Size
+				currentGripPos = v.GripPos
+				local a = Instance.new("SelectionBox")
+				a.Name = "SelectionBoxCreated"
+				a.Parent = v.Handle
+				a.Adornee = v.Handle
+				v.Handle.Massless = true
+				v.Handle.Size = Vector3.new(0.5,0.5,args[1])
+				v.GripPos = Vector3.new(0,0,0)
+				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
 			else
-				currentToolSize = handle.Size
-				currentGripPos = tool.GripPos
-				if typeof(boxes) == 'table' then
-					local box = Instance.new("SelectionBox")
-					box.Adornee = handle
-					box.Parent = hui
-					boxes[handle] = box
-				end
-				handle.Massless = true
-				handle.Size = Vector3.new(0.5,0.5,60)
-				tool.GripPos = Vector3.new(0,0,0)
-				if typeof(humanoid) == 'Instance' then
-					humanoid:UnequipTools()
-				end
+				currentToolSize = v.Handle.Size
+				currentGripPos = v.GripPos
+				local a = Instance.new("SelectionBox")
+				a.Name = "SelectionBoxCreated"
+				a.Parent = v.Handle
+				a.Adornee = v.Handle
+				v.Handle.Massless = true
+				v.Handle.Size = Vector3.new(0.5,0.5,60)
+				v.GripPos = Vector3.new(0,0,0)
+				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
 			end
 		end
 	end
 end)
 
-addcmd('unreach',{'noreach'},function(args)
-	if typeof(character) ~= 'Instance' then
-		character = localplayer.Character
-	end
-	if typeof(character) == 'Instance' then
-		for _, instance in pairs(character:GetChildren()) do
-			if instance:IsA("Tool") then
-				local handle = instance:FindFirstChild("Handle")
-				if typeof(handle) == 'Instance' and handle:IsA("BasePart") then
-					if typeof(boxes[handle]) == 'Instance' then
-						boxes[handle]:Destroy()
-						boxes[handle] = nil
-					end
-					handle.Massless = false
-					handle.Size = currentToolSize
-					instance.GripPos = currentGripPos
-				end
-			end
+addcmd('unreach',{'noreach'},function(args, speaker)
+	for i,v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") then
+			v.Handle.Size = currentToolSize
+			v.GripPos = currentGripPos
+			v.Handle.SelectionBoxCreated:Destroy()
 		end
 	end
 end)
@@ -11187,7 +11336,7 @@ addcmd('invisfling',{},function(args, speaker)
 	root.Transparency = 0
 	root.Color = Color3.new(1, 1, 1)
 	local invisflingStepped
-	invisflingStepped = RunService.Stepped:Connect(function()
+	invisflingStepped = connect(RunService.Stepped, function()
 		if speaker.Character and getRoot(speaker.Character) then
 			getRoot(speaker.Character).CanCollide = false
 		else
@@ -11282,9 +11431,6 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 		v = Players[v]
 		task.spawn(function()
 			while Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
-				if break_all_loops == true then
-					break
-				end
 				local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
 				if not Human or Human.Health <= 0 then
 					break
@@ -11299,16 +11445,12 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 end)
 
 local hb = RunService.Heartbeat
-
 addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
 	tpwalking = true
 	local chr = speaker.Character
 	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 	while tpwalking and chr and hum and hum.Parent do
-		if break_all_loops == true then
-			break
-		end
-		local delta = wait()
+		local delta = hb:Wait()
 		if hum.MoveDirection.Magnitude > 0 then
 			if args[1] and isNumber(args[1]) then
 				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta * 10)
@@ -11514,7 +11656,7 @@ addcmd('autoclick',{},function(args, speaker)
 		if args[1] and isNumber(args[1]) then clickDelay = args[1] end
 		if args[2] and isNumber(args[2]) then releaseDelay = args[2] end
 		autoclicking = true
-		cancelAutoClick = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		cancelAutoClick = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
 					autoclicking = false
@@ -11652,14 +11794,14 @@ addcmd('stareat',{'stare'},function(args, speaker)
 		if stareLoop then
 			stareLoop:Disconnect()
 		end
-		if not localplayer.Character:FindFirstChild("HumanoidRootPart") and Players[v].Character:FindFirstChild("HumanoidRootPart") then return end
+		if not Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players[v].Character:FindFirstChild("HumanoidRootPart") then return end
 		local function stareFunc()
-			if localplayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and Players[v].Character:FindFirstChild("HumanoidRootPart") then
-				local chrPos=localplayer.Character.PrimaryPart.Position
+			if Players.LocalPlayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and Players[v].Character:FindFirstChild("HumanoidRootPart") then
+				local chrPos=Players.LocalPlayer.Character.PrimaryPart.Position
 				local tPos=Players[v].Character:FindFirstChild("HumanoidRootPart").Position
 				local modTPos=Vector3.new(tPos.X,chrPos.Y,tPos.Z)
 				local newCF=CFrame.new(chrPos,modTPos)
-				localplayer.Character:SetPrimaryPartCFrame(newCF)
+				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
 			elseif not Players:FindFirstChild(v) then
 				stareLoop:Disconnect()
 			end
@@ -11676,12 +11818,12 @@ addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
 end)
 
 local RolewatchData = {["Group"]=0,["Role"]="",["Leave"]=false}
-local RolewatchConnection = Players.PlayerAdded:Connect(function(player)
+local RolewatchConnection = connect(Players.PlayerAdded, function(player)
 	if RolewatchData.Group == 0 then return end
 	if player:IsInGroup(RolewatchData.Group) then
 		if tostring(player:GetRoleInGroup(RolewatchData.Group)):lower() == RolewatchData.Role:lower() then
 			if RolewatchData.Leave == true then
-				localplayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
+				Players.LocalPlayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
 			else
 				notify("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
 			end
@@ -11937,7 +12079,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		if args[2] and isNumber(args[2]) then clickDelay = args[2] end
 		if args[3] and isNumber(args[3]) then releaseDelay = args[3] end
 		autoKeyPressing = true
-		cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		cancelAutoKeyPress = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
 					autoKeyPressing = false
@@ -12025,7 +12167,7 @@ function hookCharEvents(plr,instant)
 		if not humanoid then return end
 
 		local oldHealth = humanoid.Health
-		humanoid.HealthChanged:Connect(function(health)
+		connect(humanoid.HealthChanged, function(health)
 			local change = math.abs(oldHealth - health)
 			if oldHealth > health then
 				eventEditor.FireEvent("OnDamage",plr.Name,tonumber(health))
@@ -12033,7 +12175,7 @@ function hookCharEvents(plr,instant)
 			oldHealth = health
 		end)
 
-		humanoid.Died:Connect(function()
+		connect(humanoid.Died, function()
 			eventEditor.FireEvent("OnDied",plr.Name)
 
 			local killedBy = humanoid:FindFirstChild("creator")
@@ -12044,10 +12186,10 @@ function hookCharEvents(plr,instant)
 	end)
 end
 
-Players.PlayerAdded:Connect(function(plr)
+connect(Players.PlayerAdded, function(plr)
 	eventEditor.FireEvent("OnJoin",plr.Name)
-	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
-	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+	connect(plr.Chatted, function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
+	connect(plr.CharacterAdded, function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 	JoinLog(plr)
 	ChatLog(plr)
 	if ESPenabled then
@@ -12062,7 +12204,7 @@ end)
 
 for _,plr in pairs(Players:GetPlayers()) do
 	pcall(function()
-		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+		connect(plr.CharacterAdded, function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 		hookCharEvents(plr)
 	end)
 end
@@ -12186,7 +12328,7 @@ task.spawn(function()
 			wait(1)
 			AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, 150), "InOut", "Quart", 0.5, true, nil)
 
-			Exit.MouseButton1Click:Connect(function()
+			connect(Exit.MouseButton1Click, function()
 				AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 				wait(0.6)
 				AnnGUI:Destroy()
@@ -12211,18 +12353,3 @@ task.spawn(function()
 	minimizeHolder()
 	if table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform()) then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
-
-function env.unload_IY()
-	for _, instance in pairs(instances) do
-		if typeof(instance) == 'Instance' then
-			instance:Destroy()
-		end
-	end
-	for _, connection in pairs(connections) do
-		if typeof(connection) == 'RBXScriptConnection' then
-			connection:Disconnect()
-		end
-	end
-	break_all_loops = true
-	reload_character_IY()
-end
