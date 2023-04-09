@@ -26,10 +26,11 @@ end
 instances = {}
 connections = {}
 
+local createInstance = Instance.new
 local Instance = {}
 
 function Instance.new(className, parent)
-	local object = Instance.new(className, parent)
+	local object = createInstance(className, parent)
 	table.insert(instances, object)
 	return object
 end
@@ -41,6 +42,7 @@ function connect(signal, callback)
 end
 
 function IY.unload()
+	IY.loadchar(true)
 	for _, object in pairs(instances) do
 		if typeof(object) == 'Instance' then
 			object:Destroy()
@@ -2320,7 +2322,7 @@ eventEditor = (function()
 			button.On.BackgroundTransparency = (enabled and 0 or 1)
 		end
 
-		button.connect(On.MouseButton1Click, function()
+		connect(button.On.MouseButton1Click, function()
 			enabled = not enabled
 			update()
 			if callback then callback(enabled) end
@@ -2340,7 +2342,7 @@ eventEditor = (function()
 		for i,v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
 		local delayEditor = settingsTemplates.DelayEditor:Clone()
-		delayEditor.connect(Secs.FocusLost, function()
+		connect(delayEditor.Secs.FocusLost, function()
 			cmd[3] = tonumber(delayEditor.Secs.Text) or 0
 			delayEditor.Secs.Text = cmd[3]
 			if onEdited then onEdited() end
@@ -2532,7 +2534,7 @@ eventEditor = (function()
 			table.insert(shade1,eventF.Cmds.Add)
 
 			local expanded = false
-			eventF.connect(Expand.MouseButton1Down, function()
+			connect(eventF.Expand.MouseButton1Down, function()
 				expanded = not expanded
 				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
 				eventF.Expand.Rotation = expanded and 90 or 0
@@ -2563,11 +2565,11 @@ eventEditor = (function()
 						if onEdited then onEdited() end
 					end)
 
-					cmdF.connect(Settings.MouseButton1Click, function()
+					connect(cmdF.Settings.MouseButton1Click, function()
 						openSettingsEditor(event,cmd)
 					end)
 
-					cmdF.connect(Delete.MouseButton1Click, function()
+					connect(cmdF.Delete.MouseButton1Click, function()
 						table.remove(event.commands,i)
 						refreshCommands()
 						resizeList()
@@ -2634,7 +2636,7 @@ eventEditor = (function()
 		end
 	end
 
-	main.TopBar.connect(Close.MouseButton1Click, function()
+	connect(main.TopBar.Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-175,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	dragGUI(main)
@@ -2780,7 +2782,7 @@ reference = (function()
 	table.insert(shade1,main.Content)
 	table.insert(shade2,main.TopBar)
 	main.Name = randomString()
-	main.TopBar.connect(Close.MouseButton1Click, function()
+	connect(main.TopBar.Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-250,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	local inviteButton = main:FindFirstChild("InviteButton",true)
@@ -3418,7 +3420,7 @@ connect(ColorsButton.MouseButton1Click, function()
 				end
 
 				local function hookButtons(frame,func)
-					frame.ArrowFrame.connect(Up.InputBegan, function(input)
+					connect(frame.ArrowFrame.Up.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3448,13 +3450,13 @@ connect(ColorsButton.MouseButton1Click, function()
 						end
 					end)
 
-					frame.ArrowFrame.connect(Up.InputEnded, function(input)
+					connect(frame.ArrowFrame.Up.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 1
 						end
 					end)
 
-					frame.ArrowFrame.connect(Down.InputBegan, function(input)
+					connect(frame.ArrowFrame.Down.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3484,7 +3486,7 @@ connect(ColorsButton.MouseButton1Click, function()
 						end
 					end)
 
-					frame.ArrowFrame.connect(Down.InputEnded, function(input)
+					connect(frame.ArrowFrame.Down.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 1
 						end
@@ -4242,8 +4244,7 @@ task.spawn(function()
 			minimizeHolder()
 		end
 		local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-
-		PlayerGui:WaitForChild("Chat").Frame.connect(ChatBarParentFrame.ChildAdded, function(newbar)
+		connect(PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded, function(newbar)
 			wait()
 			if newbar:FindFirstChild('BoxFrame') then
 				chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
@@ -4802,25 +4803,28 @@ end
 
 Clip = true
 spDelay = 0.1
-Players.connect(LocalPlayer.CharacterAdded, function()
+
+function IY.loadchar(skipspawn)
 	NOFLY()
 	Floating = false
-
 	if not Clip then
 		execCmd('clip')
 	end
-
-	repeat wait() until getRoot(Players.LocalPlayer.Character)
-
-	pcall(function()
-		if spawnpoint and not refreshCmd and spawnpos ~= nil then
-			wait(spDelay)
-			getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
-		end
-	end)
-
+	if not skipspawn then
+		repeat
+			wait()
+		until getRoot(Players.LocalPlayer.Character)
+		pcall(function()
+			if spawnpoint and not refreshCmd and spawnpos ~= nil then
+				wait(spDelay)
+				getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
+			end
+		end)
+	end
 	onDied()
-end)
+end
+
+connect(Players.LocalPlayer.CharacterAdded, loadcharacter)
 
 onDied()
 
@@ -5405,7 +5409,7 @@ connect(UserInputService.InputBegan, function(input,gameProcessed)
 	end
 end)
 
-Players.connect(LocalPlayer.Chatted, function()
+connect(Players.LocalPlayer.Chatted, function()
 	wait()
 	if lastEnteredString then
 		local message = lastEnteredString
@@ -5747,7 +5751,7 @@ function refreshbinds()
 				newbind.Text.Text = key.." > "..binds[i].COMMAND.."  "..(binds[i].ISKEYUP and "(keyup)" or "(keydown)")
 			end
 			Holder_2.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newbind.Text.connect(Delete.MouseButton1Click, function()
+			connect(newbind.Text.Delete.MouseButton1Click, function()
 				unkeybind(binds[i].COMMAND,binds[i].KEY)
 			end)
 		end
@@ -5774,7 +5778,7 @@ function unkeybind(cmd,key)
 	end
 end
 
-PositionsFrame.connect(Delete.MouseButton1Click, function()
+connect(PositionsFrame.Delete.MouseButton1Click, function()
 	execCmd('cpos')
 end)
 
@@ -5802,10 +5806,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.connect(Delete.MouseButton1Click, function()
+			connect(newpoint.Text.Delete.MouseButton1Click, function()
 				execCmd('dpos '..WayPoints[i].NAME)
 			end)
-			newpoint.Text.connect(TP.MouseButton1Click, function()
+			connect(newpoint.Text.TP.MouseButton1Click, function()
 				execCmd("loadpos "..WayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5825,10 +5829,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.connect(Delete.MouseButton1Click, function()
+			connect(newpoint.Text.Delete.MouseButton1Click, function()
 				execCmd('dpos '..pWayPoints[i].NAME)
 			end)
-			newpoint.Text.connect(TP.MouseButton1Click, function()
+			connect(newpoint.Text.TP.MouseButton1Click, function()
 				execCmd("loadpos "..pWayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5859,7 +5863,7 @@ function refreshaliases()
 			table.insert(shade3,newalias.Text.Delete)
 			table.insert(text2,newalias.Text.Delete)
 			Holder_3.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newalias.Text.connect(Delete.MouseButton1Click, function()
+			connect(newalias.Text.Delete.MouseButton1Click, function()
 				execCmd('removealias '..aliases[i].ALIAS)
 			end)
 		end
@@ -5976,7 +5980,7 @@ end
 UserInputService.InputBegan:Connect(onInputBegan)
 UserInputService.InputEnded:Connect(onInputEnded)
 
-ClickTP.connect(Select.MouseButton1Click, function()
+connect(ClickTP.Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clicktp',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -5989,7 +5993,7 @@ ClickTP.connect(Select.MouseButton1Click, function()
 	end
 end)
 
-ClickDelete.connect(Select.MouseButton1Click, function()
+connect(ClickDelete.Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clickdel',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -6125,7 +6129,7 @@ function refreshplugins(dontSave)
 			table.insert(shade3,newplugin.Text.Delete)
 			table.insert(text2,newplugin.Text.Delete)
 			Holder_5.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newplugin.Text.connect(Delete.MouseButton1Click, function()
+			connect(newplugin.Text.Delete.MouseButton1Click, function()
 				deletePlugin(pName)
 			end)
 		end
@@ -6244,7 +6248,7 @@ connect(Close_4.MouseButton1Click, function()
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Players.connect(LocalPlayer.OnTeleport, function(State)
+connect(Players.LocalPlayer.OnTeleport, function(State)
 	if State == Enum.TeleportState.Started then
 		if KeepInfYield and queueteleport then
 			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
@@ -8410,7 +8414,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
-		Players.connect(LocalPlayer.Idled, function()
+		connect(Players.LocalPlayer.Idled, function()
 			local VirtualUser = game:GetService("VirtualUser")
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
