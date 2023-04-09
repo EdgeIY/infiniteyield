@@ -1,6 +1,6 @@
 # Infinite Yield
 
-[![Discord](https://media.discordapp.net/attachments/338403017894395905/668536741942263808/Discord-Logo-Color.png)](https://discord.io/infiniteyield)
+[![Discord](https://discord.com/api/guilds/336642139381301249/embed.png)](https://discord.io/infiniteyield)
 
 Infinite Yield is the best command line script for Roblox, with over 377 commands, open source code, and 6 years of development.
 

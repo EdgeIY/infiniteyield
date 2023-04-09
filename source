@@ -11071,67 +11071,202 @@ addcmd('unglobalshadows',{'nogshadows','ungshadows','noglobalshadows'},function(
 	Lighting.GlobalShadows = false
 end)
 
-origsettings = {abt = Lighting.Ambient, oabt = Lighting.OutdoorAmbient, brt = Lighting.Brightness, time = Lighting.ClockTime, fe = Lighting.FogEnd, fs = Lighting.FogStart, gs = Lighting.GlobalShadows}
+local LightingCFG = {}
 
-addcmd('restorelighting',{'rlighting'},function(args, speaker)
-	Lighting.Ambient = origsettings.abt
-	Lighting.OutdoorAmbient = origsettings.oabt
-	Lighting.Brightness = origsettings.brt
-	Lighting.ClockTime = origsettings.time
-	Lighting.FogEnd = origsettings.fe
-	Lighting.FogStart = origsettings.fs
-	Lighting.GlobalShadows = origsettings.gs
-end)
-
-addcmd('stun',{'platformstand'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
-end)
-
-addcmd('unstun',{'nostun','unplatformstand','noplatformstand'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
-end)
-
-addcmd('norotate',{'noautorotate'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = false
-end)
-
-addcmd('unnorotate',{'autorotate'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = true
-end)
-
-addcmd('enablestate',{},function(args, speaker)
-	local x = args[1]
-	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+function capturelighitng()
+	LightingCFG.Ambient = Lighting.Ambient
+	LightingCFG.OutdoorAmbient = Lighting.OutdoorAmbient
+	LightingCFG.Brightness = Lighting.Brightness
+	LightingCFG.ClockTime = Lighting.ClockTime
+	LightingCFG.FogEnd = Lighting.FogEnd
+	LightingCFG.GlobalShadows = Lighting.GlobalShadows
+	if type(gethidden) == 'function' then
+		LightingCFG.Technology = gethidden(Lighting, "Technology")
 	end
-	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, true)
-end)
+end
 
-addcmd('disablestate',{},function(args, speaker)
-	local x = args[1]
-	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+function restorelighting()
+	Lighting.Ambient = LightingCFG.Ambient
+	Lighting.OutdoorAmbient = LightingCFG.OutdoorAmbient
+	Lighting.Brightness = LightingCFG.Brightness
+	Lighting.ClockTime = LightingCFG.ClockTime
+	Lighting.FogEnd = LightingCFG.FogEnd
+	Lighting.GlobalShadows = LightingCFG.GlobalShadows
+	if type(sethidden) == 'function' then
+		sethidden(Lighting, "Technology", LightingCFG.Technology)
 	end
-	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, false)
-end)
+end
 
-addcmd('drophats',{'drophat'},function(args, speaker)
-	if speaker.Character then
-		for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
-			v.Parent = workspace
+addcmd("capturelighting", { "caplighting", "caplight" }, capturelighitng)
+addcmd("restorelighting", { "rlighting", "resetlight" }, restorelighting)
+
+addcmd("unstun", { "nostun", "unplatformstand", "noplatformstand", "unplatstand", "noplatstand" }, function(args)
+	if typeof(humanoid) ~= 'Instance' then
+		if typeof(character) ~= 'Instance' then
+			character = localplayer.Character
+		end
+		if typeof(character) == 'Instance' then
+			humanoid = character:FindFirstChildWhichIsA("Humanoid")
 		end
 	end
+	if typeof(humanoid) == 'Instance' then
+		humanoid.PlatformStand = false
+		notify("Stun", "Stun disabled")
+	else
+		notify("Stun", "No humanoid to disable PlatformStand")
+	end
 end)
 
-addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
-	for i,v in next, speaker.Character:GetDescendants() do
-		if v:IsA("Accessory") then
-			for i,p in next, v:GetDescendants() do
-				if p:IsA("Weld") then
-					p:Destroy()
-				end
+addcmd("stun", { "platformstand", "platstand" }, function(args)
+	if typeof(humanoid) ~= 'Instance' then
+		if typeof(character) ~= 'Instance' then
+			character = localplayer.Character
+		end
+		if typeof(character) == 'Instance' then
+			humanoid = character:FindFirstChildWhichIsA("Humanoid")
+		end
+	end
+	if typeof(humanoid) == 'Instance' then
+		humanoid.PlatformStand = true
+		notify("Stun", "Stun enabled")
+	else
+		notify("Stun", "No humanoid to enable PlatformStand")
+	end
+end)
+
+addcmd("autorotate", { "dorotate", "unnorotate", "startrotation", "startrotating" }, function(args, speaker)
+	if typeof(humanoid) ~= 'Instance' then
+		if typeof(character) ~= 'Instance' then
+			character = localplayer.Character
+		end
+		if typeof(character) == 'Instance' then
+			humanoid = character:FindFirstChildWhichIsA("Humanoid")
+		end
+	end
+	if typeof(humanoid) == 'Instance' then
+		humanoid.AutoRotate = true
+		notify("AutoRotate", "AutoRotate enabled")
+	else
+		notify("AutoRotate", "No humanoid to enable AutoRotate")
+	end
+end)
+
+addcmd("norotate", { "unautorotate", "stoprotation", "stoprotating" }, function(args, speaker)
+	if typeof(humanoid) ~= 'Instance' then
+		if typeof(character) ~= 'Instance' then
+			character = localplayer.Character
+		end
+		if typeof(character) == 'Instance' then
+			humanoid = character:FindFirstChildWhichIsA("Humanoid")
+		end
+	end
+	if typeof(humanoid) == 'Instance' then
+		humanoid.AutoRotate = false
+		notify("AutoRotate", "AutoRotate disabled")
+	else
+		notify("AutoRotate", "No humanoid to disable AutoRotate")
+	end
+end)
+
+addcmd("enablestate", { "dostate" }, function(args)
+	local item
+	for _, enumitem in pairs(Enum.HumanoidStateType:GetEnumItems()) do
+		if enumitem.Name:lower() == args[1]:lower() or enumitem.Name:lower():sub(1, #args[1]) == args[1]:lower() then
+			item = enumitem
+			break
+		end
+	end
+	if typeof(item) == 'EnumItem' then
+		if typeof(humanoid) ~= 'Instance' then
+			if typeof(character) ~= 'Instance' then
+				character = localplayer.Character
+			end
+			if typeof(character) == 'Instance' then
+				humanoid = character:FindFirstChildWhichIsA("Humanoid")
 			end
 		end
+		if typeof(humanoid) ~= 'Instance' then
+			notify("Enable State", "Missing a humanoid.")
+			return
+		end
+		humanoid:SetStateEnabled(item, true)
+		notify("Enable State", "Enabled " .. item.Name)
+	else
+		notify("Enable State", "Invalid state.")
+	end
+end)
+
+addcmd("disablestate", { "nostate" }, function(args)
+	local item
+	for _, enumitem in pairs(Enum.HumanoidStateType:GetEnumItems()) do
+		if enumitem.Name:lower() == args[1]:lower() or enumitem.Name:lower():sub(1, #args[1]) == args[1]:lower() then
+			item = enumitem
+			break
+		end
+	end
+	if typeof(item) == 'EnumItem' then
+		if typeof(humanoid) ~= 'Instance' then
+			if typeof(character) ~= 'Instance' then
+				character = localplayer.Character
+			end
+			if typeof(character) == 'Instance' then
+				humanoid = character:FindFirstChildWhichIsA("Humanoid")
+			end
+		end
+		if typeof(humanoid) ~= 'Instance' then
+			notify("Disable State", "Missing a humanoid.")
+			return
+		end
+		humanoid:SetStateEnabled(item.Value, false)
+		notify("Disable State", "Disabled state " .. item.Name .. ".")
+	else
+		notify("Disable State", "Invalid state.")
+	end
+end)
+
+addcmd("drophats", { "drophat" }, function(speaker)
+	local accoutrements = {}
+	if typeof(character) ~= 'Instance' then
+		character = localplayer.Character
+	end
+	if typeof(character) == 'Instance' then
+		for _, instance in pairs(character:GetChildren()) do
+			if instance:IsA("Accoutrement") then
+				table.insert(accoutrements, instance)
+			end
+		end
+		if #accoutrements > 0 then
+			for _, accoutrement in pairs(accoutrements) do
+				accoutrement.Parent = workspace
+			end
+			notify("Drop Hats", "Dropped " .. #accoutrements .. (" hat%s."):format(#accoutrements == 1 and "" or "s"))
+		else
+			notify("Drop Hats", "No hats to drop.")
+		end
+	else
+		notify("Drop Hats", "No character found.")
+	end
+end)
+
+addcmd("deletehats", { "rmhats", "rhats", "nohats", "removehats" }, function(args)
+	if typeof(character) ~= 'Instance' then
+		character = localplayer.Character
+	end
+	if typeof(character) == 'Instance' then
+		local accoutrements = 0
+		for _, instance in pairs(character:GetChildren()) do
+			if instance:IsA("Accoutrement") then
+				instance:Destroy()
+				accoutrements = accoutrements + 1
+			end
+		end
+		if accoutrements > 0 then
+			notify("Remove Hats", "Removed " .. accoutrements .. (" hat%s."):format(accoutrements == 1 and "" or "s"))
+		else
+			notify("Remove Hats", "No hats to remove.")
+		end
+	else
+		notify("Remove Hats", "No character found.")
 	end
 end)
 
@@ -11147,82 +11282,121 @@ addcmd("droptools", { "droptool" }, function(args)
                 table.insert(tools, instance)
             end
         end
+		if typeof(backpack) == 'Instance' then
+			for _, instance in pairs(backpack:GetChildren()) do
+				if instance:IsA("Tool") then
+					table.insert(tools, instance)
+				end
+			end
+		end
+		for _, tool in pairs(tools) do
+			if tool.CanBeDropped then
+				if tool.Parent ~= character then
+					tool.Parent = character
+					wait()
+				end
+				tool.Parent = workspace
+			end
+		end
+	else
+		notify("Drop Tools", "No character found.")
     end
-	if typeof(backpack) == 'Instance' then
-		for _, instance in pairs(backpack:GetChildren()) do
+end)
+
+addcmd("droppabletools", {}, function(args)
+	local backpack = localplayer:FindFirstChildWhichIsA("Backpack")
+	local tools = {}
+	if typeof(character) ~= 'Instance' then
+		character = localplayer.Character
+	end
+	if typeof(character) == 'Instance' then
+		for _, instance in pairs(character:GetChildren()) do
 			if instance:IsA("Tool") then
 				table.insert(tools, instance)
 			end
 		end
-	end
-	for _, tool in pairs(tools) do
-		if tool.CanBeDropped then
-            if tool.Parent ~= character then
-                tool.Parent = character
-                wait()
-            end
-            tool.Parent = workspace
-        end
+		if typeof(backpack) == 'Instance' then
+			for _, instance in pairs(backpack:GetChildren()) do
+				if instance:IsA("Tool") then
+					table.insert(tools, instance)
+				end
+			end
+		end
+		if #tools < 1 then
+			notify("Droppable Tools", "No tools found.")
+			return
+		end
+		local droppables = 0
+		for _, tool in pairs(tools) do
+			if tool.CanBeDropped ~= true then
+				tool.CanBeDropped = true
+				droppables = droppables + 1
+			end
+		end
+		notify("Droppable Tools", "Keep in mind that this may not replicate to other players. " .. tostring(droppables) .. " tool" .. (droppables == 1 and " is" or "s are") .. " now droppable.")
+	else
+		notify("Droppable Tools", "No character found.")
 	end
 end)
 
-addcmd('droppabletools',{},function(args, speaker)
-	if speaker.Character then
-		for _,obj in pairs(speaker.Character:GetChildren()) do
-			if obj:IsA("Tool") then
-				obj.CanBeDropped = true
-			end
-		end
-	end
-	if speaker:FindFirstChildOfClass("Backpack") then
-		for _,obj in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
-			if obj:IsA("Tool") then
-				obj.CanBeDropped = true
-			end
-		end
-	end
-end)
+local currentToolSize = ''
+local currentGripPos = ''
 
-local currentToolSize = ""
-local currentGripPos = ""
-addcmd('reach',{},function(args, speaker)
+addcmd('reach', {}, function(args)
 	execCmd('unreach')
 	wait()
-	for i,v in pairs(speaker.Character:GetDescendants()) do
-		if v:IsA("Tool") then
+	for _, tool in pairs(speaker.Character:GetDescendants()) do
+		if tool:IsA("Tool") then
 			if args[1] then
-				currentToolSize = v.Handle.Size
-				currentGripPos = v.GripPos
-				local a = Instance.new("SelectionBox")
-				a.Name = "SelectionBoxCreated"
-				a.Parent = v.Handle
-				a.Adornee = v.Handle
-				v.Handle.Massless = true
-				v.Handle.Size = Vector3.new(0.5,0.5,args[1])
-				v.GripPos = Vector3.new(0,0,0)
-				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
+				currentToolSize = handle.Size
+				currentGripPos = tool.GripPos
+				local box = Instance.new("SelectionBox")
+				box.Adornee = handle
+				box.Parent = hui
+				handle.Massless = true
+				handle.Size = Vector3.new(0.5, 0.5, args[1])
+				tool.GripPos = Vector3.zero
+				if typeof(humanoid) == 'Instance' then
+					humanoid:UnequipTools()
+				end
 			else
-				currentToolSize = v.Handle.Size
-				currentGripPos = v.GripPos
-				local a = Instance.new("SelectionBox")
-				a.Name = "SelectionBoxCreated"
-				a.Parent = v.Handle
-				a.Adornee = v.Handle
-				v.Handle.Massless = true
-				v.Handle.Size = Vector3.new(0.5,0.5,60)
-				v.GripPos = Vector3.new(0,0,0)
-				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
+				currentToolSize = handle.Size
+				currentGripPos = tool.GripPos
+				if typeof(boxes) == 'table' then
+					local box = Instance.new("SelectionBox")
+					box.Adornee = handle
+					box.Parent = hui
+					boxes[handle] = box
+				end
+				handle.Massless = true
+				handle.Size = Vector3.new(0.5,0.5,60)
+				tool.GripPos = Vector3.new(0,0,0)
+				if typeof(humanoid) == 'Instance' then
+					humanoid:UnequipTools()
+				end
 			end
 		end
 	end
 end)
 
-addcmd('unreach',{'noreach'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
-		if v:IsA("Tool") then
-			v.Handle.Size = currentToolSize
-			v.GripPos = currentGripPos
-			v.Handle.SelectionBoxCreated:Destroy()
+addcmd('unreach',{'noreach'},function(args)
+	if typeof(character) ~= 'Instance' then
+		character = localplayer.Character
+	end
+	if typeof(character) == 'Instance' then
+		for _, instance in pairs(character:GetChildren()) do
+			if instance:IsA("Tool") then
+				local handle = instance:FindFirstChild("Handle")
+				if typeof(handle) == 'Instance' and handle:IsA("BasePart") then
+					if typeof(boxes[handle]) == 'Instance' then
+						boxes[handle]:Destroy()
+						boxes[handle] = nil
+					end
+					handle.Massless = false
+					handle.Size = currentToolSize
+					instance.GripPos = currentGripPos
+				end
+			end
 		end
 	end
 end)
