@@ -2,5 +2,7 @@
     "files.associations": {
         "source": "lua",
         "version": "json"
-    }
+    },
+    "Lua.runtime.version":"Lua 5.1",
+    "Lua.codeLens.enable": false,
 }

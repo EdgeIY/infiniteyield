@@ -8239,20 +8239,20 @@ addcmd('render',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(true)
 end)
 
-addcmd('2022materials',{'use2022materials'},function(args, speaker)
-	if sethidden then
+addcmd("newmaterials", nil, function()
+	if type(sethidden) == 'function' then
 		sethidden(MaterialService, "Use2022Materials", true)
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		return
 	end
+	notify("Incompatible Environment", "Missing \'sethiddenproperty\'")
 end)
 
-addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
-	if sethidden then
+addcmd("oldmaterials", nil, function()
+	if type(sethidden) == 'function' then
 		sethidden(MaterialService, "Use2022Materials", false)
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		return
 	end
+	notify("Incompatible Environment", "Missing \'sethiddenproperty\'")
 end)
 
 function getrootpart(player)
