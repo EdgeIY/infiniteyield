@@ -1,9 +1,18 @@
-if IY_LOADED and not _G.IY_DEBUG == true then
-	-- error("Infinite Yield is already running!",0)
+local env
+if type(getgenv) == 'function' then
+	env = getgenv()
+end
+if type(env) ~= 'table' then
+	env = _G
+end
+if type(env) ~= 'table' then
 	return
 end
-
-pcall(function() getgenv().IY_LOADED = true end)
+if type(env.IY) == 'table' and type(env.IY.unload) == 'function' then
+	env.IY.unload()
+end
+local IY = {}
+env.IY = IY
 
 COREGUI = game:GetService("CoreGui")
 if not game:IsLoaded() then
@@ -12,6 +21,38 @@ if not game:IsLoaded() then
 	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
 	game.Loaded:Wait()
 	notLoaded:Destroy()
+end
+
+instances = {}
+connections = {}
+
+local createInstance = Instance.new
+local Instance = {}
+
+function Instance.new(className, parent)
+	local object = createInstance(className, parent)
+	table.insert(instances, object)
+	return object
+end
+
+function connect(signal, callback)
+	local connection = signal:Connect(callback)
+	table.insert(connections, connection)
+	return connection
+end
+
+function IY.unload()
+	IY.loadchar(true)
+	for _, object in pairs(instances) do
+		if typeof(object) == 'Instance' then
+			object:Destroy()
+		end
+	end
+	for _, connection in pairs(connections) do
+		if connection and connection.Connected then
+			connection:Disconnect()
+		end
+	end
 end
 
 currentVersion = '5.9.3'
@@ -211,6 +252,7 @@ Title.Text = "Infinite Yield FE v" .. currentVersion
 do
 	local emoji = ({
 		["01 01"] = "🎆",
+		["12 31"] = "🎉",
 		[(function(Year)
 			local A = math.floor(Year/100)
 			local B = math.floor((13+8*A)/25)
@@ -228,8 +270,12 @@ do
 			end
 			return ("03 %02d"):format(G)
 		end)(tonumber(os.date"%Y"))] = "🥚",
+		["03 17"] = "🍀",
+		["09 23"] = "🍺",
 		["10 31"] = "🎃",
-		["12 25"] = "🎄"
+		["11 26"] = "🦃",
+		["12 25"] = "🎄",
+		["12 02"] = "🕎"
 	})[os.date("%m %d")]
 	if emoji then
 		Title.Text = ("%s %s %s"):format(emoji, Title.Text, emoji)
@@ -1882,7 +1928,7 @@ ViewportTextBox = (function()
 
 		obj.View = view
 
-		textbox.Changed:Connect(function(prop)
+		connect(textbox.Changed, function(prop)
 			if prop == "Text" or prop == "CursorPosition" or prop == "AbsoluteSize" then
 				obj:Update()
 			end
@@ -2055,25 +2101,25 @@ function dragGUI(gui)
 			local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 			TweenService:Create(gui, TweenInfo.new(.20), {Position = Position}):Play()
 		end
-		gui.InputBegan:Connect(function(input)
+		connect(gui.InputBegan, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = gui.Position
 
-				input.Changed:Connect(function()
+				connect(input.Changed, function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
 					end
 				end)
 			end
 		end)
-		gui.InputChanged:Connect(function(input)
+		connect(gui.InputChanged, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-		UserInputService.InputChanged:Connect(function(input)
+		connect(UserInputService.InputChanged, function(input)
 			if input == dragInput and dragging then
 				update(input)
 			end
@@ -2281,7 +2327,7 @@ eventEditor = (function()
 			button.On.BackgroundTransparency = (enabled and 0 or 1)
 		end
 
-		button.On.MouseButton1Click:Connect(function()
+		connect(button.On.MouseButton1Click, function()
 			enabled = not enabled
 			update()
 			if callback then callback(enabled) end
@@ -2301,7 +2347,7 @@ eventEditor = (function()
 		for i,v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
 		local delayEditor = settingsTemplates.DelayEditor:Clone()
-		delayEditor.Secs.FocusLost:Connect(function()
+		connect(delayEditor.Secs.FocusLost, function()
 			cmd[3] = tonumber(delayEditor.Secs.Text) or 0
 			delayEditor.Secs.Text = cmd[3]
 			if onEdited then onEdited() end
@@ -2346,7 +2392,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					if custom:IsEnabled() then
 						cmd[2][i] = customTextBox.Text
 						if onEdited then onEdited() end
@@ -2393,7 +2439,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					if custom:IsEnabled() then
 						cmd[2][i] = customTextBox.Text
 						if onEdited then onEdited() end
@@ -2436,7 +2482,7 @@ eventEditor = (function()
 				end)
 
 				ViewportTextBox.convert(customTextBox)
-				customTextBox.FocusLost:Connect(function()
+				connect(customTextBox.FocusLost, function()
 					cmd[2][i] = tonumber(customTextBox.Text) or 0
 					customTextBox.Text = cmd[2][i]
 					if custom:IsEnabled() then
@@ -2493,7 +2539,7 @@ eventEditor = (function()
 			table.insert(shade1,eventF.Cmds.Add)
 
 			local expanded = false
-			eventF.Expand.MouseButton1Down:Connect(function()
+			connect(eventF.Expand.MouseButton1Down, function()
 				expanded = not expanded
 				eventF:TweenSize(UDim2.new(1,0,0,20 + (expanded and 20*#eventF.Cmds.Holder:GetChildren() or 0)),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,0.25,true)
 				eventF.Expand.Rotation = expanded and 90 or 0
@@ -2519,16 +2565,16 @@ eventEditor = (function()
 					table.insert(shade2,cmdF.Delete)
 					table.insert(shade2,cmdF.Settings)
 
-					cmdTextBox.FocusLost:Connect(function()
+					connect(cmdTextBox.FocusLost, function()
 						event.commands[i] = {cmdTextBox.Text,cmd[2],cmd[3]}
 						if onEdited then onEdited() end
 					end)
 
-					cmdF.Settings.MouseButton1Click:Connect(function()
+					connect(cmdF.Settings.MouseButton1Click, function()
 						openSettingsEditor(event,cmd)
 					end)
 
-					cmdF.Delete.MouseButton1Click:Connect(function()
+					connect(cmdF.Delete.MouseButton1Click, function()
 						table.remove(event.commands,i)
 						refreshCommands()
 						resizeList()
@@ -2547,7 +2593,7 @@ eventEditor = (function()
 
 			local newBox = eventF.Cmds.Add.TextBox
 			ViewportTextBox.convert(newBox)
-			newBox.FocusLost:Connect(function(enter)
+			connect(newBox.FocusLost, function(enter)
 				if enter then
 					event.commands[#event.commands+1] = {newBox.Text,defaultSettings(event),0}
 					newBox.Text = ""
@@ -2595,7 +2641,7 @@ eventEditor = (function()
 		end
 	end
 
-	main.TopBar.Close.MouseButton1Click:Connect(function()
+	connect(main.TopBar.Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-175,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	dragGUI(main)
@@ -2741,12 +2787,12 @@ reference = (function()
 	table.insert(shade1,main.Content)
 	table.insert(shade2,main.TopBar)
 	main.Name = randomString()
-	main.TopBar.Close.MouseButton1Click:Connect(function()
+	connect(main.TopBar.Close.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-250,0,-500), "InOut", "Quart", 0.5, true, nil)
 	end)
 	local inviteButton = main:FindFirstChild("InviteButton",true)
 	local lastPress = nil
-	inviteButton.MouseButton1Click:Connect(function()
+	connect(inviteButton.MouseButton1Click, function()
 		local func = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 		if func then
 			func("https://discord.io/infiniteyield")
@@ -2763,7 +2809,7 @@ reference = (function()
 	dragGUI(main)
 	main.Parent = PARENT
 
-	ReferenceButton.MouseButton1Click:Connect(function()
+	connect(ReferenceButton.MouseButton1Click, function()
 		main:TweenPosition(UDim2.new(0.5,-250,0.5,-150), "InOut", "Quart", 0.5, true, nil)
 	end)
 end)()
@@ -2928,7 +2974,7 @@ function saves()
 				ExitImage.Image = "rbxassetid://5054663650"
 				ExitImage.ZIndex = 10
 
-				Exit.MouseButton1Click:Connect(function()
+				connect(Exit.MouseButton1Click, function()
 					FileError:Destroy()
 				end)
 			end
@@ -3050,7 +3096,7 @@ function notify(text,text2,length)
 		local notificationPinned = false
 		notifyCount = notifyCount+1
 		if pinNotification then pinNotification:Disconnect() end
-		pinNotification = PinButton.MouseButton1Click:Connect(function()
+		pinNotification = connect(PinButton.MouseButton1Click, function()
 			task.spawn(function()
 				pinNotification:Disconnect()
 				notificationPinned = true
@@ -3070,7 +3116,7 @@ function notify(text,text2,length)
 			Text_2.Text = text
 		end
 		Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, -100), "InOut", "Quart", 0.5, true, nil)
-		CloseButton.MouseButton1Click:Connect(function()
+		connect(CloseButton.MouseButton1Click, function()
 			Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			closepressed = true
 			pinNotification:Disconnect()
@@ -3198,7 +3244,7 @@ function CreateJoinLabel(plr,ID)
 	info2.Text = string.gsub(info2.Text, "Loading...",splitDates[2].."/"..splitDates[3].."/"..splitDates[1])
 end
 
-IYMouse.KeyDown:Connect(function(Key)
+connect(IYMouse.KeyDown, function(Key)
 	if (Key==prefix) then
 		Cmdbar:CaptureFocus()
 		spawn(function()
@@ -3209,12 +3255,12 @@ IYMouse.KeyDown:Connect(function(Key)
 end)
 
 local lastMinimizeReq = 0
-Holder.MouseEnter:Connect(function()
+connect(Holder.MouseEnter, function()
 	lastMinimizeReq = 0
 	maximizeHolder()
 end)
 
-Holder.MouseLeave:Connect(function()
+connect(Holder.MouseLeave, function()
 	if not Cmdbar:IsFocused() then
 		local reqTime = tick()
 		lastMinimizeReq = reqTime
@@ -3264,7 +3310,7 @@ function updateColors(color,ctype)
 end
 
 local colorpickerOpen = false
-ColorsButton.MouseButton1Click:Connect(function()
+connect(ColorsButton.MouseButton1Click, function()
 	cache_currentShade1 = currentShade1
 	cache_currentShade2 = currentShade2
 	cache_currentShade3 = currentShade3
@@ -3379,7 +3425,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 				end
 
 				local function hookButtons(frame,func)
-					frame.ArrowFrame.Up.InputBegan:Connect(function(input)
+					connect(frame.ArrowFrame.Up.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3391,7 +3437,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 
 							if not startNum then return end
 
-							releaseEvent = UserInputService.InputEnded:Connect(function(input)
+							releaseEvent = connect(UserInputService.InputEnded, function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -3409,13 +3455,13 @@ ColorsButton.MouseButton1Click:Connect(function()
 						end
 					end)
 
-					frame.ArrowFrame.Up.InputEnded:Connect(function(input)
+					connect(frame.ArrowFrame.Up.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Up.BackgroundTransparency = 1
 						end
 					end)
 
-					frame.ArrowFrame.Down.InputBegan:Connect(function(input)
+					connect(frame.ArrowFrame.Down.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 0.5
 						elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -3427,7 +3473,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 
 							if not startNum then return end
 
-							releaseEvent = UserInputService.InputEnded:Connect(function(input)
+							releaseEvent = connect(UserInputService.InputEnded, function(input)
 								if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 								releaseEvent:Disconnect()
 								pressing = false
@@ -3445,24 +3491,24 @@ ColorsButton.MouseButton1Click:Connect(function()
 						end
 					end)
 
-					frame.ArrowFrame.Down.InputEnded:Connect(function(input)
+					connect(frame.ArrowFrame.Down.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							frame.ArrowFrame.Down.BackgroundTransparency = 1
 						end
 					end)
 				end
 
-				colorSpace.InputBegan:Connect(function(input)
+				connect(colorSpace.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 
-						releaseEvent = UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = connect(UserInputService.InputEnded, function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 							releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 
-						mouseEvent = UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = connect(UserInputService.InputChanged, function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorSpaceInput()
 							end
@@ -3472,17 +3518,17 @@ ColorsButton.MouseButton1Click:Connect(function()
 					end
 				end)
 
-				colorStrip.InputBegan:Connect(function(input)
+				connect(colorStrip.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						local releaseEvent,mouseEvent
 
-						releaseEvent = UserInputService.InputEnded:Connect(function(input)
+						releaseEvent = connect(UserInputService.InputEnded, function(input)
 							if input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 							releaseEvent:Disconnect()
 							mouseEvent:Disconnect()
 						end)
 
-						mouseEvent = UserInputService.InputChanged:Connect(function(input)
+						mouseEvent = connect(UserInputService.InputChanged, function(input)
 							if input.UserInputType == Enum.UserInputType.MouseMovement then
 								colorStripInput()
 							end
@@ -3502,7 +3548,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				hueInput.FocusLost:Connect(function() updateHue(hueInput.Text) end) hookButtons(hueInput,updateHue)
+				connect(hueInput.FocusLost, function() updateHue(hueInput.Text) end) hookButtons(hueInput,updateHue)
 
 				local function updateSat(str)
 					local num = tonumber(str)
@@ -3514,7 +3560,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				satInput.FocusLost:Connect(function() updateSat(satInput.Text) end) hookButtons(satInput,updateSat)
+				connect(satInput.FocusLost, function() updateSat(satInput.Text) end) hookButtons(satInput,updateSat)
 
 				local function updateVal(str)
 					local num = tonumber(str)
@@ -3526,7 +3572,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(1)
 					end
 				end
-				valInput.FocusLost:Connect(function() updateVal(valInput.Text) end) hookButtons(valInput,updateVal)
+				connect(valInput.FocusLost, function() updateVal(valInput.Text) end) hookButtons(valInput,updateVal)
 
 				local function updateRed(str)
 					local num = tonumber(str)
@@ -3538,7 +3584,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				redInput.FocusLost:Connect(function() updateRed(redInput.Text) end) hookButtons(redInput,updateRed)
+				connect(redInput.FocusLost, function() updateRed(redInput.Text) end) hookButtons(redInput,updateRed)
 
 				local function updateGreen(str)
 					local num = tonumber(str)
@@ -3550,7 +3596,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				greenInput.FocusLost:Connect(function() updateGreen(greenInput.Text) end) hookButtons(greenInput,updateGreen)
+				connect(greenInput.FocusLost, function() updateGreen(greenInput.Text) end) hookButtons(greenInput,updateGreen)
 
 				local function updateBlue(str)
 					local num = tonumber(str)
@@ -3562,7 +3608,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						updateColor(2)
 					end
 				end
-				blueInput.FocusLost:Connect(function() updateBlue(blueInput.Text) end) hookButtons(blueInput,updateBlue)
+				connect(blueInput.FocusLost, function() updateBlue(blueInput.Text) end) hookButtons(blueInput,updateBlue)
 
 				local colorChoice = Instance.new("TextButton")
 				colorChoice.Name = "Choice"
@@ -3579,7 +3625,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 					newColor.BackgroundColor3 = v
 					newColor.Position = UDim2.new(0,1 + 30*column,0,21 + 23*row)
 
-					newColor.MouseButton1Click:Connect(function()
+					connect(newColor.MouseButton1Click, function()
 						red,green,blue = v.r,v.g,v.b
 						local newColor = Color3.new(red,green,blue)
 						hue,sat,val = Color3.toHSV(newColor)
@@ -3599,14 +3645,14 @@ ColorsButton.MouseButton1Click:Connect(function()
 					newColor.BackgroundColor3 = color
 					newColor.Position = UDim2.new(0,1 + 30*column,0,20 + 23*row)
 
-					newColor.MouseButton1Click:Connect(function()
+					connect(newColor.MouseButton1Click, function()
 						local curColor = customColors[i] or Color3.new(0,0,0)
 						red,green,blue = curColor.r,curColor.g,curColor.b
 						hue,sat,val = Color3.toHSV(curColor)
 						updateColor()
 					end)
 
-					newColor.MouseButton2Click:Connect(function()
+					connect(newColor.MouseButton2Click, function()
 						customColors[i] = chosenColor
 						newColor.BackgroundColor3 = chosenColor
 					end)
@@ -3616,39 +3662,39 @@ ColorsButton.MouseButton1Click:Connect(function()
 					if column == 6 then row = row + 1 column = 0 end
 				end
 
-				shade1Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade1) end end)
-				shade1Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0.4 end end)
-				shade1Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0 end end)
+				connect(shade1Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade1) end end)
+				connect(shade1Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0.4 end end)
+				connect(shade1Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade1Button.BackgroundTransparency = 0 end end)
 
-				shade2Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade2) end end)
-				shade2Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0.4 end end)
-				shade2Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0 end end)
+				connect(shade2Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade2) end end)
+				connect(shade2Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0.4 end end)
+				connect(shade2Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade2Button.BackgroundTransparency = 0 end end)
 
-				shade3Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,shade3) end end)
-				shade3Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0.4 end end)
-				shade3Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0 end end)
+				connect(shade3Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,shade3) end end)
+				connect(shade3Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0.4 end end)
+				connect(shade3Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then shade3Button.BackgroundTransparency = 0 end end)
 
-				text1Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,text1) end end)
-				text1Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0.4 end end)
-				text1Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0 end end)
+				connect(text1Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,text1) end end)
+				connect(text1Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0.4 end end)
+				connect(text1Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text1Button.BackgroundTransparency = 0 end end)
 
-				text2Button.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,text2) end end)
-				text2Button.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0.4 end end)
-				text2Button.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0 end end)
+				connect(text2Button.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,text2) end end)
+				connect(text2Button.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0.4 end end)
+				connect(text2Button.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then text2Button.BackgroundTransparency = 0 end end)
 
-				scrollButton.MouseButton1Click:Connect(function() if newMt.Confirm then newMt:Confirm(chosenColor,scroll) end end)
-				scrollButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0.4 end end)
-				scrollButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0 end end)
+				connect(scrollButton.MouseButton1Click, function() if newMt.Confirm then newMt:Confirm(chosenColor,scroll) end end)
+				connect(scrollButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0.4 end end)
+				connect(scrollButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then scrollButton.BackgroundTransparency = 0 end end)
 
-				cancelButton.MouseButton1Click:Connect(function() if newMt.Cancel then newMt:Cancel() end end)
-				cancelButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0.4 end end)
-				cancelButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0 end end)
+				connect(cancelButton.MouseButton1Click, function() if newMt.Cancel then newMt:Cancel() end end)
+				connect(cancelButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0.4 end end)
+				connect(cancelButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then cancelButton.BackgroundTransparency = 0 end end)
 
-				defaultButton.MouseButton1Click:Connect(function() if newMt.Default then newMt:Default() end end)
-				defaultButton.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0.4 end end)
-				defaultButton.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0 end end)
+				connect(defaultButton.MouseButton1Click, function() if newMt.Default then newMt:Default() end end)
+				connect(defaultButton.InputBegan, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0.4 end end)
+				connect(defaultButton.InputEnded, function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then defaultButton.BackgroundTransparency = 0 end end)
 
-				pickerExit.MouseButton1Click:Connect(function()
+				connect(pickerExit.MouseButton1Click, function()
 					picker:TweenPosition(UDim2.new(0.5, -219, 0, -500), "InOut", "Quart", 0.5, true, nil)
 				end)
 
@@ -3694,7 +3740,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 end)
 
 
-SettingsButton.MouseButton1Click:Connect(function()
+connect(SettingsButton.MouseButton1Click, function()
 	if SettingsOpen == false then SettingsOpen = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.5, true, nil)
 		CMDsF.Visible = false
@@ -3704,7 +3750,7 @@ SettingsButton.MouseButton1Click:Connect(function()
 	end
 end)
 
-On.MouseButton1Click:Connect(function()
+connect(On.MouseButton1Click, function()
 	if isHidden == false then
 		if StayOpen == false then
 			StayOpen = true
@@ -3717,21 +3763,21 @@ On.MouseButton1Click:Connect(function()
 	end
 end)
 
-Clear.MouseButton1Down:Connect(function()
+connect(Clear.MouseButton1Down, function()
 	for _, child in pairs(scroll_2:GetChildren()) do
 		child:Destroy()
 	end
 	scroll_2.CanvasSize = UDim2.new(0, 0, 0, 10)
 end)
 
-Clear_2.MouseButton1Down:Connect(function()
+connect(Clear_2.MouseButton1Down, function()
 	for _, child in pairs(scroll_3:GetChildren()) do
 		child:Destroy()
 	end
 	scroll_3.CanvasSize = UDim2.new(0, 0, 0, 10)
 end)
 
-Toggle.MouseButton1Down:Connect(function()
+connect(Toggle.MouseButton1Down, function()
 	if logsEnabled then
 		logsEnabled = false
 		Toggle.Text = 'Disabled'
@@ -3743,7 +3789,7 @@ Toggle.MouseButton1Down:Connect(function()
 	end
 end)
 
-Toggle_2.MouseButton1Down:Connect(function()
+connect(Toggle_2.MouseButton1Down, function()
 	if jLogsEnabled then
 		jLogsEnabled = false
 		Toggle_2.Text = 'Disabled'
@@ -3755,7 +3801,7 @@ Toggle_2.MouseButton1Down:Connect(function()
 	end
 end)
 
-selectChat.MouseButton1Down:Connect(function()
+connect(selectChat.MouseButton1Down, function()
 	join.Visible = false
 	chat.Visible = true
 	table.remove(shade3,table.find(shade3,selectChat))
@@ -3766,7 +3812,7 @@ selectChat.MouseButton1Down:Connect(function()
 	selectChat.BackgroundColor3 = currentShade2
 end)
 
-selectJoin.MouseButton1Down:Connect(function()
+connect(selectJoin.MouseButton1Down, function()
 	chat.Visible = false
 	join.Visible = true	
 	table.remove(shade3,table.find(shade3,selectJoin))
@@ -3782,7 +3828,7 @@ if not writefileExploit() then
 end
 
 ChatLog = function(plr)
-	plr.Chatted:Connect(function(Message)
+	connect(plr.Chatted, function(Message)
 		if logsEnabled == true then
 			CreateLabel(plr.Name,Message)
 		end
@@ -3800,7 +3846,7 @@ local CleanFileName = function(str)
 	return gsub(str, "[*\\?:<>|]+", "")
 end
 
-SaveChatlogs.MouseButton1Down:Connect(function()
+connect(SaveChatlogs.MouseButton1Down, function()
 	if writefileExploit() then
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
@@ -3835,7 +3881,7 @@ for _, plr in pairs(Players:GetChildren()) do
 	end
 end
 
-Players.PlayerRemoving:Connect(function(player)
+connect(Players.PlayerRemoving, function(player)
 	if ESPenabled or CHMSenabled or COREGUI:FindFirstChild(player.Name..'_LC') then
 		for i,v in pairs(COREGUI:GetChildren()) do
 			if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
@@ -3854,11 +3900,11 @@ Players.PlayerRemoving:Connect(function(player)
 	end
 end)
 
-Exit.MouseButton1Down:Connect(function()
+connect(Exit.MouseButton1Down, function()
 	logs:TweenPosition(UDim2.new(0, 0, 1, 10), "InOut", "Quart", 0.3, true, nil)
 end)
 
-Hide.MouseButton1Down:Connect(function()
+connect(Hide.MouseButton1Down, function()
 	if logs.Position ~= UDim2.new(0, 0, 1, -20) then
 		logs:TweenPosition(UDim2.new(0, 0, 1, -20), "InOut", "Quart", 0.3, true, nil)
 	else
@@ -3866,55 +3912,55 @@ Hide.MouseButton1Down:Connect(function()
 	end
 end)
 
-EventBind.MouseButton1Click:Connect(function()
+connect(EventBind.MouseButton1Click, function()
 	eventEditor.Frame:TweenPosition(UDim2.new(0.5,-175,0.5,-101), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Keybinds.MouseButton1Click:Connect(function()
+connect(Keybinds.MouseButton1Click, function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Close.MouseButton1Click:Connect(function()
+connect(Close.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Keybinds.MouseButton1Click:Connect(function()
+connect(Keybinds.MouseButton1Click, function()
 	KeybindsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Add.MouseButton1Click:Connect(function()
+connect(Add.MouseButton1Click, function()
 	KeybindEditor:TweenPosition(UDim2.new(0.5, -180, 0, 260), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Delete.MouseButton1Click:Connect(function()
+connect(Delete.MouseButton1Click, function()
 	binds = {}
 	refreshbinds()
 	updatesaves()
 	notify('Keybinds Updated','Removed all keybinds')
 end)
 
-Close_2.MouseButton1Click:Connect(function()
+connect(Close_2.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Aliases.MouseButton1Click:Connect(function()
+connect(Aliases.MouseButton1Click, function()
 	AliasesFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
 end)
 
-Close_3.MouseButton1Click:Connect(function()
+connect(Close_3.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Positions.MouseButton1Click:Connect(function()
+connect(Positions.MouseButton1Click, function()
 	PositionsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 	wait(0.5)
 	SettingsHolder.Visible = false
@@ -3953,11 +3999,11 @@ function selectPart()
 	ClickSelect = IYMouse.Button1Down:Connect(SelectPart)
 end
 
-Part.MouseButton1Click:Connect(function()
+connect(Part.MouseButton1Click, function()
 	selectPart()
 end)
 
-Exit_4.MouseButton1Click:Connect(function()
+connect(Exit_4.MouseButton1Click, function()
 	ToPartFrame:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	if ActivateHighlight then
 		ActivateHighlight:Disconnect()
@@ -3970,7 +4016,7 @@ Exit_4.MouseButton1Click:Connect(function()
 	Path.Text = ""
 end)
 
-CopyPath.MouseButton1Click:Connect(function()
+connect(CopyPath.MouseButton1Click, function()
 	if Path.Text ~= "" then
 		toClipboard(Path.Text)
 	else
@@ -3978,7 +4024,7 @@ CopyPath.MouseButton1Click:Connect(function()
 	end
 end)
 
-ChoosePart.MouseButton1Click:Connect(function()
+connect(ChoosePart.MouseButton1Click, function()
 	if Path.Text ~= "" then
 		local tpNameExt = ''
 		local function handleWpNames()
@@ -4009,7 +4055,7 @@ end)
 
 cmds={}
 customAlias = {}
-Delete_3.MouseButton1Click:Connect(function()
+connect(Delete_3.MouseButton1Click, function()
 	customAlias = {}
 	aliases = {}
 	notify('Aliases Modified','Removed all aliases')
@@ -4082,25 +4128,25 @@ function dragMain(dragpoint,gui)
 				TweenService:Create(Notification, TweenInfo.new(.20), {Position = Position2}):Play()
 			end
 		end
-		dragpoint.InputBegan:Connect(function(input)
+		connect(dragpoint.InputBegan, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = gui.Position
 
-				input.Changed:Connect(function()
+				connect(input.Changed, function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
 					end
 				end)
 			end
 		end)
-		dragpoint.InputChanged:Connect(function(input)
+		connect(dragpoint.InputChanged, function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-		UserInputService.InputChanged:Connect(function(input)
+		connect(UserInputService.InputChanged, function(input)
 			if input == dragInput and dragging then
 				update(input)
 			end
@@ -4203,8 +4249,7 @@ task.spawn(function()
 			minimizeHolder()
 		end
 		local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-
-		PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
+		connect(PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded, function(newbar)
 			wait()
 			if newbar:FindFirstChild('BoxFrame') then
 				chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
@@ -4650,7 +4695,7 @@ for i = 1, #CMDs do
 	if CMDs[i].DESC ~= '' then
 		newcmd:SetAttribute("Title", CMDs[i].NAME)
 		newcmd:SetAttribute("Desc", CMDs[i].DESC)
-		newcmd.MouseButton1Down:Connect(function()
+		connect(newcmd.MouseButton1Down, function()
 			if newcmd.Visible and newcmd.TextTransparency == 0 then
 				local currentText = Cmdbar.Text
 				Cmdbar:CaptureFocus()
@@ -4763,25 +4808,28 @@ end
 
 Clip = true
 spDelay = 0.1
-Players.LocalPlayer.CharacterAdded:Connect(function()
+
+function IY.loadchar(skipspawn)
 	NOFLY()
 	Floating = false
-
 	if not Clip then
 		execCmd('clip')
 	end
-
-	repeat wait() until getRoot(Players.LocalPlayer.Character)
-
-	pcall(function()
-		if spawnpoint and not refreshCmd and spawnpos ~= nil then
-			wait(spDelay)
-			getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
-		end
-	end)
-
+	if not skipspawn then
+		repeat
+			wait()
+		until getRoot(Players.LocalPlayer.Character)
+		pcall(function()
+			if spawnpoint and not refreshCmd and spawnpos ~= nil then
+				wait(spDelay)
+				getRoot(Players.LocalPlayer.Character).CFrame = spawnpos
+			end
+		end)
+	end
 	onDied()
-end)
+end
+
+connect(Players.LocalPlayer.CharacterAdded, loadcharacter)
 
 onDied()
 
@@ -4905,14 +4953,18 @@ function execCmd(cmdStr,speaker,store)
 	end)
 end	
 
-function addcmd(name,alias,func,plgn)
-	cmds[#cmds+1]=
-		{
-			NAME=name;
-			ALIAS=alias or {};
-			FUNC=func;
-			PLUGIN=plgn;
-		}
+--- Add a new command to the internal command list.
+--- @param name string The name of the command.
+--- @param alias string[] The alias of the command.
+--- @param func function The function to be called when the command is executed.
+--- @param plgn any The plugin that the command belongs to.
+function addcmd(name, alias, func, plgn)
+	table.insert(cmds, {
+		NAME = name,
+		ALIAS = type(alias) == 'table' and alias or {},
+		FUNC = func,
+		PLUGIN = plgn
+	})
 end
 
 function removecmd(cmd)
@@ -4923,7 +4975,7 @@ function removecmd(cmd)
 				for a,c in pairs(CMDsF:GetChildren()) do
 					if string.find(c.Text, "^"..cmd.."$") or string.find(c.Text, "^"..cmd.." ") or string.find(c.Text, " "..cmd.."$") or string.find(c.Text, " "..cmd.." ") then
 						c.TextTransparency = 0.7
-						c.MouseButton1Click:Connect(function()
+						connect(c.MouseButton1Click, function()
 							notify(c.Text, "Command has been disabled by you or a plugin")
 						end)
 					end
@@ -4964,7 +5016,7 @@ function addcmdtext(text,name,desc)
 	if desc and desc ~= '' then
 		newcmd:SetAttribute("Title", tooltipText)
 		newcmd:SetAttribute("Desc", tooltipDesc)
-		newcmd.MouseButton1Down:Connect(function()
+		connect(newcmd.MouseButton1Down, function()
 			if newcmd.Visible and newcmd.TextTransparency == 0 then
 				Cmdbar:CaptureFocus()
 				autoComplete(newcmd.Text)
@@ -5331,7 +5383,7 @@ end
 
 lastTextBoxString,lastTextBoxCon,lastEnteredString = nil,nil,nil
 
-UserInputService.TextBoxFocused:Connect(function(obj)
+connect(UserInputService.TextBoxFocused, function(obj)
 	if lastTextBoxCon then lastTextBoxCon:Disconnect() end
 	if obj == Cmdbar then lastTextBoxString = nil return end
 	lastTextBoxString = obj.Text
@@ -5342,7 +5394,7 @@ UserInputService.TextBoxFocused:Connect(function(obj)
 	end)
 end)
 
-UserInputService.InputBegan:Connect(function(input,gameProcessed)
+connect(UserInputService.InputBegan, function(input,gameProcessed)
 	if gameProcessed then
 		if Cmdbar and Cmdbar:IsFocused() then
 			if input.KeyCode == Enum.KeyCode.Up then
@@ -5362,7 +5414,7 @@ UserInputService.InputBegan:Connect(function(input,gameProcessed)
 	end
 end)
 
-Players.LocalPlayer.Chatted:Connect(function()
+connect(Players.LocalPlayer.Chatted, function()
 	wait()
 	if lastEnteredString then
 		local message = lastEnteredString
@@ -5380,7 +5432,7 @@ end)
 
 local tabComplete = nil
 tabAllowed = true
-Cmdbar.FocusLost:Connect(function(enterpressed)
+connect(Cmdbar.FocusLost, function(enterpressed)
 	if enterpressed then
 		local cmdbarText = Cmdbar.Text:gsub("^"..'%'..prefix,"")
 		execCmd(cmdbarText,Players.LocalPlayer,true)
@@ -5399,7 +5451,7 @@ Cmdbar.FocusLost:Connect(function(enterpressed)
 	CMDsF.CanvasPosition = canvasPos
 end)
 
-Cmdbar.Focused:Connect(function()
+connect(Cmdbar.Focused, function()
 	historyCount = 0
 	canvasPos = CMDsF.CanvasPosition
 	if SettingsOpen == true then
@@ -5407,7 +5459,7 @@ Cmdbar.Focused:Connect(function()
 		CMDsF.Visible = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
 	end
-	tabComplete = UserInputService.InputBegan:Connect(function(input,gameProcessed)
+	tabComplete = connect(UserInputService.InputBegan, function(input,gameProcessed)
 		if Cmdbar:IsFocused() then
 			if tabAllowed == true and input.KeyCode == Enum.KeyCode.Tab and topCommand ~= nil then
 				autoComplete(topCommand)
@@ -5475,7 +5527,7 @@ function ESP(plr)
 				local espLoopFunc
 				local teamChange
 				local addedFunc
-				addedFunc = plr.CharacterAdded:Connect(function()
+				addedFunc = connect(plr.CharacterAdded, function()
 					if ESPenabled then
 						espLoopFunc:Disconnect()
 						teamChange:Disconnect()
@@ -5547,7 +5599,7 @@ function CHMS(plr)
 			local addedFunc
 			local teamChange
 			local CHMSremoved
-			addedFunc = plr.CharacterAdded:Connect(function()
+			addedFunc = connect(plr.CharacterAdded, function()
 				if CHMSenabled then
 					ESPholder:Destroy()
 					teamChange:Disconnect()
@@ -5570,7 +5622,7 @@ function CHMS(plr)
 					teamChange:Disconnect()
 				end
 			end)
-			CHMSremoved = ESPholder.AncestryChanged:Connect(function()
+			CHMSremoved = connect(ESPholder.AncestryChanged, function()
 				teamChange:Disconnect()
 				addedFunc:Disconnect()
 				CHMSremoved:Disconnect()
@@ -5628,7 +5680,7 @@ function Locate(plr)
 				local lcLoopFunc
 				local addedFunc
 				local teamChange
-				addedFunc = plr.CharacterAdded:Connect(function()
+				addedFunc = connect(plr.CharacterAdded, function()
 					if ESPholder ~= nil and ESPholder.Parent ~= nil then
 						lcLoopFunc:Disconnect()
 						teamChange:Disconnect()
@@ -5704,7 +5756,7 @@ function refreshbinds()
 				newbind.Text.Text = key.." > "..binds[i].COMMAND.."  "..(binds[i].ISKEYUP and "(keyup)" or "(keydown)")
 			end
 			Holder_2.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newbind.Text.Delete.MouseButton1Click:Connect(function()
+			connect(newbind.Text.Delete.MouseButton1Click, function()
 				unkeybind(binds[i].COMMAND,binds[i].KEY)
 			end)
 		end
@@ -5731,7 +5783,7 @@ function unkeybind(cmd,key)
 	end
 end
 
-PositionsFrame.Delete.MouseButton1Click:Connect(function()
+connect(PositionsFrame.Delete.MouseButton1Click, function()
 	execCmd('cpos')
 end)
 
@@ -5759,10 +5811,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.Delete.MouseButton1Click:Connect(function()
+			connect(newpoint.Text.Delete.MouseButton1Click, function()
 				execCmd('dpos '..WayPoints[i].NAME)
 			end)
-			newpoint.Text.TP.MouseButton1Click:Connect(function()
+			connect(newpoint.Text.TP.MouseButton1Click, function()
 				execCmd("loadpos "..WayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5782,10 +5834,10 @@ function refreshwaypoints()
 			table.insert(shade3,newpoint.Text.TP)
 			table.insert(text2,newpoint.Text.TP)
 			Holder_4.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newpoint.Text.Delete.MouseButton1Click:Connect(function()
+			connect(newpoint.Text.Delete.MouseButton1Click, function()
 				execCmd('dpos '..pWayPoints[i].NAME)
 			end)
-			newpoint.Text.TP.MouseButton1Click:Connect(function()
+			connect(newpoint.Text.TP.MouseButton1Click, function()
 				execCmd("loadpos "..pWayPoints[i].NAME)
 			end)
 			num = num+1
@@ -5816,7 +5868,7 @@ function refreshaliases()
 			table.insert(shade3,newalias.Text.Delete)
 			table.insert(text2,newalias.Text.Delete)
 			Holder_3.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newalias.Text.Delete.MouseButton1Click:Connect(function()
+			connect(newalias.Text.Delete.MouseButton1Click, function()
 				execCmd('removealias '..aliases[i].ALIAS)
 			end)
 		end
@@ -5825,19 +5877,19 @@ end
 
 local bindChosenKeyUp = false
 
-BindTo.MouseButton1Click:Connect(function()
+connect(BindTo.MouseButton1Click, function()
 	awaitingInput = true
 	BindTo.Text = 'Press something'
 end)
 
-BindTriggerSelect.MouseButton1Click:Connect(function()
+connect(BindTriggerSelect.MouseButton1Click, function()
 	bindChosenKeyUp = not bindChosenKeyUp
 	BindTriggerSelect.Text = bindChosenKeyUp and "KeyUp" or "KeyDown"
 end)
 
 newToggle = false
 Cmdbar_3.Parent.Visible = false
-On_2.MouseButton1Click:Connect(function()
+connect(On_2.MouseButton1Click, function()
 	if newToggle == false then newToggle = true
 		On_2.BackgroundTransparency = 0
 		Cmdbar_3.Parent.Visible = true
@@ -5849,7 +5901,7 @@ On_2.MouseButton1Click:Connect(function()
 	end
 end)
 
-Add_2.MouseButton1Click:Connect(function()
+connect(Add_2.MouseButton1Click, function()
 	if keySelected then
 		if string.find(Cmdbar_2.Text, "\\\\") or string.find(Cmdbar_3.Text, "\\\\") then
 			notify('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
@@ -5872,7 +5924,7 @@ Add_2.MouseButton1Click:Connect(function()
 	end
 end)
 
-Exit_2.MouseButton1Click:Connect(function()
+connect(Exit_2.MouseButton1Click, function()
 	Cmdbar_2.Text = 'Command'
 	Cmdbar_3.Text = 'Command 2'
 	BindTo.Text = 'Click to bind'
@@ -5933,7 +5985,7 @@ end
 UserInputService.InputBegan:Connect(onInputBegan)
 UserInputService.InputEnded:Connect(onInputEnded)
 
-ClickTP.Select.MouseButton1Click:Connect(function()
+connect(ClickTP.Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clicktp',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -5946,7 +5998,7 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 	end
 end)
 
-ClickDelete.Select.MouseButton1Click:Connect(function()
+connect(ClickDelete.Select.MouseButton1Click, function()
 	if keySelected then
 		addbind('clickdel',keyPressed,bindChosenKeyUp)
 		refreshbinds()
@@ -5981,7 +6033,7 @@ local function clicktpFunc()
 	end)
 end
 
-IYMouse.Button1Down:Connect(function()
+connect(IYMouse.Button1Down, function()
 	for i,v in pairs(binds) do
 		if v.COMMAND == 'clicktp' then
 			local input = v.KEY
@@ -6082,7 +6134,7 @@ function refreshplugins(dontSave)
 			table.insert(shade3,newplugin.Text.Delete)
 			table.insert(text2,newplugin.Text.Delete)
 			Holder_5.CanvasSize = UDim2.new(0,0,0, Position + 30)
-			newplugin.Text.Delete.MouseButton1Click:Connect(function()
+			connect(newplugin.Text.Delete.MouseButton1Click, function()
 				deletePlugin(pName)
 			end)
 		end
@@ -6173,20 +6225,20 @@ function FindPlugins()
 	end
 end
 
-AddPlugin.MouseButton1Click:Connect(function()
+connect(AddPlugin.MouseButton1Click, function()
 	addPlugin(PluginsGUI.FileName.Text)
 end)
 
-Exit_3.MouseButton1Click:Connect(function()
+connect(Exit_3.MouseButton1Click, function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 	FileName.Text = 'Plugin File Name'
 end)
 
-Add_3.MouseButton1Click:Connect(function()
+connect(Add_3.MouseButton1Click, function()
 	PluginEditor:TweenPosition(UDim2.new(0.5, -180, 0, 310), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Plugins.MouseButton1Click:Connect(function()
+connect(Plugins.MouseButton1Click, function()
 	if writefileExploit() then
 		PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 0), "InOut", "Quart", 0.5, true, nil)
 		wait(0.5)
@@ -6196,12 +6248,12 @@ Plugins.MouseButton1Click:Connect(function()
 	end
 end)
 
-Close_4.MouseButton1Click:Connect(function()
+connect(Close_4.MouseButton1Click, function()
 	SettingsHolder.Visible = true
 	PluginsFrame:TweenPosition(UDim2.new(0, 0, 0, 175), "InOut", "Quart", 0.5, true, nil)
 end)
 
-Players.LocalPlayer.OnTeleport:Connect(function(State)
+connect(Players.LocalPlayer.OnTeleport, function(State)
 	if State == Enum.TeleportState.Started then
 		if KeepInfYield and queueteleport then
 			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
@@ -6568,7 +6620,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		local SINFOGUI = background
 		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
 		wait(0.5)
-		Exit.MouseButton1Click:Connect(function()
+		connect(Exit.MouseButton1Click, function()
 			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil) 
 			wait(0.6)
 			FRAME:Destroy()
@@ -6580,13 +6632,13 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		SINFOGUI.maxplayers.Text = Players.MaxPlayers.. " Players Max"
 		SINFOGUI.placeid.Text = "Place ID: " ..PlaceId
 
-		CopyApp.MouseButton1Click:Connect(function()
+		connect(CopyApp.MouseButton1Click, function()
 			toClipboard(speaker.CharacterAppearanceId)
 		end)
-		CopyPlrID.MouseButton1Click:Connect(function()
+		connect(CopyPlrID.MouseButton1Click, function()
 			toClipboard(speaker.UserId)
 		end)
-		CopyPlcID.MouseButton1Click:Connect(function()
+		connect(CopyPlcID.MouseButton1Click, function()
 			toClipboard(PlaceId)
 		end)
 
@@ -6640,7 +6692,7 @@ end)
 
 addcmd('autorejoin',{'autorj'},function(args, speaker)
 	local Dir = COREGUI:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
-	Dir.DescendantAdded:Connect(function(Err)
+	connect(Dir.DescendantAdded, function(Err)
 		if Err.Name == "ErrorTitle" then
 			Err:GetPropertyChangedSignal("Text"):Connect(function()
 				if Err.Text:sub(0, 12) == "Disconnected" then
@@ -6825,7 +6877,7 @@ function sFLY(vfly)
 			end
 		end)
 	end
-	flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
+	flyKeyDown = connect(IYMouse.KeyDown, function(KEY)
 		if KEY:lower() == 'w' then
 			CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 's' then
@@ -6841,7 +6893,7 @@ function sFLY(vfly)
 		end
 		pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
 	end)
-	flyKeyUp = IYMouse.KeyUp:Connect(function(KEY)
+	flyKeyUp = connect(IYMouse.KeyUp, function(KEY)
 		if KEY:lower() == 'w' then
 			CONTROL.F = 0
 		elseif KEY:lower() == 's' then
@@ -6935,7 +6987,7 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 	local Head = speaker.Character:WaitForChild("Head")
 	Head.Anchored = true
 	if CFloop then CFloop:Disconnect() end
-	CFloop = RunService.Heartbeat:Connect(function(deltaTime)
+	CFloop = connect(RunService.Heartbeat, function(deltaTime)
 		local moveDirection = speaker.Character:FindFirstChildOfClass('Humanoid').MoveDirection * (CFspeed * deltaTime)
 		local headCFrame = Head.CFrame
 		local cameraCFrame = workspace.CurrentCamera.CFrame
@@ -6980,22 +7032,22 @@ addcmd('float', {'platform'},function(args, speaker)
 			local FloatValue = -3.1
 			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
 			notify('Float','Float Enabled (Q = down & E = up)')
-			qUp = IYMouse.KeyUp:Connect(function(KEY)
+			qUp = connect(IYMouse.KeyUp, function(KEY)
 				if KEY == 'q' then
 					FloatValue = FloatValue + 0.5
 				end
 			end)
-			eUp = IYMouse.KeyUp:Connect(function(KEY)
+			eUp = connect(IYMouse.KeyUp, function(KEY)
 				if KEY == 'e' then
 					FloatValue = FloatValue - 0.5
 				end
 			end)
-			qDown = IYMouse.KeyDown:Connect(function(KEY)
+			qDown = connect(IYMouse.KeyDown, function(KEY)
 				if KEY == 'q' then
 					FloatValue = FloatValue - 0.5
 				end
 			end)
-			eDown = IYMouse.KeyDown:Connect(function(KEY)
+			eDown = connect(IYMouse.KeyDown, function(KEY)
 				if KEY == 'e' then
 					FloatValue = FloatValue + 0.5
 				end
@@ -7071,7 +7123,7 @@ addcmd('swim',{},function(args, speaker)
 			Humanoid:SetStateEnabled(v, false)
 		end
 		Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-		swimbeat = RunService.Heartbeat:Connect(function()
+		swimbeat = connect(RunService.Heartbeat, function()
 			pcall(function()
 				speaker.Character.HumanoidRootPart.Velocity = ((Humanoid.MoveDirection ~= Vector3.new() or UserInputService:IsKeyDown(Enum.KeyCode.Space)) and speaker.Character.HumanoidRootPart.Velocity or Vector3.new())
 			end)
@@ -7413,7 +7465,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
-	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	deleteGuiInput = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
 				deleteGuisAtPos()
@@ -7588,7 +7640,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.Enabled = false
 		end
 	end
-	workspace.DescendantAdded:Connect(function(child)
+	connect(workspace.DescendantAdded, function(child)
 		task.spawn(function()
 			if child:IsA('ForceField') then
 				RunService.Heartbeat:Wait()
@@ -8367,7 +8419,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
-		Players.LocalPlayer.Idled:Connect(function()
+		connect(Players.LocalPlayer.Idled, function()
 			local VirtualUser = game:GetService("VirtualUser")
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
@@ -8975,7 +9027,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	InvisibleCharacter.Name = ""
 	local CF
 
-	local invisFix = RunService.Stepped:Connect(function()
+	local invisFix = connect(RunService.Stepped, function()
 		pcall(function()
 			local IsInteger
 			if tostring(Void):find'-' then
@@ -9403,7 +9455,7 @@ local infJumpDebounce = false
 addcmd('infjump',{'infinitejump'},function(args, speaker)
     if infJump then infJump:Disconnect() end
     infJumpDebounce = false
-    infJump = UserInputService.JumpRequest:Connect(function()
+    infJump = connect(UserInputService.JumpRequest, function()
         if not infJumpDebounce then
             infJumpDebounce = true
             speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
@@ -9421,7 +9473,7 @@ end)
 local flyjump
 addcmd('flyjump',{},function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
-	flyjump = UserInputService.JumpRequest:Connect(function(Jump)
+	flyjump = connect(UserInputService.JumpRequest, function(Jump)
 		Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
@@ -9445,7 +9497,7 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	end
 	autoJump()
 	HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
-	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 		Char, Human = nChar, nChar:WaitForChild("Humanoid")
 		autoJump()
 		HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
@@ -9477,7 +9529,7 @@ addcmd('edgejump',{'ejump'},function(args, speaker)
 	end
 	edgejump()
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
-	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 		Char, Human = nChar, nChar:WaitForChild("Humanoid")
 		edgejump()
 		HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
@@ -9705,7 +9757,7 @@ addcmd('tptool', {'teleporttool'}, function(args, speaker)
 	TpTool.Name = "Teleport Tool"
 	TpTool.RequiresHandle = false
 	TpTool.Parent = speaker.Backpack
-	TpTool.Activated:Connect(function()
+	connect(TpTool.Activated, function()
 		local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
 		local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
 		if not Char or not HRP then
@@ -9812,7 +9864,7 @@ addcmd('loopspeed',{'loopws'},function(args, speaker)
 		end
 		WalkSpeedChange()
 		HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
-		HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+		HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 			Char, Human = nChar, nChar:WaitForChild("Humanoid")
 			WalkSpeedChange()
 			HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
@@ -9867,7 +9919,7 @@ addcmd('loopjumppower',{'loopjp','loopjpower'},function(args, speaker)
 		end
 		JumpPowerChange()
 		HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
-		HumanModCons.jpCA = (HumanModCons.jpCA and HumanModCons.jpCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
+		HumanModCons.jpCA = (HumanModCons.jpCA and HumanModCons.jpCA:Disconnect() and false) or connect(speaker.CharacterAdded, function(nChar)
 			Char, Human = nChar, nChar:WaitForChild("Humanoid")
 			JumpPowerChange()
 			HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
@@ -10093,7 +10145,7 @@ addcmd('headsit',{},function(args, speaker)
 	if headSit then headSit:Disconnect() end
 	for i,v in pairs(players)do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		headSit = RunService.Heartbeat:Connect(function()
+		headSit = connect(RunService.Heartbeat, function()
 			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
 				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
 			else
@@ -10262,7 +10314,7 @@ addcmd('bang',{'rape'},function(args, speaker)
 			bangDied:Disconnect()
 		end)
 		local bangOffet = CFrame.new(0, 0, 1.1)
-		bangLoop = RunService.Stepped:Connect(function()
+		bangLoop = connect(RunService.Stepped, function()
 			pcall(function()
 				local otherRoot = getTorso(Players[bangplr].Character)
 				getRoot(Players.LocalPlayer.Character).CFrame = otherRoot.CFrame * bangOffet
@@ -10297,7 +10349,7 @@ addcmd('carpet',{},function(args, speaker)
 				carpetAnim:Destroy()
 				carpetDied:Disconnect()
 			end)
-			carpetLoop = RunService.Heartbeat:Connect(function()
+			carpetLoop = connect(RunService.Heartbeat, function()
 				pcall(function()
 					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
 				end)
@@ -10496,7 +10548,7 @@ addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
 	if fireproximityprompt then
 		execCmd("uninstantproximityprompts")
 		wait(0.1)
-		PromptButtonHoldBegan = ProximityPromptService.PromptButtonHoldBegan:Connect(function(prompt)
+		PromptButtonHoldBegan = connect(ProximityPromptService.PromptButtonHoldBegan, function(prompt)
 			fireproximityprompt(prompt)
 		end)
 	else
@@ -10527,7 +10579,7 @@ addcmd('grabtools', {}, function(args, speaker)
 		grabtoolsFunc:Disconnect() 
 	end
 
-	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
+	grabtoolsFunc = connect(workspace.ChildAdded, function(child)
 		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
 			humanoid:EquipTool(child)
 		end
@@ -10548,7 +10600,7 @@ local specifictoolremoval = {}
 addcmd('removespecifictool',{},function(args, speaker)
 	if args[1] and speaker:FindFirstChildOfClass("Backpack") then
 		local tool = string.lower(getstring(1))
-		local RST = RunService.RenderStepped:Connect(function()
+		local RST = connect(RunService.RenderStepped, function()
 			if speaker:FindFirstChildOfClass("Backpack") then
 				for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 					if v.Name:lower() == tool then
@@ -10665,7 +10717,7 @@ addcmd('hatspin',{'spinhats'},function(args, speaker)
 		end
 		keep.P = 30000
 		keep.D = 50
-		spinhats = RunService.Stepped:Connect(function()
+		spinhats = connect(RunService.Stepped, function()
 			pcall(function()
 				keep.Position = Players.LocalPlayer.Character.Head.Position
 			end)
@@ -11293,7 +11345,7 @@ addcmd('invisfling',{},function(args, speaker)
 	root.Transparency = 0
 	root.Color = Color3.new(1, 1, 1)
 	local invisflingStepped
-	invisflingStepped = RunService.Stepped:Connect(function()
+	invisflingStepped = connect(RunService.Stepped, function()
 		if speaker.Character and getRoot(speaker.Character) then
 			getRoot(speaker.Character).CanCollide = false
 		else
@@ -11613,7 +11665,7 @@ addcmd('autoclick',{},function(args, speaker)
 		if args[1] and isNumber(args[1]) then clickDelay = args[1] end
 		if args[2] and isNumber(args[2]) then releaseDelay = args[2] end
 		autoclicking = true
-		cancelAutoClick = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		cancelAutoClick = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
 					autoclicking = false
@@ -11775,7 +11827,7 @@ addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
 end)
 
 local RolewatchData = {["Group"]=0,["Role"]="",["Leave"]=false}
-local RolewatchConnection = Players.PlayerAdded:Connect(function(player)
+local RolewatchConnection = connect(Players.PlayerAdded, function(player)
 	if RolewatchData.Group == 0 then return end
 	if player:IsInGroup(RolewatchData.Group) then
 		if tostring(player:GetRoleInGroup(RolewatchData.Group)):lower() == RolewatchData.Role:lower() then
@@ -12036,7 +12088,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		if args[2] and isNumber(args[2]) then clickDelay = args[2] end
 		if args[3] and isNumber(args[3]) then releaseDelay = args[3] end
 		autoKeyPressing = true
-		cancelAutoKeyPress = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		cancelAutoKeyPress = connect(UserInputService.InputBegan, function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
 					autoKeyPressing = false
@@ -12124,7 +12176,7 @@ function hookCharEvents(plr,instant)
 		if not humanoid then return end
 
 		local oldHealth = humanoid.Health
-		humanoid.HealthChanged:Connect(function(health)
+		connect(humanoid.HealthChanged, function(health)
 			local change = math.abs(oldHealth - health)
 			if oldHealth > health then
 				eventEditor.FireEvent("OnDamage",plr.Name,tonumber(health))
@@ -12132,7 +12184,7 @@ function hookCharEvents(plr,instant)
 			oldHealth = health
 		end)
 
-		humanoid.Died:Connect(function()
+		connect(humanoid.Died, function()
 			eventEditor.FireEvent("OnDied",plr.Name)
 
 			local killedBy = humanoid:FindFirstChild("creator")
@@ -12143,10 +12195,10 @@ function hookCharEvents(plr,instant)
 	end)
 end
 
-Players.PlayerAdded:Connect(function(plr)
+connect(Players.PlayerAdded, function(plr)
 	eventEditor.FireEvent("OnJoin",plr.Name)
-	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
-	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+	connect(plr.Chatted, function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
+	connect(plr.CharacterAdded, function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 	JoinLog(plr)
 	ChatLog(plr)
 	if ESPenabled then
@@ -12161,7 +12213,7 @@ end)
 
 for _,plr in pairs(Players:GetPlayers()) do
 	pcall(function()
-		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+		connect(plr.CharacterAdded, function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 		hookCharEvents(plr)
 	end)
 end
@@ -12285,7 +12337,7 @@ task.spawn(function()
 			wait(1)
 			AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, 150), "InOut", "Quart", 0.5, true, nil)
 
-			Exit.MouseButton1Click:Connect(function()
+			connect(Exit.MouseButton1Click, function()
 				AnnGUI:TweenPosition(UDim2.new(0.5, -180, 0, -500), "InOut", "Quart", 0.5, true, nil)
 				wait(0.6)
 				AnnGUI:Destroy()
