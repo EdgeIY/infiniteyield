@@ -7525,7 +7525,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	oldhmmi = hookmetamethod(game, "__index", function(self, method)
 		if self == TeleportService then
 			if method:lower() == "teleport" then
-				return error("Expected ':' not '.' calling member function Kick", 2)
+				return error("Expected ':' not '.' calling member function Teleport", 2)
 			elseif method == "TeleportToPlaceInstance" then
 				return error("Expected ':' not '.' calling member function TeleportToPlaceInstance", 2)
 			end
