@@ -9761,12 +9761,28 @@ addcmd('speed',{'ws','walkspeed'},function(args, speaker)
 	if args[2] then
 		local speed = args[2] or 16
 		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
+			local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local old = mt.__newindex
+mt.__newindex = newcclosure(function(o, k, v)
+  if tostring(o) == "Humanoid" and tostring(k) == "WalkSpeed" then
+    return old(o, k, speed)
+  end
+  return old(o, k, v)
+end)
 		end
 	else
 		local speed = args[1] or 16
 		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
+			local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local old = mt.__newindex
+mt.__newindex = newcclosure(function(o, k, v)
+  if tostring(o) == "Humanoid" and tostring(k) == "WalkSpeed" then
+    return old(o, k, speed)
+  end
+  return old(o, k, v)
+end)
 		end
 	end
 end)
