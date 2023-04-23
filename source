@@ -9959,6 +9959,8 @@ end)
 addcmd('explorer', {'dex'}, function(args, speaker)
     notify('Loading', 'Hold on a sec')
     loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    maximizeHolder()
+    On.BackgroundTransparency = 0
 end)
 
 addcmd('olddex', {'odex'}, function(args, speaker)
