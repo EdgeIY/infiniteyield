@@ -5382,7 +5382,7 @@ local tabComplete = nil
 tabAllowed = true
 Cmdbar.FocusLost:Connect(function(enterpressed)
 	if enterpressed then
-		local cmdbarText = Cmdbar.Text:gsub("^"..'%'..prefix,"")
+		local cmdbarText = Cmdbar.Text:gsub("^"..prefix,"")
 		execCmd(cmdbarText,Players.LocalPlayer,true)
 	end
 	if tabComplete then tabComplete:Disconnect() end
