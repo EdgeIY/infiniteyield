@@ -9960,6 +9960,11 @@ addcmd('explorer', {'dex'}, function(args, speaker)
     loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 
+addcmd('secureexplorer', {'securedex'}, function(args, speaker)
+    notify('Loading', 'Hold on a sec')
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+end)
+
 addcmd('olddex', {'odex'}, function(args, speaker)
     notify('Loading old explorer', 'Hold on a sec')
     
