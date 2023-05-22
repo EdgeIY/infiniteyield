@@ -4250,6 +4250,8 @@ CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'dab / fedab', DESC = 'Starts a dab animation'}
+CMDs[#CMDs + 1] = {NAME = 'undab / unfedab', DESC = 'Stops a dab animation'}
 CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
@@ -9929,6 +9931,28 @@ addcmd('deleteselectedtool',{'dst'},function(args, speaker)
 			v:Destroy()
 		end
 	end
+end)
+
+local isdab = false
+local animationInstance = nil
+addcmd('dab', {'fedab'}, function(args, speaker)
+if isdab then
+return
+else
+local animationId = "248263260"
+local anim = Instance.new("Animation")
+anim.AnimationId = "rbxassetid://" .. animationId
+animationInstance = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(anim)
+animationInstance:Play()
+animationInstance:AdjustSpeed(1)
+end
+end)
+
+addcmd('undab', {'unfedab'}, function(args, speaker)
+if animationInstance then
+animationInstance:Stop()
+animationInstance = nil
+end
 end)
 
 addcmd('console',{},function(args, speaker)
