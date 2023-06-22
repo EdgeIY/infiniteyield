@@ -6,6 +6,10 @@ end
 pcall(function() getgenv().IY_LOADED = true end)
 
 COREGUI = game:GetService("CoreGui")
+local success, responce = pcall(gethui)
+if success then
+	COREGUI = gethui()
+end
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message")
 	notLoaded.Parent = COREGUI
