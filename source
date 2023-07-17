@@ -356,6 +356,17 @@ PrefixBox.ZIndex = 10
 table.insert(shade3,PrefixBox)
 table.insert(text2,PrefixBox)
 
+local function WaitForChildT(parent, childName, timeout)
+    local ST = tick()
+    repeat
+    	local child = parent:FindFirstChild(childName)
+        if child then return child end
+        wait(0.1)
+        local elapsed = tick() - ST
+    until elapsed >= timeout
+    return nil
+end
+
 function makeSettingsButton(name,iconID,off)
 	local button = Instance.new("TextButton")
 	button.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
@@ -4167,56 +4178,99 @@ end
 
 PlayerGui = Players.LocalPlayer:FindFirstChildOfClass("PlayerGui")
 local chatbox
+local meth = ""
 task.spawn(function()
-	local success, result = pcall(function() chatbox = game.WaitForChild(PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end)
+	local success, result = pcall(function() 
+		chatbox = WaitForChildT(PlayerGui, "Chat", 1)
+		if chatbox then
+			chatbox = chatbox:WaitForChild("Frame"):FindFirstChild("ChatBarParentFrame"):FindFirstChild("Frame"):FindFirstChild("BoxFrame"):FindFirstChild("Frame"):FindFirstChild("ChatBar")
+		end
+		if chatbox ~= nil then
+			meth = "legacy"
+		end
+		if chatbox == nil then
+			chatbox = game:GetService("CoreGui").ExperienceChat.appLayout.chatWindow.scrollingView.bottomLockedScrollView.RCTScrollView.RCTScrollContentView
+			meth = "new"
+		end
+	end)
+	if not success then print(result) end
 	if success then
-		local function chatboxFocused()
-			canvasPos = CMDsF.CanvasPosition
-		end
-		local chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
-
-		local function Index()
-			if chatbox.Text:lower():sub(1,1) == prefix then
-				if SettingsOpen == true then
-					wait(0.2)
-					CMDsF.Visible = true
-					Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+		if meth == "legacy" then
+			local function chatboxFocused()
+				print("Focused")
+				canvasPos = CMDsF.CanvasPosition
+			end
+			local chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
+	
+			local function Index()
+				if chatbox.Text:lower():sub(1,1) == prefix then
+					if SettingsOpen == true then
+						wait(0.2)
+						CMDsF.Visible = true
+						Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+					end
+					IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
+				else
+					minimizeHolder()
+					if SettingsOpen == true then
+						wait(0.2)
+						Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
+						CMDsF.Visible = false
+					end
 				end
-				IndexContents(PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Text:lower():sub(2),true)
-			else
+			end
+			local chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+	
+			local function chatboxFocusLost(enterpressed)
+				if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
+					IndexContents('',true)
+				end
+				CMDsF.CanvasPosition = canvasPos
 				minimizeHolder()
-				if SettingsOpen == true then
-					wait(0.2)
-					Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
-					CMDsF.Visible = false
+			end
+			local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
+	
+			PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
+				wait()
+				if newbar:FindFirstChild('BoxFrame') then
+					chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+					if chatboxFocusedC then chatboxFocusedC:Disconnect() end
+					chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
+					if chatboxFunc then chatboxFunc:Disconnect() end
+					chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
+					if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
+					chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
+				end
+			end)
+		end
+		if meth == "new" then
+			local inputBox = chatbox.Parent.Parent.Parent.Parent.Parent.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox
+			chatbox.ChildAdded:Connect(function(c)
+				if c.Name:find(game.Players.LocalPlayer.UserId) then
+					execCmd(c.ContentText:sub(game.Players.LocalPlayer.Name:len()))
+				end
+			end)
+			local function Index()
+				local input = chatbox.Parent.Parent.Parent.Parent.Parent.chatInputBar.Background.Container.TextContainer.TextBoxContainer.TextBox
+				if input.Text:lower():sub(1,1) == prefix then
+					if SettingsOpen == true then
+						wait(0.2)
+						CMDsF.Visible = true
+						Settings:TweenPosition(UDim2.new(0, 0, 0, 220), "InOut", "Quart", 0.2, true, nil)
+					end
+					IndexContents(input.Text:lower():sub(2),true)
+				else
+					minimizeHolder()
+					if SettingsOpen == true then
+						wait(0.2)
+						Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
+						CMDsF.Visible = false
+					end
 				end
 			end
+			inputBox.Changed:Connect(Index)
+			game:GetService("ContextActionService"):BindAction("Chat", function() inputBox:CaptureFocus() inputBox.Changed:Wait() inputBox.Changed:Wait() inputBox.Text = "" end, false, Enum.KeyCode.Minus)
 		end
-		local chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
-
-		local function chatboxFocusLost(enterpressed)
-			if not enterpressed or chatbox.Text:lower():sub(1,1) ~= prefix then
-				IndexContents('',true)
-			end
-			CMDsF.CanvasPosition = canvasPos
-			minimizeHolder()
-		end
-		local chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-
-		PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.ChildAdded:Connect(function(newbar)
-			wait()
-			if newbar:FindFirstChild('BoxFrame') then
-				chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-				if chatboxFocusedC then chatboxFocusedC:Disconnect() end
-				chatboxFocusedC = chatbox.Focused:Connect(chatboxFocused)
-				if chatboxFunc then chatboxFunc:Disconnect() end
-				chatboxFunc = chatbox:GetPropertyChangedSignal("Text"):Connect(Index)
-				if chatboxFocusLostC then chatboxFocusLostC:Disconnect() end
-				chatboxFocusLostC = chatbox.FocusLost:Connect(chatboxFocusLost)
-			end
-		end)
-		--else
-		--print('Custom chat detected. Will not provide suggestions for commands typed in the chat.')
 	end
 end)
 
