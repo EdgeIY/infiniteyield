@@ -6874,13 +6874,15 @@ local mfly1
 local mfly2
 
 local unmobilefly = function(speaker)
-	FLYING = false
-	local root = getRoot(speaker.Character)
-	root:FindFirstChild(velocityHandlerName):Destroy()
-	root:FindFirstChild(gyroHandlerName):Destroy()
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
-	mfly1:Disconnect()
-	mfly2:Disconnect()
+	pcall(function()
+		FLYING = false
+		local root = getRoot(speaker.Character)
+		root:FindFirstChild(velocityHandlerName):Destroy()
+		root:FindFirstChild(gyroHandlerName):Destroy()
+		speaker.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
+		mfly1:Disconnect()
+		mfly2:Disconnect()
+	end)
 end
 
 local mobilefly = function(speaker)
