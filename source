@@ -4492,6 +4492,8 @@ CMDs[#CMDs + 1] = {NAME = 'teleport / tp [plr] [plr] (TOOL)', DESC = 'Teleports 
 CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [plr] [plr] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
+CMDs[#CMDs + 1] = {NAME = 'flyfling', DESC = 'Basically the invisfling command but not invisible'}
+CMDs[#CMDs + 1] = {NAME = 'unflyfling', DESC = 'Disables the flyfling command'}
 CMDs[#CMDs + 1] = {NAME = 'invisfling', DESC = 'Enables invisible fling'}
 CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
@@ -5211,16 +5213,16 @@ SpecialPlayerCases = {
 		if v ~= nil then table.insert(plrs, v) end
 		return plrs
 	end,
-    ["npcs"] = function(speaker,args)
+	["npcs"] = function(speaker,args)
 		local returns = {}
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("Model") and getRoot(v) and v:FindFirstChildWhichIsA("Humanoid") and Players:GetPlayerFromCharacter(v) == nil then
-                local clone = Instance.new("Player")
-                clone.Name = v.Name .. " - " .. v:FindFirstChildWhichIsA("Humanoid").DisplayName
-                clone.Character = v
-                table.insert(returns, clone)
-            end
-        end
+		for _, v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") and getRoot(v) and v:FindFirstChildWhichIsA("Humanoid") and Players:GetPlayerFromCharacter(v) == nil then
+				local clone = Instance.new("Player")
+				clone.Name = v.Name .. " - " .. v:FindFirstChildWhichIsA("Humanoid").DisplayName
+				clone.Character = v
+				table.insert(returns, clone)
+			end
+		end
 		return returns
 	end,
 }
@@ -5970,7 +5972,7 @@ local function clicktpFunc()
 			humanoid.Sit = false
 			wait(0.1)
 		end
-		
+
 		local hipHeight = humanoid and humanoid.HipHeight > 0 and (humanoid.HipHeight + 1)
 		local rootPart = getRoot(character)
 		local rootPartPosition = rootPart.Position
@@ -7737,8 +7739,8 @@ addcmd('noesp',{'unesp'},function(args, speaker)
 end)
 
 addcmd('esptransparency',{},function(args, speaker)
-    espTransparency = (args[1] and isNumber(args[1]) and args[1]) or 0.3
-    updatesaves()
+	espTransparency = (args[1] and isNumber(args[1]) and args[1]) or 0.3
+	updatesaves()
 end)
 
 local espParts = {}
@@ -10041,88 +10043,88 @@ addcmd('console',{},function(args, speaker)
 end)
 
 addcmd('explorer', {'dex'}, function(args, speaker)
-    notify('Loading', 'Hold on a sec')
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+	notify('Loading', 'Hold on a sec')
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 
 addcmd('olddex', {'odex'}, function(args, speaker)
-    notify('Loading old explorer', 'Hold on a sec')
-    
-    local getobjects = function(a)
-        local Objects = {}
-        if a then
-            local b = InsertService:LoadLocalAsset(a)
-            if b then 
-                table.insert(Objects, b) 
-            end
-        end
-        return Objects
-    end
+	notify('Loading old explorer', 'Hold on a sec')
 
-    local Dex = getobjects("rbxassetid://10055842438")[1]
-    Dex.Parent = PARENT
+	local getobjects = function(a)
+		local Objects = {}
+		if a then
+			local b = InsertService:LoadLocalAsset(a)
+			if b then 
+				table.insert(Objects, b) 
+			end
+		end
+		return Objects
+	end
 
-    local function Load(Obj, Url)
-        local function GiveOwnGlobals(Func, Script)
-            -- Fix for this edit of dex being poorly made
-            -- I (Alex) would like to commemorate whoever added this dex in somehow finding the worst dex to ever exist
-            local Fenv, RealFenv, FenvMt = {}, {
-                script = Script,
-                getupvalue = function(a, b)
-                    return nil -- force it to use globals
-                end,
-                getreg = function() -- It loops registry for some idiotic reason so stop it from doing that and just use a global
-                    return {} -- force it to use globals
-                end,
-                getprops = getprops or function(inst)
-                    if getproperties then
-                        local props = getproperties(inst)
-                        if props[1] and gethiddenproperty then
-                            local results = {}
-                            for _,name in pairs(props) do
-                                local success, res = pcall(gethiddenproperty, inst, name)
-                                if success then
-                                    results[name] = res
-                                end
-                            end
-                            
-                            return results
-                        end
-                        
-                        return props
-                    end
-                    
-                    return {}
-                end
-            }, {}
-            FenvMt.__index = function(a,b)
-                return RealFenv[b] == nil and getgenv()[b] or RealFenv[b]
-            end
-            FenvMt.__newindex = function(a, b, c)
-                if RealFenv[b] == nil then 
-                    getgenv()[b] = c 
-                else 
-                    RealFenv[b] = c 
-                end
-            end
-            setmetatable(Fenv, FenvMt)
-            pcall(setfenv, Func, Fenv)
-            return Func
-        end
+	local Dex = getobjects("rbxassetid://10055842438")[1]
+	Dex.Parent = PARENT
 
-        local function LoadScripts(_, Script)
-            if Script:IsA("LocalScript") then
-                task.spawn(function()
-                    GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
-                end)
-            end
-            table.foreach(Script:GetChildren(), LoadScripts)
-        end
-                    
-        LoadScripts(nil, Obj)
-    end
+	local function Load(Obj, Url)
+		local function GiveOwnGlobals(Func, Script)
+			-- Fix for this edit of dex being poorly made
+			-- I (Alex) would like to commemorate whoever added this dex in somehow finding the worst dex to ever exist
+			local Fenv, RealFenv, FenvMt = {}, {
+				script = Script,
+				getupvalue = function(a, b)
+					return nil -- force it to use globals
+				end,
+				getreg = function() -- It loops registry for some idiotic reason so stop it from doing that and just use a global
+					return {} -- force it to use globals
+				end,
+				getprops = getprops or function(inst)
+					if getproperties then
+						local props = getproperties(inst)
+						if props[1] and gethiddenproperty then
+							local results = {}
+							for _,name in pairs(props) do
+								local success, res = pcall(gethiddenproperty, inst, name)
+								if success then
+									results[name] = res
+								end
+							end
 
-    Load(Dex)
+							return results
+						end
+
+						return props
+					end
+
+					return {}
+				end
+			}, {}
+			FenvMt.__index = function(a,b)
+				return RealFenv[b] == nil and getgenv()[b] or RealFenv[b]
+			end
+			FenvMt.__newindex = function(a, b, c)
+				if RealFenv[b] == nil then 
+					getgenv()[b] = c 
+				else 
+					RealFenv[b] = c 
+				end
+			end
+			setmetatable(Fenv, FenvMt)
+			pcall(setfenv, Func, Fenv)
+			return Func
+		end
+
+		local function LoadScripts(_, Script)
+			if Script:IsA("LocalScript") then
+				task.spawn(function()
+					GiveOwnGlobals(loadstring(Script.Source,"="..Script:GetFullName()), Script)()
+				end)
+			end
+			table.foreach(Script:GetChildren(), LoadScripts)
+		end
+
+		LoadScripts(nil, Obj)
+	end
+
+	Load(Dex)
 end)
 
 addcmd('remotespy',{'rspy'},function(args, speaker)
@@ -10521,24 +10523,24 @@ addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},function(args, sp
 end)
 
 addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
-    if fireclickdetector then
-        if args[1] then
-            local name = getstring(1)
-            for _, descendant in ipairs(workspace:GetDescendants()) do
-                if descendant:IsA("ClickDetector") and descendant.Name == name or descandant.Parent.Name == name then
-                    fireclickdetector(descendant)
-                end
-            end
-        else
-            for _, descendant in ipairs(workspace:GetDescendants()) do
-                if descendant:IsA("ClickDetector") then
-                    fireclickdetector(descendant)
-                end
-            end
-        end
-    else
-        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
-    end
+	if fireclickdetector then
+		if args[1] then
+			local name = getstring(1)
+			for _, descendant in ipairs(workspace:GetDescendants()) do
+				if descendant:IsA("ClickDetector") and descendant.Name == name or descandant.Parent.Name == name then
+					fireclickdetector(descendant)
+				end
+			end
+		else
+			for _, descendant in ipairs(workspace:GetDescendants()) do
+				if descendant:IsA("ClickDetector") then
+					fireclickdetector(descendant)
+				end
+			end
+		end
+	else
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
+	end
 end)
 
 addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, speaker)
@@ -10550,24 +10552,24 @@ addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, 
 end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
-    if fireclickdetector then
-        if args[1] then
-            local name = getstring(1)
-            for _, descendant in ipairs(workspace:GetDescendants()) do
-                if descendant:IsA("ProximityPrompt") and descendant.Name == name or descandant.Parent.Name == name then
-                    fireproximityprompt(descendant)
-                end
-            end
-        else
-            for _, descendant in ipairs(workspace:GetDescendants()) do
-                if descendant:IsA("ProximityPrompt") then
-                    fireproximityprompt(descendant)
-                end
-            end
-        end
-    else
-        notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
-    end
+	if fireclickdetector then
+		if args[1] then
+			local name = getstring(1)
+			for _, descendant in ipairs(workspace:GetDescendants()) do
+				if descendant:IsA("ProximityPrompt") and descendant.Name == name or descandant.Parent.Name == name then
+					fireproximityprompt(descendant)
+				end
+			end
+		else
+			for _, descendant in ipairs(workspace:GetDescendants()) do
+				if descendant:IsA("ProximityPrompt") then
+					fireproximityprompt(descendant)
+				end
+			end
+		end
+	else
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
+	end
 end)
 
 local PromptButtonHoldBegan = nil
@@ -10591,7 +10593,7 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 end)
 
 addcmd('notifyping',{'ping'},function(args, speaker)
-    notify("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
+	notify("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
 end)
 
 addcmd('grabtools', {}, function(args, speaker)
@@ -10774,17 +10776,17 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 		local Character = Player.Character
 		local Old = Character:FindFirstChild("HumanoidRootPart").CFrame
 		local Hats = {}
-		
+
 		for _, child in ipairs(workspace:GetChildren()) do
 			if child:IsA("Accessory") then
 				table.insert(Hats, child)
 			end
 		end
-		
+
 		for _, accessory in ipairs(Character:FindFirstChildOfClass("Humanoid"):GetAccessories()) do
 			accessory:Destroy()
 		end
-		
+
 		for i = 1, #Hats do
 			repeat RunService.Heartbeat:wait() until Hats[i]
 			firetouchinterest(Hats[i].Handle,Character:FindFirstChild("HumanoidRootPart"),0)
@@ -10792,11 +10794,11 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
 			repeat RunService.Heartbeat:wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
-		
+
 		execCmd("reset")
-		
+
 		Player.CharacterAdded:Wait()
-		
+
 		for i = 1,20 do 
 			RunService.Heartbeat:Wait()
 			if Player.Character:FindFirstChild("HumanoidRootPart") then
@@ -10984,7 +10986,7 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 	end
 
 	local root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
-	
+
 	local function touch(x)
 		x = x:FindFirstAncestorWhichIsA("Part")
 		if x then
@@ -10999,20 +11001,20 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 		end
 	end
 
-    if args[1] then
-        local name = getstring(1)
-        for _, descendant in ipairs(workspace:GetDescendants()) do
-            if descendant:IsA("TouchTransmitter") and descendant.Name == name or descandant.Parent.Name == name then
-                touch(descendant)
-            end
-        end
-    else
-        for _, descendant in ipairs(workspace:GetDescendants()) do
-            if descendant:IsA("TouchTransmitter") then
-                touch(descendant)
-            end
-        end
-    end
+	if args[1] then
+		local name = getstring(1)
+		for _, descendant in ipairs(workspace:GetDescendants()) do
+			if descendant:IsA("TouchTransmitter") and descendant.Name == name or descandant.Parent.Name == name then
+				touch(descendant)
+			end
+		end
+	else
+		for _, descendant in ipairs(workspace:GetDescendants()) do
+			if descendant:IsA("TouchTransmitter") then
+				touch(descendant)
+			end
+		end
+	end
 end)
 
 addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
@@ -11337,6 +11339,20 @@ addcmd('togglefling',{},function(args, speaker)
 	else
 		execCmd('fling')
 	end
+end)
+
+addcmd("flyfling", {}, function(args, speaker)
+    execCmd("unvehiclefly\\unfling\\unnoclip")
+    wait()
+    execCmd("vehiclefly\\fling\\noclip")
+end)
+
+addcmd("unflyfling", {}, function(args, speaker)
+    execCmd("unvehiclefly\\unfling\\unnoclip\\breakvelocity")
+end)
+
+addcmd("toggleflyfling", {}, function(args, speaker)
+    execCmd(flinging and "unflyfling" or "flyfling")
 end)
 
 addcmd('invisfling',{},function(args, speaker)
@@ -12308,12 +12324,12 @@ task.spawn(function()
 		local versionJson = game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version')
 		return HttpService:JSONDecode(versionJson)
 	end)
-	
+
 	if success then
 		if currentVersion ~= latestVersionInfo.Version then
 			notify('Outdated','Get the new version at infyiff.github.io')
 		end
-		
+
 		if latestVersionInfo.Announcement and latestVersionInfo.Announcement ~= '' then
 			local AnnGUI = Instance.new("Frame")
 			local background = Instance.new("Frame")
