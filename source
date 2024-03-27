@@ -3829,10 +3829,8 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 	end
 end)
 
-for _, plr in pairs(Players:GetChildren()) do
-	if plr.ClassName == "Player" then
+for _, plr in pairs(Players:GetPlayers()) do
 		ChatLog(plr)
-	end
 end
 
 Players.PlayerRemoving:Connect(function(player)
@@ -7718,8 +7716,8 @@ end)
 addcmd('esp',{},function(args, speaker)
 	if not CHMSenabled then
 		ESPenabled = true
-		for i,v in pairs(Players:GetChildren()) do
-			if v.ClassName == "Player" and v.Name ~= speaker.Name then
+		for i,v in pairs(Players:GetPlayers()) do
+			if v.Name ~= speaker.Name then
 				ESP(v)
 			end
 		end
@@ -7812,8 +7810,8 @@ end)
 addcmd('chams',{},function(args, speaker)
 	if not ESPenabled then
 		CHMSenabled = true
-		for i,v in pairs(Players:GetChildren()) do
-			if v.ClassName == "Player" and v.Name ~= speaker.Name then
+		for i,v in pairs(Players:GetPlayers()) do
+			if v.Name ~= speaker.Name then
 				CHMS(v)
 			end
 		end
@@ -7824,7 +7822,7 @@ end)
 
 addcmd('nochams',{'unchams'},function(args, speaker)
 	CHMSenabled = false
-	for i,v in pairs(Players:GetChildren()) do
+	for i,v in pairs(Players:GetPlayers()) do
 		local chmsplr = v
 		for i,c in pairs(COREGUI:GetChildren()) do
 			if c.Name == chmsplr.Name..'_CHMS' then
