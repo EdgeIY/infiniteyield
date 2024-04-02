@@ -5,9 +5,9 @@ end
 
 pcall(function() getgenv().IY_LOADED = true end)
 
-local clonerefs = cloneref or function(o) return o end
-COREGUI = clonerefs(game:GetService("CoreGui"))
-Players = clonerefs(game:GetService("Players"))
+local cloneref = cloneref or function(o) return o end
+COREGUI = cloneref(game:GetService("CoreGui"))
+Players = cloneref(game:GetService("Players"))
 
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message")
@@ -1825,7 +1825,7 @@ function create(data)
 	return insts[1]
 end
 
-TextService = clonerefs(game:GetService("TextService"))
+TextService = cloneref(game:GetService("TextService"))
 ViewportTextBox = (function()
 
 	local funcs = {}
@@ -1906,31 +1906,31 @@ ViewportTextBox.convert(Cmdbar_3).View.ZIndex = 10
 
 IYMouse = Players.LocalPlayer:GetMouse()
 PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-UserInputService = clonerefs(game:GetService("UserInputService"))
-TweenService = clonerefs(game:GetService("TweenService"))
-HttpService = clonerefs(game:GetService("HttpService"))
-MarketplaceService = clonerefs(game:GetService("MarketplaceService"))
-RunService = clonerefs(game:GetService("RunService"))
-TeleportService = clonerefs(game:GetService("TeleportService"))
-StarterGui = clonerefs(game:GetService("StarterGui"))
-GuiService = clonerefs(game:GetService("GuiService"))
-Lighting = clonerefs(game:GetService("Lighting"))
-ContextActionService = clonerefs(game:GetService("ContextActionService"))
-NetworkClient = clonerefs(game:GetService("NetworkClient"))
-ReplicatedStorage = clonerefs(game:GetService("ReplicatedStorage"))
-GroupService = clonerefs(game:GetService("GroupService"))
-PathService = clonerefs(game:GetService("PathfindingService"))
-SoundService = clonerefs(game:GetService("SoundService"))
-Teams = clonerefs(game:GetService("Teams"))
-StarterPlayer = clonerefs(game:GetService("StarterPlayer"))
-InsertService = clonerefs(game:GetService("InsertService"))
-ChatService = clonerefs(game:GetService("Chat"))
-ProximityPromptService = clonerefs(game:GetService("ProximityPromptService"))
-StatsService = clonerefs(game:GetService("Stats"))
-MaterialService = clonerefs(game:GetService("MaterialService"))
-AvatarEditorService = clonerefs(game:GetService("AvatarEditorService"))
-TextChatService = clonerefs(game:GetService("TextChatService"))
-VirtualUser = clonerefs(game:GetService("VirtualUser"))
+UserInputService = cloneref(game:GetService("UserInputService"))
+TweenService = cloneref(game:GetService("TweenService"))
+HttpService = cloneref(game:GetService("HttpService"))
+MarketplaceService = cloneref(game:GetService("MarketplaceService"))
+RunService = cloneref(game:GetService("RunService"))
+TeleportService = cloneref(game:GetService("TeleportService"))
+StarterGui = cloneref(game:GetService("StarterGui"))
+GuiService = cloneref(game:GetService("GuiService"))
+Lighting = cloneref(game:GetService("Lighting"))
+ContextActionService = cloneref(game:GetService("ContextActionService"))
+NetworkClient = cloneref(game:GetService("NetworkClient"))
+ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+GroupService = cloneref(game:GetService("GroupService"))
+PathService = cloneref(game:GetService("PathfindingService"))
+SoundService = cloneref(game:GetService("SoundService"))
+Teams = cloneref(game:GetService("Teams"))
+StarterPlayer = cloneref(game:GetService("StarterPlayer"))
+InsertService = cloneref(game:GetService("InsertService"))
+ChatService = cloneref(game:GetService("Chat"))
+ProximityPromptService = cloneref(game:GetService("ProximityPromptService"))
+StatsService = cloneref(game:GetService("Stats"))
+MaterialService = cloneref(game:GetService("MaterialService"))
+AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
+TextChatService = cloneref(game:GetService("TextChatService"))
+VirtualUser = cloneref(game:GetService("VirtualUser"))
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
