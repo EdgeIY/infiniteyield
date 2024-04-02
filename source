@@ -5,7 +5,10 @@ end
 
 pcall(function() getgenv().IY_LOADED = true end)
 
-COREGUI = game:GetService("CoreGui")
+local clonerefs = cloneref or function(o) return o end
+COREGUI = clonerefs(game:GetService("CoreGui"))
+Players = clonerefs(game:GetService("Players"))
+
 if not game:IsLoaded() then
 	local notLoaded = Instance.new("Message")
 	notLoaded.Parent = COREGUI
@@ -15,8 +18,6 @@ if not game:IsLoaded() then
 end
 
 currentVersion = '5.9.4'
-
-Players = game:GetService("Players")
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -1824,7 +1825,7 @@ function create(data)
 	return insts[1]
 end
 
-local textService = game:GetService("TextService")
+TextService = clonerefs(game:GetService("TextService"))
 ViewportTextBox = (function()
 
 	local funcs = {}
@@ -1839,8 +1840,8 @@ ViewportTextBox = (function()
 		local leftEnd = -self.TextBox.Position.X.Offset
 		local rightEnd = leftEnd + self.View.AbsoluteSize.X
 
-		local totalTextSize = textService:GetTextSize(text,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
-		local cursorTextSize = textService:GetTextSize(cursorText,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
+		local totalTextSize = TextService:GetTextSize(text,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
+		local cursorTextSize = TextService:GetTextSize(cursorText,self.TextBox.TextSize,self.TextBox.Font,Vector2.new(999999999,100)).X
 
 		if cursorTextSize > rightEnd then
 			pos = math.max(-2,cursorTextSize - self.View.AbsoluteSize.X + 2)
@@ -1905,30 +1906,31 @@ ViewportTextBox.convert(Cmdbar_3).View.ZIndex = 10
 
 IYMouse = Players.LocalPlayer:GetMouse()
 PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-UserInputService = game:GetService("UserInputService")
-TweenService = game:GetService("TweenService")
-HttpService = game:GetService("HttpService")
-MarketplaceService = game:GetService("MarketplaceService")
-RunService = game:GetService("RunService")
-TeleportService = game:GetService("TeleportService")
-StarterGui = game:GetService("StarterGui")
-GuiService = game:GetService("GuiService")
-Lighting = game:GetService("Lighting")
-ContextActionService = game:GetService("ContextActionService")
-NetworkClient = game:GetService("NetworkClient")
-ReplicatedStorage = game:GetService("ReplicatedStorage")
-GroupService = game:GetService("GroupService")
-PathService = game:GetService("PathfindingService")
-SoundService = game:GetService("SoundService")
-Teams = game:GetService("Teams")
-StarterPlayer = game:GetService("StarterPlayer")
-InsertService = game:GetService("InsertService")
-ChatService = game:GetService("Chat")
-ProximityPromptService = game:GetService("ProximityPromptService")
-StatsService = game:GetService("Stats")
-MaterialService = game:GetService("MaterialService")
-AvatarEditorService = game:GetService("AvatarEditorService")
-TextChatService = game:GetService("TextChatService")
+UserInputService = clonerefs(game:GetService("UserInputService"))
+TweenService = clonerefs(game:GetService("TweenService"))
+HttpService = clonerefs(game:GetService("HttpService"))
+MarketplaceService = clonerefs(game:GetService("MarketplaceService"))
+RunService = clonerefs(game:GetService("RunService"))
+TeleportService = clonerefs(game:GetService("TeleportService"))
+StarterGui = clonerefs(game:GetService("StarterGui"))
+GuiService = clonerefs(game:GetService("GuiService"))
+Lighting = clonerefs(game:GetService("Lighting"))
+ContextActionService = clonerefs(game:GetService("ContextActionService"))
+NetworkClient = clonerefs(game:GetService("NetworkClient"))
+ReplicatedStorage = clonerefs(game:GetService("ReplicatedStorage"))
+GroupService = clonerefs(game:GetService("GroupService"))
+PathService = clonerefs(game:GetService("PathfindingService"))
+SoundService = clonerefs(game:GetService("SoundService"))
+Teams = clonerefs(game:GetService("Teams"))
+StarterPlayer = clonerefs(game:GetService("StarterPlayer"))
+InsertService = clonerefs(game:GetService("InsertService"))
+ChatService = clonerefs(game:GetService("Chat"))
+ProximityPromptService = clonerefs(game:GetService("ProximityPromptService"))
+StatsService = clonerefs(game:GetService("Stats"))
+MaterialService = clonerefs(game:GetService("MaterialService"))
+AvatarEditorService = clonerefs(game:GetService("AvatarEditorService"))
+TextChatService = clonerefs(game:GetService("TextChatService"))
+VirtualUser = clonerefs(game:GetService("VirtualUser"))
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -8454,7 +8456,6 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 		end
 	else
 		Players.LocalPlayer.Idled:Connect(function()
-			local VirtualUser = game:GetService("VirtualUser")
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
 		end)
