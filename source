@@ -6331,6 +6331,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		local CopyApp = Instance.new("TextButton")
 		local CopyPlrID = Instance.new("TextButton")
 		local CopyPlcID = Instance.new("TextButton")
+		local CopyPlcName = Instance.new("TextButton")
 
 		FRAME.Name = randomString()
 		FRAME.Parent = PARENT
@@ -6571,6 +6572,20 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		table.insert(shade2,CopyPlcID)
 		table.insert(text1,CopyPlcID)
 
+		CopyPlcName.Name = "CopyPlcName"
+		CopyPlcName.Parent = background
+		CopyPlcName.BackgroundColor3 = currentShade2
+		CopyPlcName.BorderSizePixel = 0
+		CopyPlcName.Position = UDim2.new(0, 210, 0, 215)
+		CopyPlcName.Size = UDim2.new(0, 35, 0, 20)
+		CopyPlcName.Font = Enum.Font.SourceSans
+		CopyPlcName.TextSize = 14
+		CopyPlcName.Text = "Copy"
+		CopyPlcName.TextColor3 = currentText1
+		CopyPlcName.ZIndex = 10
+		table.insert(shade2,CopyPlcName)
+		table.insert(text1,CopyPlcName)
+
 		local SINFOGUI = background
 		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
 		wait(0.5)
@@ -6594,6 +6609,9 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		end)
 		CopyPlcID.MouseButton1Click:Connect(function()
 			toClipboard(PlaceId)
+		end)
+		CopyPlcName.MouseButton1Click:Connect(function()
+			toClipboard(Asset.Name)
 		end)
 
 		repeat
@@ -6651,25 +6669,29 @@ addcmd("autorejoin", {"autorj"}, function(args, speaker)
 	notify("Auto Rejoin", "Auto rejoin enabled")
 end)
 
-addcmd('serverhop',{'shop'},function(args, speaker)
-	-- thanks to NoobSploit for fixing
-	if httprequest then
-		local servers = {}
-		local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
-		local body = HttpService:JSONDecode(req.Body)
-		if body and body.data then
-			for i, v in next, body.data do
-				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
-					table.insert(servers, 1, v.id)
-				end
-			end
-		end
-		if #servers > 0 then
-			TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
-		else
-			return notify("Serverhop", "Couldn't find a server.")
-		end
-	end
+addcmd("serverhop", {"shop"}, function(args, speaker)
+    -- thanks to NoobSploit for fixing
+    if httprequest then
+        local servers = {}
+        local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", PlaceId)})
+        local body = HttpService:JSONDecode(req.Body)
+
+        if body and body.data then
+            for i, v in next, body.data do
+                if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
+                    table.insert(servers, 1, v.id)
+                end
+            end
+        end
+
+        if #servers > 0 then
+            TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
+        else
+            return notify("Serverhop", "Couldn't find a server.")
+        end
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+    end
 end)
 
 addcmd('joinplayer',{'joinp'},function(args, speaker)
@@ -6728,8 +6750,8 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 	ToServer(args[1],args[2])
 end)
 
-addcmd('exit',{},function(args, speaker)
-	game:shutdown() 
+addcmd("exit", {}, function(args, speaker)
+    game:Shutdown()
 end)
 
 local Noclipping = nil
@@ -7573,7 +7595,6 @@ addcmd('savegame',{'saveplace'},function(args, speaker)
 		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
 	end
 end)
-
 
 addcmd('clearerror',{'clearerrors'},function(args, speaker)
 	GuiService:ClearError()
