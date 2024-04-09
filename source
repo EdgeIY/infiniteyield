@@ -2801,10 +2801,23 @@ defaultsettings = {
 
 defaults = HttpService:JSONEncode(defaultsettings)
 nosaves = false
+useFactorySettings = function()
+    prefix = ';'
+    StayOpen = false
+    KeepInfYield = true
+    espTransparency = 0.3
+    logsEnabled = false
+    jLogsEnabled = false
+    aliases = {}
+    binds = {}
+    WayPoints = {}
+    PluginsTable = {}
+end
 
 local loadedEventData = nil
+local jsonAttempts = 0
 function saves()
-	if writefileExploit() then
+	if writefileExploit() and jsonAttempts < 50 then
 		if pcall(function() readfile("IY_FE.iy") end) then
 			if readfile("IY_FE.iy") ~= nil then
 				local success, response = pcall(function()
@@ -2829,6 +2842,7 @@ function saves()
 					if json.eventBinds ~= nil then loadedEventData = json.eventBinds end
 				end)
 				if not success then
+					jsonAttempts = jsonAttempts + 1
 					warn("Save Json Error:", response)
 					warn("Overwriting Save File")
 					writefileCooldown("IY_FE.iy", defaults)
@@ -2847,16 +2861,7 @@ function saves()
 				saves()
 			else
 				nosaves = true
-				prefix = ';'
-				StayOpen = false
-				KeepInfYield = true
-				espTransparency = 0.3
-				logsEnabled = false
-				jLogsEnabled = false
-				aliases = {}
-				binds = {}
-				WayPoints = {}
-				PluginsTable = {}
+				useFactorySettings()
 
 				local FileError = Instance.new("Frame")
 				local background = Instance.new("Frame")
@@ -2938,16 +2943,90 @@ function saves()
 			end
 		end
 	else
-		prefix = ';'
-		StayOpen = false
-		KeepInfYield = true
-		espTransparency = 0.3
-		logsEnabled = false
-		jLogsEnabled = false
-		aliases = {}
-		binds = {}
-		WayPoints = {}
-		PluginsTable = {}
+        if jsonAttempts >= 50 then
+            nosaves = true
+            useFactorySettings()
+
+            local FileError = Instance.new("Frame")
+            local background = Instance.new("Frame")
+            local Directions = Instance.new("TextLabel")
+            local shadow = Instance.new("Frame")
+            local PopupText = Instance.new("TextLabel")
+            local Exit = Instance.new("TextButton")
+            local ExitImage = Instance.new("ImageLabel")
+
+            FileError.Name = randomString()
+            FileError.Parent = PARENT
+            FileError.Active = true
+            FileError.BackgroundTransparency = 1
+            FileError.Position = UDim2.new(0.5, -180, 0, 290)
+            FileError.Size = UDim2.new(0, 360, 0, 20)
+            FileError.ZIndex = 10
+
+            background.Name = "background"
+            background.Parent = FileError
+            background.Active = true
+            background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
+            background.BorderSizePixel = 0
+            background.Position = UDim2.new(0, 0, 0, 20)
+            background.Size = UDim2.new(0, 360, 0, 205)
+            background.ZIndex = 10
+
+            Directions.Name = "Directions"
+            Directions.Parent = background
+            Directions.BackgroundTransparency = 1
+            Directions.BorderSizePixel = 0
+            Directions.Position = UDim2.new(0, 10, 0, 10)
+            Directions.Size = UDim2.new(0, 340, 0, 185)
+            Directions.Font = Enum.Font.SourceSans
+            Directions.TextSize = 14
+            Directions.Text = "Sorry, but we have attempted to parse your data, but it is unreadable!\n\nInfinite Yield is now using factory settings until your executor fixes its file system.\n\nYour data has not been deleted."
+            Directions.TextColor3 = Color3.new(1, 1, 1)
+            Directions.TextWrapped = true
+            Directions.TextXAlignment = Enum.TextXAlignment.Left
+            Directions.TextYAlignment = Enum.TextYAlignment.Top
+            Directions.ZIndex = 10
+
+            shadow.Name = "shadow"
+            shadow.Parent = FileError
+            shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+            shadow.BorderSizePixel = 0
+            shadow.Size = UDim2.new(0, 360, 0, 20)
+            shadow.ZIndex = 10
+
+            PopupText.Name = "PopupText"
+            PopupText.Parent = shadow
+            PopupText.BackgroundTransparency = 1
+            PopupText.Size = UDim2.new(1, 0, 0.95, 0)
+            PopupText.ZIndex = 10
+            PopupText.Font = Enum.Font.SourceSans
+            PopupText.TextSize = 14
+            PopupText.Text = "File Error"
+            PopupText.TextColor3 = Color3.new(1, 1, 1)
+            PopupText.TextWrapped = true
+
+            Exit.Name = "Exit"
+            Exit.Parent = shadow
+            Exit.BackgroundTransparency = 1
+            Exit.Position = UDim2.new(1, -20, 0, 0)
+            Exit.Size = UDim2.new(0, 20, 0, 20)
+            Exit.Text = ""
+            Exit.ZIndex = 10
+
+            ExitImage.Parent = Exit
+            ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+            ExitImage.BackgroundTransparency = 1
+            ExitImage.Position = UDim2.new(0, 5, 0, 5)
+            ExitImage.Size = UDim2.new(0, 10, 0, 10)
+            ExitImage.Image = "rbxassetid://5054663650"
+            ExitImage.ZIndex = 10
+
+            Exit.MouseButton1Click:Connect(function()
+                FileError:Destroy()
+            end)
+        else
+            useFactorySettings()
+        end
 	end
 end
 
