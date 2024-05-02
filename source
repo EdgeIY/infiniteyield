@@ -1930,7 +1930,6 @@ StatsService = cloneref(game:GetService("Stats"))
 MaterialService = cloneref(game:GetService("MaterialService"))
 AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
 TextChatService = cloneref(game:GetService("TextChatService"))
-VirtualUser = cloneref(game:GetService("VirtualUser"))
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -8558,6 +8557,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
+		local VirtualUser = cloneref(game:GetService("VirtualUser"))
 		Players.LocalPlayer.Idled:Connect(function()
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
