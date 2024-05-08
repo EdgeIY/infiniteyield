@@ -7663,18 +7663,14 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd('savegame',{'saveplace'},function(args, speaker)
-	if saveinstance then
-		notify("Loading","Downloading game. This will take a while")
-		if getsynasset then
-			saveinstance()
-		else
-			saveinstance(game)
-		end
-		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
-	end
+addcmd("savegame", {"saveplace"}, function(args, speaker)
+    if saveinstance then
+        notify("Loading", "Downloading game. This will take a while")
+        saveinstance()
+        notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+    end
 end)
 
 addcmd('clearerror',{'clearerrors'},function(args, speaker)
