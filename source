@@ -1,6 +1,6 @@
 if IY_LOADED and not _G.IY_DEBUG == true then
-	-- error("Infinite Yield is already running!", 0)
-	return
+    -- error("Infinite Yield is already running!", 0)
+    return
 end
 
 pcall(function() getgenv().IY_LOADED = true end)
@@ -10,14 +10,14 @@ COREGUI = cloneref(game:GetService("CoreGui"))
 Players = cloneref(game:GetService("Players"))
 
 if not game:IsLoaded() then
-	local notLoaded = Instance.new("Message")
-	notLoaded.Parent = COREGUI
-	notLoaded.Text = 'Infinite Yield is waiting for the game to load'
-	game.Loaded:Wait()
-	notLoaded:Destroy()
+    local notLoaded = Instance.new("Message")
+    notLoaded.Parent = COREGUI
+    notLoaded.Text = "Infinite Yield is waiting for the game to load"
+    game.Loaded:Wait()
+    notLoaded:Destroy()
 end
 
-currentVersion = '5.9.4'
+currentVersion = "5.9.4"
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -1930,7 +1930,6 @@ StatsService = cloneref(game:GetService("Stats"))
 MaterialService = cloneref(game:GetService("MaterialService"))
 AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
 TextChatService = cloneref(game:GetService("TextChatService"))
-VirtualUser = cloneref(game:GetService("VirtualUser"))
 
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
@@ -3218,10 +3217,7 @@ function CreateLabel(Name, Text)
 		scroll_2.CanvasSize = UDim2.new(0,0,0,alls+tl.TextBounds.Y)
 		scroll_2.CanvasPosition = Vector2.new(0,scroll_2.CanvasPosition.Y+tl.TextBounds.Y)
 		tl:TweenPosition(UDim2.new(0,3,0,alls), 'In', 'Quint', 0.5)
-		for i = 0,50 do wait(0.05)
-			tl.TextTransparency = tl.TextTransparency - 0.05
-		end
-		tl.TextTransparency = 0
+		TweenService:Create(tl, TweenInfo.new(1.25, Enum.EasingStyle.Linear), { TextTransparency = 0 }):Play()
 	end
 end
 
@@ -3861,7 +3857,7 @@ selectJoin.MouseButton1Down:Connect(function()
 end)
 
 if not writefileExploit() then
-	notify('Saves','Your exploit does not support read/write file. Your settings will not save.')
+    notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
 end
 
 ChatLog = function(plr)
@@ -3933,6 +3929,7 @@ Players.PlayerRemoving:Connect(function(player)
 		end
 		notify('Spectate','View turned off (player left)')
 	end
+	eventEditor.FireEvent("OnLeave", player.Name)
 end)
 
 Exit.MouseButton1Down:Connect(function()
@@ -4464,6 +4461,8 @@ CMDs[#CMDs + 1] = {NAME = 'locate [player]', DESC = 'View a single player and th
 CMDs[#CMDs + 1] = {NAME = 'unlocate / nolocate [player]', DESC = 'Removes locate'}
 CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
 CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency'}
+CMDs[#CMDs + 1] = {NAME = 'loopxray', DESC = 'Makes all parts in workspace transparent but looped'}
+CMDs[#CMDs + 1] = {NAME = 'unloopunxray', DESC = 'Unloops xray'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'spectate / view [player]', DESC = 'View a player'}
 CMDs[#CMDs + 1] = {NAME = 'viewpart / viewp [part name]', DESC = 'View a part'}
@@ -4562,6 +4561,8 @@ CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [player]', DESC = 'Disables stare
 CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'Notify if someone from a watched group joins the server'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatchstop / unrolewatch', DESC = 'Disable Rolewatch'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatchleave', DESC = 'Toggle if you should leave the game if someone from a watched group joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'staffwatch', DESC = 'Notify if a staff member of the game joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'unstaffwatch', DESC = 'Disable Staffwatch'}
 CMDs[#CMDs + 1] = {NAME = 'attach [player] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'kill [player] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastkill [player] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
@@ -4723,6 +4724,7 @@ CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 20
 CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
+CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 wait()
 
 for i = 1, #CMDs do
@@ -5395,6 +5397,13 @@ function getPlayer(list,speaker)
 	for i,v in pairs(foundList) do table.insert(foundNames,v.Name) end
 
 	return foundNames
+end
+
+formatUsername = function(player)
+    if player.DisplayName ~= player.Name then
+        return string.format("%s (%s)", player.Name, player.DisplayName)
+    end
+    return player.Name
 end
 
 getprfx=function(strn)
@@ -7661,18 +7670,14 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd('savegame',{'saveplace'},function(args, speaker)
-	if saveinstance then
-		notify("Loading","Downloading game. This will take a while")
-		if getsynasset then
-			saveinstance()
-		else
-			saveinstance(game)
-		end
-		notify('Game Saved','Saved place to the workspace folder within your exploit folder.')
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing saveinstance)')
-	end
+addcmd("savegame", {"saveplace"}, function(args, speaker)
+    if saveinstance then
+        notify("Loading", "Downloading game. This will take a while")
+        saveinstance()
+        notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+    end
 end)
 
 addcmd('clearerror',{'clearerrors'},function(args, speaker)
@@ -8555,6 +8560,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			end
 		end
 	else
+		local VirtualUser = cloneref(game:GetService("VirtualUser"))
 		Players.LocalPlayer.Idled:Connect(function()
 			VirtualUser:CaptureController()
 			VirtualUser:ClickButton2(Vector2.new())
@@ -8600,6 +8606,10 @@ end)
 
 addcmd("promptr15", {}, function(args, speaker)
 	promptNewRig(speaker, "R15")
+end)
+
+addcmd("wallwalk", {"walkonwalls"}, function(args, speaker)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua"))()
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -11738,36 +11748,44 @@ addcmd('unspin',{},function(args, speaker)
 	end
 end)
 
-local transparent = false
-function x(v)
-	if v then
-		for _,i in pairs(workspace:GetDescendants()) do
-			if i:IsA("BasePart") and not i.Parent:FindFirstChildOfClass('Humanoid') and not i.Parent.Parent:FindFirstChildOfClass('Humanoid') then
-				i.LocalTransparencyModifier = 0.5
-			end
-		end
-	else
-		for _,i in pairs(workspace:GetDescendants()) do
-			if i:IsA("BasePart") and not i.Parent:FindFirstChildOfClass('Humanoid') and not i.Parent.Parent:FindFirstChildOfClass('Humanoid') then
-				i.LocalTransparencyModifier = 0
-			end
-		end
-	end
+xrayEnabled = false
+xray = function()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and not v.Parent:FindFirstChildWhichIsA("Humanoid") and not v.Parent.Parent:FindFirstChildWhichIsA("Humanoid") then
+            v.LocalTransparencyModifier = xrayEnabled and 0.5 or 0
+        end
+    end
 end
 
-addcmd('xray',{},function(args, speaker)
-	transparent = true
-	x(transparent)
+addcmd("xray", {}, function(args, speaker)
+    xrayEnabled = true
+    xray()
 end)
 
-addcmd('unxray',{'noxray'},function(args, speaker)
-	transparent = false
-	x(transparent)
+addcmd("unxray", {"noxray"}, function(args, speaker)
+    xrayEnabled = false
+    xray()
 end)
 
-addcmd('togglexray',{},function(args, speaker)
-	transparent=not transparent
-	x(transparent)
+addcmd("togglexray", {}, function(args, speaker)
+    xrayEnabled = not xrayEnabled
+    xray()
+end)
+
+addcmd("loopxray", {}, function(args, speaker)
+    if xrayLoop then
+        xrayLoop:Disconnect()
+    end
+    xrayLoop = RunService.RenderStepped:Connect(function()
+        xrayEnabled = true
+        xray()
+    end)
+end)
+
+addcmd("unloopxray", {}, function(args, speaker)
+    if xrayLoop then
+        xrayLoop:Disconnect()
+    end
 end)
 
 local walltpTouch = nil
@@ -12003,6 +12021,54 @@ end)
 addcmd("rolewatchleave", {"unrolewatch"}, function(args, speaker)
     RolewatchData.Leave = not RolewatchData.Leave
     notify("Rolewatch", RolewatchData.Leave and "Leave has been Enabled" or "Leave has been Disabled")
+end)
+
+staffRoles = {"mod", "admin", "staff", "dev", "founder", "owner", "supervis", "manager", "management", "executive", "president", "chairman", "chairwoman", "chairperson", "director"}
+
+getStaffRole = function(player)
+    local playerRole = player:GetRoleInGroup(game.CreatorId)
+    local result = {Role = playerRole, Staff = false}
+    for _, role in pairs(staffRoles) do
+        if string.find(string.lower(playerRole), role) then
+            result.Staff = true
+        end
+    end
+    return result
+end
+
+addcmd("staffwatch", {}, function(args, speaker)
+    if staffwatchjoin then
+        staffwatchjoin:Disconnect()
+    end
+    if game.CreatorType == Enum.CreatorType.Group then
+        local found = {}
+        staffwatchjoin = Players.PlayerAdded:Connect(function(player)
+            local result = getStaffRole(player)
+            if result.Staff then
+                notify("Staffwatch", formatUsername(player) .. " is a " .. result.Role)
+            end
+        end)
+        for _, player in pairs(Players:GetPlayers()) do
+            local result = getStaffRole(player)
+            if result.Staff then
+                table.insert(found, formatUsername(player) .. " is a " .. result.Role)
+            end
+        end
+        if #found > 0 then
+            notify("Staffwatch", table.concat(found, ",\n"))
+        else
+            notify("Staffwatch", "Enabled")
+        end
+    else
+        notify("Staffwatch", "Game is not owned by a Group")
+    end
+end)
+
+addcmd("unstaffwatch", {}, function(args, speaker)
+    if staffwatchjoin then
+        staffwatchjoin:Disconnect()
+    end
+    notify("Staffwatch", "Disabled")
 end)
 
 addcmd('removeterrain',{'rterrain','noterrain'},function(args, speaker)
@@ -12330,6 +12396,9 @@ eventEditor.RegisterEvent("OnKilled",{
 	{Type="Player",Name="Killer Player ($2)",Default = 1}
 })
 eventEditor.RegisterEvent("OnJoin",{
+	{Type="Player",Name="Player Filter ($1)",Default = 1}
+})
+eventEditor.RegisterEvent("OnLeave",{
 	{Type="Player",Name="Player Filter ($1)",Default = 1}
 })
 eventEditor.RegisterEvent("OnChatted",{
