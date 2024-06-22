@@ -3883,9 +3883,8 @@ JoinLog = function(plr)
 	end
 end
 
-local CleanFileName = function(str)
-	local gsub = string.gsub
-	return gsub(str, "[*\\?:<>|]+", "")
+CleanFileName = function(name)
+    return tostring(name):gsub("[*\\?:<>|]+", ""):sub(1, 175)
 end
 
 SaveChatlogs.MouseButton1Down:Connect(function()
@@ -6395,7 +6394,7 @@ addcmd('unkeepiy', {}, function(args, speaker)
 	end
 end)
 
-addcmd('toggleunkeepiy', {}, function(args, speaker)
+addcmd('togglekeepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = not KeepInfYield
 		updatesaves()
