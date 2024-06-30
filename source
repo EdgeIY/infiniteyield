@@ -1968,6 +1968,10 @@ function r15(plr)
 	end
 end
 
+function rigType(player)
+    return tostring(player.Character:FindFirstChildWhichIsA("Humanoid").RigType):split(".")[3]
+end
+
 function toClipboard(txt)
     if everyClipboard then
         everyClipboard(tostring(txt))
@@ -4637,7 +4641,6 @@ CMDs[#CMDs + 1] = {NAME = 'team [team name] (CLIENT)', DESC = 'Changes your team
 CMDs[#CMDs + 1] = {NAME = 'nobillboardgui / nobgui / noname', DESC = 'Removes billboard and surface guis from your players (i.e. name guis at cafes)'}
 CMDs[#CMDs + 1] = {NAME = 'loopnobgui / loopnoname', DESC = 'Loop removes billboard and surface guis from your players (i.e. name guis at cafes)'}
 CMDs[#CMDs + 1] = {NAME = 'unloopnobgui / unloopnoname', DESC = 'Disables loopnobgui'}
-CMDs[#CMDs + 1] = {NAME = 'nohead / headless', DESC = 'Removes your head (uses simulation radius)'}
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
@@ -9502,54 +9505,6 @@ addcmd('nolimbs',{'rlimbs'},function(args, speaker)
 	end
 end)
 
-addcmd('nohead',{'rhead','headless'},function(args, speaker)
-	if sethidden then
-		-- Full credit to Thomas_Cornez#0272 @Discord
-		local lplr = Players.LocalPlayer
-		local char = lplr.Character
-		local rigType = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
-
-		local speaker = Players.LocalPlayer
-
-
-		local test = Instance.new("Model")
-		local hum  = Instance.new("Humanoid")
-		local animation = Instance.new("Model")
-		local humanoidanimation = Instance.new("Humanoid")
-		test.Parent = workspace
-		hum.Parent = test
-		animation.Parent = workspace
-		humanoidanimation.Parent = animation
-
-		lplr.Character = test
-		wait(2)
-		char:FindFirstChildOfClass('Humanoid').Animator.Parent = humanoidanimation
-		char:FindFirstChildOfClass('Humanoid'):Destroy()
-
-		char.Head:Destroy()
-		wait(5)
-		Players.LocalPlayer.Character = char
-
-		local hum2 = Instance.new("Humanoid")
-		hum2.Parent = char
-		char:FindFirstChildOfClass("Humanoid").Jump = true
-
-		humanoidanimation.Animator.Parent = hum2
-		char.Animate.Disabled = true
-		wait()
-		char.Animate.Disabled = false
-		wait()
-
-		if rig == 1 then
-			hum2.HipHeight = 0
-		elseif rig == 2 then
-			hum2.HipHeight = 2.19
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
-end)
-
 addcmd('noarms',{'rarms'},function(args, speaker)
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
@@ -12172,116 +12127,104 @@ end)
 local freezingua = nil
 frozenParts = {}
 addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
-	if sethidden then
-		local badnames = {
-			"Head",
-			"UpperTorso",
-			"LowerTorso",
-			"RightUpperArm",
-			"LeftUpperArm",
-			"RightLowerArm",
-			"LeftLowerArm",
-			"RightHand",
-			"LeftHand",
-			"RightUpperLeg",
-			"LeftUpperLeg",
-			"RightLowerLeg",
-			"LeftLowerLeg",
-			"RightFoot",
-			"LeftFoot",
-			"Torso",
-			"Right Arm",
-			"Left Arm",
-			"Right Leg",
-			"Left Leg",
-			"HumanoidRootPart"
-		}
-		local function FREEZENOOB(v)
-			if v:IsA("BasePart" or "UnionOperation") and v.Anchored == false then
-				local BADD = false
-				for i = 1,#badnames do
-					if v.Name == badnames[i] then
-						BADD = true
-					end
-				end
-				if speaker.Character and v:IsDescendantOf(speaker.Character) then
-					BADD = true
-				end
-				if BADD == false then
-					for i,c in pairs(v:GetChildren()) do
-						if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
-							c:Destroy()
-						end
-					end
-					local bodypos = Instance.new("BodyPosition")
-					bodypos.Parent = v
-					bodypos.Position = v.Position
-					bodypos.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-					local bodygyro = Instance.new("BodyGyro")
-					bodygyro.Parent = v
-					bodygyro.CFrame = v.CFrame
-					bodygyro.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
-					if not table.find(frozenParts,v) then
-						table.insert(frozenParts,v)
-					end
-				end
-			end
-		end
-		for i,v in pairs(workspace:GetDescendants()) do
-			FREEZENOOB(v)
-		end
-		freezingua = workspace.DescendantAdded:Connect(FREEZENOOB)
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
+    local badnames = {
+        "Head",
+        "UpperTorso",
+        "LowerTorso",
+        "RightUpperArm",
+        "LeftUpperArm",
+        "RightLowerArm",
+        "LeftLowerArm",
+        "RightHand",
+        "LeftHand",
+        "RightUpperLeg",
+        "LeftUpperLeg",
+        "RightLowerLeg",
+        "LeftLowerLeg",
+        "RightFoot",
+        "LeftFoot",
+        "Torso",
+        "Right Arm",
+        "Left Arm",
+        "Right Leg",
+        "Left Leg",
+        "HumanoidRootPart"
+    }
+    local function FREEZENOOB(v)
+        if v:IsA("BasePart" or "UnionOperation") and v.Anchored == false then
+            local BADD = false
+            for i = 1,#badnames do
+                if v.Name == badnames[i] then
+                    BADD = true
+                end
+            end
+            if speaker.Character and v:IsDescendantOf(speaker.Character) then
+                BADD = true
+            end
+            if BADD == false then
+                for i,c in pairs(v:GetChildren()) do
+                    if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+                        c:Destroy()
+                    end
+                end
+                local bodypos = Instance.new("BodyPosition")
+                bodypos.Parent = v
+                bodypos.Position = v.Position
+                bodypos.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+                local bodygyro = Instance.new("BodyGyro")
+                bodygyro.Parent = v
+                bodygyro.CFrame = v.CFrame
+                bodygyro.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+                if not table.find(frozenParts,v) then
+                    table.insert(frozenParts,v)
+                end
+            end
+        end
+    end
+    for i,v in pairs(workspace:GetDescendants()) do
+        FREEZENOOB(v)
+    end
+    freezingua = workspace.DescendantAdded:Connect(FREEZENOOB)
 end)
 
 addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(args, speaker)
-	if sethidden then
-		if freezingua then
-			freezingua:Disconnect()
-		end
-		for i,v in pairs(frozenParts) do
-			for i,c in pairs(v:GetChildren()) do
-				if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
-					c:Destroy()
-				end
-			end
-		end
-		frozenParts = {}
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
+    if freezingua then
+        freezingua:Disconnect()
+    end
+    for i,v in pairs(frozenParts) do
+        for i,c in pairs(v:GetChildren()) do
+            if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+                c:Destroy()
+            end
+        end
+    end
+    frozenParts = {}
 end)
 
 addcmd('tpunanchored',{'tpua'},function(args, speaker)
-	if sethidden then
-		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players) do
-			local Forces = {}
-			for _,part in pairs(workspace:GetDescendants()) do
-				if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-					for i,c in pairs(part:GetChildren()) do
-						if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
-							c:Destroy()
-						end
-					end
-					local ForceInstance = Instance.new("BodyPosition")
-					ForceInstance.Parent = part
-					ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-					table.insert(Forces, ForceInstance)
-					if not table.find(frozenParts,part) then
-						table.insert(frozenParts,part)
-					end
-				end
-			end
-			for i,c in pairs(Forces) do
-				c.Position = Players[v].Character.Head.Position
-			end
-		end
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
-	end
+    local players = getPlayer(args[1], speaker)
+    for i,v in pairs(players) do
+        local Forces = {}
+        for _,part in pairs(workspace:GetDescendants()) do
+            if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+                for i,c in pairs(part:GetChildren()) do
+                    if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+                        c:Destroy()
+                    end
+                end
+                local ForceInstance = Instance.new("BodyPosition")
+                ForceInstance.Parent = part
+                ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                table.insert(Forces, ForceInstance)
+                if not table.find(frozenParts,part) then
+                    table.insert(frozenParts,part)
+                end
+            end
+        end
+        for i,c in pairs(Forces) do
+            c.Position = Players[v].Character.Head.Position
+        end
+    end
 end)
 
 keycodeMap = {
