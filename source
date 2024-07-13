@@ -4682,6 +4682,7 @@ CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
 CMDs[#CMDs + 1] = {NAME = 'copyanimation / copyanim / copyemote [player]', DESC = 'Copies someone elses animation'}
+CMDs[#CMDs + 1] = {NAME = 'copyanimationid / copyanimid / copyemoteid [player]', DESC = 'Copies your animation id or someone elses to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'loopanimation / loopanim', DESC = 'Loops your current animation'}
 CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
 CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims', DESC = 'Refreshes animations'}
@@ -9811,6 +9812,21 @@ addcmd('copyanimation',{'copyanim','copyemote'},function(args, speaker)
 			end
 		end
 	end
+end)
+
+addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
+    local copyAnimId = function(player)
+        for _, v in pairs(player.Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
+            if not string.find(v.Animation.AnimationId, "507768375") then
+                toClipboard(v.Animation.AnimationId)
+            end
+        end
+    end
+    if args[1] then
+        copyAnimId(Players[getPlayer(args[1], speaker)[1]])
+    else
+        copyAnimId(speaker)
+    end
 end)
 
 addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
