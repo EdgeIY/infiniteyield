@@ -9816,12 +9816,32 @@ end)
 
 addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
     local copyAnimId = function(player)
+        local found = "Animations Copied"
+
         for _, v in pairs(player.Character:FindFirstChildWhichIsA("Humanoid"):GetPlayingAnimationTracks()) do
-            if not string.find(v.Animation.AnimationId, "507768375") then
-                toClipboard(v.Animation.AnimationId)
+            local animationId = v.Animation.AnimationId
+            local assetId = animationId:find("rbxassetid://") and animationId:match("%d+")
+
+            if not string.find(animationId, "507768375") and not string.find(animationId, "180435571") then
+                if assetId then
+                    local success, result = pcall(function()
+                        return MarketplaceService:GetProductInfo(tonumber(assetId)).Name
+                    end)
+                    local name = success and result or "Failed to get name"
+                    found = found .. "\n\nName: " .. name .. "\nAnimation Id: " .. animationId
+                else
+                    found = found .. "\n\nAnimation Id: " .. animationId
+                end
             end
         end
+
+        if found ~= "Animations Copied" then
+            toClipboard(found)
+        else
+            notify("Animations", "No animations to copy")
+        end
     end
+
     if args[1] then
         copyAnimId(Players[getPlayer(args[1], speaker)[1]])
     else
