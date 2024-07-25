@@ -2056,7 +2056,7 @@ function writefileCooldown(name,data)
 			repeat wait() until cooldown == false
 			writefileCooldown(name,data)
 		end
-		task.wait(3)
+		wait(3)
 		cooldown = false
 	end)
 end
@@ -2772,7 +2772,7 @@ reference = (function()
 		end
 		local pressTime = tick()
 		lastPress = pressTime
-		task.wait(2)
+		wait(2)
 		if lastPress ~= pressTime then return end
 		inviteButton.Text = "Copy Discord Invite Link (https://discord.gg/78ZuWSq)"
 	end)
@@ -9606,7 +9606,7 @@ end)
 addcmd("lay", {"laydown"}, function(args, speaker)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	humanoid.Sit = true
-	task.wait(0.1)
+	task.wait(0.1) // i forgot if this one was already here
 	humanoid.RootPart.CFrame = humanoid.RootPart.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
 	for _, v in ipairs(humanoid:GetPlayingAnimationTracks()) do
 		v:Stop()
