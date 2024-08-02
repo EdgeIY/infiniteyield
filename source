@@ -2959,12 +2959,20 @@ function saves()
             else
                 writefileCooldown("IY_FE.iy", defaults)
                 wait()
-                saves()
+                local dReadSuccess, dOut = readfile("IY_FE.iy")
+                if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
+                    saves()
+                else
+                    nosaves = true
+                    useFactorySettings()
+                    createPopup("There was a problem writing a save file to your PC.\n\nPlease contact the developer/support team for your exploit and tell them writefile/readfile is not working.\n\nYour settings, keybinds, waypoints, and aliases will not save if you continue.\n\nThings to try:\n> Make sure a 'workspace' folder is located in the same folder as your exploit\n> If your exploit is inside of a zip/rar file, extract it.\n> Rejoin the game and try again or restart your PC and try again.")
+                end
             end
         else
             writefileCooldown("IY_FE.iy", defaults)
             wait()
-            if readfile("IY_FE.iy") then
+            local dReadSuccess, dOut = readfile("IY_FE.iy")
+            if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
                 saves()
             else
                 nosaves = true
