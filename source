@@ -1939,12 +1939,14 @@ PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 everyClipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 
-local writefile = type(writefile) == "function" and function(file, data)
-    return pcall(writefile, file, data)
+local writefile = type(writefile) == "function" and function(file, data, safe)
+    if safe == true then return pcall(writefile, file, data) end
+    writefile(file, data)
 end
 
-local readfile = type(readfile) == "function" and function(file)
-    return pcall(readfile, file)
+local readfile = type(readfile) == "function" and function(file, safe)
+    if safe == true then return pcall(readfile, file) end
+    return readfile(file)
 end
 
 function writefileExploit()
@@ -2065,7 +2067,7 @@ function writefileCooldown(name,data)
 	task.spawn(function()
 		if not cooldown then
 			cooldown = true
-			writefile(name, data)
+			writefile(name, data, true)
 		else
 			repeat wait() until cooldown == false
 			writefileCooldown(name,data)
@@ -2924,7 +2926,7 @@ local loadedEventData = nil
 local jsonAttempts = 0
 function saves()
     if writefileExploit() and readfileExploit() and jsonAttempts < 10 then
-        local readSuccess, out = readfile("IY_FE.iy")
+        local readSuccess, out = readfile("IY_FE.iy", true)
         if readSuccess then
             if out ~= nil and tostring(out):gsub("%s", "") ~= "" then
                 local success, response = pcall(function()
@@ -2952,14 +2954,14 @@ function saves()
                     jsonAttempts = jsonAttempts + 1
                     warn("Save Json Error:", response)
                     warn("Overwriting Save File")
-                    writefileCooldown("IY_FE.iy", defaults)
+                    writefile("IY_FE.iy", defaults, true)
                     wait()
                     saves()
                 end
             else
-                writefileCooldown("IY_FE.iy", defaults)
+                writefile("IY_FE.iy", defaults, true)
                 wait()
-                local dReadSuccess, dOut = readfile("IY_FE.iy")
+                local dReadSuccess, dOut = readfile("IY_FE.iy", true)
                 if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
                     saves()
                 else
@@ -2969,9 +2971,9 @@ function saves()
                 end
             end
         else
-            writefileCooldown("IY_FE.iy", defaults)
+            writefile("IY_FE.iy", defaults, true)
             wait()
-            local dReadSuccess, dOut = readfile("IY_FE.iy")
+            local dReadSuccess, dOut = readfile("IY_FE.iy", true)
             if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
                 saves()
             else
