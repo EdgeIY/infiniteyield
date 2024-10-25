@@ -4402,6 +4402,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
+CMDs[#CMDs + 1] = {NAME = 'antichatlogs / antichatlogger', DESC = 'Prevents Roblox from banning you for your silly chat messages (game needs the legacy chat)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
@@ -4484,6 +4485,7 @@ CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws 
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
 CMDs[#CMDs + 1] = {NAME = 'clearnilinstances / nonilinstances / cni', DESC = 'Removes nil instances'}
 CMDs[#CMDs + 1] = {NAME = 'destroyheight / dh [num]', DESC = 'Sets FallenPartsDestroyHeight'}
+CMDs[#CMDs + 1] = {NAME = 'fakeout', DESC = 'Tp to the void and then back (useful to kill people attached to you)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
@@ -11349,6 +11351,26 @@ addcmd('joinlogs',{'jlogs'},function(args, speaker)
 	logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
 end)
 
+addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
+    if TextChatService.ChatVersion ~= Enum.ChatVersion.LegacyChatService then
+        return notify("antichatlogs", "Game needs the legacy chat")
+    end
+    local MessagePosted, _ = pcall(function()
+        rawset(require(speaker:FindFirstChild("PlayerScripts"):FindFirstChild("ChatScript").ChatMain), "MessagePosted", {
+            ["fire"] = function(msg)
+                return msg
+            end,
+            ["wait"] = function()
+                return
+            end,
+            ["connect"] = function()
+                return
+            end
+        })
+    end)
+    notify("antichatlogs", MessagePosted and "Enabled" or "Failed to enable antichatlogs")
+end)
+
 flinging = false
 addcmd('fling',{},function(args, speaker)
 	flinging = false
@@ -12131,6 +12153,17 @@ addcmd('destroyheight',{'dh'},function(args, speaker)
 	if isNumber(dh) then
 		workspace.FallenPartsDestroyHeight = dh
 	end
+end)
+
+OrgDestroyHeight = workspace.FallenPartsDestroyHeight
+addcmd("fakeout", {}, function(args, speaker)
+    local root = getRoot(speaker.Character)
+    local oldpos = root.CFrame
+    workspace.FallenPartsDestroyHeight = 0/1/0
+    root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
+    wait(1)
+    root.CFrame = oldpos
+    workspace.FallenPartsDestroyHeight = OrgDestroyHeight
 end)
 
 addcmd('trip',{},function(args, speaker)
