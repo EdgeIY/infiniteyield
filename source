@@ -4486,6 +4486,8 @@ CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Remove
 CMDs[#CMDs + 1] = {NAME = 'clearnilinstances / nonilinstances / cni', DESC = 'Removes nil instances'}
 CMDs[#CMDs + 1] = {NAME = 'destroyheight / dh [num]', DESC = 'Sets FallenPartsDestroyHeight'}
 CMDs[#CMDs + 1] = {NAME = 'fakeout', DESC = 'Tp to the void and then back (useful to kill people attached to you)'}
+CMDs[#CMDs + 1] = {NAME = 'antivoid', DESC = 'Prevents you from falling into the void by launching you upwards'}
+CMDs[#CMDs + 1] = {NAME = 'unantivoid / noantivoid', DESC = 'Disables antivoid'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
@@ -12190,6 +12192,25 @@ addcmd("fakeout", {}, function(args, speaker)
     wait(1)
     root.CFrame = oldpos
     workspace.FallenPartsDestroyHeight = OrgDestroyHeight
+end)
+
+antivoidloop = false
+addcmd("antivoid", {}, function(args, speaker)
+    execCmd("unantivoid nonotify")
+    wait()
+    antivoidloop = RunService.Stepped:Connect(function()
+        local root = getRoot(speaker.Character)
+        if root and root.Position.Y <= OrgDestroyHeight + 25 then
+            root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
+        end
+    end)
+    notify("antivoid", "Enabled")
+end)
+
+addcmd("unantivoid", {"noantivoid"}, function(args, speaker)
+    antivoidloop:Disconnect()
+    antivoidloop = nil
+    if args[1] ~= "nonotify" then notify("antivoid", "Disabled") end
 end)
 
 addcmd('trip',{},function(args, speaker)
