@@ -4696,6 +4696,7 @@ CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disabl
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
+CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
 wait()
 
 for i = 1, #CMDs do
@@ -12177,6 +12178,23 @@ addcmd('trip',{},function(args, speaker)
 		hum:ChangeState(0)
 		root.Velocity = root.CFrame.LookVector * 30
 	end
+end)
+
+addcmd("removeads", {"adblock"}, function(args, speaker)
+    while wait() do
+        pcall(function()
+            for i, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("PackageLink") then
+                    if v.Parent:FindFirstChild("ADpart") then
+                        v.Parent:Destroy()
+                    end
+                    if v.Parent:FindFirstChild("AdGuiAdornee") then
+                        v.Parent.Parent:Destroy()
+                    end
+                end
+            end
+        end)
+    end
 end)
 
 local freezingua = nil
