@@ -4671,6 +4671,7 @@ CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically rem
 CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
+CMDs[#CMDs + 1] = {NAME = 'boxreach [num]', DESC = 'Increases the hitbox of your held tool in a box shape'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
 CMDs[#CMDs + 1] = {NAME = 'usetools [ammount] [delay]', DESC = 'Activates all tools in your backpack at the same time'}
@@ -11286,7 +11287,27 @@ addcmd('reach',{},function(args, speaker)
 	end
 end)
 
-addcmd('unreach',{'noreach'},function(args, speaker)
+addcmd("boxreach", {}, function(args, speaker)
+    execCmd("unreach")
+    wait()
+    for i, v in pairs(speaker.Character:GetDescendants()) do
+        if v:IsA("Tool") then
+            local size = tonumber(args[1]) or 60
+            currentToolSize = v.Handle.Size
+            currentGripPos = v.GripPos
+            local a = Instance.new("SelectionBox")
+            a.Name = "SelectionBoxCreated"
+            a.Parent = v.Handle
+            a.Adornee = v.Handle
+            v.Handle.Massless = true
+            v.Handle.Size = Vector3.new(size, size, size)
+            v.GripPos = Vector3.new(0, 0, 0)
+            speaker.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+        end
+    end
+end)
+
+addcmd('unreach',{'noreach','unboxreach'},function(args, speaker)
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
 			v.Handle.Size = currentToolSize
