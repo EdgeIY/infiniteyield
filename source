@@ -2924,9 +2924,9 @@ createPopup = function(text)
 end
 
 local loadedEventData = nil
-local jsonAttempt = false
+local jsonAttempts = 0
 function saves()
-    if writefileExploit() and readfileExploit() and jsonAttempt then
+    if writefileExploit() and readfileExploit() and jsonAttempts < 10 then
         local readSuccess, out = readfile("IY_FE.iy", true)
         if readSuccess then
             if out ~= nil and tostring(out):gsub("%s", "") ~= "" then
@@ -2952,7 +2952,7 @@ function saves()
                     if json.eventBinds ~= nil then loadedEventData = json.eventBinds end
                 end)
                 if not success then
-                    jsonAttempt = true
+                    jsonAttempts = jsonAttempts + 1
                     warn("Save Json Error:", response)
                     warn("Overwriting Save File")
                     writefile("IY_FE.iy", defaults, true)
@@ -2984,7 +2984,7 @@ function saves()
             end
         end
     else
-        if jsonAttempt then
+        if jsonAttempts >= 10 then
             nosaves = true
             useFactorySettings()
             createPopup("Sorry, we have attempted to parse your save file, but it is unreadable!\n\nInfinite Yield is now using factory settings until your exploit's file system works.\n\nYour save file has not been deleted.")
