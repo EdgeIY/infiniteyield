@@ -12579,8 +12579,8 @@ end)
 
 if not isLegacyChat then
     TextChatService.MessageReceived:Connect(function(message)
-        if message.TextSource and tonumber(message.TextSource.UserId) > 0 then
-            local player = Players:FindFirstChild(Players:GetNameFromUserIdAsync(message.TextSource.UserId))
+        if message.TextSource then
+            local player = Players:GetPlayerByUserId(message.TextSource.UserId)
             if not player then return end
 
             if logsEnabled == true then
