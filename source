@@ -1938,6 +1938,7 @@ httprequest = (syn and syn.request) or (http and http.request) or http_request o
 PlaceId, JobId = game.PlaceId, game.JobId
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 everyClipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
 
 local writefile = type(writefile) == "function" and function(file, data, safe)
     if safe == true then return pcall(writefile, file, data) end
@@ -1999,7 +2000,7 @@ end
 
 function chatMessage(str)
     str = tostring(str)
-    if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+    if not isLegacyChat then
         TextChatService.TextChannels.RBXGeneral:SendAsync(str)
     else
         ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
@@ -4209,7 +4210,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 end
 
 task.spawn(function()
-	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then return end
+	if not isLegacyChat then return end
 	local chatbox
 	local success, result = pcall(function() chatbox = game.WaitForChild(PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end)
 	if success then
@@ -11376,7 +11377,7 @@ addcmd('joinlogs',{'jlogs'},function(args, speaker)
 end)
 
 addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
-    if TextChatService.ChatVersion ~= Enum.ChatVersion.LegacyChatService then
+    if not isLegacyChat then
         return notify("antichatlogs", "Game needs the legacy chat")
     end
     local MessagePosted, _ = pcall(function()
@@ -12562,10 +12563,10 @@ end
 
 Players.PlayerAdded:Connect(function(plr)
 	eventEditor.FireEvent("OnJoin",plr.Name)
-	plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end)
+	if isLegacyChat then plr.Chatted:Connect(function(msg) eventEditor.FireEvent("OnChatted",tostring(plr),msg) end) end
 	plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
 	JoinLog(plr)
-	ChatLog(plr)
+	if isLegacyChat then ChatLog(plr) end
 	if ESPenabled then
 		repeat wait(1) until plr.Character and getRoot(plr.Character)
 		ESP(plr)
@@ -12575,6 +12576,23 @@ Players.PlayerAdded:Connect(function(plr)
 		CHMS(plr)
 	end
 end)
+
+if not isLegacyChat then
+    TextChatService.MessageReceived:Connect(function(message)
+        if message.TextSource and tonumber(message.TextSource.UserId) > 0 then
+            local player = Players:FindFirstChild(Players:GetNameFromUserIdAsync(message.TextSource.UserId))
+            if not player then return end
+
+            if logsEnabled == true then
+                CreateLabel(player.Name, message.Text)
+            end
+            if player.UserId == Players.LocalPlayer.UserId then
+                do_exec(message.Text, Players.LocalPlayer)
+            end
+            eventEditor.FireEvent("OnChatted", player.Name, message.Text)
+        end
+    end)
+end
 
 for _,plr in pairs(Players:GetPlayers()) do
 	pcall(function()
