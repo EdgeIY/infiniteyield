@@ -3873,8 +3873,10 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 	end
 end)
 
-for _, plr in pairs(Players:GetPlayers()) do
-		ChatLog(plr)
+if isLegacyChat then
+    for _, plr in pairs(Players:GetPlayers()) do
+        ChatLog(plr)
+    end
 end
 
 Players.PlayerRemoving:Connect(function(player)
@@ -4292,7 +4294,8 @@ end
 
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
-CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads old Roblox console'}
+CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
+CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
@@ -10127,6 +10130,30 @@ end)
 
 addcmd("console", {}, function(args, speaker)
     StarterGui:SetCore("DevConsoleVisible", true)
+end)
+
+addcmd('oldconsole',{},function(args, speaker)
+	-- Thanks wally!!
+	notify("Loading",'Hold on a sec')
+	local _, str = pcall(function()
+		return game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/console.lua", true)
+	end)
+
+	local s, e = loadstring(str)
+	if typeof(s) ~= "function" then
+		return
+	end
+
+	local success, message = pcall(s)
+	if (not success) then
+		if printconsole then
+			printconsole(message)
+		elseif printoutput then
+			printoutput(message)
+		end
+	end
+	wait(1)
+	notify('Console','Press F9 to open the console')
 end)
 
 addcmd('explorer', {'dex'}, function(args, speaker)
