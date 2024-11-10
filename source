@@ -11490,13 +11490,13 @@ addcmd('togglefling',{},function(args, speaker)
 end)
 
 addcmd("flyfling", {}, function(args, speaker)
-    execCmd("unvehiclefly\\unfling\\unnoclip")
+    execCmd("unvehiclefly\\unwalkfling")
     wait()
-    execCmd("vehiclefly\\fling\\noclip")
+    execCmd("vehiclefly\\walkfling")
 end)
 
 addcmd("unflyfling", {}, function(args, speaker)
-    execCmd("unvehiclefly\\unfling\\unnoclip\\breakvelocity")
+    execCmd("unvehiclefly\\unwalkfling\\breakvelocity")
 end)
 
 addcmd("toggleflyfling", {}, function(args, speaker)
@@ -11527,7 +11527,7 @@ addcmd("walkfling", {}, function(args, speaker)
         end
 
         vel = root.Velocity
-        root.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
+        root.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
 
         RunService.RenderStepped:Wait()
         if character and character.Parent and root and root.Parent then
