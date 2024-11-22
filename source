@@ -4705,6 +4705,7 @@ CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your r
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
 CMDs[#CMDs + 1] = {NAME = 'hideplayers / hplyrs', DESC = 'Hides all charater models'}
+CMDs[#CMDs + 1] = {NAME = 'hydroxide, hyd', DESC = 'Opens Hydroxide'}
 wait()
 
 for i = 1, #CMDs do
@@ -10333,6 +10334,16 @@ addcmd('whisper',{'pm'},function(args, speaker)
 			chatMessage("/w "..plrName.." "..pmstring)
 		end)
 	end
+end)
+
+addcmd('hydroxide',{'hyd'},function(args, speaker)
+	--full credits to ARSON
+	local function webImport(file)
+    		return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/%s.lua"):format(file)), file .. '.lua')()
+	end
+
+	webImport("init")
+	webImport("ui/main")
 end)
 
 pmspamming = {}
