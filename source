@@ -12344,6 +12344,24 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(ar
     frozenParts = {}
 end)
 
+addcmd("hideplayers", {"hplyrs"}, function(args, speaker)
+	local players = game:GetService("Players")
+	local player = players.LocalPlayer or players.PlayerAdded:Wait()
+
+	for i, plr in pairs(players:GetPlayers()) do
+		if plr.Name ~= speaker.Name then
+			local char = plr.Character
+			for i, child in pairs(char:GetChildren()) do
+				if child:IsA("Part") or child:IsA("MeshPart") then
+					child.Transparency = 1
+				elseif child:IsA("Accessory") then
+					child:FindFirstChild("Handle").Transparency = 1
+				end
+			end
+		end
+	end
+end)
+
 addcmd('tpunanchored',{'tpua'},function(args, speaker)
     local players = getPlayer(args[1], speaker)
     for i,v in pairs(players) do
