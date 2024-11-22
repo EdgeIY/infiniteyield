@@ -4705,7 +4705,8 @@ CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your r
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
 CMDs[#CMDs + 1] = {NAME = 'hideplayers / hplyrs', DESC = 'Hides all charater models'}
-CMDs[#CMDs + 1] = {NAME = 'hydroxide, hyd', DESC = 'Opens Hydroxide'}
+CMDs[#CMDs + 1] = {NAME = 'hydroxide / hyd', DESC = 'Opens Hydroxide'}
+CMDs[#CMDs + 1] = {NAME = 'secureexplorer / securedex', DESC = 'Opens Secure Dex Explorer'}
 wait()
 
 for i = 1, #CMDs do
@@ -7221,6 +7222,11 @@ addcmd('unfloat',{'nofloat','unplatform','noplatform'},function(args, speaker)
 		eDown:Disconnect()
 		floatDied:Disconnect()
 	end
+end)
+
+addcmd('secureexplorer', {'securedex'}, function(args, speaker)
+    notify('Loading', 'Hold on a sec')
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
 end)
 
 addcmd('togglefloat',{},function(args, speaker)
