@@ -15,6 +15,7 @@ Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
 ### Developer: Zwolf
 ### Developer: Toon
 
+man those people kinda are exploiters soo... ive made this script ported to id2 so you can add this to ANY game as long as you use my environment emulator-
 
 ## Usage
 You can learn how to use all the features of this script in the wiki!
