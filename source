@@ -6836,6 +6836,8 @@ addcmd('noclip',{},function(args, speaker)
 		end
 	end
 	Noclipping = RunService.Stepped:Connect(NoclipLoop)
+	if args[1] and args[1] == 'nonotify' then return end
+	notify('Noclip','Noclip Enabled')
 end)
 
 addcmd('clip',{'unnoclip'},function(args, speaker)
@@ -6843,6 +6845,8 @@ addcmd('clip',{'unnoclip'},function(args, speaker)
 		Noclipping:Disconnect()
 	end
 	Clip = true
+	if args[1] and args[1] == 'nonotify' then return end
+	notify('Noclip','Noclip Disabled')
 end)
 
 addcmd('togglenoclip',{},function(args, speaker)
@@ -11522,7 +11526,7 @@ addcmd("walkfling", {}, function(args, speaker)
         end)
     end
 
-    execCmd("noclip")
+    execCmd("noclip nonotify")
     walkflinging = true
     repeat RunService.Heartbeat:Wait()
         local character = speaker.Character
