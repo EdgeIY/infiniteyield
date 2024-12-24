@@ -1931,6 +1931,13 @@ MaterialService = cloneref(game:GetService("MaterialService"))
 AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
 TextChatService = cloneref(game:GetService("TextChatService"))
 
+-- validateType
+function vtype(o, t)
+    if o == nil then return false end
+    if type(o) == "userdata" then return typeof(o) == t end
+    return type(o) == t
+end
+
 sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
@@ -2837,6 +2844,7 @@ useFactorySettings = function()
     espTransparency = 0.3
     logsEnabled = false
     jLogsEnabled = false
+    logsWebhook = nil
     aliases = {}
     binds = {}
     WayPoints = {}
@@ -2932,24 +2940,25 @@ function saves()
             if out ~= nil and tostring(out):gsub("%s", "") ~= "" then
                 local success, response = pcall(function()
                     local json = HttpService:JSONDecode(out)
-                    if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
-                    if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
-                    if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
-                    if json.espTransparency ~= nil then espTransparency = json.espTransparency else espTransparency = 0.3 end
-                    if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
-                    if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
-                    if json.aliases ~= nil then aliases = json.aliases else aliases = {} end
-                    if json.binds ~= nil then binds = (json.binds or {}) else binds = {} end
-                    if json.spawnCmds ~= nil then spawnCmds = json.spawnCmds end
-                    if json.WayPoints ~= nil then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
-                    if json.PluginsTable ~= nil then PluginsTable = json.PluginsTable else PluginsTable = {} end
-                    if json.currentShade1 ~= nil then currentShade1 = Color3.new(json.currentShade1[1],json.currentShade1[2],json.currentShade1[3]) end
-                    if json.currentShade2 ~= nil then currentShade2 = Color3.new(json.currentShade2[1],json.currentShade2[2],json.currentShade2[3]) end
-                    if json.currentShade3 ~= nil then currentShade3 = Color3.new(json.currentShade3[1],json.currentShade3[2],json.currentShade3[3]) end
-                    if json.currentText1 ~= nil then currentText1 = Color3.new(json.currentText1[1],json.currentText1[2],json.currentText1[3]) end
-                    if json.currentText2 ~= nil then currentText2 = Color3.new(json.currentText2[1],json.currentText2[2],json.currentText2[3]) end
-                    if json.currentScroll ~= nil then currentScroll = Color3.new(json.currentScroll[1],json.currentScroll[2],json.currentScroll[3]) end
-                    if json.eventBinds ~= nil then loadedEventData = json.eventBinds end
+                    if vtype(json.prefix, "string") then prefix = json.prefix else prefix = ';' end
+                    if vtype(json.StayOpen, "boolean") then StayOpen = json.StayOpen else StayOpen = false end
+                    if vtype(json.keepIY, "boolean") then KeepInfYield = json.keepIY else KeepInfYield = true end
+                    if vtype(json.espTransparency, "number") then espTransparency = json.espTransparency else espTransparency = 0.3 end
+                    if vtype(json.logsEnabled, "boolean") then logsEnabled = json.logsEnabled else logsEnabled = false end
+                    if vtype(json.jLogsEnabled, "boolean") then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
+                    if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
+                    if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
+                    if vtype(json.binds, "table") then binds = json.binds else binds = {} end
+                    if vtype(json.spawnCmds, "table") then spawnCmds = json.spawnCmds end
+                    if vtype(json.WayPoints, "table") then AllWaypoints = json.WayPoints else WayPoints = {} AllWaypoints = {} end
+                    if vtype(json.PluginsTable, "table") then PluginsTable = json.PluginsTable else PluginsTable = {} end
+                    if vtype(json.currentShade1, "table") then currentShade1 = Color3.new(json.currentShade1[1],json.currentShade1[2],json.currentShade1[3]) end
+                    if vtype(json.currentShade2, "table") then currentShade2 = Color3.new(json.currentShade2[1],json.currentShade2[2],json.currentShade2[3]) end
+                    if vtype(json.currentShade3, "table") then currentShade3 = Color3.new(json.currentShade3[1],json.currentShade3[2],json.currentShade3[3]) end
+                    if vtype(json.currentText1, "table") then currentText1 = Color3.new(json.currentText1[1],json.currentText1[2],json.currentText1[3]) end
+                    if vtype(json.currentText2, "table") then currentText2 = Color3.new(json.currentText2[1],json.currentText2[2],json.currentText2[3]) end
+                    if vtype(json.currentScroll, "table") then currentScroll = Color3.new(json.currentScroll[1],json.currentScroll[2],json.currentScroll[3]) end
+                    if vtype(json.eventBinds, "string") then loadedEventData = json.eventBinds end
                 end)
                 if not success then
                     jsonAttempts = jsonAttempts + 1
@@ -3006,6 +3015,7 @@ function updatesaves()
 			espTransparency = espTransparency;
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
+			logsWebhook = logsWebhook;
 			aliases = aliases;
 			binds = binds or {};
 			WayPoints = AllWaypoints;
@@ -3826,12 +3836,31 @@ if not writefileExploit() then
     notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
 end
 
-ChatLog = function(plr)
-	plr.Chatted:Connect(function(Message)
-		if logsEnabled == true then
-			CreateLabel(plr.Name,Message)
-		end
-	end)
+function sendChatWebhook(player, message)
+    if httprequest and vtype(logsWebhook, "string") then
+        local log = HttpService:JSONEncode({
+            content = message,
+            avatar_url = "https://files.catbox.moe/i968v2.jpg",
+            username = formatUsername(player),
+            allowed_mentions = {parse = {}}
+        })
+
+        httprequest({
+            Url = logsWebhook,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = log
+        })
+    end
+end
+
+ChatLog = function(player)
+    player.Chatted:Connect(function(message)
+        if logsEnabled == true then
+            CreateLabel(player.Name, message)
+            sendChatWebhook(player, message)
+        end
+    end)
 end
 
 JoinLog = function(plr)
@@ -4406,6 +4435,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
+CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a discord webhook for chatlogs to go to (provide no url to disable this)'}
 CMDs[#CMDs + 1] = {NAME = 'antichatlogs / antichatlogger', DESC = 'Prevents Roblox from banning you for your silly chat messages (game needs the legacy chat)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
@@ -11416,6 +11446,15 @@ addcmd('joinlogs',{'jlogs'},function(args, speaker)
 	logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
 end)
 
+addcmd("chatlogswebhook", {"logswebhook"}, function(args, speaker)
+    if httprequest then
+        logsWebhook = args[1] or nil
+        updatesaves()
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+    end
+end)
+
 addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
     if not isLegacyChat then
         return notify("antichatlogs", "Game needs the legacy chat")
@@ -12630,6 +12669,7 @@ if not isLegacyChat then
                 do_exec(message.Text, Players.LocalPlayer)
             end
             eventEditor.FireEvent("OnChatted", player.Name, message.Text)
+            sendChatWebhook(player, message.Text)
         end
     end)
 end
