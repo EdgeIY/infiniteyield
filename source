@@ -11596,7 +11596,7 @@ end)
 
 addcmd("unwalkfling", {"nowalkfling"}, function(args, speaker)
     walkflinging = false
-    execCmd("unnoclip")
+    execCmd("unnoclip nonotify")
 end)
 
 addcmd("togglewalkfling", {}, function(args, speaker)
