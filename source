@@ -7199,7 +7199,7 @@ addcmd('float', {'platform'},function(args, speaker)
 			end)
 			eUp = IYMouse.KeyUp:Connect(function(KEY)
 				if KEY == 'e' then
-					FloatValue = FloatValue - 0.5
+					FloatValue = FloatValue - 1.5
 				end
 			end)
 			qDown = IYMouse.KeyDown:Connect(function(KEY)
@@ -7209,7 +7209,7 @@ addcmd('float', {'platform'},function(args, speaker)
 			end)
 			eDown = IYMouse.KeyDown:Connect(function(KEY)
 				if KEY == 'e' then
-					FloatValue = FloatValue + 0.5
+					FloatValue = FloatValue + 1.5
 				end
 			end)
 			floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
