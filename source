@@ -12550,21 +12550,22 @@ addcmd('reloadplugin',{},function(args, speaker)
 end)
 
 addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
-    if listfiles and isfolder then
-        for _, filePath in ipairs(listfiles("")) do
-            local fileName = filePath:match("([^/\\]+%.iy)$")
-            local lowerName = fileName and fileName:lower()
-
-            if fileName and
-                lowerName ~= "iy_fe.iy" and
-                not isfolder(fileName) and
-                not table.find(PluginsTable, fileName)
-            then
-                addPlugin(fileName)
-            end
-        end
-    else
+    if not listfiles or not isfolder then
         notify("Incompatible Exploit", "Your exploit does not support this command (missing listfiles/isfolder)")
+        return
+    end
+
+    for _, filePath in ipairs(listfiles("")) do
+        local fileName = filePath:match("([^/\\]+%.iy)$")
+        local lowerName = fileName and fileName:lower()
+
+        if fileName and
+            lowerName ~= "iy_fe.iy" and
+            not isfolder(fileName) and
+            not table.find(PluginsTable, fileName)
+        then
+            addPlugin(fileName)
+        end
     end
 end)
 
