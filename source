@@ -12557,10 +12557,9 @@ addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
 
     for _, filePath in ipairs(listfiles("")) do
         local fileName = filePath:match("([^/\\]+%.iy)$")
-        local lowerName = fileName and fileName:lower()
 
         if fileName and
-            lowerName ~= "iy_fe.iy" and
+            fileName:lower() ~= "iy_fe.iy" and
             not isfolder(fileName) and
             not table.find(PluginsTable, fileName)
         then
