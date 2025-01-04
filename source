@@ -12556,9 +12556,8 @@ addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
         for i, v in pairs(listfiles("")) do
             local paths = v:split("\\")
             local file = paths[#paths]
-            local ext = file:split(".")
 
-            if ext[#ext] == "iy" and file:lower() ~= "iy_fe.iy" and file:lower() ~= "iy_fe" and not isfolder(file) then
+            if file:sub(-3) == ".iy" and file:lower() ~= "iy_fe.iy" and file:lower() ~= "iy_fe" and not isfolder(file) then
                 files[#files + 1] = file
             end
         end
