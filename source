@@ -12551,20 +12551,17 @@ end)
 
 addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
     if listfiles and isfolder then
-        local files = {}
+        for _, filePath in ipairs(listfiles("")) do
+            local fileName = filePath:match("([^/\\]+%.iy)$")
+            local lowerName = fileName and fileName:lower()
 
-        for i, v in pairs(listfiles("")) do
-            local paths = v:split("\\")
-            local file = paths[#paths]
-
-            if file:sub(-3) == ".iy" and file:lower() ~= "iy_fe.iy" and file:lower() ~= "iy_fe" and not isfolder(file) then
-                files[#files + 1] = file
-            end
-        end
-
-        for i, v in pairs(files) do
-            if not FindInTable(PluginsTable, v) then
-                addPlugin(v)
+            if fileName and
+                lowerName ~= "iy_fe.iy" and
+                lowerName ~= "iy_fe" and
+                not isfolder(fileName) and
+                not table.find(PluginsTable, fileName)
+            then
+                addPlugin(fileName)
             end
         end
     else
