@@ -12557,7 +12557,6 @@ addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
 
             if fileName and
                 lowerName ~= "iy_fe.iy" and
-                lowerName ~= "iy_fe" and
                 not isfolder(fileName) and
                 not table.find(PluginsTable, fileName)
             then
