@@ -17,7 +17,7 @@ if not game:IsLoaded() then
     notLoaded:Destroy()
 end
 
-currentVersion = "6.1"
+currentVersion = "6.2"
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -4720,6 +4720,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
+CMDs[#CMDs + 1] = {NAME = 'addallplugins / loadallplugins', DESC = 'Adds all available plugins from the workspace folder'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
@@ -12546,6 +12547,26 @@ addcmd('reloadplugin',{},function(args, speaker)
 	deletePlugin(pluginName)
 	wait(1)
 	addPlugin(pluginName)
+end)
+
+addcmd("addallplugins", {"loadallplugins"}, function(args, speaker)
+    if not listfiles or not isfolder then
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing listfiles/isfolder)")
+        return
+    end
+
+    for _, filePath in ipairs(listfiles("")) do
+        local fileName = filePath:match("([^/\\]+%.iy)$")
+        local lowerName = fileName and fileName:lower()
+
+        if fileName and
+            lowerName ~= "iy_fe.iy" and
+            not isfolder(fileName) and
+            not table.find(PluginsTable, fileName)
+        then
+            addPlugin(fileName)
+        end
+    end
 end)
 
 addcmd('removecmd',{'deletecmd'},function(args, speaker)
