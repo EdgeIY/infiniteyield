@@ -12604,8 +12604,9 @@ if IsOnMobile then
 	QuickCapture.Font = Enum.Font.SourceSansBold
 	QuickCapture.Text = "IY"
 	QuickCapture.TextColor3 = Color3.fromRGB(255, 255, 255)
-	QuickCapture.TextSize = 20.000
+	QuickCapture.TextSize = 20
 	QuickCapture.TextWrapped = true
+	QuickCapture.ZIndex = 10
 	QuickCapture.Draggable = true
 	UICorner.Name = randomString()
 	UICorner.CornerRadius = UDim.new(0.5, 0)
