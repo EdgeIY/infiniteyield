@@ -4736,6 +4736,7 @@ CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your ri
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
+CMDs[#CMDs + 1] = {NAME = 'scare / spook [player]', DESC = 'Teleports in front of a player for half a second'}
 wait()
 
 for i = 1, #CMDs do
@@ -12324,6 +12325,25 @@ addcmd("removeads", {"adblock"}, function(args, speaker)
     end
 end)
 
+addcmd("scare", {"spook"}, function(args, speaker)
+    local players = getPlayer(args[1], speaker)
+    local oldpos = nil
+
+    for _, v in pairs(players) do
+        local root = speaker.Character and getRoot(speaker.Character)
+        local target = Players[v]
+        local targetRoot = target and target.Character and getRoot(target.Character)
+
+        if root and targetRoot and target ~= speaker then
+            oldpos = root.CFrame
+            root.CFrame = targetRoot.CFrame + targetRoot.CFrame.lookVector * 2
+            root.CFrame = CFrame.new(root.Position, targetRoot.Position)
+            task.wait(0.5)
+            root.CFrame = oldpos
+        end
+    end
+end)
+
 local freezingua = nil
 frozenParts = {}
 addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
@@ -12584,8 +12604,9 @@ if IsOnMobile then
 	QuickCapture.Font = Enum.Font.SourceSansBold
 	QuickCapture.Text = "IY"
 	QuickCapture.TextColor3 = Color3.fromRGB(255, 255, 255)
-	QuickCapture.TextSize = 20.000
+	QuickCapture.TextSize = 20
 	QuickCapture.TextWrapped = true
+	QuickCapture.ZIndex = 10
 	QuickCapture.Draggable = true
 	UICorner.Name = randomString()
 	UICorner.CornerRadius = UDim.new(0.5, 0)
