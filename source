@@ -4243,7 +4243,7 @@ end
 task.spawn(function()
 	if not isLegacyChat then return end
 	local chatbox
-	local success, result = pcall(function() chatbox = game.WaitForChild(PlayerGui, "Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end)
+	local success, result = pcall(function() chatbox = PlayerGui:WaitForChild("Chat").Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar end)
 	if success then
 		local function chatboxFocused()
 			canvasPos = CMDsF.CanvasPosition
