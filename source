@@ -2521,6 +2521,7 @@ eventEditor = (function()
 		return res
 	end
 
+
 	local function refreshList()
 		for i,v in pairs(eventListHolder:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
@@ -3280,6 +3281,51 @@ Holder.MouseLeave:Connect(function()
 		end
 	end
 end)
+
+local followingNPCs = false
+local defaultRadius = 20
+
+local function isNPC(model)
+    if model:IsA("Model") and model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p.Character == model then
+                return false -- It's a player.
+            end
+        end
+        return true -- It's an NPC.
+    end
+    return false
+end
+
+local function followNPCs(speaker, radius)
+    followingNPCs = true
+    radius = tonumber(radius) or defaultRadius
+    local character = speaker.Character
+    if not character then return end
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+
+    while followingNPCs do
+        for _, obj in pairs(workspace:GetChildren()) do
+            if isNPC(obj) then
+                local humanoid = obj:FindFirstChildOfClass("Humanoid")
+                local rootPart = obj:FindFirstChild("HumanoidRootPart")
+
+                if humanoid and rootPart then
+                    local distance = (humanoidRootPart.Position - rootPart.Position).magnitude
+                    if distance <= radius then
+                        humanoid:MoveTo(humanoidRootPart.Position)
+                    end
+                end
+            end
+        end
+        task.wait(0.5)
+    end
+end
+
+local function stopFollowing()
+    followingNPCs = false
+end
 
 function updateColors(color,ctype)
 	if ctype == shade1 then
@@ -8938,6 +8984,14 @@ addcmd('walkto',{'follow'},function(args, speaker)
 			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
 		end
 	end
+end)
+
+addcmd('follownpcs', {'fnpcs'}, function(args, speaker)
+    followNPCs(speaker, args[1])
+end)
+
+addcmd('unfollownpcs', {'unfnpcs'}, function(args, speaker)
+    stopFollowing()
 end)
 
 addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
