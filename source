@@ -9571,25 +9571,12 @@ addcmd("sitwalk", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = not r15(speaker) and -1.5 or 0.5
 end)
 
-function noSitFunc()
-	wait()
-	if Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit then
-		Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Sit = false
-	end
-end
 addcmd("nosit", {}, function(args, speaker)
-	if noSit then noSit:Disconnect() nositDied:Disconnect() end
-	noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-	local function nositDiedFunc()
-		repeat wait() until speaker.Character ~= nil and speaker.Character:FindFirstChildOfClass("Humanoid")
-		noSit:Disconnect()
-		noSit = Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):GetPropertyChangedSignal("Sit"):Connect(noSitFunc)
-	end
-	nositDied = speaker.CharacterAdded:Connect(nositDiedFunc)
+    speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 end)
 
 addcmd("unnosit", {}, function(args, speaker)
-	if noSit then noSit:Disconnect() nositDied:Disconnect() end
+    speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
