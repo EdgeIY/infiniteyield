@@ -1930,6 +1930,7 @@ StatsService = cloneref(game:GetService("Stats"))
 MaterialService = cloneref(game:GetService("MaterialService"))
 AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
 TextChatService = cloneref(game:GetService("TextChatService"))
+CaptureService = cloneref(game:GetService("CaptureService"))
 
 -- validateType
 function vtype(o, t)
@@ -12794,6 +12795,16 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
+CaptureService.CaptureBegan:Connect(function()
+    Holder.Visible = false
+end)
+
+CaptureService.CaptureEnded:Connect(function()
+    task.delay(0.1, function()
+        Holder.Visible = true
+    end)
+end)
+
 task.spawn(function()
 	local success, latestVersionInfo = pcall(function() 
 		local versionJson = game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version')
@@ -12838,7 +12849,7 @@ task.spawn(function()
 			TextBox.Font = Enum.Font.SourceSans
 			TextBox.TextSize = 18
 			TextBox.TextWrapped = true
-			TextBox.Text = Announcement
+			TextBox.Text = latestVersionInfo.Announcement
 			TextBox.TextColor3 = currentText1
 			TextBox.TextXAlignment = Enum.TextXAlignment.Left
 			TextBox.TextYAlignment = Enum.TextYAlignment.Top
