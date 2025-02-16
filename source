@@ -17,7 +17,7 @@ if not game:IsLoaded() then
     notLoaded:Destroy()
 end
 
-currentVersion = "6.2"
+currentVersion = "6.3"
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
