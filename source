@@ -5559,7 +5559,7 @@ function ESP(plr)
 			ESPholder.Parent = COREGUI
 			repeat wait(1) until plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid")
 			for b,n in pairs (plr.Character:GetChildren()) do
-				if (n:IsA("BasePart")) then
+				if n:IsA("Part") or n:IsA("MeshPart") then
 					local a = Instance.new("BoxHandleAdornment")
 					a.Name = plr.Name
 					a.Parent = ESPholder
