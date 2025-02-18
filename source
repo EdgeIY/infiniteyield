@@ -5040,6 +5040,11 @@ function removecmd(cmd)
 	end
 end
 
+function overridecmd(name, func)
+    local cmd = findCmd(name)
+    if cmd and cmd.FUNC then cmd.FUNC = func end
+end
+
 function addbind(cmd,key,iskeyup,toggle)
 	if toggle then
 		binds[#binds+1]=
