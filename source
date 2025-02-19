@@ -2522,6 +2522,7 @@ eventEditor = (function()
 		return res
 	end
 
+
 	local function refreshList()
 		for i,v in pairs(eventListHolder:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
@@ -3281,6 +3282,89 @@ Holder.MouseLeave:Connect(function()
 		end
 	end
 end)
+
+local followingNPCs = false
+local defaultRadius = 20
+local defaultKillRadius = 20
+
+
+local function isNPC(model)
+    if model:IsA("Model") and model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p.Character == model then
+                return false -- It's a player.
+            end
+        end
+        return true -- It's an NPC.
+    end
+    return false
+end
+
+local function killNPCs(speaker, radius)
+    radius = tonumber(radius) or defaultKillRadius
+    local character = speaker.Character
+    if not character then return end
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+
+    for _, obj in pairs(workspace:GetChildren()) do
+        if isNPC(obj) then
+            local humanoid = obj:FindFirstChildOfClass("Humanoid")
+            local rootPart = obj:FindFirstChild("HumanoidRootPart")
+
+            if humanoid and rootPart then
+                local distance = (humanoidRootPart.Position - rootPart.Position).magnitude
+                if distance <= radius then
+                    humanoid.Health = 0 -- Set health to 0.
+                    obj:BreakJoints() -- Pray the server allows them to die.
+                end
+            end
+        end
+    end
+end
+
+
+local function isNPC(model)
+    if model:IsA("Model") and model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p.Character == model then
+                return false -- It's a player.
+            end
+        end
+        return true -- It's an NPC.
+    end
+    return false
+end
+
+local function followNPCs(speaker, radius)
+    followingNPCs = true
+    radius = tonumber(radius) or defaultRadius
+    local character = speaker.Character
+    if not character then return end
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+
+    while followingNPCs do
+        for _, obj in pairs(workspace:GetChildren()) do
+            if isNPC(obj) then
+                local humanoid = obj:FindFirstChildOfClass("Humanoid")
+                local rootPart = obj:FindFirstChild("HumanoidRootPart")
+
+                if humanoid and rootPart then
+                    local distance = (humanoidRootPart.Position - rootPart.Position).magnitude
+                    if distance <= radius then
+                        humanoid:MoveTo(humanoidRootPart.Position)
+                    end
+                end
+            end
+        end
+        task.wait(0.5)
+    end
+end
+
+local function stopFollowing()
+    followingNPCs = false
+end
 
 function updateColors(color,ctype)
 	if ctype == shade1 then
@@ -4556,6 +4640,8 @@ CMDs[#CMDs + 1] = {NAME = 'friend [player]', DESC = 'Sends a friend request to c
 CMDs[#CMDs + 1] = {NAME = 'unfriend [player]', DESC = 'Unfriends certain players'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [player]', DESC = 'Sit on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [player]', DESC = 'Follow a player'}
+CMDs[#CMDs + 1] = {NAME = 'follownpcs [radius]', DESC = 'Makes npcs follow you'}
+CMDs[#CMDs + 1] = {NAME = 'unfollownpcs', DESC = 'Makes npcs unfollow you'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalkto / pathfindfollow [player]', DESC = 'Follow a player using pathfinding'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]', DESC = 'Walk to a waypoint using pathfinding'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
@@ -4574,6 +4660,7 @@ CMDs[#CMDs + 1] = {NAME = 'fastkill [player] (TOOL)', DESC = 'Kills a player (le
 CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [player] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'bring [player] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastbring [player] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'killncps [radius]', DESC = 'Kills npcs in that radius (slightly buggy might not work sometimes, low radius recommended)'}
 CMDs[#CMDs + 1] = {NAME = 'teleport / tp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
@@ -8951,6 +9038,14 @@ addcmd('walkto',{'follow'},function(args, speaker)
 	end
 end)
 
+addcmd('follownpcs', {'fnpcs'}, function(args, speaker)
+    followNPCs(speaker, args[1])
+end)
+
+addcmd('unfollownpcs', {'unfnpcs'}, function(args, speaker)
+    stopFollowing()
+end)
+
 addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	walkto = false
 	wait()
@@ -11776,6 +11871,10 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
 		end)
 	end
+end)
+
+addcmd('killnpcs', {'knpcs'}, function(args, speaker)
+    killNPCs(speaker, args[1])
 end)
 
 local hb = RunService.Heartbeat
