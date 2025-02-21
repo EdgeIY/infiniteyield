@@ -7826,18 +7826,37 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	end)
 end)
 
+local fpsCap = 1e6
+local function capfps()
+	local timer = os.clock()
+	while true do
+		if os.clock() >= timer + 1 / fpsCap then
+			timer = os.clock()
+			task.wait()
+		end
+	end
+end
+
+if not setfpscap then
+	task.spawn(capfps)
+end
+
 addcmd('setfpscap', {'fpscap', 'maxfps'}, function(args, speaker)
-	if setfpscap and type(setfpscap) == "function" then
-		local num = args[1] or 1e6
-		if num == 'none' then
-			return setfpscap(1e6)
-		elseif num > 0 then
-			return setfpscap(num)
+	local num = args[1] or 1e6
+	if num == 'none' then
+		if setfpscap then
+			setfpscap(1e6)
 		else
-			return notify('Invalid argument', "Please provide a number above 0 or 'none'.")
+			fpsCap = 1e6
+		end
+	elseif num > 0 then
+		if setfpscap then
+			setfpscap(num)
+		else
+			fpsCap = num
 		end
 	else
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setfpscap)')
+		return notify('Invalid argument', "Please provide a number above 0 or 'none'.")
 	end
 end)
 
