@@ -10421,11 +10421,19 @@ addcmd('spamspeed',{},function(args, speaker)
 end)
 
 addcmd('bubblechat',{},function(args, speaker)
-	ChatService.BubbleChatEnabled = true
+	if isLegacyChat then
+		ChatService.BubbleChatEnabled = true
+	else
+		TextChatService.BubbleChatConfiguration.Enabled = true
+	end
 end)
 
 addcmd('unbubblechat',{'nobubblechat'},function(args, speaker)
-	ChatService.BubbleChatEnabled = false
+	if isLegacyChat then
+		ChatService.BubbleChatEnabled = false
+	else
+		TextChatService.BubbleChatConfiguration.Enabled = false
+	end
 end)
 
 addcmd('safechat',{},function(args, speaker)
