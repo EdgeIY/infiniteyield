@@ -4639,7 +4639,7 @@ CMDs[#CMDs + 1] = {NAME = 'friend [player]', DESC = 'Sends a friend request to c
 CMDs[#CMDs + 1] = {NAME = 'unfriend [player]', DESC = 'Unfriends certain players'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [player]', DESC = 'Sit on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [player]', DESC = 'Follow a player'}
-CMDs[#CMDs + 1] = {NAME = 'follownpcs [radius]', DESC = 'Makes npcs follow you'}
+CMDs[#CMDs + 1] = {NAME = 'follownpcs / fnpcs [radius]', DESC = 'Makes npcs follow you'}
 CMDs[#CMDs + 1] = {NAME = 'unfollownpcs', DESC = 'Makes npcs unfollow you'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalkto / pathfindfollow [player]', DESC = 'Follow a player using pathfinding'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]', DESC = 'Walk to a waypoint using pathfinding'}
@@ -4659,7 +4659,7 @@ CMDs[#CMDs + 1] = {NAME = 'fastkill [player] (TOOL)', DESC = 'Kills a player (le
 CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [player] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'bring [player] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastbring [player] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
-CMDs[#CMDs + 1] = {NAME = 'killncps [radius]', DESC = 'Kills npcs in that radius (slightly buggy might not work sometimes, low radius recommended)'}
+CMDs[#CMDs + 1] = {NAME = 'killncps / knpcs [radius]', DESC = 'Kills npcs in that radius (slightly buggy might not work sometimes, low radius recommended)'}
 CMDs[#CMDs + 1] = {NAME = 'teleport / tp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
@@ -4819,6 +4819,7 @@ CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease t
 CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
 CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 2022 material textures'}
 CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
+CMDs[#CMDs + 1] = {NAME = '2016ify / 2016', DESC = '2016ifys your game. Made by Nitro-GT (Hemi)'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
@@ -4831,6 +4832,7 @@ CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+CMDs[#CMDs + 1] = {NAME = 'permadeath / pd', DESC = 'Makes you unable to die'}
 wait()
 
 for i = 1, #CMDs do
@@ -12384,6 +12386,36 @@ addcmd("fakeout", {}, function(args, speaker)
     wait(1)
     root.CFrame = oldpos
     workspace.FallenPartsDestroyHeight = OrgDestroyHeight
+end)
+
+addcmd("2016ify", {"2016"}, function(args, speaker)
+    -- Set default values
+    _G.GuestMode = false
+    _G.FullMap = false
+    _G.Studs = true
+
+    -- Check if "full" argument is given
+    if args[1] == "full" then
+        _G.FullMap = true
+    end
+
+    -- Load the script
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Nitro-GT/2016ify/main/gui"))()
+
+    -- Notify user
+    notify("2016ify", "2016ify applied" .. (args[1] == "full" and " (Full Map Mode)" or ""))
+end)
+
+addcmd("permadeath", {"pd"}, function(args, speaker)
+    if replicatesignal then
+        -- Call replicatesignal on the player's death signal backend.
+        notify("Permadeath", "Wait " .. (game.Players.RespawnTime + 0.1) .. " seconds!")
+        replicatesignal(speaker.ConnectDiedSignalBackend)
+        wait(game.Players.RespawnTime + 0.1)
+        notify("Permadeath", "Turned on!")
+    else
+        notify("Permadeath", "Your executor doesn't support replicatesignal.")
+    end
 end)
 
 antivoidloop = false
