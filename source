@@ -12387,6 +12387,24 @@ addcmd("fakeout", {}, function(args, speaker)
     workspace.FallenPartsDestroyHeight = OrgDestroyHeight
 end)
 
+addcmd("2016ify", {"2016"}, function(args, speaker)
+    -- Set default values
+    _G.GuestMode = false
+    _G.FullMap = false
+    _G.Studs = true
+
+    -- Check if "full" argument is given
+    if args[1] == "full" then
+        _G.FullMap = true
+    end
+
+    -- Load the script
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Nitro-GT/2016ify/main/gui"))()
+
+    -- Notify user
+    notify("2016ify", "2016ify applied" .. (args[1] == "full" and " (Full Map Mode)" or ""))
+end)
+
 addcmd("permadeath", {"pd"}, function(args, speaker)
     if replicatesignal then
         -- Call replicatesignal on the player's death signal backend.
