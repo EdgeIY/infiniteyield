@@ -4831,6 +4831,7 @@ CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+CMDs[#CMDs + 1] = {NAME = 'permadeath', DESC = 'Makes you unable to die'}
 wait()
 
 for i = 1, #CMDs do
@@ -12384,6 +12385,17 @@ addcmd("fakeout", {}, function(args, speaker)
     wait(1)
     root.CFrame = oldpos
     workspace.FallenPartsDestroyHeight = OrgDestroyHeight
+end)
+
+addcmd("permadeath", {"pd"}, function(args, speaker)
+    if replicatesignal then
+        -- Call replicatesignal on the player's death signal backend.
+        replicatesignal(speaker.ConnectDiedSignalBackend)
+        wait(game.Players.RespawnTime + 0.1)
+        notify("permadeath", "Permadeath toggled on!")
+    else
+        notify("permadeath", "Your executor doesn't support replicatesignal.")
+    end
 end)
 
 antivoidloop = false
