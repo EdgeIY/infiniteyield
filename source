@@ -12390,11 +12390,12 @@ end)
 addcmd("permadeath", {"pd"}, function(args, speaker)
     if replicatesignal then
         -- Call replicatesignal on the player's death signal backend.
+        notify("Permadeath", "Wait " .. (game.Players.RespawnTime + 0.1) .. " seconds!")
         replicatesignal(speaker.ConnectDiedSignalBackend)
         wait(game.Players.RespawnTime + 0.1)
-        notify("permadeath", "Permadeath toggled on!")
+        notify("Permadeath", "Turned on!")
     else
-        notify("permadeath", "Your executor doesn't support replicatesignal.")
+        notify("Permadeath", "Your executor doesn't support replicatesignal.")
     end
 end)
 
