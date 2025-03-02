@@ -1,4 +1,11 @@
-<h1 align="center"> Infinite Yield </h2>
+<p align="left" style="position: absolute; left: 10px; top: 10px;">
+	<a href="https://discord.gg/78ZuWSq">
+		<img alt="Discord" src="https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61" width="40"/>
+	</a>
+</p>
+
+<h1 align="center">Infinite Yield</h1>
+
 <p align="center">✮ The ULTIMATE fe admin utility for Roblox! ✮</p>
 <p align="center">
 	<a href="https://github.com/EdgeIY/infiniteyield/issues">
@@ -8,9 +15,6 @@
 		<img alt="GitHub Pulls" src="https://img.shields.io/github/issues-pr/EdgeIY/infiniteyield?color=FF0000"/>
 	</a>
 </p>
-
-
-[![Discord](https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61)](https://discord.gg/78ZuWSq)  
 
 Get it [here](https://github.com/EdgeIY/infiniteyield/wiki).  
 
