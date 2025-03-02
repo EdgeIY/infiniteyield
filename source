@@ -4915,15 +4915,15 @@ end
 
 function respawn(plr)
 	if invisRunning then TurnVisible() end
-	local char = plr.Character
-	if char:FindFirstChildOfClass("Humanoid") then char:FindFirstChildOfClass("Humanoid"):ChangeState(15) end
-	char:ClearAllChildren()
-	local newChar = Instance.new("Model")
-	newChar.Parent = workspace
-	plr.Character = newChar
-	wait()
-	plr.Character = char
-	newChar:Destroy()
+	local h = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local cam = workspace.CurrentCamera
+        if replicatesignal then
+        replicatesignal(game.Players.LocalPlayer.ConnectDiedSignalBackend)
+        else
+        notify("Can't do InstantRespawn because replicatesignal function not supported")
+        end
+        wait(game.Players.RespawnTime - .165)
+        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(15)
 end
 
 local refreshCmd = false
