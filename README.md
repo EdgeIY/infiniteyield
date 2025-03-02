@@ -18,7 +18,7 @@
 
 Get it [here](https://github.com/EdgeIY/infiniteyield/wiki).  
 
-- **Over 378 commands**  
+- **Over 406 commands**  
 - **Open Source**  
 - **6 years of development**  
 
