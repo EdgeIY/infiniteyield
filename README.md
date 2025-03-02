@@ -1,5 +1,14 @@
-# Infinite Yield  
-The best command-line script for Roblox.  
+<h1 align="center"> Infinite Yield </h2>
+<p align="center">✮ The ULTIMATE fe admin utility for Roblox! ✮</p>
+<p align="center">
+	<a href="https://github.com/EdgeIY/infiniteyield/issues">
+		<img alt="Issues" src="https://img.shields.io/github/issues/EdgeIY/infiniteyield?color=FF0000"/>
+	</a>
+	<a href="https://github.com/EdgeIY/infiniteyield/pulls">
+		<img alt="GitHub Pulls" src="https://img.shields.io/github/issues-pr/EdgeIY/infiniteyield?color=FF0000"/>
+	</a>
+</p>
+
 
 [![Discord](https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61)](https://discord.gg/78ZuWSq)  
 
