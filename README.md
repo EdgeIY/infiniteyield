@@ -1,6 +1,5 @@
 # Infinite Yield 
-[![Discord](https://media.discordapp.net/attachments/338403017894395905/668536741942263808/Discord-Logo-Color.png)](https://discord.gg/78ZuWSq)
-The best command line script for roblox.
+The best command line script for roblox. [![Discord](https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61)](https://discord.gg/78ZuWSq)
 
 Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
 
