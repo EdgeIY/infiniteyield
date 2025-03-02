@@ -1,22 +1,22 @@
-# Infinite Yield 
-The best command line script for roblox. [![Discord](https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61)](https://discord.gg/78ZuWSq)
+# Infinite Yield  
+The best command-line script for Roblox.  
 
-Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
+[![Discord](https://github.com/user-attachments/assets/6c15aa50-506b-4641-a1c0-8cfa65f78e61)](https://discord.gg/78ZuWSq)  
 
- - Currently 378 commands
- - Open Source
- - 6 years of development
+Get it [here](https://github.com/EdgeIY/infiniteyield/wiki).  
 
-## Developers
-### Creator: Edge
+- **Over 378 commands**  
+- **Open Source**  
+- **6 years of development**  
 
-### Developer: Moon
-### Developer: Zwolf
-### Developer: Toon
+## Developers  
+- **Creator:** Edge  
+- **Developer:** Moon  
+- **Developer:** Zwolf  
+- **Developer:** Toon  
 
+## Usage  
+Learn how to use all the features of this script in the [wiki](https://github.com/EdgeIY/infiniteyield/wiki)!  
 
-## Usage
-You can learn how to use all the features of this script in the wiki!
-
-## Contributing
-There is no specific rules on contributing (as of now) just open a pull request and if it checks out we will merge it!
+## Contributing  
+There are no strict contribution rules (as of now). Just open a pull request via [this link](https://github.com/EdgeIY/infiniteyield/pulls), and if it checks out, we’ll merge it!
