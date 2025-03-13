@@ -4345,7 +4345,6 @@ CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
 CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
-CMDs[#CMDs + 1] = {NAME = 'joinplayer [username / ID] [place ID]', DESC = 'Joins a specific players server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
 CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
@@ -4456,8 +4455,6 @@ CMDs[#CMDs + 1] = {NAME = 'unpmspam [player]', DESC = 'Turns off pm spam'}
 CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
 CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
-CMDs[#CMDs + 1] = {NAME = 'safechat', DESC = 'Enables safe chat'}
-CMDs[#CMDs + 1] = {NAME = 'nosafechat / disablesafechat', DESC = 'Disables safechat'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp', DESC = 'Removes esp'}
@@ -6815,62 +6812,6 @@ addcmd("serverhop", {"shop"}, function(args, speaker)
     else
         notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
     end
-end)
-
-addcmd('joinplayer',{'joinp'},function(args, speaker)
-	local retries = 0
-	function ToServer(User,Place)	
-		if args[2] == nil then Place = PlaceId end
-		if not pcall(function()
-				local FoundUser, UserId = pcall(function()
-					if tonumber(User) then
-						return tonumber(User)
-					end
-
-					return Players:GetUserIdFromNameAsync(User)
-				end)
-				if not FoundUser then
-					notify('Join Error','Username/UserID does not exist')
-				else
-					notify('Join Player','Loading servers. Hold on a second.')
-					local URL2 = ("https://games.roblox.com/v1/games/"..Place.."/servers/Public?sortOrder=Asc&limit=100")
-					local Http = HttpService:JSONDecode(game:HttpGet(URL2))
-					local GUID
-
-					function tablelength(T)
-						local count = 0
-						for _ in pairs(T) do count = count + 1 end
-						return count
-					end
-
-					for i=1,tonumber(tablelength(Http.data)) do
-						for j,k in pairs(Http.data[i].playerIds) do
-							if k == UserId then
-								GUID = Http.data[i].id
-							end
-						end
-					end
-
-					if GUID ~= nil then
-						notify('Join Player','Joining '..User)
-						TeleportService:TeleportToPlaceInstance(Place,GUID,Players.LocalPlayer)
-					else
-						notify('Join Error','Unable to join user.')
-					end
-				end
-			end)
-		then
-			if retries < 3 then
-				retries = retries + 1
-				print('ERROR retrying '..retries..'/3')
-				notify('Join Error','Error while trying to join. Retrying '..retries..'/3.')
-				ToServer(User,Place)
-			else
-				notify('Join Error','Error while trying to join.')
-			end
-		end
-	end
-	ToServer(args[1],args[2])
 end)
 
 addcmd("exit", {}, function(args, speaker)
@@ -10460,14 +10401,6 @@ addcmd('unbubblechat',{'nobubblechat'},function(args, speaker)
 	else
 		TextChatService.BubbleChatConfiguration.Enabled = false
 	end
-end)
-
-addcmd('safechat',{},function(args, speaker)
-	speaker:SetSuperSafeChat(true)
-end)
-
-addcmd('nosafechat',{'disablesafechat','unsafechat'},function(args, speaker)
-	speaker:SetSuperSafeChat(false)
 end)
 
 addcmd('blockhead',{},function(args, speaker)
