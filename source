@@ -10527,14 +10527,14 @@ end)
 addcmd('friend',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
-		speaker:RequestFriendship(v)
+		speaker:RequestFriendship(Players[v])
 	end
 end)
 
 addcmd('unfriend',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
-		speaker:RevokeFriendship(v)
+		speaker:RevokeFriendship(Players[v])
 	end
 end)
 
