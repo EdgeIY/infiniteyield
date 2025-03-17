@@ -9859,39 +9859,73 @@ addcmd('loopanimation', {'loopanim'},function(args, speaker)
 end)
 
 addcmd('tpposition',{'tppos'},function(args, speaker)
-	if #args < 3 then return end
-	local tpX,tpY,tpZ = tonumber((args[1]:gsub(",", ""))),tonumber((args[2]:gsub(",", ""))),tonumber((args[3]:gsub(",", "")))
-	local char = speaker.Character
-	if char and getRoot(char) then
-		getRoot(char).CFrame = CFrame.new(tpX,tpY,tpZ)
-	end
+    local tpX, tpY, tpZ
+    if args[3] then
+        tpX, tpY, tpZ = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+    elseif args[1] then
+        local coords = args[1]:gsub(",", " ")
+        tpX, tpY, tpZ = coords:match("(%S+)%s+(%S+)%s+(%S+)")
+        tpX, tpY, tpZ = tonumber(tpX), tonumber(tpY), tonumber(tpZ)
+    end
+    if not (tpX or tpY or tpZ) then return end
+    local char = speaker.Character
+    local root = char and getRoot(char)
+    if root then
+        root.CFrame = CFrame.new(tpX or root.Position.X, tpY or root.Position.Y, tpZ or root.Position.Z)
+    end
 end)
 
 addcmd('tweentpposition',{'ttppos'},function(args, speaker)
-	if #args < 3 then return end
-	local tpX,tpY,tpZ = tonumber((args[1]:gsub(",", ""))),tonumber((args[2]:gsub(",", ""))),tonumber((args[3]:gsub(",", "")))
-	local char = speaker.Character
-	if char and getRoot(char) then
-		TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
-	end
+    local tpX, tpY, tpZ
+    if args[3] then
+        tpX, tpY, tpZ = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+    elseif args[1] then
+        local coords = args[1]:gsub(",", " ")
+        tpX, tpY, tpZ = coords:match("(%S+)%s+(%S+)%s+(%S+)")
+        tpX, tpY, tpZ = tonumber(tpX), tonumber(tpY), tonumber(tpZ)
+    end
+    if not (tpX or tpY or tpZ) then return end
+    local char = speaker.Character
+    local root = char and getRoot(char)
+    if root then
+        TweenService:Create(root, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {
+            CFrame = CFrame.new(tpX or root.Position.X, tpY or root.Position.Y, tpZ or root.Position.Z)
+        }):Play()
+    end
 end)
 
 addcmd('offset',{},function(args, speaker)
-	if #args < 3 then
-		return 
-	end
-	if speaker.Character then
-		speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
-	end
+    local tpX, tpY, tpZ
+    if args[3] then
+        tpX, tpY, tpZ = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+    elseif args[1] then
+        local coords = args[1]:gsub(",", " ")
+        tpX, tpY, tpZ = coords:match("(%S+)%s+(%S+)%s+(%S+)")
+        tpX, tpY, tpZ = tonumber(tpX) or 0, tonumber(tpY) or 0, tonumber(tpZ) or 0
+    end
+    if tpX == 0 and tpY == 0 and tpZ == 0 then return end
+    if speaker.Character then
+        speaker.Character:TranslateBy(Vector3.new(tpX, tpY, tpZ))
+    end
 end)
 
 addcmd('tweenoffset',{'toffset'},function(args, speaker)
-	if #args < 3 then return end
-	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
-	local char = speaker.Character
-	if char and getRoot(char) then
-		TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
-	end
+    local tpX, tpY, tpZ
+    if args[3] then
+        tpX, tpY, tpZ = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+    elseif args[1] then
+        local coords = args[1]:gsub(",", " ")
+        tpX, tpY, tpZ = coords:match("(%S+)%s+(%S+)%s+(%S+)")
+        tpX, tpY, tpZ = tonumber(tpX) or 0, tonumber(tpY) or 0, tonumber(tpZ) or 0
+    end
+    if tpX == 0 and tpY == 0 and tpZ == 0 then return end
+    local char = speaker.Character
+    local root = char and getRoot(char)
+    if root then
+        TweenService:Create(root, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {
+            CFrame = root.CFrame * CFrame.new(tpX, tpY, tpZ)
+        }):Play()
+    end
 end)
 
 addcmd('clickteleport',{},function(args, speaker)
