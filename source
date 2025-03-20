@@ -3,11 +3,26 @@ if IY_LOADED and not _G.IY_DEBUG == true then
     return
 end
 
+local WebImport = function(host, url)
+    local sucess, __function = pcall(loadstring, game:HttpGet(string.format("https://%s/%s", host, url)))
+	if sucess then
+		local new, returned = pcall(__function)
+		if returned ~= nil then
+			return returned
+		end
+
+		if _G.IY_DEBUG then
+			warn(string.format("Get: %d from Url: %s/%s", new, host, url))
+		end
+	end
+end
+
 pcall(function() getgenv().IY_LOADED = true end)
 
 local cloneref = cloneref or function(o) return o end
 COREGUI = cloneref(game:GetService("CoreGui"))
 Players = cloneref(game:GetService("Players"))
+local crtype = game.CreatorType
 
 if not game:IsLoaded() then
     local notLoaded = Instance.new("Message")
@@ -4338,6 +4353,7 @@ CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
+CMDs[#CMDs + 1] = {NAME = 'hydroxide', DESC = 'Opens Hydroxide'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
@@ -6330,8 +6346,13 @@ end)
 local TeleportCheck = false
 Players.LocalPlayer.OnTeleport:Connect(function(State)
 	if KeepInfYield and (not TeleportCheck) and queueteleport then
+		local git = "https://raw.githubusercontent.com/"
 		TeleportCheck = true
-		queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
+		if is_fork then
+			queueteleport("loadstring(game:HttpGet('".. git.. "EdgeIY/infiniteyield/master/source'))()")
+		else
+		    queueteleport("loadstring(game:HttpGet('".. git.. "RIOTLaF/Infinite-Yield-BB/master/source'))()")
+		end
 	end
 end)
 
@@ -6400,31 +6421,32 @@ addcmd('discord', {'support', 'help'}, function(args, speaker)
 	end
 end)
 
+local function ismissing(func,code, errorcode)
+	if func then
+		pcall(code)
+	else
+		notify(string.format('Incompatible Exploit',"Your exploit does not support this command (missing %s)", errorcode))
+	end
+end
 addcmd('keepiy', {}, function(args, speaker)
-	if queueteleport then
+	ismissing(queueteleport,function()
 		KeepInfYield = true
 		updatesaves()
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
-	end
+	end, "queue_on_teleport")
 end)
 
 addcmd('unkeepiy', {}, function(args, speaker)
-	if queueteleport then
+	ismissing(queueteleport,function()
 		KeepInfYield = false
 		updatesaves()
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
-	end
+	end, "queue_on_teleport")
 end)
 
 addcmd('togglekeepiy', {}, function(args, speaker)
-	if queueteleport then
+	ismissing(queueteleport,function()
 		KeepInfYield = not KeepInfYield
 		updatesaves()
-	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
-	end
+	end, "queue_on_teleport")
 end)
 
 local canOpenServerinfo = true
@@ -8538,7 +8560,7 @@ addcmd('btools',{},function(args, speaker)
 end)
 
 addcmd('f3x',{'fex'},function(args, speaker)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua"))()
+	WebImport("raw.githubusercontent.com", "infyiff/backup/refs/heads/main/f3x.lua")
 end)
 
 addcmd('partpath',{'partname'},function(args, speaker)
@@ -8605,7 +8627,7 @@ addcmd("promptr15", {}, function(args, speaker)
 end)
 
 addcmd("wallwalk", {"walkonwalls"}, function(args, speaker)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua"))()
+	WebImport("raw.githubusercontent.com", "infyiff/backup/main/wallwalker.lua")
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -8683,9 +8705,9 @@ addcmd('copyid',{'copyuserid'},function(args, speaker)
 end)
 
 addcmd('creatorid',{'creator'},function(args, speaker)
-	if game.CreatorType == Enum.CreatorType.User then
+	if crtype == Enum.CreatorType.User then
 		notify('Creator ID',game.CreatorId)
-	elseif game.CreatorType == Enum.CreatorType.Group then
+	elseif crtype == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
 		notify('Creator ID',OwnerID)
@@ -8693,10 +8715,10 @@ addcmd('creatorid',{'creator'},function(args, speaker)
 end)
 
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
-	if game.CreatorType == Enum.CreatorType.User then
+	if crtype == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
 		notify('Copied ID','Copied creator ID to clipboard')
-	elseif game.CreatorType == Enum.CreatorType.Group then
+	elseif crtype == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
 		notify('Copied ID','Copied creator ID to clipboard')
@@ -8704,10 +8726,10 @@ addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 end)
 
 addcmd('setcreatorid',{'setcreator'},function(args, speaker)
-	if game.CreatorType == Enum.CreatorType.User then
+	if crtype == Enum.CreatorType.User then
 		speaker.UserId = game.CreatorId
 		notify('Set ID','Set UserId to '..game.CreatorId)
-	elseif game.CreatorType == Enum.CreatorType.Group then
+	elseif crtype == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
 		notify('Set ID','Set UserId to '..OwnerID)
@@ -9054,10 +9076,13 @@ addcmd("orbit", {}, function(args, speaker)
 end)
 
 addcmd("unorbit", {}, function(args, speaker)
-    if orbit1 then orbit1:Disconnect() end
-    if orbit2 then orbit2:Disconnect() end
-    if orbit3 then orbit3:Disconnect() end
-    if orbit4 then orbit4:Disconnect() end
+	local sd = function(...)
+		for i,v in pairs{...} do
+			if v then v:Disconnect() end
+		end
+	end
+	sd(orbit1,orbit2,orbit3,orbit4)
+    
     if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
 
@@ -10258,6 +10283,19 @@ addcmd('remotespy',{'rspy'},function(args, speaker)
 	-- Full credit to exx, creator of SimpleSpy
 	-- also thanks to NoobSploit for fixing
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
+end)
+
+addcmd('remotespy',{'rspy'},function(args, speaker)
+	notify("Loading",'Hold on a sec')
+	local owner = "Upbolt"
+    local branch = "revision"
+
+    local function webImport(file)
+        return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
+    end
+
+    pcall(webImport,"init")
+    pcall(webImport,"ui/main")
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
@@ -12184,7 +12222,7 @@ addcmd("staffwatch", {}, function(args, speaker)
     if staffwatchjoin then
         staffwatchjoin:Disconnect()
     end
-    if game.CreatorType == Enum.CreatorType.Group then
+    if crtype == Enum.CreatorType.Group then
         local found = {}
         staffwatchjoin = Players.PlayerAdded:Connect(function(player)
             local result = getStaffRole(player)
