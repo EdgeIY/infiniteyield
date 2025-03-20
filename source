@@ -9655,13 +9655,12 @@ addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
 end)
 
 addcmd('team',{},function(args, speaker)
-    local teamname = nil
-    for a, b in ipairs(Teams:GetChildren()) do
-        if string.match(b.Name:lower(), getstring(1):lower()) then
-            teamname = b
+    for _, team in ipairs(Teams:GetChildren()) do
+        if b.Name:lower():match(getstring(1):lower()) then
+            speaker.Team = team
+            break
         end
     end
-    speaker.Team = teamname
 end)
 
 addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},function(args, speaker)
