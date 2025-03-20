@@ -9656,10 +9656,10 @@ end)
 
 addcmd('team',{},function(args, speaker)
 	local teamname = nil
-	for a,b in pairs(Teams:GetChildren()) do
+	for a, b in ipairs(Teams:GetChildren()) do
 		local L_name = b.Name:lower()
-		local F = L_name:find(getstring(1))
-		if F == 1 then
+		local F = string.lower(getstring(1))
+		if L_name == F then
 			teamname = b 
 		end
 	end
