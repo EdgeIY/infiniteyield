@@ -10285,7 +10285,7 @@ addcmd('remotespy',{'rspy'},function(args, speaker)
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
 end)
 
-addcmd('remotespy',{'rspy'},function(args, speaker)
+addcmd('hydroxide',{'hydrospy'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
 	local owner = "Upbolt"
     local branch = "revision"
