@@ -1924,7 +1924,6 @@ StarterGui = cloneref(game:GetService("StarterGui"))
 GuiService = cloneref(game:GetService("GuiService"))
 Lighting = cloneref(game:GetService("Lighting"))
 ContextActionService = cloneref(game:GetService("ContextActionService"))
-NetworkClient = cloneref(game:GetService("NetworkClient"))
 ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
 GroupService = cloneref(game:GetService("GroupService"))
 PathService = cloneref(game:GetService("PathfindingService"))
@@ -8566,9 +8565,11 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 end)
 
 addcmd("datalimit", {}, function(args, speaker)
-	if tonumber(args[1]) then
-		NetworkClient:SetOutgoingKBPSLimit(args[1])
-	end
+    local kbps = tonumber(args[1])
+    if kbps then
+        local NetworkClient = cloneref(game:GetService("NetworkClient"))
+        NetworkClient:SetOutgoingKBPSLimit(kbps)
+    end
 end)
 
 addcmd("replicationlag", {"backtrack"}, function(args, speaker)
