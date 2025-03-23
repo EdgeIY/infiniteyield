@@ -9655,16 +9655,30 @@ addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
 	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or nil
 end)
 
-addcmd('team',{},function(args, speaker)
-	local teamname = nil
-	for a,b in pairs(Teams:GetChildren()) do
-		local L_name = b.Name:lower()
-		local F = L_name:find(getstring(1))
-		if F == 1 then
-			teamname = b 
-		end
-	end
-	speaker.Team = teamname
+addcmd("team", {}, function(args, speaker)
+    local teamName = getstring(1)
+    local team = nil
+    local root = speaker.Character and getRoot(speaker.Character)
+    for _, v in ipairs(Teams:GetChildren()) do
+        if v.Name:lower():match(teamName:lower()) then
+            team = v
+            break
+        end
+    end
+    if not team then
+        return notify("Invalid Team", teamName .. " is not a valid team")
+    end
+    if root and firetouchinterest then
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("SpawnLocation") and v.BrickColor == team.TeamColor and v.AllowTeamChangeOnTouch == true then
+                firetouchinterest(v, root, 0)
+                firetouchinterest(v, root, 1)
+                break
+            end
+        end
+    else
+        speaker.Team = team
+    end
 end)
 
 addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},function(args, speaker)
