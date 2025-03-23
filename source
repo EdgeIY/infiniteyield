@@ -4601,6 +4601,7 @@ CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
 CMDs[#CMDs + 1] = {NAME = 'god', DESC = 'Makes your character difficult to kill in most games'}
+CMDs[#CMDs + 1] = {NAME = 'permadeath', DESC = 'Makes you unable to die'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
@@ -4831,17 +4832,27 @@ function GetInTable(Table, Name)
 	return false
 end
 
+function permadeath(plr)
+    if replicatesignal then
+        replicatesignal(plr.ConnectDiedSignalBackend)
+        task.wait(Players.RespawnTime - 0.165)
+    end
+end
+
 function respawn(plr)
-	if invisRunning then TurnVisible() end
-	local char = plr.Character
-	if char:FindFirstChildOfClass("Humanoid") then char:FindFirstChildOfClass("Humanoid"):ChangeState(15) end
-	char:ClearAllChildren()
-	local newChar = Instance.new("Model")
-	newChar.Parent = workspace
-	plr.Character = newChar
-	wait()
-	plr.Character = char
-	newChar:Destroy()
+    if invisRunning then TurnVisible() end
+    permadeath(plr)
+    local char = plr.Character
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
+    if not replicatesignal then wait() end
+    char:ClearAllChildren()
+    local newChar = Instance.new("Model")
+    newChar.Parent = workspace
+    plr.Character = newChar
+    wait()
+    plr.Character = char
+    newChar:Destroy()
 end
 
 local refreshCmd = false
@@ -12461,6 +12472,15 @@ end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
     VoiceChatService:joinVoice()
+end)
+
+addcmd("permadeath", {}, function(args, speaker)
+    if replicatesignal then
+        permadeath(speaker)
+        notify("Permadeath", "Enabled")
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
+    end
 end)
 
 local freezingua = nil
