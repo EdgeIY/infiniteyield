@@ -9192,6 +9192,7 @@ addcmd('refresh',{'re'},function(args, speaker)
 end)
 
 addcmd('god',{},function(args, speaker)
+	permadeath(speaker)
 	local Cam = workspace.CurrentCamera
 	local Pos, Char = Cam.CFrame, speaker.Character
 	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
@@ -9216,6 +9217,7 @@ invisRunning = false
 addcmd('invisible',{'invis'},function(args, speaker)
 	if invisRunning then return end
 	invisRunning = true
+	permadeath(speaker)
 	-- Full credit to AmokahFox @V3rmillion
 	local Player = speaker
 	repeat wait(.1) until Player.Character
@@ -11602,6 +11604,7 @@ addcmd("togglewalkfling", {}, function(args, speaker)
 end)
 
 addcmd('invisfling',{},function(args, speaker)
+	permadeath(speaker)
 	local ch = speaker.Character
 	local prt=Instance.new("Model")
 	prt.Parent = speaker.Character
