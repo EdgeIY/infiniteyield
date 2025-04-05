@@ -13035,10 +13035,3 @@ task.spawn(function()
 	minimizeHolder()
 	if IsOnMobile then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
-
-if os.date("%m %d") == "04 01" then
-	if math.random(1, 4) == 1 then
-		createPopup("AMONG US JUMPSCARE AMONG US DIES TOMORROW!!\n\nidk april fools")
-	end
-	Title.Text = string.gsub(Title.Text, "Infinite Yield FE", "fortnite hack")
-end
