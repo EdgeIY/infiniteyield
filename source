@@ -3845,21 +3845,25 @@ if not writefileExploit() then
 end
 
 function sendChatWebhook(player, message)
-    if httprequest and vtype(logsWebhook, "string") then
-        local log = HttpService:JSONEncode({
-            content = message,
-            avatar_url = "https://files.catbox.moe/i968v2.jpg",
-            username = formatUsername(player),
-            allowed_mentions = {parse = {}}
-        })
-
-        httprequest({
-            Url = logsWebhook,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = log
-        })
-    end
+  if httprequest and vtype(logsWebhook, "string") then
+    local d = HttpService:JSONDecode(request({
+      Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. player.UserId .. "&size=420x420&format=Png&isCircular=false",
+      Method = "GET"
+    }).Body)["data"]
+    local avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
+    local log = HttpService:JSONEncode({
+      content = message,
+      avatar_url = avatar,
+      username = formatUsername(player),
+      allowed_mentions = {parse = {}}
+    })
+    httprequest({
+      Url = logsWebhook,
+      Method = "POST",
+      Headers = {["Content-Type"] = "application/json"},
+      Body = log
+    })
+  end
 end
 
 ChatLog = function(player)
