@@ -12475,6 +12475,13 @@ end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
     VoiceChatService:joinVoice()
+
+    if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
+        onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
+            task.wait(1)
+            VoiceChatService:joinVoice()
+        end)
+    end
 end)
 
 addcmd("permadeath", {}, function(args, speaker)
