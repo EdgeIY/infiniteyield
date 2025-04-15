@@ -3844,13 +3844,19 @@ if not writefileExploit() then
     notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
 end
 
+avatarcache = {}
 function sendChatWebhook(player, message)
   if httprequest and vtype(logsWebhook, "string") then
-    local d = HttpService:JSONDecode(httprequest({
-      Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. player.UserId .. "&size=420x420&format=Png&isCircular=false",
-      Method = "GET"
-    }).Body)["data"]
-    local avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
+    local id = player.UserId
+    local avatar = avatarcache[id]
+    if not avatar then
+      local d = HttpService:JSONDecode(httprequest({
+        Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. id .. "&size=420x420&format=Png&isCircular=false",
+        Method = "GET"
+      }).Body)["data"]
+      avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
+      avatarcache[id] = avatar
+    end
     local log = HttpService:JSONEncode({
       content = message,
       avatar_url = avatar,
