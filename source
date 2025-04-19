@@ -9336,7 +9336,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	notify('Invisible','You now appear invisible to other players')
 end)
 
-addcmd("visible", {"vis"}, function(args, speaker)
+addcmd("visible", {"vis","uninvisible"}, function(args, speaker)
 	TurnVisible()
 end)
 
