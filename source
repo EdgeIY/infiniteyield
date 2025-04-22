@@ -6,8 +6,8 @@ end
 pcall(function() getgenv().IY_LOADED = true end)
 
 local cloneref = cloneref or function(o) return o end
-COREGUI = cloneref(game:GetService("CoreGui"))
 Players = cloneref(game:GetService("Players"))
+COREGUI = Players.LocalPlayer.PlayerGui
 
 if not game:IsLoaded() then
     local notLoaded = Instance.new("Message")
@@ -1952,7 +1952,7 @@ gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 PlaceId, JobId = game.PlaceId, game.JobId
-local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
+local IsOnMobile = false
 everyClipboard = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
 isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
 
@@ -4449,6 +4449,7 @@ CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where y
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = 'teleporttool / tptool', DESC = 'Gives you a teleport tool'}
+CMDs[#CMDs + 1] = {NAME = 'tweentptool / tweentool', DESC = 'Gives you a tween teleport tool (May bypass some anticheats)'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
@@ -4762,6 +4763,7 @@ CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area aroun
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'setfpscap / fpscap', DESC = 'Sets the FPS cap'}
 wait()
 
 for i = 1, #CMDs do
@@ -9959,6 +9961,17 @@ addcmd('tptool', {'teleporttool'}, function(args, speaker)
 		end
 		HRP.CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:components()))
 	end)
+end)
+
+addcmd('tweentptool', {'tweentool'}, function(args, speaker)
+	local TweenTool = Instance.new("Tool")
+	TweenTool.Name = "Tween Tool"
+	TweenTool.RequiresHandle = false
+	TweenTool.Parent = speaker.Backpack
+	TweenTool.Activated:Connect(function()
+		local HRP = getRoot(speaker.Character)
+		TweenService:Create(HRP, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:components()))}):Play()
+	end)	
 end)
 
 addcmd('clickdelete',{},function(args, speaker)
