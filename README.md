@@ -24,3 +24,6 @@ There is no specific rules on contributing (as of now) just open a pull request 
 
 ## NEWEST VERSION!
 [![Go to my Scriptblox Account! (MY SCRIPTS ARE THERE)](https://scriptblox.com/images/script/0-1744960083051.png)](https://scriptblox.com/u/Poker)
+
+## What's New?
+### New 3 Commands: executesirius / executesir, executeat / executeautoplayer, and unjerk / unj!
