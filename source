@@ -17,7 +17,7 @@ if not game:IsLoaded() then
     notLoaded:Destroy()
 end
 
-currentVersion = "6.3.1"
+currentVersion = "7.3.1"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
@@ -3844,32 +3844,22 @@ if not writefileExploit() then
     notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
 end
 
-avatarcache = {}
 function sendChatWebhook(player, message)
-  if httprequest and vtype(logsWebhook, "string") then
-    local id = player.UserId
-    local avatar = avatarcache[id]
-    if not avatar then
-      local d = HttpService:JSONDecode(httprequest({
-        Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. id .. "&size=420x420&format=Png&isCircular=false",
-        Method = "GET"
-      }).Body)["data"]
-      avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
-      avatarcache[id] = avatar
+    if httprequest and vtype(logsWebhook, "string") then
+        local log = HttpService:JSONEncode({
+            content = message,
+            avatar_url = "https://files.catbox.moe/i968v2.jpg",
+            username = formatUsername(player),
+            allowed_mentions = {parse = {}}
+        })
+
+        httprequest({
+            Url = logsWebhook,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = log
+        })
     end
-    local log = HttpService:JSONEncode({
-      content = message,
-      avatar_url = avatar,
-      username = formatUsername(player),
-      allowed_mentions = {parse = {}}
-    })
-    httprequest({
-      Url = logsWebhook,
-      Method = "POST",
-      Headers = {["Content-Type"] = "application/json"},
-      Body = log
-    })
-  end
 end
 
 ChatLog = function(player)
@@ -4680,7 +4670,7 @@ CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters 
 CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Funny Commands', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be by roblox to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
 CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
@@ -4697,7 +4687,7 @@ CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running an
 CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims', DESC = 'Refreshes animations'}
 CMDs[#CMDs + 1] = {NAME = 'allowcustomanim / allowcustomanimations', DESC = 'Lets you use custom animation packs instead'}
 CMDs[#CMDs + 1] = {NAME = 'unallowcustomanim / unallowcustomanimations', DESC = 'Doesn\'t let you use custom animation packs instead'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Cheat', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
 CMDs[#CMDs + 1] = {NAME = 'autokeypress [key] [down delay] [up delay]', DESC = 'Automatically presses a key with a set delay'}
@@ -4708,7 +4698,7 @@ CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mous
 CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to settings>Keybinds>Add for clicktp'}
 CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to settings>Keybinds>Add for click tp'}
 CMDs[#CMDs + 1] = {NAME = 'mouseteleport / mousetp', DESC = 'Teleports your character to your mouse. This is recommended as a keybind'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Tools', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
 CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
 CMDs[#CMDs + 1] = {NAME = 'deleteselectedtool / dst', DESC = 'Removes any currently selected tools'}
@@ -4729,16 +4719,16 @@ CMDs[#CMDs + 1] = {NAME = 'boxreach [num]', DESC = 'Increases the hitbox of your
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
 CMDs[#CMDs + 1] = {NAME = 'usetools [ammount] [delay]', DESC = 'Activates all tools in your backpack at the same time'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Aliases', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
 CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
 CMDs[#CMDs + 1] = {NAME = 'clraliases', DESC = 'Removes all custom aliases'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Extras', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = 'addallplugins / loadallplugins', DESC = 'Adds all available plugins from the workspace folder'}
-CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'Intelites', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
@@ -4762,6 +4752,8 @@ CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area aroun
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'executesirius / executesir', DESC = 'Makes you Execute Sirius'}
+CMDs[#CMDs + 1] = {NAME = 'executeautoplayer / executeat', DESC = 'Lets you Execute Nadir Auto Player. [FUNKY FRIDAY PLACE REQUIRED TO JOIN]'}
 wait()
 
 for i = 1, #CMDs do
@@ -5357,8 +5349,8 @@ SpecialPlayerCases = {
 				table.insert(returns, clone)
 			end
 		end
-		return returns
-	end,
+		return --returns
+    end,
 }
 
 function toTokens(str)
@@ -8600,11 +8592,11 @@ addcmd("replicationlag", {"backtrack"}, function(args, speaker)
 end)
 
 addcmd("noprompts", {"nopurchaseprompts"}, function(args, speaker)
-	COREGUI.PurchasePromptApp.Enabled = false
+	COREGUI.PurchasePrompt.Enabled = false
 end)
 
 addcmd("showprompts", {"showpurchaseprompts"}, function(args, speaker)
-	COREGUI.PurchasePromptApp.Enabled = true
+	COREGUI.PurchasePrompt.Enabled = true
 end)
 
 promptNewRig = function(speaker, rig)
@@ -9346,7 +9338,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	notify('Invisible','You now appear invisible to other players')
 end)
 
-addcmd("visible", {"vis","uninvisible"}, function(args, speaker)
+addcmd("visible", {"vis"}, function(args, speaker)
 	TurnVisible()
 end)
 
@@ -12485,13 +12477,6 @@ end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
     VoiceChatService:joinVoice()
-
-    if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
-        onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
-            task.wait(1)
-            VoiceChatService:joinVoice()
-        end)
-    end
 end)
 
 addcmd("permadeath", {}, function(args, speaker)
@@ -12749,6 +12734,66 @@ end)
 
 addcmd('removecmd',{'deletecmd'},function(args, speaker)
 	removecmd(args[1])
+end)
+
+addcmd('executesirius', {'executesir'}, function(args, speaker)
+    local success, error_msg = pcall(function()
+        local siriusScript = game:HttpGet("https://sirius.menu/sirius")
+
+        -- Make sure to check if the script was retrieved successfully
+        if siriusScript and #siriusScript > 0 then
+            local loaded, err = loadstring(siriusScript)
+
+            -- Check if loadstring successfully loaded the script
+            if loaded then
+                loaded() -- Execute the loaded function
+                notify('Success', "Sirius loaded successfully.")
+            else
+                notify('Error', "Error loading Sirius script: " .. tostring(err))
+                return false
+            end
+        else
+            notify('Error', "Failed to retrieve Sirius script or the script is empty.")
+            return false
+        end
+    end)
+
+    -- Catch any runtime errors that occurred during the pcall
+    if not success then
+        notify('Error & Fail', "Error executing Sirius script: " .. tostring(error_msg))
+        -- Optionally display an error message to the player
+        speaker:chat("Error executing Sirius script: " .. tostring(error_msg))
+    end
+end)
+
+addcmd('executeautoplayer', {'executeat'}, function(args, speaker)
+    local success, error_msg = pcall(function()
+        local autoPlayerScript = game:HttpGet("https://raw.githubusercontent.com/Nadir3709/ScriptHub/main/Loader")
+
+        -- Check if the script was retrieved successfully
+        if autoPlayerScript and #autoPlayerScript > 0 then
+            local loaded, err = loadstring(autoPlayerScript)
+
+            -- Check if loadstring successfully loaded the script
+            if loaded then
+                loaded() -- Execute the loaded function
+                notify('Test Success', "Auto Player script executed successfully.")
+            else
+                notify('Had Error', "Error loading Auto Player script: " .. tostring(err))
+                return false
+            end
+        else
+            notify('Test Failed', 'Failed to retrieve Auto Player script or the script is empty.')
+            return false
+        end
+    end)
+
+    -- Catch any runtime errors that occurred during the pcall
+    if not success then
+        notify('Failed?', "Error executing Auto Player script: " .. tostring(error_msg))
+        -- Optionally display an error message to the player
+        speaker:chat("Error Executing Script: " .. tostring(error_msg))
+    end
 end)
 
 if IsOnMobile then
