@@ -21,3 +21,6 @@ You can learn how to use all the features of this script in the wiki!
 
 ## Contributing
 There is no specific rules on contributing (as of now) just open a pull request and if it checks out we will merge it!
+
+## NEWEST VERSION!
+[![Go to my Scriptblox Account! (MY SCRIPTS ARE THERE)](https://scriptblox.com/images/script/0-1744960083051.png)](https://scriptblox.com/u/Poker)
