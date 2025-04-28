@@ -4851,18 +4851,30 @@ end
 
 function respawn(plr)
     if invisRunning then TurnVisible() end
-    permadeath(plr)
-    local char = plr.Character
-    local hum = char:FindFirstChildWhichIsA("Humanoid")
-    if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
-    if not replicatesignal then wait() end
-    char:ClearAllChildren()
-    local newChar = Instance.new("Model")
-    newChar.Parent = workspace
-    plr.Character = newChar
-    wait()
-    plr.Character = char
-    newChar:Destroy()
+
+	local rcdEnabled, wasHidden = true, false
+	if gethiddenproperty then
+		rcdEnabled, wasHidden = gethiddenproperty(workspace, "RejectCharacterDeletions") ~= Enum.RejectCharacterDeletions.Disabled
+	end
+
+	if replicatesignal and rcdEnabled then
+		replicatesignal(plr.ConnectDiedSignalBackend)
+		task.wait(Players.RespawnTime - .01)
+		replicatesignal(plr.Kill)
+	elseif rcdEnabled and not replicatesignal then
+		notify('Unsupported Command', 'Command not supported (missing replicatesignal)')
+	elseif not rcdEnabled then
+		local char = plr.Character
+		local hum = char:FindFirstChildWhichIsA("Humanoid")
+		if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
+		char:ClearAllChildren()
+		local newChar = Instance.new("Model")
+		newChar.Parent = workspace
+		plr.Character = newChar
+		wait()
+		plr.Character = char
+		newChar:Destroy()
+	end
 end
 
 local refreshCmd = false
