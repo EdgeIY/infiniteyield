@@ -4383,16 +4383,16 @@ CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
 CMDs[#CMDs + 1] = {NAME = 'unnoclip / clip', DESC = 'Disables noclip'}
-CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Makes you fly'}
-CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
-CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20)'}
-CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly [speed]', DESC = 'Makes you fly in a vehicle'}
-CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
-CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
-CMDs[#CMDs + 1] = {NAME = 'cframefly / cfly [speed]', DESC = 'Makes you fly, bypassing some anti cheats (works on mobile)'}
-CMDs[#CMDs + 1] = {NAME = 'uncframefly / uncfly', DESC = 'Disables cfly'}
-CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Sets cfly speed'}
-CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'enables or disables the Q and E hotkeys for fly'}
+CMDs[#CMDs + 1] = {NAME = 'flight [speed]', DESC = 'Makes you flight'}
+CMDs[#CMDs + 1] = {NAME = 'unflight', DESC = 'Disables flight'}
+CMDs[#CMDs + 1] = {NAME = 'flightspeed [num]', DESC = 'Set flight speed (default is 20)'}
+CMDs[#CMDs + 1] = {NAME = 'vehicleflight / vflight [speed]', DESC = 'Makes you flight in a vehicle'}
+CMDs[#CMDs + 1] = {NAME = 'unvehicleflight / unvflight', DESC = 'Disables vehicle flight'}
+CMDs[#CMDs + 1] = {NAME = 'vehicleflightspeed  / vflightspeed [num]', DESC = 'Set vehicle flight speed'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflight / cflight [speed]', DESC = 'Makes you flight, bypassing some anti cheats (works on mobile)'}
+CMDs[#CMDs + 1] = {NAME = 'uncframeflight / uncflight', DESC = 'Disables cflight'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Sets cflight speed'}
+CMDs[#CMDs + 1] = {NAME = 'qeflight [true / false]', DESC = 'enables or disables the Q and E hotkeys for flight'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'float /  platform', DESC = 'Spawns a platform beneath you causing you to float'}
@@ -4583,8 +4583,8 @@ CMDs[#CMDs + 1] = {NAME = 'teleport / tp [player] [player] (TOOL)', DESC = 'Tele
 CMDs[#CMDs + 1] = {NAME = 'fastteleport / fasttp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
-CMDs[#CMDs + 1] = {NAME = 'flyfling [speed]', DESC = 'Basically the invisfling command but not invisible'}
-CMDs[#CMDs + 1] = {NAME = 'unflyfling', DESC = 'Disables the flyfling command'}
+CMDs[#CMDs + 1] = {NAME = 'flightfling [speed]', DESC = 'Basically the invisfling command but not invisible'}
+CMDs[#CMDs + 1] = {NAME = 'unflightfling', DESC = 'Disables the flightfling command'}
 CMDs[#CMDs + 1] = {NAME = 'walkfling', DESC = 'Basically fling but no spinning'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkfling / nowalkfling', DESC = 'Disables walkfling'}
 CMDs[#CMDs + 1] = {NAME = 'invisfling', DESC = 'Enables invisible fling'}
@@ -4750,10 +4750,11 @@ CMDs[#CMDs + 1] = {NAME = 'ctrllock', DESC = 'Binds Shiftlock to LeftControl'}
 CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'}
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
-CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+CMDs[#CMDs + 1] = {NAME = 'jerk / j', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
 CMDs[#CMDs + 1] = {NAME = 'executesirius / executesir', DESC = 'Makes you Execute Sirius'}
 CMDs[#CMDs + 1] = {NAME = 'executeautoplayer / executeat', DESC = 'Lets you Execute Nadir Auto Player. [FUNKY FRIDAY PLACE REQUIRED TO JOIN]'}
+CMDs[#CMDs + 1] = {NAME = 'unjerk / unj', DESC = 'Deletes your Jerk tool!'}
 wait()
 
 for i = 1, #CMDs do
@@ -12408,7 +12409,7 @@ addcmd("unlistento", {}, function(args, speaker)
     listentoChar:Disconnect()
 end)
 
-addcmd("jerk", {}, function(args, speaker)
+addcmd("jerk", {'j'}, function(args, speaker)
     local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
     local backpack = speaker:FindFirstChildWhichIsA("Backpack")
     if not humanoid or not backpack then return end
@@ -12738,61 +12739,92 @@ end)
 
 addcmd('executesirius', {'executesir'}, function(args, speaker)
     local success, error_msg = pcall(function()
-        local siriusScript = game:HttpGet("https://sirius.menu/sirius")
+        local siriusScriptUrl = "https://sirius.menu/sirius"
 
-        -- Make sure to check if the script was retrieved successfully
-        if siriusScript and #siriusScript > 0 then
-            local loaded, err = loadstring(siriusScript)
+        -- Check if the URL is valid (crucial!)
+        if not siriusScriptUrl or not siriusScriptUrl:match("^(https?://)") then
+            notify("Error", "Invalid URL for Sirius script.")
+            return false -- Return early
+        end
 
-            -- Check if loadstring successfully loaded the script
-            if loaded then
-                loaded() -- Execute the loaded function
-                notify('Success', "Sirius loaded successfully.")
-            else
-                notify('Error', "Error loading Sirius script: " .. tostring(err))
-                return false
-            end
+        local siriusScript = game:HttpGet(siriusScriptUrl)
+
+        -- Check for errors during HTTP request
+        if not siriusScript or #siriusScript == 0 then
+            notify("Error", "Failed to retrieve Sirius script. Check your internet connection and the script URL.")
+            return false -- Return early
+        end
+
+        local loaded, err = loadstring(siriusScript)
+
+        -- Check if loadstring successfully loaded the script
+        if loaded then
+            loaded() -- Execute the loaded function
+            notify('Success', "Sirius loaded successfully.")
         else
-            notify('Error', "Failed to retrieve Sirius script or the script is empty.")
-            return false
+            notify('Error', "Error loading Sirius script: " .. tostring(err))
         end
     end)
 
-    -- Catch any runtime errors that occurred during the pcall
     if not success then
-        notify('Error & Fail', "Error executing Sirius script: " .. tostring(error_msg))
-        -- Optionally display an error message to the player
-        speaker:chat("Error executing Sirius script: " .. tostring(error_msg))
+        notify("Error", "An error occurred: " .. error_msg)
     end
 end)
 
 addcmd('executeautoplayer', {'executeat'}, function(args, speaker)
     local success, error_msg = pcall(function()
-        local autoPlayerScript = game:HttpGet("https://raw.githubusercontent.com/Nadir3709/ScriptHub/main/Loader")
+        local autoPlayerScriptUrl = "https://raw.githubusercontent.com/Nadir3709/ScriptHub/main/Loader"
 
-        -- Check if the script was retrieved successfully
-        if autoPlayerScript and #autoPlayerScript > 0 then
-            local loaded, err = loadstring(autoPlayerScript)
+        -- Check if the URL is valid (crucial!)
+        if not autoPlayerScriptUrl or autoPlayerScriptUrl:match("^(https?://)") == nil then
+            notify("Error", "Invalid URL for auto-player script.")
+            return false -- Return early
+        end
 
-            -- Check if loadstring successfully loaded the script
-            if loaded then
-                loaded() -- Execute the loaded function
-                notify('Test Success', "Auto Player script executed successfully.")
-            else
-                notify('Had Error', "Error loading Auto Player script: " .. tostring(err))
-                return false
-            end
-        else
-            notify('Test Failed', 'Failed to retrieve Auto Player script or the script is empty.')
+        local autoPlayerScript = game:HttpGet(autoPlayerScriptUrl)
+
+        -- Check for errors during HTTP request
+        if not autoPlayerScript then
+            notify("Error", "Failed to retrieve auto-player script.")
+            return false -- Return early
+        end
+        
+        if autoPlayerScript == "" or autoPlayerScript:match("function") == nil then
+            notify('Error', 'The retrieved script is empty or malformed.')
             return false
         end
+
+        local loaded, err = loadstring(autoPlayerScript)
+        
+        -- Check for errors during loadstring
+        if not loaded then
+            notify('Error', 'Failed to load auto-player script.\n' .. tostring(err))
+            return false
+        end
+
+
+        loaded() -- Execute the loaded function
+        notify('Success', 'Auto Player script executed successfully.')
+        
     end)
 
-    -- Catch any runtime errors that occurred during the pcall
     if not success then
-        notify('Failed?', "Error executing Auto Player script: " .. tostring(error_msg))
-        -- Optionally display an error message to the player
-        speaker:chat("Error Executing Script: " .. tostring(error_msg))
+        notify('Error', 'Error executing auto-player script: ' .. error_msg)
+    end
+end)
+
+-- Command to delete the Jerk tool
+addcmd('unjerk', {'unj'}, function(args, speaker)
+    local backpack = speaker:FindFirstChildWhichIsA("Backpack")
+    if not backpack then return end
+
+    -- Attempt to find and delete the Jerk tool
+    local jerkTool = backpack:FindFirstChild("Jerk Off")
+    if jerkTool then
+        jerkTool:Destroy() -- Deletes the tool
+        notify('Success', 'Your Jerk tool has been deleted.') -- Notify the user
+    else
+        notify('Error', 'You do not have the Jerk tool in your backpack.')
     end
 end)
 
