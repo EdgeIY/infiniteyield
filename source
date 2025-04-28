@@ -4852,7 +4852,7 @@ end
 function respawn(plr)
     if invisRunning then TurnVisible() end
 
-	local rcdEnabled, wasHidden = true, false
+	local rcdEnabled, wasHidden = false, false
 	if gethiddenproperty then
 		rcdEnabled, wasHidden = gethiddenproperty(workspace, "RejectCharacterDeletions") ~= Enum.RejectCharacterDeletions.Disabled
 	end
@@ -4863,7 +4863,7 @@ function respawn(plr)
 		replicatesignal(plr.Kill)
 	elseif rcdEnabled and not replicatesignal then
 		notify('Unsupported Command', 'Command not supported (missing replicatesignal)')
-	elseif not rcdEnabled then
+	else
 		local char = plr.Character
 		local hum = char:FindFirstChildWhichIsA("Humanoid")
 		if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
