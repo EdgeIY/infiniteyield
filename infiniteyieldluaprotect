@@ -1,3 +1,10 @@
+--[[
+ ____     __    ____  _  _  __    __  __    __    \  
+(  _ \   /__\  (  _ \( )/ )(  )  (  )(  )  /__\   |  Welcome To darklua.com!
+ )(_) ) /(  )\  )   / )  (  )(__  )(__)(  /(  )\  |  you can Obfuscate Scripts From Roblox OR other game scripts!
+(____/ (__)(__)(_)\_)(_)\_)(____)(______)(__)(__) |  This is a Test of INFINITEYIELD.lua and it's correct, Have Fun!
+                                                  /
+]]
 if IY_LOADED and not _G.IY_DEBUG==true then
 
 return
