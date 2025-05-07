@@ -12778,7 +12778,7 @@ if IsOnMobile then
 	table.insert(text1, QuickCapture)
 end
 
-Scale.Scale = math.max(Holder.AbsoluteSize.X / 1920, guiScale)
+pcall(function() Scale.Scale = math.max(Holder.AbsoluteSize.X / 1920, guiScale) end)
 Scale.Parent = ScaledHolder
 ScaledHolder.Size = UDim2.fromScale(1 / Scale.Scale, 1 / Scale.Scale)
 Scale:GetPropertyChangedSignal("Scale"):Connect(function()
@@ -12930,13 +12930,6 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
-if setfflag then
-    pcall(function()
-        setfflag("AbuseReportScreenshot", "False")
-        setfflag("AbuseReportScreenshotPercentage", "0")
-    end)
-end
-
 CaptureService.CaptureBegan:Connect(function()
     Holder.Visible = false
 end)
@@ -12946,6 +12939,13 @@ CaptureService.CaptureEnded:Connect(function()
         Holder.Visible = true
     end)
 end)
+
+if setfflag then
+    pcall(function()
+        setfflag("AbuseReportScreenshot", "False")
+        setfflag("AbuseReportScreenshotPercentage", "0")
+    end)
+end
 
 task.spawn(function()
 	local success, latestVersionInfo = pcall(function() 
