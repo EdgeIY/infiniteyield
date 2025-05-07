@@ -12930,6 +12930,13 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
+if setfflag then
+    pcall(function()
+        setfflag("AbuseReportScreenshot", "False")
+        setfflag("AbuseReportScreenshotPercentage", "0")
+    end)
+end
+
 CaptureService.CaptureBegan:Connect(function()
     Holder.Visible = false
 end)
