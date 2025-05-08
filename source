@@ -7764,7 +7764,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	Lighting.FogEnd = 9e9
 	settings().Rendering.QualityLevel = 1
 	for i,v in pairs(game:GetDescendants()) do
-		if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+		if v:IsA("BasePart") then
 			v.Material = "Plastic"
 			v.Reflectance = 0
 		elseif v:IsA("Decal") then
