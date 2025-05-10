@@ -12944,13 +12944,6 @@ CaptureService.CaptureEnded:Connect(function()
     end)
 end)
 
-if setfflag then
-    pcall(function()
-        setfflag("AbuseReportScreenshot", "False")
-        setfflag("AbuseReportScreenshotPercentage", "0")
-    end)
-end
-
 task.spawn(function()
 	local success, latestVersionInfo = pcall(function() 
 		local versionJson = game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version')
