@@ -4493,7 +4493,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the l
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
-CMDs[#CMDS + 1] = {NAME = 'clipcam', DESC = 'Disables noclipcam'}
+CMDs[#CMDs + 1] = {NAME = 'clipcam / unnoclipcam', DESC = 'Disables noclipcam'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Minimum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
@@ -8444,7 +8444,7 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
 end)
 
-addcmd('clipcam', {}, function(args, speaker)
+addcmd('clipcam', {'unnoclipcam'}, function(args, speaker)
 	speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
 end)
 
