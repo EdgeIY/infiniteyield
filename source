@@ -1939,6 +1939,7 @@ AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
 TextChatService = cloneref(game:GetService("TextChatService"))
 CaptureService = cloneref(game:GetService("CaptureService"))
 VoiceChatService = cloneref(game:GetService("VoiceChatService"))
+Debris = cloneref(game:GetService("Debris"))
 
 -- validateType
 function vtype(o, t)
@@ -7774,6 +7775,12 @@ addcmd("antilag", { "boostfps", "lowgraphics" }, function(args, speaker)
         if v:IsA("BasePart") then
             v.Material = Enum.Material.Plastic
             v.Reflectance = 0
+			v.BackSurface = "SmoothNoOutlines"
+			v.BottomSurface = "SmoothNoOutlines"
+			v.FrontSurface = "SmoothNoOutlines"
+			v.LeftSurface = "SmoothNoOutlines"
+			v.RightSurface = "SmoothNoOutlines"
+			v.TopSurface = "SmoothNoOutlines"
         elseif v:IsA("Decal") then
             v.Transparency = 1
         elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
@@ -7807,8 +7814,7 @@ addcmd("antilag", { "boostfps", "lowgraphics" }, function(args, speaker)
 
     boostFpsWsCon = workspace.DescendantAdded:Connect(function(v)
         if v:IsA("ForceField") or v:IsA("Sparkles") or v:IsA("Smoke") or v:IsA("Fire") then
-            RunService.Heartbeat:Wait()
-            v:Destroy()
+            Debris:AddItem(v, 0)
         end
     end)
 end)
