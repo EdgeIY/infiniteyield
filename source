@@ -1978,10 +1978,8 @@ function readfileExploit()
 	end
 end
 
-function isNumber(str)
-	if tonumber(str) ~= nil or str == 'inf' then
-		return true
-	end
+function isNumber(...)
+    return not not tonumber(...)
 end
 
 function getRoot(char)
@@ -4495,6 +4493,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the l
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
+CMDs[#CMDS + 1] = {NAME = 'clipcam', DESC = 'Disables noclipcam'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Minimum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
@@ -7758,47 +7757,65 @@ addcmd('volume',{'vol'},function(args, speaker)
 	UserSettings():GetService("UserGameSettings").MasterVolume = level
 end)
 
+local boostFpsWsCon
 addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
-	local Terrain = workspace:FindFirstChildOfClass('Terrain')
-	Terrain.WaterWaveSize = 0
-	Terrain.WaterWaveSpeed = 0
-	Terrain.WaterReflectance = 0
-	Terrain.WaterTransparency = 0
-	Lighting.GlobalShadows = false
-	Lighting.FogEnd = 9e9
-	settings().Rendering.QualityLevel = 1
-	for i,v in pairs(game:GetDescendants()) do
-		if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
-			v.Material = "Plastic"
+    settings().Rendering.QualityLevel = 1
+
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    if Terrain then
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 1
+    end
+
+    for _, v in next, game:GetDescendants() do
+        if v:IsA("BasePart") then
+			v.Material = Enum.Material.Plastic
 			v.Reflectance = 0
-		elseif v:IsA("Decal") then
-			v.Transparency = 1
-		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-			v.Lifetime = NumberRange.new(0)
-		elseif v:IsA("Explosion") then
-			v.BlastPressure = 1
-			v.BlastRadius = 1
-		end
-	end
-	for i,v in pairs(Lighting:GetDescendants()) do
-		if v:IsA("BlurEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("DepthOfFieldEffect") then
-			v.Enabled = false
-		end
-	end
-	workspace.DescendantAdded:Connect(function(child)
-		task.spawn(function()
-			if child:IsA('ForceField') then
-				RunService.Heartbeat:Wait()
-				child:Destroy()
-			elseif child:IsA('Sparkles') then
-				RunService.Heartbeat:Wait()
-				child:Destroy()
-			elseif child:IsA('Smoke') or child:IsA('Fire') then
-				RunService.Heartbeat:Wait()
-				child:Destroy()
-			end
-		end)
-	end)
+			v.BackSurface = "SmoothNoOutlines"
+			v.BottomSurface = "SmoothNoOutlines"
+			v.FrontSurface = "SmoothNoOutlines"
+			v.LeftSurface = "SmoothNoOutlines"
+			v.RightSurface = "SmoothNoOutlines"
+			v.TopSurface = "SmoothNoOutlines"
+        elseif v:IsA("Decal") then
+            v.Transparency = 1
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v.Lifetime = NumberRange.new(0)
+        elseif v:IsA("Explosion") then
+            v.BlastPressure = 1
+            v.BlastRadius = 1
+        end
+    end
+
+    Lighting.GlobalShadows = false
+    Lighting.FogEnd = 9e9
+
+    for _, v in next, Lighting:GetDescendants() do
+        if v:IsA("PostEffect") then
+            v.Enabled = false
+        end
+    end
+
+    if workspace.CurrentCamera then
+        for _, v in next, workspace.CurrentCamera:GetDescendants() do
+            if v:IsA("PostEffect") then
+                v.Enabled = false
+            end
+        end
+    end
+
+    if boostFpsWsCon then
+        boostFpsWsCon:Disconnect()
+    end
+
+    boostFpsWsCon = workspace.DescendantAdded:Connect(function(v)
+        if v:IsA("ForceField") or v:IsA("Sparkles") or v:IsA("Smoke") or v:IsA("Fire") then
+            RunService.Heartbeat:Wait()
+            v:Destroy()
+        end
+    end)
 end)
 
 addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
@@ -8425,31 +8442,19 @@ addcmd('thirdp',{},function(args, speaker)
 end)
 
 addcmd('noclipcam', {'nccam'}, function(args, speaker)
-	local sc = (debug and debug.setconstant) or setconstant
-	local gc = (debug and debug.getconstants) or getconstants
-	if not sc or not getgc or not gc then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
-	end
-	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
-	for _, v in pairs(getgc()) do
-		if type(v) == 'function' and getfenv(v).script == pop then
-			for i, v1 in pairs(gc(v)) do
-				if tonumber(v1) == .25 then
-					sc(v, i, 0)
-				elseif tonumber(v1) == 0 then
-					sc(v, i, .25)
-				end
-			end
-		end
-	end
+	speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+end)
+
+addcmd('clipcam', {}, function(args, speaker)
+	speaker.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
-	speaker.CameraMaxZoomDistance = args[1]
+	speaker.CameraMaxZoomDistance = tonumber(args[1]) or StarterPlayer.CameraMaxZoomDistance
 end)
 
 addcmd('minzoom',{},function(args, speaker)
-	speaker.CameraMinZoomDistance = args[1]
+	speaker.CameraMinZoomDistance = tonumber(args[1]) or StarterPlayer.CameraMinZoomDistance
 end)
 
 addcmd('camdistance',{},function(args, speaker)
@@ -11486,16 +11491,17 @@ addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
     notify("antichatlogs", MessagePosted and "Enabled" or "Failed to enable antichatlogs")
 end)
 
+local flingDied
 flinging = false
 addcmd('fling',{},function(args, speaker)
 	flinging = false
 	for _, child in pairs(speaker.Character:GetDescendants()) do
 		if child:IsA("BasePart") then
-			child.CustomPhysicalProperties = PhysicalProperties.new(math.huge, 0.3, 0.5)
+			child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
 		end
 	end
-	execCmd('noclip')
-	wait(.1)
+	execCmd('noclip nonotify')
+	task.wait(.1)
 	local bambam = Instance.new("BodyAngularVelocity")
 	bambam.Name = randomString()
 	bambam.Parent = getRoot(speaker.Character)
@@ -11517,19 +11523,17 @@ addcmd('fling',{},function(args, speaker)
 	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(flingDiedF)
 	repeat
 		bambam.AngularVelocity = Vector3.new(0,99999,0)
-		wait(.2)
+		task.wait(.2)
 		bambam.AngularVelocity = Vector3.new(0,0,0)
-		wait(.1)
+		task.wait(.1)
 	until flinging == false
 end)
 
 addcmd('unfling',{'nofling'},function(args, speaker)
-	execCmd('clip')
-	if flingDied then
-		flingDied:Disconnect()
-	end
+	execCmd('clip nonotify')
+	if flingDied then flingDied:Disconnect() end
 	flinging = false
-	wait(.1)
+	task.wait(.1)
 	local speakerChar = speaker.Character
 	if not speakerChar or not getRoot(speakerChar) then return end
 	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
@@ -11774,7 +11778,7 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 	for _, v in ipairs(getPlayer(args[1], speaker)) do
 		v = Players[v]
 		task.spawn(function()
-			while Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
+			while task.wait() and Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
 				local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
 				if not Human or Human.Health <= 0 then
 					break
@@ -12273,39 +12277,48 @@ addcmd('clearnilinstances',{'nonilinstances','cni'},function(args, speaker)
 end)
 
 addcmd('destroyheight',{'dh'},function(args, speaker)
-	local dh = args[1] or -500
-	if isNumber(dh) then
-		workspace.FallenPartsDestroyHeight = dh
-	end
+	workspace.FallenPartsDestroyHeight = tonumber(args[1]) or -500
 end)
 
 OrgDestroyHeight = workspace.FallenPartsDestroyHeight
+antiVoidWasEnabled = false
+antivoidloop = nil
 addcmd("fakeout", {}, function(args, speaker)
     local root = getRoot(speaker.Character)
     local oldpos = root.CFrame
+	if antivoidloop then
+		antiVoidWasEnabled = true
+		execCmd('unantivoid nonotify')
+	end
     workspace.FallenPartsDestroyHeight = 0/1/0
     root.CFrame = CFrame.new(Vector3.new(0, OrgDestroyHeight - 25, 0))
-    wait(1)
+    task.wait(1)
     root.CFrame = oldpos
     workspace.FallenPartsDestroyHeight = OrgDestroyHeight
+	if antiVoidWasEnabled then
+		execCmd('antivoid nonotify')
+		antiVoidWasEnabled = false
+	end
 end)
 
-antivoidloop = false
 addcmd("antivoid", {}, function(args, speaker)
     execCmd("unantivoid nonotify")
-    wait()
+    task.wait()
     antivoidloop = RunService.Stepped:Connect(function()
         local root = getRoot(speaker.Character)
         if root and root.Position.Y <= OrgDestroyHeight + 25 then
             root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
         end
     end)
-    notify("antivoid", "Enabled")
+	if args[1] ~= "nonotify" then notify("antivoid", "Enabled") end
 end)
 
 addcmd("unantivoid", {"noantivoid"}, function(args, speaker)
-    antivoidloop:Disconnect()
-    antivoidloop = nil
+	if antivoidloop then
+		antivoidloop:Disconnect()
+		antivoidloop = nil
+	end
+
     if args[1] ~= "nonotify" then notify("antivoid", "Disabled") end
 end)
 
@@ -12318,21 +12331,22 @@ addcmd('trip',{},function(args, speaker)
 	end
 end)
 
+local blockConnect
 addcmd("removeads", {"adblock"}, function(args, speaker)
-    while wait() do
-        pcall(function()
-            for i, v in pairs(workspace:GetDescendants()) do
-                if v:IsA("PackageLink") then
-                    if v.Parent:FindFirstChild("ADpart") then
-                        v.Parent:Destroy()
-                    end
-                    if v.Parent:FindFirstChild("AdGuiAdornee") then
-                        v.Parent.Parent:Destroy()
-                    end
-                end
-            end
-        end)
-    end
+	local function removeAds(v)
+		if v:IsA("PackageLink") then
+			if v.Parent:FindFirstChild("ADpart") then
+				v.Parent:Destroy()
+			end
+			if v.Parent:FindFirstChild("AdGuiAdornee") then
+				v.Parent.Parent:Destroy()
+			end
+		end
+	end
+
+	if blockConnect then blockConnect:Disconnect() end
+	blockConnect = workspace.DescendantAdded:Connect(removeAds)
+	for _, v in pairs(workspace:GetDescendants()) do removeAds(v) end
 end)
 
 addcmd("scare", {"spook"}, function(args, speaker)
@@ -12354,8 +12368,10 @@ addcmd("scare", {"spook"}, function(args, speaker)
     end
 end)
 
+local alignConnect
 addcmd("alignmentkeys", {}, function(args, speaker)
-    alignmentKeys = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if alignConnect then alignConnect:Disconnect() end
+    alignConnect = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.Comma then workspace.CurrentCamera:PanUnits(-1) end
         if input.KeyCode == Enum.KeyCode.Period then workspace.CurrentCamera:PanUnits(1) end
@@ -12368,7 +12384,7 @@ addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
     if type(alignmentKeysEmotes) == "boolean" then
         StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
     end
-    alignmentKeys:Disconnect()
+	if alignConnect then alignConnect:Disconnect() end
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12487,12 +12503,13 @@ addcmd("guiscale", {}, function(args, speaker)
     updatesaves()
 end)
 
+local onVoiceModerated
 addcmd("unsuspendvc", {}, function(args, speaker)
     VoiceChatService:joinVoice()
 
     if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
         onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
-            task.wait(1)
+            task.wait(2)
             VoiceChatService:joinVoice()
         end)
     end
@@ -12589,7 +12606,7 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
     for i,v in pairs(players) do
         local Forces = {}
         for _,part in pairs(workspace:GetDescendants()) do
-            if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
+            if Players[v].Character:FindFirstChild('Head') and part:IsA("PVInstance") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name ~= "Torso" and part.Name ~= "Head" and part.Name ~= "Right Arm" and part.Name ~= "Left Arm" and part.Name ~= "Right Leg" and part.Name ~= "Left Leg" and part.Name ~= "HumanoidRootPart" then
                 for i,c in pairs(part:GetChildren()) do
                     if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
                         c:Destroy()
