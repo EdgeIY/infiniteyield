@@ -12935,12 +12935,12 @@ end
 IYMouse.Move:Connect(checkTT)
 
 CaptureService.CaptureBegan:Connect(function()
-    Holder.Visible = false
+    PARENT.Enabled = false
 end)
 
 CaptureService.CaptureEnded:Connect(function()
     task.delay(0.1, function()
-        Holder.Visible = true
+        PARENT.Enabled = true
     end)
 end)
 
