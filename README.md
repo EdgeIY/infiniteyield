@@ -6,7 +6,7 @@
 
 <h1 align="center">Infinite Yield</h1>
 
-<p align="center">✮ The ULTIMATE fe admin utility for Roblox! ✮</p>
+<p align="center">✮ The ultimate FE admin utility for Roblox! ✮</p>
 <p align="center">
 	<a href="https://github.com/EdgeIY/infiniteyield/issues">
 		<img alt="Issues" src="https://img.shields.io/github/issues/EdgeIY/infiniteyield?color=FF0000"/>
@@ -32,4 +32,4 @@ Get it [here](https://github.com/EdgeIY/infiniteyield/wiki).
 Learn how to use all the features of this script in the [wiki](https://github.com/EdgeIY/infiniteyield/wiki)!  
 
 ## Contributing  
-There are no strict contribution rules (as of now). Just open a pull request via [this link](https://github.com/EdgeIY/infiniteyield/pulls), and if it checks out, we’ll merge it!
+There are no strict contribution rules (as of now). Just open a pull request via [this link](https://github.com/EdgeIY/infiniteyield/pulls), and if it checks out, we'll merge it!
