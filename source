@@ -11778,7 +11778,7 @@ addcmd('handlekill', { 'hkill' }, function(args, speaker)
 
 	local range = tonumber(args[2]) or math.huge
 
-	notify('Handle Kill', ('Started!\nRadius: %s | Auto-Clicking: %s'):format(tostring(range):upper(), activate and 'ON' or 'OFF'))
+	notify('Handle Kill', ('Started!\nRadius: %s'):format(tostring(range):upper()))
 
 	while speaker.Character and tool.Parent and tool.Parent == speaker.Character do
 		for _, plr in next, getPlayer(args[1], speaker) do
