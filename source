@@ -4586,7 +4586,7 @@ CMDs[#CMDs + 1] = {NAME = 'unstaffwatch', DESC = 'Disable Staffwatch'}
 CMDs[#CMDs + 1] = {NAME = 'attach [player] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'kill [player] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastkill [player] (TOOL)', DESC = 'Kills a player (less reliable) (YOU NEED A TOOL)'}
-CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [player] [click] [radius] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
+CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [player] [radius] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'bring [player] (TOOL)', DESC = 'Brings a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fastbring [player] (TOOL)', DESC = 'Brings a player (less reliable) (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'teleport / tp [player] [player] (TOOL)', DESC = 'Teleports a player to another player (YOU NEED A TOOL)'}
@@ -11759,34 +11759,6 @@ addcmd('kill',{'fekill'},function(args, speaker)
 	end
 end)
 
-booleanPossibilities = {
-	trues = {
-		'true',
-		'on',
-		'yes',
-		'y',
-		'1',
-	},
-	falses = {
-		'false',
-		'off',
-		'no',
-		'n',
-		'0',
-	},
-}
-function validateBooleanArg(input)
-	input = tostring(input):lower()
-
-	if table.find(booleanPossibilities.trues, input) then
-		return true, true
-	elseif table.find(booleanPossibilities.falses, input) then
-		return true, false
-	end
-
-	return false, nil
-end
-
 addcmd('handlekill', { 'hkill' }, function(args, speaker)
 	if not firetouchinterest then
 		notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
@@ -11804,14 +11776,7 @@ addcmd('handlekill', { 'hkill' }, function(args, speaker)
 		return
 	end
 
-	local ok, activate = validateBooleanArg(args[2])
-	if not ok then
-		-- I KNOW THIS IS UNNCESSARY (`activate` WOULD BE `nil` AND CONSIDRED FALSEY)
-		-- I'M JUST DEMOING THE FUNCTION
-		activate = false
-	end
-
-	local range = tonumber(args[3]) or math.huge
+	local range = tonumber(args[2]) or math.huge
 
 	notify('Handle Kill', ('Started!\nRadius: %s | Auto-Clicking: %s'):format(tostring(range):upper(), activate and 'ON' or 'OFF'))
 
@@ -11828,10 +11793,6 @@ addcmd('handlekill', { 'hkill' }, function(args, speaker)
 					firetouchinterest(handle, root, false)
 				end
 			end
-		end
-
-		if activate then
-			tool:Activate()
 		end
 
 		task.wait()
