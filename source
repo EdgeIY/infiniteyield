@@ -101,18 +101,14 @@ end)
 if makefolder and isfolder and writefile and isfile then
     pcall(function() -- good executor trust
         local assets = "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/"
-        local function pathToHttp(path)
-            return path:gsub("infiniteyield/", assets)
+        for _, folder in {"infiniteyield", "infiniteyield/assets"} do
+            if not isfolder(folder) then
+                makefolder(folder)
+            end
         end
-        if not isfolder("infiniteyield") then
-            makefolder("infiniteyield")
-        end
-        if not isfolder("infiniteyield/assets") then
-            makefolder("infiniteyield/assets")
-        end
-        for path in pairs(iyassets) do
+        for path in iyassets do
             if not isfile(path) then
-                writefile(path, game:HttpGet(pathToHttp(path)))
+                writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
             end
         end
     end)
@@ -726,8 +722,8 @@ Credits.BorderSizePixel = 0
 Credits.Position = UDim2.new(0, 0, 0.9, 30)
 Credits.Size = UDim2.new(0, 250, 0, 20)
 Credits.Font = Enum.Font.SourceSansLight
-Credits.FontSize = Enum.FontSize.Size18
-Credits.Text = "Edge // Zwolf // Moon // Toon"
+Credits.FontSize = Enum.FontSize.Size14
+Credits.Text = "Edge // Zwolf // Moon // Toon // Peyton // ATP"
 Credits.TextColor3 = Color3.new(1, 1, 1)
 Credits.ZIndex = 10
 
