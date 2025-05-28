@@ -66,7 +66,7 @@ TextChatService = cloneref(game:GetService("TextChatService"))
 CaptureService = cloneref(game:GetService("CaptureService"))
 VoiceChatService = cloneref(game:GetService("VoiceChatService"))
 
-IYMouse = Players.LocalPlayer:GetMouse()
+IYMouse = cloneref(Players.LocalPlayer:GetMouse())
 PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 PlaceId, JobId = game.PlaceId, game.JobId
 IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, UserInputService:GetPlatform())
