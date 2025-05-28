@@ -6,8 +6,6 @@ end
 pcall(function() getgenv().IY_LOADED = true end)
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-local iyassets
-
 function missing(t, f, fallback)
     if type(f) == t then return f end
     return fallback or nil
@@ -29,14 +27,12 @@ readfile = missing("function", waxreadfile) and function(file, safe)
     if safe == true then return pcall(waxreadfile, file) end
     return waxreadfile(file)
 end
+isfile = missing("function", isfile, readfile and function(...)
+    local success, result = pcall(readfile, ...)
+    return success and result ~= nil and result ~= ""
+end)
 makefolder = missing("function", makefolder)
 isfolder = missing("function", isfolder)
-isfile = missing("function", isfile, readfile and function(...)
-    return readfile(...) ~= nil
-end)
-getcustomasset = missing("function", getcustomasset or getsynasset, function(path)
-    return iyassets[path]
-end)
 hookfunction = missing("function", hookfunction)
 hookmetamethod = missing("function", hookmetamethod)
 getnamecallmethod = missing("function", getnamecallmethod or get_namecall_method)
@@ -82,9 +78,8 @@ PlaceId, JobId = game.PlaceId, game.JobId
 IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, UserInputService:GetPlatform())
 isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
 
--- getcustomasset implementation (kindly taking "inspiration" from xylex)
-
-iyassets = {
+-- xylex & europa
+local iyassets = {
     ["infiniteyield/assets/bindsandplugins.png"] = "rbxassetid://5147695474",
     ["infiniteyield/assets/close.png"] = "rbxassetid://5054663650",
     ["infiniteyield/assets/editaliases.png"] = "rbxassetid://5147488658",
@@ -96,29 +91,31 @@ iyassets = {
     ["infiniteyield/assets/minimize.png"] = "rbxassetid://2406617031",
     ["infiniteyield/assets/pin.png"] = "rbxassetid://6234691350",
     ["infiniteyield/assets/reference.png"] = "rbxassetid://3523243755",
-    ["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029",
+    ["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029"
 }
 
--- make folder and write asset files
-if (makefolder and isfolder) then
-	local rawhttp = "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/"
+local getcustomasset = missing("function", getcustomasset or getsynasset, function(asset)
+    return iyassets[asset]
+end)
 
-	local function pathToHttp(path)
-		return path:gsub("infiniteyield/", rawhttp)
-	end
-
-	if not isfolder("infiniteyield") then
-		makefolder("infiniteyield")
-	end
-	if not isfolder("infiniteyield/assets") then
-		makefolder("infiniteyield/assets")
-	end
-
-	for path in pairs(iyassets) do
-		if not isfile(path) then
-			writefile(path, game:HttpGet(pathToHttp(path)))
-		end
-	end
+if makefolder and isfolder and writefile and isfile then
+    pcall(function() -- good executor trust
+        local assets = "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/"
+        local function pathToHttp(path)
+            return path:gsub("infiniteyield/", assets)
+        end
+        if not isfolder("infiniteyield") then
+            makefolder("infiniteyield")
+        end
+        if not isfolder("infiniteyield/assets") then
+            makefolder("infiniteyield/assets")
+        end
+        for path in pairs(iyassets) do
+            if not isfile(path) then
+                writefile(path, game:HttpGet(pathToHttp(path)))
+            end
+        end
+    end)
 end
 
 currentVersion = "6.3.2"
@@ -7621,7 +7618,7 @@ end)
 
 local invisGUIS = {}
 addcmd('showguis',{},function(args, speaker)
-	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
+	for i,v in pairs(PlayerGui:GetDescendants()) do
 		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and not v.Visible then
 			v.Visible = true
 			if not FindInTable(invisGUIS,v) then
@@ -7640,7 +7637,7 @@ end)
 
 local hiddenGUIS = {}
 addcmd('hideguis',{},function(args, speaker)
-	for i,v in pairs(speaker:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
+	for i,v in pairs(PlayerGui:GetDescendants()) do
 		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and v.Visible then
 			v.Visible = false
 			if not FindInTable(hiddenGUIS,v) then
@@ -7659,7 +7656,7 @@ end)
 
 function deleteGuisAtPos()
 	pcall(function()
-		local guisAtPosition = Players.LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
+		local guisAtPosition = PlayerGui:GetGuiObjectsAtPosition(IYMouse.X, IYMouse.Y)
 		for _, gui in pairs(guisAtPosition) do
 			if gui.Visible == true then
 				gui:Destroy()
