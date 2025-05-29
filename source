@@ -27,9 +27,9 @@ readfile = missing("function", waxreadfile) and function(file, safe)
     if safe == true then return pcall(waxreadfile, file) end
     return waxreadfile(file)
 end
-isfile = missing("function", isfile, readfile and function(...)
+isfile = missing("function", isfile, readfile and function(file)
     local success, result = pcall(function()
-        return readfile(...)
+        return readfile(file)
     end)
     return success and result ~= nil and result ~= ""
 end)
