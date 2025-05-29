@@ -7843,8 +7843,10 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.TopSurface = "SmoothNoOutlines"
 		elseif v:IsA("Decal") then
 			v.Transparency = 1
-		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+		elseif v:IsA("ParticleEmitter") then
 			v.Lifetime = NumberRange.new(0)
+		elseif v:IsA("Trail") then
+			v.Lifetime = 0
 		end
 	end
 	for i,v in pairs(Lighting:GetDescendants()) do
@@ -7857,6 +7859,32 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			if child:IsA('ForceField') or child:IsA('Sparkles') or child:IsA('Smoke') or child:IsA('Fire') or child:IsA('Beam') then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
+			elseif child:IsA("ParticleEmitter") then
+				RunService.Heartbeat:Wait()
+				child.Lifetime = NumberRange.new(0)
+			elseif child:IsA("Trail") then
+				RunService.Heartbeat:Wait()
+				child.Lifetime = 0
+			elseif v:IsA("Explosion") then
+				RunService.Heartbeat:Wait()
+				child.Visible = false
+				local ball = Instance.new("Part")
+				ball.Shape = Enum.PartType.Ball
+				ball.Size = Vector3.new(child.BlastRadius * 2,child.BlastRadius * 2,child.BlastRadius * 2)
+				ball.Position = child.Position
+				ball.Anchored = true
+				ball.CanCollide = false
+				ball.Material = "Neon"
+				ball.Reflectance = 0
+				ball.CastShadow = false
+				ball.BottomSurface = "Smooth"
+				ball.TopSurface = "Smooth"
+				ball.Transparency = 0
+				ball.Color = Color3.fromRGB(255, 125, 0)
+				ball.Parent = workspace
+				TweenService:Create(ball,TweenInfo.new(1.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),{Transparency = 1}):Play()
+				wait(1.25)
+				ball:Destroy()
 			end
 		end)
 	end)
