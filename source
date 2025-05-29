@@ -28,11 +28,14 @@ readfile = missing("function", waxreadfile) and function(file, safe)
     return waxreadfile(file)
 end
 isfile = missing("function", isfile, readfile and function(...)
-    local success, result = pcall(readfile, ...)
+    local success, result = pcall(function()
+        return readfile(...)
+    end)
     return success and result ~= nil and result ~= ""
 end)
 makefolder = missing("function", makefolder)
 isfolder = missing("function", isfolder)
+waxgetcustomasset = missing("function", getcustomasset or getsynasset)
 hookfunction = missing("function", hookfunction)
 hookmetamethod = missing("function", hookmetamethod)
 getnamecallmethod = missing("function", getnamecallmethod or get_namecall_method)
@@ -94,9 +97,17 @@ local iyassets = {
     ["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029"
 }
 
-local getcustomasset = missing("function", getcustomasset or getsynasset, function(asset)
+local function getcustomasset(asset)
+    if waxgetcustomasset then
+        local success, result = pcall(function()
+            return waxgetcustomasset(asset)
+        end)
+        if success and result ~= nil and result ~= "" then
+            return result
+        end
+    end
     return iyassets[asset]
-end)
+end
 
 if makefolder and isfolder and writefile and isfile then
     pcall(function() -- good executor trust
