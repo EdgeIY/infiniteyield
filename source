@@ -9671,10 +9671,7 @@ addcmd("nosit", {"antisit"}, function(args, speaker)
 end)
 
 addcmd("unnosit", {"unantisit"}, function(args, speaker)
-	if noSitConnection then
-		noSitConnection:Disconnect()
-		noSitConnection = nil
-	end
+	noSitConnection:Disconnect()
     speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
