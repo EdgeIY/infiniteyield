@@ -9663,16 +9663,16 @@ end)
 
 addcmd("nosit", {"antisit"}, function(args, speaker)
 	execCmd("unnosit")
-	local function noSitFunct(char)
-    	char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+	local function noSitFunc(char)
+		char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 	end
-	noSitFunct(speaker.Character)
-	noSitConnection = speaker.CharacterAdded:Connect(noSitFunct)
+	noSitFunc(speaker.Character)
+	noSitConnection = speaker.CharacterAdded:Connect(noSitFunc)
 end)
 
 addcmd("unnosit", {"unantisit"}, function(args, speaker)
 	noSitConnection:Disconnect()
-    speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
