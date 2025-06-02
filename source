@@ -124,6 +124,7 @@ if makefolder and isfolder and writefile and isfile then
         end
     end)
 end
+pcall(function() delfile("IY_FE") end) -- bad executor x2
 
 currentVersion = "6.3.2"
 
