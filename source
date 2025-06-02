@@ -122,6 +122,7 @@ if makefolder and isfolder and writefile and isfile then
                 writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
             end
         end
+        if IsOnMobile then writefile("infiniteyield/assets/.nomedia") end
     end)
 end
 pcall(function() delfile("IY_FE") end) -- bad executor x2
