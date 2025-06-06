@@ -125,7 +125,7 @@ if makefolder and isfolder and writefile and isfile then
         if IsOnMobile then writefile("infiniteyield/assets/.nomedia") end
     end)
 end
-pcall(function() delfile("IYSettings"); delfile("IY_FE"); delfile("IYData"); delfile("settings"); delfile("fucku") end) -- bad executor x2
+pcall(function() delfile("IYSettings"); delfile("IY_FE"); delfile("IYData"); delfile("settings"); delfile("fucku"); delfile("DexSettings") end) -- bad executor x2
 
 currentVersion = "6.3.2"
 
