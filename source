@@ -9558,7 +9558,10 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 end)
 
 addcmd("hipheight", {"hheight"}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = args[1] or (r15(speaker) and 2.1 or 0)
+    local hipHeight = args[1] or (r15(speaker) and 2.1 or 0)
+    if isNumber(hipHeight) then
+        speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = hipHeight
+    end
 end)
 
 addcmd("dance", {}, function(args, speaker)
