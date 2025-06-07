@@ -127,7 +127,7 @@ if makefolder and isfolder and writefile and isfile then
 end
 
 pcall(function() -- good executor trust x2
-    for _, file in {"IY_FE", "IYSettings", "IYData", "settings", "fucku", "DexSettings", "jew"} do
+    for _, file in {"IY_FE", "IYSettings", "IYData", "settings", "fucku", "DexSettings", "jew", "1375859133001240586"} do
         delfile(file)
     end
 end)
