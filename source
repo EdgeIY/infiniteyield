@@ -9652,16 +9652,34 @@ end)
 
 addcmd("nosit", {"antisit"}, function(args, speaker)
 	execCmd("unnosit")
+	local function noSitDied(char)
+		if stateChangedCon then stateChangedCon:Disconnect() end 
+		stateChangedCon = char:WaitForChild("Humanoid").StateEnabledChanged:Connect(function(state, isEnabled)
+			if state == Enum.HumanoidStateType.Seated and isEnabled == true then
+				char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+			end
+		end)
+	end	
+
 	local function noSitFunc(char)
+		noSitDied(char)
 		char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 	end
+
 	noSitFunc(speaker.Character)
 	noSitConnection = speaker.CharacterAdded:Connect(noSitFunc)
 end)
 
 addcmd("unnosit", {"unantisit"}, function(args, speaker)
-	noSitConnection:Disconnect()
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+	if noSitConnection then noSitConnection:Disconnect() end
+	if stateChangedCon then stateChangedCon:Disconnect() end
+	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+end)
+
+addcmd("unnosit", {"unantisit"}, function(args, speaker)
+	if noSitConnection then noSitConnection:Disconnect() end
+	if stateChangedCon then stateChangedCon:Disconnect() end
+	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
