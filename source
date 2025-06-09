@@ -6925,7 +6925,7 @@ addcmd('clip',{'unnoclip'},function(args, speaker)
 	if Noclipping then
 		Noclipping:Disconnect()
 		for _, child in pairs(speaker.Character:GetDescendants()) do
-				if child:IsA("BasePart") and child.CanCollide == false and not child:IsA("Accessory") and child.Name ~= floatName then
+				if child:IsA("BasePart") and child.CanCollide == false and not child.Parent:IsA("Accessory") and child.Name ~= floatName then
 					child.CanCollide = false
 				end
 		end
