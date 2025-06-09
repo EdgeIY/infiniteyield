@@ -6924,6 +6924,11 @@ end)
 addcmd('clip',{'unnoclip'},function(args, speaker)
 	if Noclipping then
 		Noclipping:Disconnect()
+		for _, child in pairs(speaker.Character:GetDescendants()) do
+				if child:IsA("BasePart") and child.CanCollide == false and not child:IsA("Accessory") and child.Name ~= floatName then
+					child.CanCollide = false
+				end
+		end
 	end
 	Clip = true
 	if args[1] and args[1] == 'nonotify' then return end
@@ -11694,6 +11699,15 @@ addcmd("unantifling", {}, function(args, speaker)
     if antifling then
         antifling:Disconnect()
         antifling = nil
+	for _, player in pairs(Players:GetPlayers()) do
+            if player ~= speaker and player.Character then
+                for _, v in pairs(player.Character:GetDescendants()) do
+                    if not v.CanCollide and v:IsA("BasePart") and not v.Parent:IsA("Accessory") then
+                        v.CanCollide = true
+                    end
+                end
+            end
+        end
     end
 end)
 
