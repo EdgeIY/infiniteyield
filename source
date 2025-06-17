@@ -4630,8 +4630,7 @@ CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players use
 CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players appearance ID'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players appearance ID to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'bang [player] [speed]', DESC = 'owo'}
-CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
+// Bang/Rape cmd is also gone
 CMDs[#CMDs + 1] = {NAME = 'carpet [player]', DESC = 'Be someones carpet'}
 CMDs[#CMDs + 1] = {NAME = 'uncarpet', DESC = 'Undoes carpet'}
 CMDs[#CMDs + 1] = {NAME = 'friend [player]', DESC = 'Sends a friend request to certain players'}
@@ -4819,7 +4818,7 @@ CMDs[#CMDs + 1] = {NAME = 'ctrllock', DESC = 'Binds Shiftlock to LeftControl'}
 CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'}
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
-CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+// Jerk off command is gone bc yes
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
 wait()
 
@@ -10575,44 +10574,7 @@ function getTorso(x)
 	return x:FindFirstChild("Torso") or x:FindFirstChild("UpperTorso") or x:FindFirstChild("LowerTorso") or x:FindFirstChild("HumanoidRootPart")
 end
 
-addcmd("bang", {"rape"}, function(args, speaker)
-	execCmd("unbang")
-	wait()
-	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	bangAnim = Instance.new("Animation")
-	bangAnim.AnimationId = not r15(speaker) and "rbxassetid://148840371" or "rbxassetid://5918726674"
-	bang = humanoid:LoadAnimation(bangAnim)
-	bang:Play(0.1, 1, 1)
-	bang:AdjustSpeed(args[2] or 3)
-	bangDied = humanoid.Died:Connect(function()
-		bang:Stop()
-		bangAnim:Destroy()
-		bangDied:Disconnect()
-		bangLoop:Disconnect()
-	end)
-	if args[1] then
-		local players = getPlayer(args[1], speaker)
-		for _, v in pairs(players) do
-			local bangplr = Players[v].Name
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = RunService.Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
-			end)
-		end
-	end
-end)
-
-addcmd("unbang", {"unrape"}, function(args, speaker)
-	if bangDied then
-		bangDied:Disconnect()
-		bang:Stop()
-		bangAnim:Destroy()
-		bangLoop:Disconnect()
-	end
-end)
+// Same here bye bye bang cmd
 
 addcmd('carpet',{},function(args, speaker)
 	if not r15(speaker) then
@@ -12423,53 +12385,7 @@ addcmd("unlistento", {}, function(args, speaker)
     listentoChar:Disconnect()
 end)
 
-addcmd("jerk", {}, function(args, speaker)
-    local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
-    local backpack = speaker:FindFirstChildWhichIsA("Backpack")
-    if not humanoid or not backpack then return end
-
-    local tool = Instance.new("Tool")
-    tool.Name = "Jerk Off"
-    tool.ToolTip = "in the stripped club. straight up \"jorking it\" . and by \"it\" , haha, well. let's justr say. My peanits."
-    tool.RequiresHandle = false
-    tool.Parent = backpack
-
-    local jorkin = false
-    local track = nil
-
-    local function stopTomfoolery()
-        jorkin = false
-        if track then
-            track:Stop()
-            track = nil
-        end
-    end
-
-    tool.Equipped:Connect(function() jorkin = true end)
-    tool.Unequipped:Connect(stopTomfoolery)
-    humanoid.Died:Connect(stopTomfoolery)
-
-    while task.wait() do
-        if not jorkin then continue end
-
-        local isR15 = r15(speaker)
-        if not track then
-            local anim = Instance.new("Animation")
-            anim.AnimationId = not isR15 and "rbxassetid://72042024" or "rbxassetid://698251653"
-            track = humanoid:LoadAnimation(anim)
-        end
-
-        track:Play()
-        track:AdjustSpeed(isR15 and 0.7 or 0.65)
-        track.TimePosition = 0.6
-        task.wait(0.1)
-        while track and track.TimePosition < (not isR15 and 0.65 or 0.7) do task.wait(0.1) end
-        if track then
-            track:Stop()
-            track = nil
-        end
-    end
-end)
+// Stop jerking it dude
 
 addcmd("guiscale", {}, function(args, speaker)
     if args[1] and isNumber(args[1]) then
