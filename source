@@ -8527,7 +8527,7 @@ end)
 
 addcmd('enableshiftlock',{'enablesl','shiftlock'},function(args, speaker)
 	speaker.DevEnableMouseLock = true
-	notify('Shiftlock','Shift lock is now available')
+	notify('Shiftlock','Shift lock should now be available')
 end)
 
 addcmd('firstp',{},function(args, speaker)
