@@ -11989,7 +11989,7 @@ end)
 
 autoclicking = false
 addcmd('autoclick',{},function(args, speaker)
-	if mouse1press and mouse1release then
+	if mouse1press and mouse1release and not IsOnMobile then
 		execCmd('unautoclick')
 		wait()
 		local clickDelay = 0.1
