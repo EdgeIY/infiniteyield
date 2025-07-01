@@ -8,7 +8,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 
 function missing(t, f, fallback)
     if type(f) == t then return f end
-    return fallback or nil
+    return fallback
 end
 
 cloneref = missing("function", cloneref, function(...) return ... end)
