@@ -4691,7 +4691,7 @@ CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
 CMDs[#CMDs + 1] = {NAME = 'god', DESC = 'Makes your character difficult to kill in most games'}
-CMDs[#CMDs + 1] = {NAME = 'permadeath', DESC = 'Makes you unable to die'}
+CMDs[#CMDs + 1] = {NAME = 'immortal', DESC = 'Makes you unable to die'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
@@ -4933,7 +4933,7 @@ function GetInTable(Table, Name)
 	return false
 end
 
-function permadeath(plr)
+function immortal(plr)
     if replicatesignal then
         replicatesignal(plr.ConnectDiedSignalBackend)
         task.wait(Players.RespawnTime - 0.1)
@@ -9323,7 +9323,7 @@ addcmd("refresh", {"re"}, function(args, speaker)
 end)
 
 addcmd("god", {}, function(args, speaker)
-    permadeath(speaker)
+    immortal(speaker)
     local Cam = workspace.CurrentCamera
     local Char, Pos = speaker.Character, Cam.CFrame
     local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
@@ -12534,10 +12534,10 @@ addcmd("unsuspendvc", {}, function(args, speaker)
     end
 end)
 
-addcmd("permadeath", {}, function(args, speaker)
+addcmd("immortal", {}, function(args, speaker)
     if replicatesignal then
-        permadeath(speaker)
-        notify("Permadeath", "Enabled")
+        immortal(speaker)
+        notify("Immortality", "Enabled")
     else
         notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
     end
