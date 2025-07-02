@@ -8520,11 +8520,11 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
-	speaker.CameraMaxZoomDistance = args[1]
+	speaker.CameraMaxZoomDistance = tonumber(args[1]) or StarterPlayer.CameraMaxZoomDistance
 end)
 
 addcmd('minzoom',{},function(args, speaker)
-	speaker.CameraMinZoomDistance = args[1]
+	speaker.CameraMinZoomDistance = tonumber(args[1]) or StarterPlayer.CameraMinZoomDistance
 end)
 
 addcmd('camdistance',{},function(args, speaker)
@@ -11320,16 +11320,32 @@ end)
 addcmd('enablestate',{},function(args, speaker)
 	local x = args[1]
 	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+		for _, v in ipairs(Enum.HumanoidStateType:GetEnumItems()) do
+			if v.Name:lower() == x:lower() then
+				x = v
+				break
+			end
+		end
+	else
+		x = tonumber(x)
 	end
+
 	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, true)
-end)
+end)	
 
 addcmd('disablestate',{},function(args, speaker)
 	local x = args[1]
 	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+		for _, v in ipairs(Enum.HumanoidStateType:GetEnumItems()) do
+			if v.Name:lower() == x:lower() then
+				x = v
+				break
+			end
+		end
+	else
+		x = tonumber(x)
 	end
+
 	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, false)
 end)
 
