@@ -252,6 +252,7 @@ background = Instance.new("Frame")
 chat = Instance.new("Frame")
 Clear = Instance.new("TextButton")
 SaveChatlogs = Instance.new("TextButton")
+SaveJoinLogs = Instance.new("TextButton")
 Toggle = Instance.new("TextButton")
 scroll_2 = Instance.new("ScrollingFrame")
 join = Instance.new("Frame")
@@ -1816,6 +1817,20 @@ SaveChatlogs.TextColor3 = Color3.new(1, 1, 1)
 table.insert(shade2,SaveChatlogs)
 table.insert(text1,SaveChatlogs)
 
+SaveJoinLogs.Name = "SaveJoinLogs"
+SaveJoinLogs.Parent = join
+SaveJoinLogs.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.184314)
+SaveJoinLogs.BorderSizePixel = 0
+SaveJoinLogs.Position = UDim2.new(0, 258, 0, 220)
+SaveJoinLogs.Size = UDim2.new(0, 75, 0, 20)
+SaveJoinLogs.ZIndex = 10
+SaveJoinLogs.Font = Enum.Font.SourceSans
+SaveJoinLogs.FontSize = Enum.FontSize.Size14
+SaveJoinLogs.Text = "Save To .txt"
+SaveJoinLogs.TextColor3 = Color3.new(1, 1, 1)
+table.insert(shade2,SaveJoinLogs)
+table.insert(text1,SaveJoinLogs)
+
 Toggle.Name = "Toggle"
 Toggle.Parent = chat
 Toggle.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.184314)
@@ -3275,13 +3290,13 @@ function CreateJoinLabel(plr,ID)
 	local info1 = Instance.new("TextLabel")
 	local info2 = Instance.new("TextLabel")
 	local ImageLabel_3 = Instance.new("ImageLabel")
-	infoFrame.Name = randomString()
+	infoFrame.Name = plr.Name
 	infoFrame.Parent = scroll_3
 	infoFrame.BackgroundColor3 = Color3.new(1, 1, 1)
 	infoFrame.BackgroundTransparency = 1
 	infoFrame.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
 	infoFrame.Size = UDim2.new(1, 0, 0, 50)
-	info1.Name = randomString()
+	info1.Name = "User"
 	info1.Parent = infoFrame
 	info1.BackgroundTransparency = 1
 	info1.BorderSizePixel = 0
@@ -3294,7 +3309,7 @@ function CreateJoinLabel(plr,ID)
 	info1.TextColor3 = Color3.new(1, 1, 1)
 	info1.TextWrapped = true
 	info1.TextXAlignment = Enum.TextXAlignment.Left
-	info2.Name = randomString()
+	info2.Name = "Info"
 	info2.Parent = infoFrame
 	info2.BackgroundTransparency = 1
 	info2.BorderSizePixel = 0
@@ -3960,7 +3975,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
 			end
-			local writelogsFile = tostring(writelogs)
+
 			local fileext = 0
 			local function nameFile()
 				local file
@@ -3969,14 +3984,46 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 					fileext = fileext+1
 					nameFile()
 				else
-					writefileCooldown(placeName..' Chat Logs ('..fileext..').txt', writelogsFile)
+					writefileCooldown(placeName..' Chat Logs ('..fileext..').txt', writelogs)
 				end
 			end
 			nameFile()
 			notify('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
 		end
 	else
-		notify('Chat Logs','Your exploit does not support write file. You cannot save chat logs.')
+		notify('Chat Logs','Your exploit does not support writefile. You cannot save chat logs.')
+	end
+end)
+
+SaveJoinLogs.MouseButton1Down:Connect(function()
+    if writefileExploit() then
+		if scroll_3:FindFirstChildOfClass("Frame") then
+			notify("Loading",'Hold on a sec')
+			local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
+			local writelogs = '-- Infinite Yield join logs for '..placeName
+
+            for _, entry in pairs(scroll_3:GetChildren()) do
+                if entry:IsA("Frame") then
+                    writelogs = writelogs..'\n\n'..entry.User.Text..'\n'..entry.Info.Text
+                end
+            end
+
+			local fileext = 0
+			local function nameFile()
+				local file
+				pcall(function() file = readfile(placeName..' Join Logs ('..fileext..').txt') end)
+				if file then
+					fileext = fileext+1
+					nameFile()
+				else
+					writefileCooldown(placeName..' Join Logs ('..fileext..').txt', writelogs)
+				end
+			end
+			nameFile()
+			notify('Join Logs','Saved join logs to the workspace folder within your exploit folder.')
+		end
+	else
+		notify('Join Logs','Your exploit does not support writefile. You cannot save join logs.')
 	end
 end)
 
@@ -9664,12 +9711,18 @@ addcmd("sitwalk", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = not r15(speaker) and -1.5 or 0.5
 end)
 
-addcmd("nosit", {}, function(args, speaker)
-    speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+addcmd("nosit", {"antisit"}, function(args, speaker)
+	execCmd("unnosit")
+	local function noSitFunc(char)
+		char:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+	end
+	noSitFunc(speaker.Character)
+	noSitConnection = speaker.CharacterAdded:Connect(noSitFunc)
 end)
 
-addcmd("unnosit", {}, function(args, speaker)
-    speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+addcmd("unnosit", {"unantisit"}, function(args, speaker)
+	noSitConnection:Disconnect()
+	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
@@ -11320,16 +11373,32 @@ end)
 addcmd('enablestate',{},function(args, speaker)
 	local x = args[1]
 	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+		for _, v in ipairs(Enum.HumanoidStateType:GetEnumItems()) do
+			if v.Name:lower() == x:lower() then
+				x = v
+				break
+			end
+		end
+	else
+		x = tonumber(x)
 	end
+
 	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, true)
 end)
 
 addcmd('disablestate',{},function(args, speaker)
 	local x = args[1]
 	if not tonumber(x) then
-		local x = Enum.HumanoidStateType[args[1]]
+		for _, v in ipairs(Enum.HumanoidStateType:GetEnumItems()) do
+			if v.Name:lower() == x:lower() then
+				x = v
+				break
+			end
+		end
+	else
+		x = tonumber(x)
 	end
+
 	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, false)
 end)
 
