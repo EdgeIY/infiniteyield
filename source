@@ -8526,7 +8526,11 @@ addcmd('fixcam',{'restorecam'},function(args, speaker)
 end)
 
 addcmd('enableshiftlock',{'enablesl','shiftlock'},function(args, speaker)
-	speaker.DevEnableMouseLock = true
+	local function noSl() 
+		speaker.DevEnableMouseLock = true 
+	end
+	speaker:GetPropertyChangedSignal("DevEnableMouseLock"):Connect(noSl)
+	noSl()
 	notify('Shiftlock','Shift lock should now be available')
 end)
 
