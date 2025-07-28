@@ -3253,7 +3253,9 @@ function CreateLabel(Name, Text)
 		tl.Name = Name
 		tl.Parent = scroll_2
 		tl.ZIndex = 10
+		tl.RichText = true
 		tl.Text = Time().." - ["..Name.."]: "..Text
+		tl.Text = tl.ContentText
 		tl.Size = UDim2.new(0,322,0,84)
 		tl.BackgroundTransparency = 1
 		tl.BorderSizePixel = 0
@@ -5525,7 +5527,7 @@ function getPlayer(list,speaker)
 	return foundNames
 end
 
-formatUsername = function(player)
+function formatUsername(player)
     if player.DisplayName ~= player.Name then
         return string.format("%s (%s)", player.Name, player.DisplayName)
     end
@@ -8495,9 +8497,13 @@ addcmd('fixcam',{'restorecam'},function(args, speaker)
 	speaker.Character.Head.Anchored = false
 end)
 
-addcmd('enableshiftlock',{'enablesl','shiftlock'},function(args, speaker)
-	speaker.DevEnableMouseLock = true
-	notify('Shiftlock','Shift lock is now available')
+addcmd("enableshiftlock", {"enablesl", "shiftlock"}, function(args, speaker)
+    local function enableShiftlock() 
+        speaker.DevEnableMouseLock = true 
+    end
+    speaker:GetPropertyChangedSignal("DevEnableMouseLock"):Connect(enableShiftlock)
+    enableShiftlock()
+    notify("Shiftlock", "Shift lock is now available")
 end)
 
 addcmd('firstp',{},function(args, speaker)
