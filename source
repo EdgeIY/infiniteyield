@@ -4443,7 +4443,7 @@ CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
 CMDs[#CMDs + 1] = {NAME = 'showiy / unhideiy', DESC = 'Shows IY again'}
 CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport through servers'}
 CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
-CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggle keepiy'}
+CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggles keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
@@ -4544,9 +4544,10 @@ CMDs[#CMDs + 1] = {NAME = 'nochams / unchams', DESC = 'Removes chams'}
 CMDs[#CMDs + 1] = {NAME = 'locate [player]', DESC = 'View a single player and their status'}
 CMDs[#CMDs + 1] = {NAME = 'unlocate / nolocate [player]', DESC = 'Removes locate'}
 CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
-CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency'}
+CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency to all parts in workspace'}
 CMDs[#CMDs + 1] = {NAME = 'loopxray', DESC = 'Makes all parts in workspace transparent but looped'}
-CMDs[#CMDs + 1] = {NAME = 'unloopunxray', DESC = 'Unloops xray'}
+CMDs[#CMDs + 1] = {NAME = 'unloopxray', DESC = 'Unloops xray'}
+CMDs[#CMDs + 1] = {NAME = 'togglexray', DESC = 'Toggles xray'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'spectate / view [player]', DESC = 'View a player'}
 CMDs[#CMDs + 1] = {NAME = 'viewpart / viewp [part name]', DESC = 'View a part'}
@@ -11928,7 +11929,7 @@ addcmd('unspin',{},function(args, speaker)
 end)
 
 xrayEnabled = false
-xray = function()
+function xray()
     for _, v in pairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") and not v.Parent:FindFirstChildWhichIsA("Humanoid") and not v.Parent.Parent:FindFirstChildWhichIsA("Humanoid") then
             v.LocalTransparencyModifier = xrayEnabled and 0.5 or 0
@@ -11952,9 +11953,7 @@ addcmd("togglexray", {}, function(args, speaker)
 end)
 
 addcmd("loopxray", {}, function(args, speaker)
-    if xrayLoop then
-        xrayLoop:Disconnect()
-    end
+    pcall(function() xrayLoop:Disconnect() end)
     xrayLoop = RunService.RenderStepped:Connect(function()
         xrayEnabled = true
         xray()
@@ -11962,9 +11961,9 @@ addcmd("loopxray", {}, function(args, speaker)
 end)
 
 addcmd("unloopxray", {}, function(args, speaker)
-    if xrayLoop then
-        xrayLoop:Disconnect()
-    end
+    pcall(function() xrayLoop:Disconnect() end)
+    xrayEnabled = false
+    xray()
 end)
 
 local walltpTouch = nil
