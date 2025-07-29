@@ -3120,7 +3120,7 @@ if type(binds) ~= "table" then binds = {} end
 if type(PluginsTable) == "table" then
     for i = #PluginsTable, 1, -1 do
         if string.sub(PluginsTable[i], -3) ~= ".iy" then
-            table.remove(PluginsTable[i])
+            table.remove(PluginsTable, i)
         end
     end
 end
