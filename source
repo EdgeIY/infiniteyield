@@ -11617,10 +11617,8 @@ end)
 
 addcmd("flyfling", {}, function(args, speaker)
     execCmd("unvehiclefly\\unwalkfling")
-    wait()
-    if args[1] and isNumber(args[1]) then
-        vehicleflyspeed = args[1]
-    end
+    task.wait()
+    vehicleflyspeed = tonumber(args[1]) or vehicleflyspeed
     execCmd("vehiclefly\\walkfling")
 end)
 
