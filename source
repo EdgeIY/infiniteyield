@@ -9870,20 +9870,12 @@ addcmd('headthrow',{},function(args, speaker)
 	end
 end)
 
-addcmd('animation',{'anim'},function(args, speaker)
-	if not r15(speaker) then
-		local pchar=speaker.Character
-		local AnimationId = tostring(args[1])
-		local Anim = Instance.new("Animation")
-		Anim.AnimationId = "rbxassetid://"..AnimationId
-		local k = pchar:FindFirstChildOfClass('Humanoid'):LoadAnimation(Anim)
-		k:Play()
-		if args[2] then
-			k:AdjustSpeed(tostring(args[2]))
-		end
-	else
-		notify('R6 Required','This command requires the r6 rig type')
-	end
+addcmd("animation", {"anim"}, function(args, speaker)
+    local animation = Instance.new("Animation")
+    animation.AnimationId = "rbxassetid://" .. tostring(args[1])
+    local anim = speaker.Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(animation)
+    anim:Play()
+    if args[2] then anim:AdjustSpeed(tostring(args[2])) end
 end)
 
 addcmd('noanim',{},function(args, speaker)
