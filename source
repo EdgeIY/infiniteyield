@@ -4839,14 +4839,14 @@ for i = 1, #CMDs do
 	if CMDs[i].DESC ~= "" then
 		newcmd:SetAttribute("Title", CMDs[i].NAME)
 		newcmd:SetAttribute("Desc", CMDs[i].DESC)
-		newcmd.MouseButton1Down:Connect(function()
-			if not IsOnMobile and newcmd.Visible and newcmd.TextTransparency == 0 then
+		if not IsOnMobile and newcmd.Visible and newcmd.TextTransparency == 0 then
+			newcmd.MouseButton1Down:Connect(function()
 				local currentText = Cmdbar.Text
 				Cmdbar:CaptureFocus()
 				autoComplete(newcmd.Text, currentText)
 				maximizeHolder()
-			end
-		end)
+			end)
+		end
 	end
 end
 
@@ -5180,13 +5180,13 @@ function addcmdtext(text,name,desc)
 	if desc and desc ~= '' then
 		newcmd:SetAttribute("Title", tooltipText)
 		newcmd:SetAttribute("Desc", tooltipDesc)
-		newcmd.MouseButton1Down:Connect(function()
-			if newcmd.Visible and newcmd.TextTransparency == 0 then
+		if not IsOnMobile and newcmd.Visible and newcmd.TextTransparency == 0 then
+			newcmd.MouseButton1Down:Connect(function()
 				Cmdbar:CaptureFocus()
 				autoComplete(newcmd.Text)
 				maximizeHolder()
-			end
-		end)
+			end)
+		end
 	end
 end
 
