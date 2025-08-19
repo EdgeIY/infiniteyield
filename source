@@ -7024,9 +7024,9 @@ function sFLY(vfly)
 			CONTROL.L = - (vfly and vehicleflyspeed or iyflyspeed)
 		elseif input.KeyCode == Enum.KeyCode.D then
 			CONTROL.R = (vfly and vehicleflyspeed or iyflyspeed)
-		elseif input.KeyCode == Enum.KeyCode.E then
+		elseif input.KeyCode == Enum.KeyCode.E and QEfly then
 			CONTROL.Q = (vfly and vehicleflyspeed or iyflyspeed)*2
-		elseif input.KeyCode == Enum.KeyCode.Q then
+		elseif input.KeyCode == Enum.KeyCode.Q and QEfly then
 			CONTROL.E = -(vfly and vehicleflyspeed or iyflyspeed)*2
 		end
 		pcall(function() camera.CameraType = Enum.CameraType.Track end)
