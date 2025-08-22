@@ -1,3 +1,18 @@
+if run_on_actor then
+	pcall(function()
+		run_on_actor(function()
+    		for i, obj in pairs(getgc(true)) do
+        		if type(obj) == "table" then
+            		if rawget(obj, "Detected") and rawget(obj, "AddDetector") and rawget(obj, "Launch") then
+                		for k, v in pairs(obj) do
+                    		obj[k] = nil
+               			end
+            		end
+        		end
+    		end
+		end)
+	end)
+end
 wait = task.wait
 spawn = task.spawn
 defer = task.defer
