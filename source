@@ -1,3 +1,6 @@
+wait = task.wait
+spawn = task.spawn
+defer = task.defer
 if IY_LOADED and not _G.IY_DEBUG == true then
     -- error("Infinite Yield is already running!", 0)
     return
