@@ -11886,8 +11886,7 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 end)
 
 local guarding = false
-local guardLoop = nil
-local followLoop = nil
+local guardLoop = nil -- Combined loop for following and guarding
 local isSpinning = false
 
 addcmd('guard', {'protect'}, function(args, speaker)
@@ -11916,61 +11915,56 @@ addcmd('guard', {'protect'}, function(args, speaker)
     bambam.MaxTorque = Vector3.new(0, math.huge, 0)
     bambam.P = 50000
 
-    -- Цикл следования
-    followLoop = RunService.Heartbeat:Connect(function()
+    -- Main loop for both following and flinging
+    guardLoop = RunService.Heartbeat:Connect(function()
         pcall(function()
+            -- Exit condition check
             if not guarding or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
                 execCmd("unguard", {"nonotify"})
                 return
             end
-            
+
             local guardHumanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
             if guardHumanoid and guardHumanoid.SeatPart then
                 guardHumanoid.Sit = false
             end
 
-            local targetRoot = getRoot(targetPlayer.Character)
-            -- Используем MoveTo для плавного следования
-            guardHumanoid:MoveTo(targetRoot.Position)
-        end)
-    end)
+            local guardedRoot = getRoot(targetPlayer.Character)
+            local guardedPosition = guardedRoot.Position
+            
+            local closestIntruder = nil
+            local minDistance = radius + 1
 
-    -- Цикл обнаружения и флинга
-    guardLoop = RunService.Heartbeat:Connect(function()
-        if not guarding or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) then
-            execCmd("unguard", {"nonotify"})
-            return
-        end
+            -- Find the closest intruder
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player == targetPlayer or player == speaker then continue end
 
-        local guardedRoot = getRoot(targetPlayer.Character)
-        local guardedPosition = guardedRoot.Position
-        local shouldSpin = false
-
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player == targetPlayer or player == speaker then continue end
-
-            if player.Character and getRoot(player.Character) then
-                if (getRoot(player.Character).Position - guardedPosition).Magnitude <= radius then
-                    shouldSpin = true
-                    break
+                if player.Character and getRoot(player.Character) then
+                    local distance = (getRoot(player.Character).Position - guardedPosition).Magnitude
+                    if distance <= radius and distance < minDistance then
+                        minDistance = distance
+                        closestIntruder = player
+                    end
                 end
             end
-        end
 
-        if shouldSpin and not isSpinning then
-            isSpinning = true
-            pcall(function()
-                for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end
-                bambam.Parent = getRoot(speaker.Character)
-                bambam.AngularVelocity = Vector3.new(0, 100, 0)
-            end)
-        elseif not shouldSpin and isSpinning then
-            isSpinning = false
-            pcall(function()
-                bambam.AngularVelocity = Vector3.new(0, 0, 0)
-                bambam.Parent = nil
-                for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end
-            end)
+            local shouldSpin = (closestIntruder ~= nil)
+
+            -- Movement logic
+            if shouldSpin then
+                guardHumanoid:MoveTo(getRoot(closestIntruder.Character).Position)
+            else
+                guardHumanoid:MoveTo(guardedPosition)
+            end
+
+            -- Spinning logic
+            if shouldSpin and not isSpinning then
+                isSpinning = true
+                pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 100, 0) end)
+            elseif not shouldSpin and isSpinning then
+                isSpinning = false
+                pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end end)
+            end
         end
     end)
 end)
@@ -11979,8 +11973,7 @@ addcmd('unguard', {'unprotect'}, function(args, speaker)
     if guarding then
         guarding = false
         isSpinning = false
-        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
-        if followLoop then followLoop:Disconnect(); followLoop = nil end
+        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end -- Disconnect the main loop
         
         execCmd('clip', {'nonotify'}) -- Выключаем noclip
 
