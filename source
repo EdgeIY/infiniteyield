@@ -9227,16 +9227,52 @@ end)
 
 oofing = false
 addcmd('loopoof',{},function(args, speaker)
-	oofing = true
-	repeat wait(0.1)
-		for i,v in pairs(Players:GetPlayers()) do
-			if v.Character ~= nil and v.Character:FindFirstChild'Head' then
-				for _,x in pairs(v.Character.Head:GetChildren()) do
-					if x:IsA'Sound' then x.Playing = true end
-				end
-			end
-		end
-	until oofing == false
+    oofing = true
+    local oofSoundId = "rbxassetid://212222358" -- Classic "oof" sound
+    local oofSounds = {}
+
+    local function setupPlayer(player)
+        if player.Character then
+            local head = player.Character:WaitForChild("Head", 5)
+            if head and not oofSounds[player] then
+                local sound = Instance.new("Sound")
+                sound.SoundId = oofSoundId
+                sound.Parent = head
+                oofSounds[player] = sound
+            end
+        end
+    end
+
+    for _, player in pairs(Players:GetPlayers()) do
+        setupPlayer(player)
+    end
+
+    local playerAddedConn = Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function() setupPlayer(player) end)
+        setupPlayer(player)
+    end)
+
+    local playerRemovingConn = Players.PlayerRemoving:Connect(function(player)
+        if oofSounds[player] then
+            oofSounds[player]:Destroy()
+            oofSounds[player] = nil
+        end
+    end)
+
+    repeat wait(0.5) -- Increased delay to prevent sound from being too spammy
+        for player, sound in pairs(oofSounds) do
+            if player and player.Character and sound and sound.Parent then
+                sound:Play()
+            elseif oofSounds[player] then
+                oofSounds[player]:Destroy()
+                oofSounds[player] = nil
+            end
+        end
+    until oofing == false
+
+    playerAddedConn:Disconnect()
+    playerRemovingConn:Disconnect()
+    for _, sound in pairs(oofSounds) do if sound then sound:Destroy() end end
 end)
 
 addcmd('unloopoof',{},function(args, speaker)
@@ -10697,7 +10733,7 @@ addcmd('bringpartclass',{'bpc'},function(args, speaker)
 end)
 
 gotopartDelay = 0.1
-addcmd('gotopart',{'topart'},function(args, speaker)
+addcmd('gotopart',{'topart', 'tppart'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
@@ -11842,6 +11878,125 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 	end
 
 	notify("Handle Kill", "Stopped!")
+end)
+
+local guarding = false
+local guardLoop = nil
+local followLoop = nil
+local isSpinning = false
+
+addcmd('guard', {'protect'}, function(args, speaker)
+    if #args < 1 then
+        notify("Guard", "Использование: guard [игрок] [дистанция]")
+        return
+    end
+
+    execCmd("unguard", {"nonotify"}) -- Останавливаем предыдущего охранника
+
+    local targetPlayerName = getPlayer(args[1], speaker)[1]
+    if not targetPlayerName then
+        notify("Guard", "Игрок не найден: " .. args[1])
+        return
+    end
+
+    local targetPlayer = Players[targetPlayerName]
+    local radius = tonumber(args[2]) or 7 -- Немного больший радиус для обнаружения столкновений
+
+    guarding = true
+    notify("Guard", "Охраняю игрока " .. targetPlayer.Name)
+    execCmd('noclip', {'nonotify'}) -- Включаем noclip для охранника
+
+    local bambam = Instance.new("BodyAngularVelocity")
+    bambam.Name = "GuardSpin"
+    bambam.MaxTorque = Vector3.new(0, math.huge, 0)
+    bambam.P = 50000
+
+    -- Цикл следования
+    followLoop = RunService.Heartbeat:Connect(function()
+        pcall(function()
+            if not guarding or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
+                execCmd("unguard", {"nonotify"})
+                return
+            end
+            
+            local guardHumanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
+            if guardHumanoid and guardHumanoid.SeatPart then
+                guardHumanoid.Sit = false
+            end
+
+            local targetRoot = getRoot(targetPlayer.Character)
+            -- Используем MoveTo для плавного следования
+            guardHumanoid:MoveTo(targetRoot.Position)
+        end)
+    end)
+
+    -- Цикл обнаружения и флинга
+    guardLoop = RunService.Heartbeat:Connect(function()
+        if not guarding or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) then
+            execCmd("unguard", {"nonotify"})
+            return
+        end
+
+        local guardedRoot = getRoot(targetPlayer.Character)
+        local guardedPosition = guardedRoot.Position
+        local shouldSpin = false
+
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == targetPlayer or player == speaker then continue end
+
+            if player.Character and getRoot(player.Character) then
+                if (getRoot(player.Character).Position - guardedPosition).Magnitude <= radius then
+                    shouldSpin = true
+                    break
+                end
+            end
+        end
+
+        if shouldSpin and not isSpinning then
+            isSpinning = true
+            pcall(function()
+                for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end
+                bambam.Parent = getRoot(speaker.Character)
+                bambam.AngularVelocity = Vector3.new(0, 100, 0)
+            end)
+        elseif not shouldSpin and isSpinning then
+            isSpinning = false
+            pcall(function()
+                bambam.AngularVelocity = Vector3.new(0, 0, 0)
+                bambam.Parent = nil
+                for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end
+            end)
+        end
+    end)
+end)
+
+addcmd('unguard', {'unprotect'}, function(args, speaker)
+    if guarding then
+        guarding = false
+        isSpinning = false
+        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
+        if followLoop then followLoop:Disconnect(); followLoop = nil end
+        
+        execCmd('clip', {'nonotify'}) -- Выключаем noclip
+
+        pcall(function()
+            if speaker.Character and getRoot(speaker.Character) then
+                local root = getRoot(speaker.Character)
+                if root:FindFirstChild("GuardSpin") then
+                    root:FindFirstChild("GuardSpin"):Destroy()
+                end
+                for _, part in ipairs(speaker.Character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CustomPhysicalProperties then
+                        part.CustomPhysicalProperties = nil
+                    end
+                end
+            end
+        end)
+
+        if not (args[1] and args[1] == "nonotify") then
+            notify("Guard", "Охрана снята.")
+        end
+    end
 end)
 
 local hb = RunService.Heartbeat
