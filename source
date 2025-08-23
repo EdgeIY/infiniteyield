@@ -11929,6 +11929,9 @@ addcmd('guard', {'protect'}, function(args, speaker)
                 guardHumanoid.Sit = false
             end
 
+            local guardRoot = getRoot(speaker.Character)
+            if not guardRoot then return end
+
             local guardedRoot = getRoot(targetPlayer.Character)
             local guardedPosition = guardedRoot.Position
             
@@ -11951,10 +11954,15 @@ addcmd('guard', {'protect'}, function(args, speaker)
             local shouldSpin = (closestIntruder ~= nil)
 
             -- Movement logic
-            if shouldSpin then
-                guardHumanoid:MoveTo(getRoot(closestIntruder.Character).Position)
-            else
-                guardHumanoid:MoveTo(guardedPosition)
+            if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
+                local intruderRoot = getRoot(closestIntruder.Character)
+                -- Плавно телепортируемся к нарушителю, сохраняя ориентацию
+                local targetCFrame = CFrame.new(intruderRoot.Position) * (guardRoot.CFrame - guardRoot.Position)
+                TweenService:Create(guardRoot, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+            elseif not shouldSpin then
+                -- Плавно телепортируемся за охраняемым игроком
+                local targetCFrame = CFrame.new(guardedRoot.Position - (guardedRoot.CFrame.LookVector * 5), guardedRoot.Position)
+                TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
             end
 
             -- Spinning logic
