@@ -12657,10 +12657,10 @@ addcmd('ringparts', {'rp', 'partnado', 'parttornado'}, function(args, speaker)
 				end
 			end
 			if not isPlayerPart then
-				pcall(function()
+				pcall(function() 
 					part:SetNetworkOwner(speaker)
-					orbitingParts[part] = true
 				end)
+				orbitingParts[part] = true 
 			end
 		end
 	end
