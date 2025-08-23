@@ -11910,11 +11910,11 @@ addcmd('guard', {'protect'}, function(args, speaker)
         return
     end
 
-    local radius = tonumber(args[2]) or 7 -- Немного больший радиус для обнаружения столкновений
+    local radius = tonumber(args[2]) or 7
 
     guarding = true
-    notify("Guard", "Охраняю игрока " .. targetPlayer.Name)
-    execCmd('noclip', {'nonotify'}) -- Включаем noclip для охранника
+    notify("Guard", "Now guarding player " .. targetPlayer.Name)
+    execCmd('noclip', {'nonotify'})
 
     local bambam = Instance.new("BodyAngularVelocity")
     bambam.Name = "GuardSpin"
@@ -11922,7 +11922,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
     bambam.P = 50000
 
     -- Main loop for both following and flinging
-    guardLoop = RunService.Heartbeat:Connect(function()
+    guardLoop = RunService.Heartbeat:Connect(function() -- Main loop for both following and flinging
         pcall(function()
             -- Exit condition check
             if not guarding or not targetPlayer or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
@@ -11962,12 +11962,13 @@ addcmd('guard', {'protect'}, function(args, speaker)
             -- Movement logic
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
                 local intruderRoot = getRoot(closestIntruder.Character)
-                -- Плавно телепортируемся к нарушителю, сохраняя ориентацию
-                local targetCFrame = CFrame.new(intruderRoot.Position) * (guardRoot.CFrame - guardRoot.Position)
+                -- Move to the intruder, but on the same Y-level as the guarded player.
+                local targetPosition = Vector3.new(intruderRoot.Position.X, guardedPosition.Y, intruderRoot.Position.Z)
+                local targetCFrame = CFrame.new(targetPosition) * (guardRoot.CFrame - guardRoot.Position)
                 TweenService:Create(guardRoot, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
             elseif not shouldSpin then
-                -- Плавно телепортируемся за охраняемым игроком
-                local targetCFrame = CFrame.new(guardedRoot.Position - (guardedRoot.CFrame.LookVector * 5), guardedRoot.Position)
+                -- Follow the guarded player.
+                local targetCFrame = CFrame.new(guardedPosition - (guardedRoot.CFrame.LookVector * 5), guardedPosition)
                 TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
             end
 
@@ -11987,9 +11988,9 @@ addcmd('unguard', {'unprotect'}, function(args, speaker)
     if guarding then
         guarding = false
         isSpinning = false
-        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end -- Disconnect the main loop
+        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
         
-        execCmd('clip', {'nonotify'}) -- Выключаем noclip
+        execCmd('clip', {'nonotify'})
 
         pcall(function()
             if speaker.Character and getRoot(speaker.Character) then
@@ -12006,7 +12007,7 @@ addcmd('unguard', {'unprotect'}, function(args, speaker)
         end)
 
         if not (args[1] and args[1] == "nonotify") then
-            notify("Guard", "Охрана снята.")
+            notify("Guard", "Guard duty has ended.")
         end
     end
 end)
