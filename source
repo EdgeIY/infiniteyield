@@ -3069,6 +3069,7 @@ function saves()
         else
             nosaves = true
             useFactorySettings()
+            createPopup("There was a problem writing a save file to your PC.\n\nPlease contact the developer/support team for your exploit and tell them writefile/readfile is not working.\n\nYour settings, keybinds, waypoints, and aliases will not save if you continue.\n\nThings to try:\n> Make sure a 'workspace' folder is located in the same folder as your exploit\n> If your exploit is inside of a zip/rar file, extract it.\n> Rejoin the game and try again or restart your PC and try again.")
         end
     end
 end
@@ -4603,6 +4604,8 @@ CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses a
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [player]', DESC = 'Teleports unanchored parts to a player'}
+CMDs[#CMDs + 1] = {NAME = 'ringparts / rp', DESC = 'Welds all anchored parts in the game to you, causing chaos.'}
+CMDs[#CMDs + 1] = {NAME = 'unringparts / unrp', DESC = 'Stops the ringparts command from welding new parts.'}
 CMDs[#CMDs + 1] = {NAME = 'animsunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
@@ -12618,6 +12621,51 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
         for i,c in pairs(Forces) do
             c.Position = Players[v].Character.Head.Position
         end
+    end
+end)
+
+local ringPartsLoop = nil
+addcmd('ringparts', {'rp'}, function(args, speaker)
+    if ringPartsLoop and ringPartsLoop.Connected then
+        notify("RingParts", "The command is already running.")
+        return
+    end
+
+    local root = getRoot(speaker.Character)
+    if not root then
+        notify("RingParts", "Could not find your character's root part.")
+        return
+    end
+
+    notify("RingParts", "Starting to attach parts... This may cause extreme lag. Use 'unringparts' to stop.")
+    
+    ringPartsLoop = RunService.Heartbeat:Connect(function()
+        for _, part in ipairs(workspace:GetDescendants()) do
+            if part:IsA("BasePart") and part.Anchored == true then
+                local modelAncestor = part:FindFirstAncestorOfClass("Model")
+                if not (modelAncestor and Players:GetPlayerFromCharacter(modelAncestor)) then
+                    pcall(function()
+                        part.Anchored = false
+                        local weld = Instance.new("Weld")
+                        weld.Part0 = root
+                        weld.Part1 = part
+                        weld.C0 = root.CFrame:Inverse()
+                        weld.C1 = part.CFrame:Inverse()
+                        weld.Parent = root
+                    end)
+                end
+            end
+        end
+    end)
+end)
+
+addcmd('unringparts', {'unrp'}, function(args, speaker)
+    if ringPartsLoop and ringPartsLoop.Connected then
+        ringPartsLoop:Disconnect()
+        ringPartsLoop = nil
+        notify("RingParts", "Stopped attaching new parts. Existing parts remain welded.")
+    else
+        notify("RingParts", "The command is not currently running.")
     end
 end)
 
