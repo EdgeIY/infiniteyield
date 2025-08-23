@@ -4604,8 +4604,8 @@ CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses a
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [player]', DESC = 'Teleports unanchored parts to a player'}
-CMDs[#CMDs + 1] = {NAME = 'ringparts / rp', DESC = 'Welds all anchored parts in the game to you, causing chaos.'}
-CMDs[#CMDs + 1] = {NAME = 'unringparts / unrp', DESC = 'Stops the ringparts command from welding new parts.'}
+CMDs[#CMDs + 1] = {NAME = 'ringparts / rp [radius] [height] [speed] [strength]', DESC = 'Creates a tornado of unanchored parts around you.'}
+CMDs[#CMDs + 1] = {NAME = 'unringparts / unrp', DESC = 'Stops the part tornado.'}
 CMDs[#CMDs + 1] = {NAME = 'animsunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
@@ -12625,60 +12625,103 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
 end)
 
 local ringPartsLoop = nil
-local createdWelds = {}
+local ringPartsConnections = {}
+local orbitingParts = {}
+local originalReplicationFocus = nil
 
-addcmd('ringparts', {'rp'}, function(args, speaker)
+addcmd('ringparts', {'rp', 'partnado', 'parttornado'}, function(args, speaker)
 	if ringPartsLoop and ringPartsLoop.Connected then
-		notify("RingParts", "The command is already running.")
-		return
+		execCmd("unringparts", { "nonotify" })
+		task.wait(0.1)
 	end
 
-	execCmd("unringparts nonotify")
-	task.wait()
+	local radius = tonumber(args[1]) or 50
+	local height = tonumber(args[2]) or 20
+	local speed = tonumber(args[3]) or 1
+	local strength = tonumber(args[4]) or 500
 
-	local root = getRoot(speaker.Character)
-	if not root then
-		notify("RingParts", "Could not find your character's root part.")
-		return
+	if sethiddenproperty then
+		originalReplicationFocus = speaker.ReplicationFocus
+		speaker.ReplicationFocus = workspace
+		sethiddenproperty(speaker, "SimulationRadius", math.huge)
 	end
 
-	notify("RingParts", "Starting to attach parts... Use 'unringparts' to stop.")
-
-	ringPartsLoop = RunService.Heartbeat:Connect(function()
-		for _, part in ipairs(workspace:GetDescendants()) do
-			if part:IsA("BasePart") and part.Anchored == true and part.Size.Magnitude < 200 then
-				local modelAncestor = part:FindFirstAncestorOfClass("Model")
-				if not (modelAncestor and Players:GetPlayerFromCharacter(modelAncestor)) then
-					pcall(function()
-						part.Anchored = false
-						local weld = Instance.new("Weld")
-						weld.Part0 = root
-						weld.Part1 = part
-						weld.C0 = root.CFrame:Inverse()
-						weld.C1 = part.CFrame:Inverse()
-						weld.Parent = root
-						table.insert(createdWelds, weld)
-					end)
+	orbitingParts = {}
+	local function addPart(part)
+		if part:IsA("BasePart") and not part.Anchored then
+			local isPlayerPart = false
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Character and part:IsDescendantOf(p.Character) then
+					isPlayerPart = true
+					break
 				end
 			end
+			if not isPlayerPart then
+				orbitingParts[part] = true
+			end
+		end
+	end
+
+	local function removePart(part)
+		if orbitingParts[part] then
+			orbitingParts[part] = nil
+		end
+	end
+
+	for _, part in ipairs(workspace:GetDescendants()) do
+		addPart(part)
+	end
+
+	table.insert(ringPartsConnections, workspace.DescendantAdded:Connect(addPart))
+	table.insert(ringPartsConnections, workspace.DescendantRemoving:Connect(removePart))
+
+	notify("RingParts", "Starting part tornado...")
+
+	local root = getRoot(speaker.Character)
+	ringPartsLoop = RunService.Heartbeat:Connect(function()
+		root = getRoot(speaker.Character)
+		if not root then execCmd("unringparts") return end
+
+		local center = root.Position
+		for part, _ in pairs(orbitingParts) do
+			pcall(function()
+				if part and part.Parent then
+					local pos = part.Position
+					local angle = math.atan2(pos.z - center.z, pos.x - center.x) + math.rad(speed)
+					local targetPos = Vector3.new(center.x + radius * math.cos(angle), center.y + math.sin(os.clock() * speed + pos.x) * height, center.z + radius * math.sin(angle))
+					part.Velocity = (targetPos - pos).Unit * strength
+				else
+					removePart(part)
+				end
+			end)
 		end
 	end)
 end)
 
 addcmd('unringparts', {'unrp'}, function(args, speaker)
-	if ringPartsLoop and ringPartsLoop.Connected then ringPartsLoop:Disconnect() ringPartsLoop = nil end
-	if #createdWelds > 0 then
-		for i, weld in ipairs(createdWelds) do
-			if weld and weld.Parent then
-				if weld.Part1 and weld.Part1.Parent then pcall(function() weld.Part1.Anchored = true end) end
-				weld:Destroy()
-			end
-		end
-		createdWelds = {}
-		if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Stopped and removed all created welds.") end
-	elseif not (args[1] and args[1] == "nonotify") then
-		notify("RingParts", "The command is not currently running or no welds were created.")
+	if not ringPartsLoop then
+		if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Not running.") end
+		return
 	end
+
+	ringPartsLoop:Disconnect()
+	ringPartsLoop = nil
+
+	for _, conn in ipairs(ringPartsConnections) do conn:Disconnect() end
+	ringPartsConnections = {}
+
+	if sethiddenproperty and originalReplicationFocus then
+		speaker.ReplicationFocus = originalReplicationFocus
+		sethiddenproperty(speaker, "SimulationRadius", 800)
+		originalReplicationFocus = nil
+	end
+
+	for part, _ in pairs(orbitingParts) do
+		pcall(function() if part and part.Parent then part.Velocity = Vector3.new(0, 0, 0) end end)
+	end
+	orbitingParts = {}
+
+	if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Stopped.") end
 end)
 
 keycodeMap = {
