@@ -11891,22 +11891,22 @@ local isSpinning = false
 
 addcmd('guard', {'protect'}, function(args, speaker)
     if #args < 1 then
-        notify("Guard", "Использование: guard [игрок] [дистанция]")
+        notify("Guard", "Usage: guard [player] [distance]")
         return
     end
 
-    execCmd("unguard", {"nonotify"}) -- Останавливаем предыдущего охранника
+    execCmd("unguard", {"nonotify"}) -- Stop the previous guard
 
     local targetPlayerName = getPlayer(args[1], speaker)[1]
     if not targetPlayerName then
-        notify("Guard", "Игрок не найден: " .. args[1])
+        notify("Guard", "Player not found: " .. args[1])
         return
     end
 
     local targetPlayer = Players[targetPlayerName]
     if not targetPlayer then
         -- The player might have left between the getPlayer call and this line.
-        notify("Guard", "Игрок не найден: " .. args[1])
+        notify("Guard", "Player not found: " .. args[1])
         return
     end
 
@@ -11962,6 +11962,17 @@ addcmd('guard', {'protect'}, function(args, speaker)
             -- Movement logic
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
                 local intruderRoot = getRoot(closestIntruder.Character)
+                -- Fling the intruder
+                if not intruderRoot:FindFirstChild("GuardFling") then
+                    local flingVelocity = Instance.new("BodyVelocity")
+                    flingVelocity.Name = "GuardFling"
+                    flingVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    local flingDirection = (intruderRoot.Position - guardedPosition).Unit
+                    flingVelocity.Velocity = (flingDirection + Vector3.new(0, 1, 0)).Unit * 150
+                    flingVelocity.Parent = intruderRoot
+                    game.Debris:AddItem(flingVelocity, 0.5)
+                end
+
                 -- Move to the intruder, but on the same Y-level as the guarded player.
                 local targetPosition = Vector3.new(intruderRoot.Position.X, guardedPosition.Y, intruderRoot.Position.Z)
                 local targetCFrame = CFrame.new(targetPosition) * (guardRoot.CFrame - guardRoot.Position)
