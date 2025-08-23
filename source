@@ -11904,6 +11904,12 @@ addcmd('guard', {'protect'}, function(args, speaker)
     end
 
     local targetPlayer = Players[targetPlayerName]
+    if not targetPlayer then
+        -- The player might have left between the getPlayer call and this line.
+        notify("Guard", "Игрок не найден: " .. args[1])
+        return
+    end
+
     local radius = tonumber(args[2]) or 7 -- Немного больший радиус для обнаружения столкновений
 
     guarding = true
@@ -11919,7 +11925,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
     guardLoop = RunService.Heartbeat:Connect(function()
         pcall(function()
             -- Exit condition check
-            if not guarding or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
+            if not guarding or not targetPlayer or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
                 execCmd("unguard", {"nonotify"})
                 return
             end
@@ -11973,7 +11979,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
                 isSpinning = false
                 pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end end)
             end
-        end
+        end)
     end)
 end)
 
