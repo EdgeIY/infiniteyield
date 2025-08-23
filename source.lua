@@ -12657,7 +12657,10 @@ addcmd('ringparts', {'rp', 'partnado', 'parttornado'}, function(args, speaker)
 				end
 			end
 			if not isPlayerPart then
-				orbitingParts[part] = true
+				pcall(function()
+					part:SetNetworkOwner(speaker)
+					orbitingParts[part] = true
+				end)
 			end
 		end
 	end
@@ -12717,7 +12720,12 @@ addcmd('unringparts', {'unrp'}, function(args, speaker)
 	end
 
 	for part, _ in pairs(orbitingParts) do
-		pcall(function() if part and part.Parent then part.Velocity = Vector3.new(0, 0, 0) end end)
+		pcall(function()
+			if part and part.Parent then
+				part.Velocity = Vector3.new(0, 0, 0)
+				part:SetNetworkOwner(nil)
+			end
+		end)
 	end
 	orbitingParts = {}
 
