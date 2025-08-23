@@ -12625,48 +12625,60 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
 end)
 
 local ringPartsLoop = nil
+local createdWelds = {}
+
 addcmd('ringparts', {'rp'}, function(args, speaker)
-    if ringPartsLoop and ringPartsLoop.Connected then
-        notify("RingParts", "The command is already running.")
-        return
-    end
+	if ringPartsLoop and ringPartsLoop.Connected then
+		notify("RingParts", "The command is already running.")
+		return
+	end
 
-    local root = getRoot(speaker.Character)
-    if not root then
-        notify("RingParts", "Could not find your character's root part.")
-        return
-    end
+	execCmd("unringparts nonotify")
+	task.wait()
 
-    notify("RingParts", "Starting to attach parts... This may cause extreme lag. Use 'unringparts' to stop.")
-    
-    ringPartsLoop = RunService.Heartbeat:Connect(function()
-        for _, part in ipairs(workspace:GetDescendants()) do
-            if part:IsA("BasePart") and part.Anchored == true then
-                local modelAncestor = part:FindFirstAncestorOfClass("Model")
-                if not (modelAncestor and Players:GetPlayerFromCharacter(modelAncestor)) then
-                    pcall(function()
-                        part.Anchored = false
-                        local weld = Instance.new("Weld")
-                        weld.Part0 = root
-                        weld.Part1 = part
-                        weld.C0 = root.CFrame:Inverse()
-                        weld.C1 = part.CFrame:Inverse()
-                        weld.Parent = root
-                    end)
-                end
-            end
-        end
-    end)
+	local root = getRoot(speaker.Character)
+	if not root then
+		notify("RingParts", "Could not find your character's root part.")
+		return
+	end
+
+	notify("RingParts", "Starting to attach parts... Use 'unringparts' to stop.")
+
+	ringPartsLoop = RunService.Heartbeat:Connect(function()
+		for _, part in ipairs(workspace:GetDescendants()) do
+			if part:IsA("BasePart") and part.Anchored == true and part.Size.Magnitude < 200 then
+				local modelAncestor = part:FindFirstAncestorOfClass("Model")
+				if not (modelAncestor and Players:GetPlayerFromCharacter(modelAncestor)) then
+					pcall(function()
+						part.Anchored = false
+						local weld = Instance.new("Weld")
+						weld.Part0 = root
+						weld.Part1 = part
+						weld.C0 = root.CFrame:Inverse()
+						weld.C1 = part.CFrame:Inverse()
+						weld.Parent = root
+						table.insert(createdWelds, weld)
+					end)
+				end
+			end
+		end
+	end)
 end)
 
 addcmd('unringparts', {'unrp'}, function(args, speaker)
-    if ringPartsLoop and ringPartsLoop.Connected then
-        ringPartsLoop:Disconnect()
-        ringPartsLoop = nil
-        notify("RingParts", "Stopped attaching new parts. Existing parts remain welded.")
-    else
-        notify("RingParts", "The command is not currently running.")
-    end
+	if ringPartsLoop and ringPartsLoop.Connected then ringPartsLoop:Disconnect() ringPartsLoop = nil end
+	if #createdWelds > 0 then
+		for i, weld in ipairs(createdWelds) do
+			if weld and weld.Parent then
+				if weld.Part1 and weld.Part1.Parent then pcall(function() weld.Part1.Anchored = true end) end
+				weld:Destroy()
+			end
+		end
+		createdWelds = {}
+		if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Stopped and removed all created welds.") end
+	elseif not (args[1] and args[1] == "nonotify") then
+		notify("RingParts", "The command is not currently running or no welds were created.")
+	end
 end)
 
 keycodeMap = {
