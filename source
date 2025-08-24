@@ -11957,30 +11957,26 @@ addcmd('guard', {'protect'}, function(args, speaker)
                 end
             end
 
+            -- Movement logic to always follow the guarded player with Y-axis locked
+            local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+            local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+            local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+            TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+
             local shouldSpin = (closestIntruder ~= nil)
 
-            -- Movement logic
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
                 local intruderRoot = getRoot(closestIntruder.Character)
-                -- Fling the intruder
                 if not intruderRoot:FindFirstChild("GuardFling") then
+                    pcall(function() intruderRoot:SetNetworkOwner(Players.LocalPlayer) end)
                     local flingVelocity = Instance.new("BodyVelocity")
                     flingVelocity.Name = "GuardFling"
                     flingVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                    local flingDirection = (intruderRoot.Position - guardedPosition).Unit
-                    flingVelocity.Velocity = (flingDirection + Vector3.new(0, 1, 0)).Unit * 150
+                    local flingDirection = (intruderRoot.Position - guardRoot.Position).Unit
+                    flingVelocity.Velocity = (flingDirection + Vector3.new(0, 1, 0)).Unit * 250
                     flingVelocity.Parent = intruderRoot
                     game.Debris:AddItem(flingVelocity, 0.5)
                 end
-
-                -- Move to the intruder, but on the same Y-level as the guarded player.
-                local targetPosition = Vector3.new(intruderRoot.Position.X, guardedPosition.Y, intruderRoot.Position.Z)
-                local targetCFrame = CFrame.new(targetPosition) * (guardRoot.CFrame - guardRoot.Position)
-                TweenService:Create(guardRoot, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
-            elseif not shouldSpin then
-                -- Follow the guarded player.
-                local targetCFrame = CFrame.new(guardedPosition - (guardedRoot.CFrame.LookVector * 5), guardedPosition)
-                TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
             end
 
             -- Spinning logic
