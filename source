@@ -11962,35 +11962,46 @@ addcmd('guard', {'protect'}, function(args, speaker)
                 end
             end
 
-            -- Movement logic to always follow the guarded player with Y-axis locked
-            local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
-            local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
-            local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
-            guardRoot.CFrame = targetCFrame
-
             local shouldSpin = (closestIntruder ~= nil)
 
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
+                -- Intruder detected: Stop following, teleport to intruder, and fling.
                 local intruderRoot = getRoot(closestIntruder.Character)
+                guardRoot.CFrame = intruderRoot.CFrame -- Instant TP to intruder
+
                 if not intruderRoot:FindFirstChild("GuardFling") then
                     pcall(function() intruderRoot:SetNetworkOwner(Players.LocalPlayer) end)
                     local flingVelocity = Instance.new("BodyVelocity")
                     flingVelocity.Name = "GuardFling"
                     flingVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                    local flingDirection = (intruderRoot.Position - guardRoot.Position).Unit
+                    -- Fling away from the guarded player
+                    local flingDirection = (intruderRoot.Position - guardedPosition).Unit
                     flingVelocity.Velocity = (flingDirection + Vector3.new(0, 1, 0)).Unit * 250
                     flingVelocity.Parent = intruderRoot
                     game.Debris:AddItem(flingVelocity, 0.5)
                 end
-            end
 
-            -- Spinning logic
-            if shouldSpin and not isSpinning then
-                isSpinning = true
-                pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 2000, 0) end)
-            elseif not shouldSpin and isSpinning then
-                isSpinning = false
-                pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end end)
+                if not isSpinning then
+                    isSpinning = true
+                    pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 2000, 0) end)
+                end
+            else
+                -- No intruder: Stop spinning, (optional instant TP back), and smoothly follow.
+                if isSpinning then
+                    isSpinning = false
+                    pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end end)
+                    
+                    -- Instant TP back to client after flinging is done
+                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                    guardRoot.CFrame = CFrame.new(lockedYPosition, guardedPosition)
+                end
+
+                -- Smoothly follow the client
+                local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+                TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
             end
         end)
     end)
