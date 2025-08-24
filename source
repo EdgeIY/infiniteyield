@@ -11921,11 +11921,6 @@ addcmd('guard', {'protect'}, function(args, speaker)
         guardHumanoid.PlatformStand = true
     end
 
-    local bambam = Instance.new("BodyAngularVelocity")
-    bambam.Name = "GuardSpin"
-    bambam.MaxTorque = Vector3.new(0, math.huge, 0)
-    bambam.P = 50000
-
     -- Main loop for both following and flinging
     guardLoop = RunService.Heartbeat:Connect(function() -- Main loop for both following and flinging
         pcall(function()
@@ -11966,30 +11961,31 @@ addcmd('guard', {'protect'}, function(args, speaker)
 
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
                 -- Intruder detected: Stop following, teleport to intruder, and fling.
-                local intruderRoot = getRoot(closestIntruder.Character)
-                guardRoot.CFrame = intruderRoot.CFrame -- Instant TP to intruder for fling
-
                 if not isSpinning then
                     isSpinning = true
-                    pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) part.Massless = true end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 2000, 0) end)
+                    local intruderRoot = getRoot(closestIntruder.Character)
+                    guardRoot.CFrame = intruderRoot.CFrame -- Instant TP to intruder for fling
+                    execCmd('fling')
                 end
             else
                 -- No intruder: Stop spinning, (optional instant TP back), and smoothly follow.
                 if isSpinning then
                     isSpinning = false
-                    pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then if part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end part.Massless = false end end end)
+                    execCmd('unfling')
+                    execCmd('noclip', {'nonotify'}) -- Re-enable noclip for guard since unfling disables it
                     
                     -- Instant TP back to client after flinging is done
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
                     local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
                     guardRoot.CFrame = CFrame.new(lockedYPosition, guardedPosition)
                 end
-
-                -- Smoothly follow the client
-                local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
-                local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
-                local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
-                TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+                -- Smoothly follow the client only when not flinging
+                if not isSpinning then
+                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                    local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+                    TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+                end
             end
         end)
     end)
@@ -11998,29 +11994,18 @@ end)
 addcmd('unguard', {'unprotect'}, function(args, speaker)
     if guarding then
         guarding = false
-        isSpinning = false
         if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
         
+        if isSpinning then
+            isSpinning = false
+            execCmd('unfling', {'nonotify'})
+        end
         execCmd('clip', {'nonotify'})
 
         local guardHumanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
         if guardHumanoid then
             guardHumanoid.PlatformStand = false
         end
-
-        pcall(function()
-            if speaker.Character and getRoot(speaker.Character) then
-                local root = getRoot(speaker.Character)
-                if root:FindFirstChild("GuardSpin") then
-                    root:FindFirstChild("GuardSpin"):Destroy()
-                end
-                for _, part in ipairs(speaker.Character:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CustomPhysicalProperties then
-                        part.CustomPhysicalProperties = nil
-                    end
-                end
-            end
-        end)
 
         if not (args[1] and args[1] == "nonotify") then
             notify("Guard", "Guard duty has ended.")
