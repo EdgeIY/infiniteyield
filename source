@@ -11969,27 +11969,31 @@ addcmd('guard', {'protect'}, function(args, speaker)
                     execCmd('fling')
                 end
             else
+                -- No intruder: Stop flinging and return to client.
                 if isSpinning then
                     isSpinning = false
                     execCmd('unfling')
-                    execCmd('noclip', {'nonotify'}) 
-                    
-                    end
+                    execCmd('noclip', {'nonotify'}) -- Re-enable noclip for guard since unfling disables it
 
-                local maxFollowDistance = radius + 15 
-                local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
-                local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
-                local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
-
-                if (guardRoot.Position - guardedPosition).Magnitude > maxFollowDistance then
-                    guardRoot.CFrame = targetCFrame
-                else
-                    
-                if not isSpinning then
+                    -- Instant TP back to client after flinging is done to combat inertia
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
                     local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
                     local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
-                    TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+                    guardRoot.CFrame = targetCFrame
+                else
+                    -- This block now handles following when there's no intruder and we are not just coming from a fling.
+                    local maxFollowDistance = radius + 15 -- The "shield" radius
+                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                    local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+
+                    if (guardRoot.Position - guardedPosition).Magnitude > maxFollowDistance then
+                        -- If guard is outside the shield (e.g., from drift), snap back instantly.
+                        guardRoot.CFrame = targetCFrame
+                    else
+                        -- Otherwise, smoothly follow the client.
+                        TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+                    end
                 end
             end
         end)
