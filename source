@@ -11922,11 +11922,24 @@ addcmd('guard', {'protect'}, function(args, speaker)
     end
 
     -- Main loop for both following and flinging
-    guardLoop = RunService.Heartbeat:Connect(function() -- Main loop for both following and flinging
+    guardLoop = RunService.Heartbeat:Connect(function()
         pcall(function()
-            -- Exit condition check
-            if not guarding or not targetPlayer or not targetPlayer.Parent or not targetPlayer.Character or not getRoot(targetPlayer.Character) or not speaker.Character or not getRoot(speaker.Character) then
-                execCmd("unguard", {"nonotify"})
+            local guardRoot = speaker.Character and getRoot(speaker.Character)
+            local guardedRoot = targetPlayer and targetPlayer.Character and getRoot(targetPlayer.Character)
+
+            if game.PlaceId == 189707 then
+                if not guarding or not targetPlayer or not targetPlayer.Parent or not guardedRoot then
+                    execCmd("unguard", {"nonotify"})
+                    return
+                end
+            else
+                if not guarding or not targetPlayer or not targetPlayer.Parent or not guardedRoot or not guardRoot then
+                    execCmd("unguard", {"nonotify"})
+                    return
+                end
+            end
+
+            if not guardRoot then
                 return
             end
 
@@ -11935,10 +11948,6 @@ addcmd('guard', {'protect'}, function(args, speaker)
                 guardHumanoid.Sit = false
             end
 
-            local guardRoot = getRoot(speaker.Character)
-            if not guardRoot then return end
-
-            local guardedRoot = getRoot(targetPlayer.Character)
             local guardedPosition = guardedRoot.Position
             
             local closestIntruder = nil
@@ -11969,29 +11978,25 @@ addcmd('guard', {'protect'}, function(args, speaker)
                     execCmd('fling')
                 end
             else
-                -- No intruder: Stop flinging and return to client.
                 if isSpinning then
                     isSpinning = false
                     execCmd('unfling')
-                    execCmd('noclip', {'nonotify'}) -- Re-enable noclip for guard since unfling disables it
+                    execCmd('noclip', {'nonotify'}) 
 
-                    -- Instant TP back to client after flinging is done to combat inertia
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
                     local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
                     local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
                     guardRoot.CFrame = targetCFrame
                 else
-                    -- This block now handles following when there's no intruder and we are not just coming from a fling.
-                    local maxFollowDistance = radius + 15 -- The "shield" radius
+                    local maxFollowDistance = radius + 15 
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
                     local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
                     local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
 
                     if (guardRoot.Position - guardedPosition).Magnitude > maxFollowDistance then
-                        -- If guard is outside the shield (e.g., from drift), snap back instantly.
                         guardRoot.CFrame = targetCFrame
                     else
-                        -- Otherwise, smoothly follow the client.
+                        
                         TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
                     end
                 end
