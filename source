@@ -11961,10 +11961,11 @@ addcmd('guard', {'protect'}, function(args, speaker)
 
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
                 -- Intruder detected: Stop following, teleport to intruder, and fling.
+                local intruderRoot = getRoot(closestIntruder.Character)
+                guardRoot.CFrame = intruderRoot.CFrame -- Continuously teleport to the intruder
+
                 if not isSpinning then
                     isSpinning = true
-                    local intruderRoot = getRoot(closestIntruder.Character)
-                    guardRoot.CFrame = intruderRoot.CFrame -- Instant TP to intruder for fling
                     execCmd('fling')
                 end
             else
