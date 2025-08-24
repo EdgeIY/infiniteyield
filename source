@@ -11638,7 +11638,6 @@ addcmd('unfling',{'nofling'},function(args, speaker)
 		flingDied:Disconnect()
 	end
 	flinging = false
-	wait(.1)
 	local speakerChar = speaker.Character
 	if not speakerChar or not getRoot(speakerChar) then return end
 	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
@@ -11647,8 +11646,9 @@ addcmd('unfling',{'nofling'},function(args, speaker)
 		end
 	end
 	for _, child in pairs(speakerChar:GetDescendants()) do
-		if child.ClassName == "Part" or child.ClassName == "MeshPart" then
+		if child:IsA("BasePart") then
 			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+			child.Massless = false
 		end
 	end
 end)
@@ -11888,6 +11888,7 @@ end)
 local guarding = false
 local guardLoop = nil -- Combined loop for following and guarding
 local isSpinning = false
+local ncc = nil
 
 addcmd('guard', {'protect'}, function(args, speaker)
     if #args < 1 then
@@ -11975,12 +11976,22 @@ addcmd('guard', {'protect'}, function(args, speaker)
 
                 if not isSpinning then
                     isSpinning = true
+                    if speaker.Character and targetPlayer.Character and speaker.Character:FindFirstChild("PrimaryPart") and targetPlayer.Character:FindFirstChild("PrimaryPart") then
+                        ncc = Instance.new("NoCollisionConstraint")
+                        ncc.Part0 = speaker.Character.PrimaryPart
+                        ncc.Part1 = targetPlayer.Character.PrimaryPart
+                        ncc.Parent = workspace
+                    end
                     execCmd('fling')
                 end
             else
                 if isSpinning then
                     isSpinning = false
                     execCmd('unfling')
+                    if ncc then
+                        ncc:Destroy()
+                        ncc = nil
+                    end
                     execCmd('noclip', {'nonotify'}) 
 
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
@@ -12013,6 +12024,10 @@ addcmd('unguard', {'unprotect'}, function(args, speaker)
         if isSpinning then
             isSpinning = false
             execCmd('unfling', {'nonotify'})
+        end
+        if ncc then
+            ncc:Destroy()
+            ncc = nil
         end
         execCmd('clip', {'nonotify'})
 
