@@ -11944,7 +11944,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
             local closestIntruder = nil
             local minDistance = radius + 1
 
-            -- Find the closest intruder
+            
             for _, player in ipairs(Players:GetPlayers()) do
                 if player == targetPlayer or player == speaker then continue end
 
@@ -11960,27 +11960,31 @@ addcmd('guard', {'protect'}, function(args, speaker)
             local shouldSpin = (closestIntruder ~= nil)
 
             if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
-                -- Intruder detected: Stop following, teleport to intruder, and fling.
+                
                 local intruderRoot = getRoot(closestIntruder.Character)
-                guardRoot.CFrame = intruderRoot.CFrame -- Continuously teleport to the intruder
+                guardRoot.CFrame = intruderRoot.CFrame 
 
                 if not isSpinning then
                     isSpinning = true
                     execCmd('fling')
                 end
             else
-                -- No intruder: Stop spinning, (optional instant TP back), and smoothly follow.
                 if isSpinning then
                     isSpinning = false
                     execCmd('unfling')
-                    execCmd('noclip', {'nonotify'}) -- Re-enable noclip for guard since unfling disables it
+                    execCmd('noclip', {'nonotify'}) 
                     
-                    -- Instant TP back to client after flinging is done
-                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
-                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
-                    guardRoot.CFrame = CFrame.new(lockedYPosition, guardedPosition)
-                end
-                -- Smoothly follow the client only when not flinging
+                    end
+
+                local maxFollowDistance = radius + 15 
+                local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+
+                if (guardRoot.Position - guardedPosition).Magnitude > maxFollowDistance then
+                    guardRoot.CFrame = targetCFrame
+                else
+                    
                 if not isSpinning then
                     local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
                     local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
