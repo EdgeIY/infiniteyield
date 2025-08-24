@@ -11916,6 +11916,11 @@ addcmd('guard', {'protect'}, function(args, speaker)
     notify("Guard", "Now guarding player " .. targetPlayer.Name)
     execCmd('noclip', {'nonotify'})
 
+    local guardHumanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+    if guardHumanoid then
+        guardHumanoid.PlatformStand = true
+    end
+
     local bambam = Instance.new("BodyAngularVelocity")
     bambam.Name = "GuardSpin"
     bambam.MaxTorque = Vector3.new(0, math.huge, 0)
@@ -11961,7 +11966,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
             local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
             local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
             local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
-            TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+            guardRoot.CFrame = targetCFrame
 
             local shouldSpin = (closestIntruder ~= nil)
 
@@ -11982,7 +11987,7 @@ addcmd('guard', {'protect'}, function(args, speaker)
             -- Spinning logic
             if shouldSpin and not isSpinning then
                 isSpinning = true
-                pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 100, 0) end)
+                pcall(function() for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") then part.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5) end end bambam.Parent = getRoot(speaker.Character) bambam.AngularVelocity = Vector3.new(0, 2000, 0) end)
             elseif not shouldSpin and isSpinning then
                 isSpinning = false
                 pcall(function() bambam.AngularVelocity = Vector3.new(0, 0, 0) bambam.Parent = nil for _, part in ipairs(speaker.Character:GetDescendants()) do if part:IsA("BasePart") and part.CustomPhysicalProperties then part.CustomPhysicalProperties = nil end end end)
@@ -11998,6 +12003,11 @@ addcmd('unguard', {'unprotect'}, function(args, speaker)
         if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
         
         execCmd('clip', {'nonotify'})
+
+        local guardHumanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+        if guardHumanoid then
+            guardHumanoid.PlatformStand = false
+        end
 
         pcall(function()
             if speaker.Character and getRoot(speaker.Character) then
