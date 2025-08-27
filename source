@@ -9884,7 +9884,14 @@ addcmd('headthrow',{},function(args, speaker)
 end)
 
 addcmd("animation", {"anim"}, function(args, speaker)
-    local anim = speaker.Character:FindFirstChildWhichIsA("Humanoid"):PlayEmoteAndGetAnimTrackById("rbxassetid://" .. tostring(args[1]))
+	local animid = tostring(args[1])
+	if not animid:find("rbxassetid://") then
+		animid = "rbxassetid://".. animid
+	end
+    local animation = Instance.new("Animation")
+    animation.AnimationId = animid
+    local anim = speaker.Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(animation)
+    anim:Play()
     if args[2] then anim:AdjustSpeed(tostring(args[2])) end
 end)
 
