@@ -12120,6 +12120,7 @@ addcmd('headsize',{},function(args, speaker)
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
 			local Head = Players[v].Character:FindFirstChild('Head')
 			if Head:IsA("BasePart") then
+				Head.Massless = true
 				if not args[2] or sizeArg == 1 then
 					Head.Size = Vector3.new(2,1,1)
 				else
@@ -12139,6 +12140,7 @@ addcmd('hitbox',{},function(args, speaker)
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
 			local Root = Players[v].Character:FindFirstChild('HumanoidRootPart')
 			if Root:IsA("BasePart") then
+				Root.Massless = true
 				if not args[2] or sizeArg == 1 then
 					Root.Size = Vector3.new(2,1,1)
 					Root.Transparency = transparency
