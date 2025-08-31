@@ -7859,6 +7859,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	settings().Rendering.QualityLevel = 1
 	for i,v in pairs(game:GetDescendants()) do
 		if v:IsA("BasePart") then
+			v.CastShadow = false
 			v.Material = "Plastic"
 			v.Reflectance = 0
 			v.BackSurface = "SmoothNoOutlines"
@@ -7869,6 +7870,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.TopSurface = "SmoothNoOutlines"
 		elseif v:IsA("Decal") then
 			v.Transparency = 1
+			v.Texture = ""
 		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
 			v.Lifetime = NumberRange.new(0)
 		end
@@ -7883,6 +7885,8 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			if child:IsA('ForceField') or child:IsA('Sparkles') or child:IsA('Smoke') or child:IsA('Fire') or child:IsA('Beam') then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
+			elseif child:IsA("BasePart") then
+				child.CastShadow = false
 			end
 		end)
 	end)
