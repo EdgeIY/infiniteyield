@@ -3069,6 +3069,7 @@ function saves()
         else
             nosaves = true
             useFactorySettings()
+            createPopup("There was a problem writing a save file to your PC.\n\nPlease contact the developer/support team for your exploit and tell them writefile/readfile is not working.\n\nYour settings, keybinds, waypoints, and aliases will not save if you continue.\n\nThings to try:\n> Make sure a 'workspace' folder is located in the same folder as your exploit\n> If your exploit is inside of a zip/rar file, extract it.\n> Rejoin the game and try again or restart your PC and try again.")
         end
     end
 end
@@ -4413,10 +4414,13 @@ CMDs = {}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
 CMDs[#CMDs + 1] = {NAME = 'guiscale [number]', DESC = 'Changes the size of the gui. [number] accepts both decimals and whole numbers. Min is 0.4 and Max is 2'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
+
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
+CMDs[#CMDs + 1] = {NAME = 'guard / protect [player] [distance]', DESC = 'Protects a player by flinging others in a radius.'}
+CMDs[#CMDs + 1] = {NAME = 'unguard / unprotect', DESC = 'Stops protecting a player.'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
@@ -4603,6 +4607,8 @@ CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses a
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [player]', DESC = 'Teleports unanchored parts to a player'}
+CMDs[#CMDs + 1] = {NAME = 'ringparts / rp [radius] [height] [speed] [strength]', DESC = 'Creates a tornado of unanchored parts around you.'}
+CMDs[#CMDs + 1] = {NAME = 'unringparts / unrp', DESC = 'Stops the part tornado.'}
 CMDs[#CMDs + 1] = {NAME = 'animsunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
@@ -4650,6 +4656,8 @@ CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a playe
 CMDs[#CMDs + 1] = {NAME = 'orbit [player] [speed] [distance]', DESC = 'Makes your character orbit around a player with an optional speed and an optional distance'}
 CMDs[#CMDs + 1] = {NAME = 'unorbit', DESC = 'Disables orbit'}
 CMDs[#CMDs + 1] = {NAME = 'stareat / stare [player]', DESC = 'Stare / look at a player'}
+CMDs[#CMDs + 1] = {NAME = 'stareat / stare [player]', DESC = 'Stare / look at a player'}
+
 CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [player]', DESC = 'Disables stareat'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'Notify if someone from a watched group joins the server'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatchstop / unrolewatch', DESC = 'Disable Rolewatch'}
@@ -9224,16 +9232,52 @@ end)
 
 oofing = false
 addcmd('loopoof',{},function(args, speaker)
-	oofing = true
-	repeat wait(0.1)
-		for i,v in pairs(Players:GetPlayers()) do
-			if v.Character ~= nil and v.Character:FindFirstChild'Head' then
-				for _,x in pairs(v.Character.Head:GetChildren()) do
-					if x:IsA'Sound' then x.Playing = true end
-				end
-			end
-		end
-	until oofing == false
+    oofing = true
+    local oofSoundId = "rbxassetid://212222358" -- Classic "oof" sound
+    local oofSounds = {}
+
+    local function setupPlayer(player)
+        if player.Character then
+            local head = player.Character:WaitForChild("Head", 5)
+            if head and not oofSounds[player] then
+                local sound = Instance.new("Sound")
+                sound.SoundId = oofSoundId
+                sound.Parent = head
+                oofSounds[player] = sound
+            end
+        end
+    end
+
+    for _, player in pairs(Players:GetPlayers()) do
+        setupPlayer(player)
+    end
+
+    local playerAddedConn = Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function() setupPlayer(player) end)
+        setupPlayer(player)
+    end)
+
+    local playerRemovingConn = Players.PlayerRemoving:Connect(function(player)
+        if oofSounds[player] then
+            oofSounds[player]:Destroy()
+            oofSounds[player] = nil
+        end
+    end)
+
+    repeat wait(0.5) -- Increased delay to prevent sound from being too spammy
+        for player, sound in pairs(oofSounds) do
+            if player and player.Character and sound and sound.Parent then
+                sound:Play()
+            elseif oofSounds[player] then
+                oofSounds[player]:Destroy()
+                oofSounds[player] = nil
+            end
+        end
+    until oofing == false
+
+    playerAddedConn:Disconnect()
+    playerRemovingConn:Disconnect()
+    for _, sound in pairs(oofSounds) do if sound then sound:Destroy() end end
 end)
 
 addcmd('unloopoof',{},function(args, speaker)
@@ -10701,7 +10745,7 @@ addcmd('bringpartclass',{'bpc'},function(args, speaker)
 end)
 
 gotopartDelay = 0.1
-addcmd('gotopart',{'topart'},function(args, speaker)
+addcmd('gotopart',{'topart', 'tppart'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
@@ -11601,7 +11645,6 @@ addcmd('unfling',{'nofling'},function(args, speaker)
 		flingDied:Disconnect()
 	end
 	flinging = false
-	wait(.1)
 	local speakerChar = speaker.Character
 	if not speakerChar or not getRoot(speakerChar) then return end
 	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
@@ -11610,8 +11653,9 @@ addcmd('unfling',{'nofling'},function(args, speaker)
 		end
 	end
 	for _, child in pairs(speakerChar:GetDescendants()) do
-		if child.ClassName == "Part" or child.ClassName == "MeshPart" then
+		if child:IsA("BasePart") then
 			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+			child.Massless = false
 		end
 	end
 end)
@@ -11846,6 +11890,163 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 	end
 
 	notify("Handle Kill", "Stopped!")
+end)
+
+local guarding = false
+local guardLoop = nil -- Combined loop for following and guarding
+local isSpinning = false
+local ncc = nil
+
+addcmd('guard', {'protect'}, function(args, speaker)
+    if #args < 1 then
+        notify("Guard", "Usage: guard [player] [distance]")
+        return
+    end
+
+    execCmd("unguard", {"nonotify"}) -- Stop the previous guard
+
+    local targetPlayerName = getPlayer(args[1], speaker)[1]
+    if not targetPlayerName then
+        notify("Guard", "Player not found: " .. args[1])
+        return
+    end
+
+    local targetPlayer = Players[targetPlayerName]
+    if not targetPlayer then
+        -- The player might have left between the getPlayer call and this line.
+        notify("Guard", "Player not found: " .. args[1])
+        return
+    end
+
+    local radius = tonumber(args[2]) or 7
+
+    guarding = true
+    notify("Guard", "Now guarding player " .. targetPlayer.Name)
+    execCmd('noclip', {'nonotify'})
+
+    local guardHumanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+    if guardHumanoid then
+        guardHumanoid.PlatformStand = true
+    end
+
+    -- Main loop for both following and flinging
+    guardLoop = RunService.Heartbeat:Connect(function()
+        pcall(function()
+            local guardRoot = speaker.Character and getRoot(speaker.Character)
+            local guardedRoot = targetPlayer and targetPlayer.Character and getRoot(targetPlayer.Character)
+
+            if game.PlaceId == 189707 then
+                if not guarding or not targetPlayer or not targetPlayer.Parent or not guardedRoot then
+                    execCmd("unguard", {"nonotify"})
+                    return
+                end
+            else
+                if not guarding or not targetPlayer or not targetPlayer.Parent or not guardedRoot or not guardRoot then
+                    execCmd("unguard", {"nonotify"})
+                    return
+                end
+            end
+
+            if not guardRoot then
+                return
+            end
+
+            local guardHumanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
+            if guardHumanoid and guardHumanoid.SeatPart then
+                guardHumanoid.Sit = false
+            end
+
+            local guardedPosition = guardedRoot.Position
+            
+            local closestIntruder = nil
+            local minDistance = radius + 1
+
+            
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player == targetPlayer or player == speaker then continue end
+
+                if player.Character and getRoot(player.Character) then
+                    local distance = (getRoot(player.Character).Position - guardedPosition).Magnitude
+                    if distance <= radius and distance < minDistance then
+                        minDistance = distance
+                        closestIntruder = player
+                    end
+                end
+            end
+
+            local shouldSpin = (closestIntruder ~= nil)
+
+            if shouldSpin and closestIntruder.Character and getRoot(closestIntruder.Character) then
+                
+                local intruderRoot = getRoot(closestIntruder.Character)
+                guardRoot.CFrame = intruderRoot.CFrame 
+
+                if not isSpinning then
+                    isSpinning = true
+                    if speaker.Character and targetPlayer.Character and speaker.Character:FindFirstChild("PrimaryPart") and targetPlayer.Character:FindFirstChild("PrimaryPart") then
+                        ncc = Instance.new("NoCollisionConstraint")
+                        ncc.Part0 = speaker.Character.PrimaryPart
+                        ncc.Part1 = targetPlayer.Character.PrimaryPart
+                        ncc.Parent = workspace
+                    end
+                    execCmd('fling')
+                end
+            else
+                if isSpinning then
+                    isSpinning = false
+                    execCmd('unfling')
+                    if ncc then
+                        ncc:Destroy()
+                        ncc = nil
+                    end
+                    execCmd('noclip', {'nonotify'}) 
+
+                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                    local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+                    guardRoot.CFrame = targetCFrame
+                else
+                    local maxFollowDistance = radius + 15 
+                    local desiredPosition = guardedPosition - (guardedRoot.CFrame.LookVector * 5)
+                    local lockedYPosition = Vector3.new(desiredPosition.X, guardedPosition.Y, desiredPosition.Z)
+                    local targetCFrame = CFrame.new(lockedYPosition, guardedPosition)
+
+                    if (guardRoot.Position - guardedPosition).Magnitude > maxFollowDistance then
+                        guardRoot.CFrame = targetCFrame
+                    else
+                        
+                        TweenService:Create(guardRoot, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {CFrame = targetCFrame}):Play()
+                    end
+                end
+            end
+        end)
+    end)
+end)
+
+addcmd('unguard', {'unprotect'}, function(args, speaker)
+    if guarding then
+        guarding = false
+        if guardLoop then guardLoop:Disconnect(); guardLoop = nil end
+        
+        if isSpinning then
+            isSpinning = false
+            execCmd('unfling', {'nonotify'})
+        end
+        if ncc then
+            ncc:Destroy()
+            ncc = nil
+        end
+        execCmd('clip', {'nonotify'})
+
+        local guardHumanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+        if guardHumanoid then
+            guardHumanoid.PlatformStand = false
+        end
+
+        if not (args[1] and args[1] == "nonotify") then
+            notify("Guard", "Guard duty has ended.")
+        end
+    end
 end)
 
 local hb = RunService.Heartbeat
@@ -12628,6 +12829,114 @@ addcmd('tpunanchored',{'tpua'},function(args, speaker)
             c.Position = Players[v].Character.Head.Position
         end
     end
+end)
+
+local ringPartsLoop = nil
+local ringPartsConnections = {}
+local orbitingParts = {}
+local originalReplicationFocus = nil
+
+addcmd('ringparts', {'rp', 'partnado', 'parttornado'}, function(args, speaker)
+	if ringPartsLoop and ringPartsLoop.Connected then
+		execCmd("unringparts", { "nonotify" })
+		task.wait(0.1)
+	end
+
+	local radius = tonumber(args[1]) or 50
+	local height = tonumber(args[2]) or 20
+	local speed = tonumber(args[3]) or 1
+	local strength = tonumber(args[4]) or 500
+
+	if sethiddenproperty then
+		originalReplicationFocus = speaker.ReplicationFocus
+		speaker.ReplicationFocus = workspace
+		sethiddenproperty(speaker, "SimulationRadius", math.huge)
+	end
+
+	orbitingParts = {}
+	local function addPart(part)
+		if part:IsA("BasePart") and not part.Anchored then
+			local isPlayerPart = false
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Character and part:IsDescendantOf(p.Character) then
+					isPlayerPart = true
+					break
+				end
+			end
+			if not isPlayerPart then
+				pcall(function() 
+					part:SetNetworkOwner(speaker)
+				end)
+				orbitingParts[part] = true 
+			end
+		end
+	end
+
+	local function removePart(part)
+		if orbitingParts[part] then
+			orbitingParts[part] = nil
+		end
+	end
+
+	for _, part in ipairs(workspace:GetDescendants()) do
+		addPart(part)
+	end
+
+	table.insert(ringPartsConnections, workspace.DescendantAdded:Connect(addPart))
+	table.insert(ringPartsConnections, workspace.DescendantRemoving:Connect(removePart))
+
+	notify("RingParts", "Starting part tornado...")
+
+	local root = getRoot(speaker.Character)
+	ringPartsLoop = RunService.Heartbeat:Connect(function()
+		root = getRoot(speaker.Character)
+		if not root then execCmd("unringparts") return end
+
+		local center = root.Position
+		for part, _ in pairs(orbitingParts) do
+			pcall(function()
+				if part and part.Parent then
+					local pos = part.Position
+					local angle = math.atan2(pos.z - center.z, pos.x - center.x) + math.rad(speed)
+					local targetPos = Vector3.new(center.x + radius * math.cos(angle), center.y + math.sin(os.clock() * speed + pos.x) * height, center.z + radius * math.sin(angle))
+					part.Velocity = (targetPos - pos).Unit * strength
+				else
+					removePart(part)
+				end
+			end)
+		end
+	end)
+end)
+
+addcmd('unringparts', {'unrp'}, function(args, speaker)
+	if not ringPartsLoop then
+		if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Not running.") end
+		return
+	end
+
+	ringPartsLoop:Disconnect()
+	ringPartsLoop = nil
+
+	for _, conn in ipairs(ringPartsConnections) do conn:Disconnect() end
+	ringPartsConnections = {}
+
+	if sethiddenproperty and originalReplicationFocus then
+		speaker.ReplicationFocus = originalReplicationFocus
+		sethiddenproperty(speaker, "SimulationRadius", 800)
+		originalReplicationFocus = nil
+	end
+
+	for part, _ in pairs(orbitingParts) do
+		pcall(function()
+			if part and part.Parent then
+				part.Velocity = Vector3.new(0, 0, 0)
+				part:SetNetworkOwner(nil)
+			end
+		end)
+	end
+	orbitingParts = {}
+
+	if not (args[1] and args[1] == "nonotify") then notify("RingParts", "Stopped.") end
 end)
 
 keycodeMap = {
