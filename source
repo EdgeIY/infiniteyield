@@ -8807,7 +8807,7 @@ addcmd('userid',{'id'},function(args, speaker)
 end)
 
 addcmd('copyplaceid',{'placeid'},function(args, speaker)
-	toClipboard(tostring(game.PlaceId))
+	toClipboard(tostring(PlaceId))
 end)
 
 addcmd('copygameid',{'gameid'},function(args, speaker)
