@@ -4633,6 +4633,8 @@ CMDs[#CMDs + 1] = {NAME = 'joindate / jd [player]', DESC = 'Tells you the date t
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [player]', DESC = 'Chats the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [player]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players user ID'}
+CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current game id to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current place id to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players appearance ID'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -8802,6 +8804,14 @@ addcmd('userid',{'id'},function(args, speaker)
 		local id = tostring(Players[v].UserId)
 		notify('User ID',id)
 	end
+end)
+
+addcmd('copyplaceid',{'placeid'},function(args, speaker)
+	toClipboard(tostring(game.PlaceId))
+end)
+
+addcmd('copygameid',{'gameid'},function(args, speaker)
+	toClipboard(tostring(game.GameId))
 end)
 
 addcmd('copyid',{'copyuserid'},function(args, speaker)
