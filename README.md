@@ -1,5 +1,5 @@
 # Infinite Yield for Studio
-Forked from [this repo!](https://github.com/EdgeIY/infiniteyield)
+Forked from [this repo,](https://github.com/EdgeIY/infiniteyield) which is the original!
 
 It works on normal (Local)Scripts!
 
