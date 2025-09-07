@@ -4826,7 +4826,6 @@ CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
-CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
 wait()
 
 for i = 1, #CMDs do
@@ -12505,17 +12504,6 @@ addcmd("guiscale", {}, function(args, speaker)
 
     Scale.Scale = math.max(Holder.AbsoluteSize.X / 1920, guiScale)
     updatesaves()
-end)
-
-addcmd("unsuspendvc", {}, function(args, speaker)
-    VoiceChatService:joinVoice()
-
-    if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
-        onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
-            task.wait(1)
-            VoiceChatService:joinVoice()
-        end)
-    end
 end)
 
 addcmd("permadeath", {}, function(args, speaker)
