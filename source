@@ -4633,8 +4633,8 @@ CMDs[#CMDs + 1] = {NAME = 'joindate / jd [player]', DESC = 'Tells you the date t
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [player]', DESC = 'Chats the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [player]', DESC = 'Copies a players full username to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players user ID'}
-CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current game id to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current place id to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current game id to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players user ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players appearance ID'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players appearance ID to your clipboard'}
@@ -4828,6 +4828,7 @@ CMDs[#CMDs + 1] = {NAME = 'unctrllock', DESC = 'Re-binds Shiftlock to LeftShift'
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+CMDs[#CMDs + 1] = {NAME = 'unsuspendchat', DESC = 'Unsuspends you from text chat'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
 wait()
 
@@ -7221,7 +7222,7 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		CFspeed = args[1]
 	end
-	
+
 	-- Full credit to peyton#9148 (apeyton)
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
@@ -7844,17 +7845,16 @@ addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	end
 end)
 
-addcmd('cancelteleport',{'canceltp'},function(args, speaker)
-	TeleportService:TeleportCancel()
+addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
+    TeleportService:TeleportCancel()
 end)
 
-addcmd('volume',{'vol'},function(args, speaker)
-	local level = args[1]/10
-	UserSettings():GetService("UserGameSettings").MasterVolume = level
+addcmd("volume",{ "vol"}, function(args, speaker)
+    UserSettings():GetService("UserGameSettings").MasterVolume = args[1]/10
 end)
 
-addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
-	local Terrain = workspace:FindFirstChildOfClass('Terrain')
+addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
+	local Terrain = workspace:FindFirstChildWhichIsA("Terrain")
 	Terrain.WaterWaveSize = 0
 	Terrain.WaterWaveSpeed = 0
 	Terrain.WaterReflectance = 0
@@ -7863,7 +7863,7 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 	Lighting.FogEnd = 9e9
 	Lighting.FogStart = 9e9
 	settings().Rendering.QualityLevel = 1
-	for i,v in pairs(game:GetDescendants()) do
+	for _, v in pairs(game:GetDescendants()) do
 		if v:IsA("BasePart") then
 			v.CastShadow = false
 			v.Material = "Plastic"
@@ -7881,14 +7881,14 @@ addcmd('antilag',{'boostfps','lowgraphics'},function(args, speaker)
 			v.Lifetime = NumberRange.new(0)
 		end
 	end
-	for i,v in pairs(Lighting:GetDescendants()) do
+	for _, v in pairs(Lighting:GetDescendants()) do
 		if v:IsA("PostEffect") then
 			v.Enabled = false
 		end
 	end
 	workspace.DescendantAdded:Connect(function(child)
 		task.spawn(function()
-			if child:IsA('ForceField') or child:IsA('Sparkles') or child:IsA('Smoke') or child:IsA('Fire') or child:IsA('Beam') then
+			if child:IsA("ForceField") or child:IsA("Sparkles") or child:IsA("Smoke") or child:IsA("Fire") or child:IsA("Beam") then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
 			elseif child:IsA("BasePart") then
@@ -8814,12 +8814,12 @@ addcmd('userid',{'id'},function(args, speaker)
 	end
 end)
 
-addcmd('copyplaceid',{'placeid'},function(args, speaker)
-	toClipboard(tostring(PlaceId))
+addcmd("copyplaceid", {"placeid"}, function(args, speaker)
+    toClipboard(PlaceId)
 end)
 
-addcmd('copygameid',{'gameid'},function(args, speaker)
-	toClipboard(tostring(game.GameId))
+addcmd("copygameid", {"gameid"}, function(args, speaker)
+    toClipboard(game.GameId)
 end)
 
 addcmd('copyid',{'copyuserid'},function(args, speaker)
@@ -12523,6 +12523,14 @@ addcmd("guiscale", {}, function(args, speaker)
 
     Scale.Scale = math.max(Holder.AbsoluteSize.X / 1920, guiScale)
     updatesaves()
+end)
+
+addcmd("unsuspendchat", {}, function(args, speaker)
+	if replicatesignal then
+        replicatesignal(TextChatService.UpdateChatTimeout, speaker.UserId, 0, 10)
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
+    end
 end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
