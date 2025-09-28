@@ -12508,13 +12508,17 @@ addcmd("guiscale", {}, function(args, speaker)
 end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
-    VoiceChatService:joinVoice()
+	if replicatesignal then
+    	replicatesignal(VoiceChatService.ClientRetryJoin)
 
-    if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
-        onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
-            task.wait(1)
-            VoiceChatService:joinVoice()
-        end)
+    	if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
+        	onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
+            	task.wait(1)
+            	replicatesignal(VoiceChatService.ClientRetryJoin)
+        	end)
+    	end
+    else
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
     end
 end)
 
