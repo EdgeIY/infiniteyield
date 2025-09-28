@@ -1,23 +1,22 @@
-# Infinite Yield 
-[![Discord](https://media.discordapp.net/attachments/338403017894395905/668536741942263808/Discord-Logo-Color.png)](https://discord.gg/78ZuWSq)
-The best command line script for roblox.
+# Infinite Yield
 
-Get it [here](https://github.com/EdgeIY/infiniteyield/wiki)
+<a href="https://discord.gg/78ZuWSq"><img src="https://files.catbox.moe/klbeou.png" alt="discord" width="48"></a> The best command line script for roblox.
 
- - Currently 378 commands
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+```
+
+ - Currently 400 commands
  - Open Source
- - 6 years of development
+ - 7+ years of development
 
 ## Developers
-### Creator: Edge
 
-### Developer: Moon
-### Developer: Zwolf
-### Developer: Toon
-
+### Creator: [Edge](https://github.com/EdgeIY)
+### Developers: [Moon](https://github.com/LorekeeperZinnia), [Zwolf](https://github.com/luatsuki), [Hunter](https://github.com/tooslzy), [Toon](https://github.com/Toon-arch), [Peyton](https://github.com/peyton2465), [ATP](https://github.com/ionizedparticle)
 
 ## Usage
-You can learn how to use all the features of this script in the wiki!
+You can learn how to use all the features of this script in [the wiki](https://github.com/EdgeIY/infiniteyield/wiki)!
 
 ## Contributing
-There is no specific rules on contributing (as of now) just open a pull request and if it checks out we will merge it!
+There is no specific rules on contributing (as of now) just open a [pull request](https://github.com/EdgeIY/infiniteyield/pulls) and if it checks out we will merge it!
