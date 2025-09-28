@@ -12509,12 +12509,12 @@ end)
 
 addcmd("unsuspendvc", {}, function(args, speaker)
 	if replicatesignal then
-    	replicatesignal(cloneref(game:GetService("VoiceChatService")).ClientRetryJoin)
+    	replicatesignal(VoiceChatService.ClientRetryJoin)
 
     	if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
         	onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
             	task.wait(1)
-            	replicatesignal(cloneref(game:GetService("VoiceChatService")).ClientRetryJoin)
+            	replicatesignal(VoiceChatService.ClientRetryJoin)
         	end)
     	end
     else
