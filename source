@@ -7216,6 +7216,10 @@ end)
 
 CFspeed = 50
 addcmd('cframefly', {'cfly'}, function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		CFspeed = args[1]
+	end
+	
 	-- Full credit to peyton#9148 (apeyton)
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
