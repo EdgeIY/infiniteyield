@@ -8776,7 +8776,7 @@ addcmd('joindate',{'jd'},function(args, speaker)
 	for i,v in pairs(players) do
 		local p = Players[v]
 
-		local secondsOld = p.AccountAge * 60 * 24 * 24
+		local secondsOld = p.AccountAge * 24 * 60 * 60
 		local now = os.time()
 		local dateJoined  = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
 
@@ -8791,7 +8791,7 @@ addcmd('chatjoindate',{'cjd'},function(args, speaker)
 	for i,v in pairs(players) do
 		local p = Players[v]
 
-		local secondsOld = p.AccountAge * 60 * 24 * 24
+		local secondsOld = p.AccountAge * 24 * 60 * 60
 		local now = os.time()
 		local dateJoined  = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
 
