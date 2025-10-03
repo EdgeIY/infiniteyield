@@ -8754,7 +8754,11 @@ addcmd('age',{},function(args, speaker)
 	local ages = {}
 	for i,v in pairs(players) do
 		local p = Players[v]
-		table.insert(ages, p.Name.."'s age is: "..p.AccountAge)
+		local secondsOld = p.AccountAge * 24 * 60 * 60
+		local dateJoined = os.date("%B %d, %Y", os.time() - secondsOld)
+		local str = p.Name .. " joined on " .. dateJoined
+
+		table.insert(ages, str)
 	end
 	notify('Account Age',table.concat(ages, ',\n'))
 end)
