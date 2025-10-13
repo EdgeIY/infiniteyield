@@ -1,5 +1,5 @@
-# Infinite Yield 
-The best command-line script for Roblox. 
+# Infinite Yield (IY)
+The best command-line script for Roblox. Just download an executor and run the following code:
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
