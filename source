@@ -4427,9 +4427,9 @@ CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipbo
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
-CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
+CMDs[#CMDs + 1] = {NAME = 'serverhop / shop / hop', DESC = 'Teleports you to a different server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
-CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
+CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/AFK'}
 CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
 CMDs[#CMDs + 1] = {NAME = 'replicationlag / backtrack [num]', DESC = 'Set IncomingReplicationLag'}
 CMDs[#CMDs + 1] = {NAME = 'creatorid / creator', DESC = 'Notifies you the creators ID'}
@@ -4463,10 +4463,13 @@ CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
-CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
+CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills Roblox process'}
+CMDs[#CMDs + 1] = {NAME = 'crash', DESC = 'Crash your Roblox client'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
-CMDs[#CMDs + 1] = {NAME = 'unnoclip / clip', DESC = 'Disables noclip'}
+CMDs[#CMDs + 1] = {NAME = 'clip / unnoclip', DESC = 'Disables noclip'}
 CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Makes you fly'}
 CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
 CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20)'}
@@ -4475,16 +4478,18 @@ CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'
 CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
 CMDs[#CMDs + 1] = {NAME = 'cframefly / cfly [speed]', DESC = 'Makes you fly, bypassing some anti cheats (works on mobile)'}
 CMDs[#CMDs + 1] = {NAME = 'uncframefly / uncfly', DESC = 'Disables cfly'}
-CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Sets cfly speed'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed / cflyspeed [num]', DESC = 'Sets cfly speed'}
 CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'Enables or disables the Q and E hotkeys for fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
-CMDs[#CMDs + 1] = {NAME = 'float /  platform', DESC = 'Spawns a platform beneath you causing you to float'}
+CMDs[#CMDs + 1] = {NAME = 'float / platform', DESC = 'Spawns a platform beneath you causing you to float'}
 CMDs[#CMDs + 1] = {NAME = 'unfloat / noplatform', DESC = 'Removes the platform'}
 CMDs[#CMDs + 1] = {NAME = 'swim', DESC = 'Allows you to swim in the air'}
 CMDs[#CMDs + 1] = {NAME = 'unswim / noswim', DESC = 'Stops you from swimming everywhere'}
 CMDs[#CMDs + 1] = {NAME = 'toggleswim', DESC = 'Toggles swimming'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'setwaypoint / swp [name]', DESC = 'Sets a waypoint at your position'}
 CMDs[#CMDs + 1] = {NAME = 'waypointpos / wpp [name] [X Y Z]', DESC = 'Sets a waypoint with specified coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'waypoints', DESC = 'Shows a list of currently active waypoints'}
@@ -4496,7 +4501,9 @@ CMDs[#CMDs + 1] = {NAME = 'walktowaypoint / wtwp [name]', DESC = 'Walks player t
 CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypoint'}
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = 'cleargamewaypoints / cgamewp', DESC = 'Clears all waypoints for the game you are in'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'goto [player]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [player]', DESC = 'Tween to a player (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'tweenspeed / tspeed [num]', DESC = 'Sets how fast all tween commands go (default is 1)'}
@@ -4524,7 +4531,9 @@ CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where y
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = 'teleporttool / tptool', DESC = 'Gives you a teleport tool'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
@@ -4539,7 +4548,9 @@ CMDs[#CMDs + 1] = {NAME = 'unpmspam [player]', DESC = 'Turns off pm spam'}
 CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
 CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'espteam', DESC = 'ESP but teammates are green and bad guys are red'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp / unespteam', DESC = 'Removes ESP'}
@@ -4553,9 +4564,11 @@ CMDs[#CMDs + 1] = {NAME = 'unlocate / nolocate [player]', DESC = 'Removes locate
 CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
 CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency to all parts in workspace'}
 CMDs[#CMDs + 1] = {NAME = 'loopxray', DESC = 'Makes all parts in workspace transparent but looped'}
-CMDs[#CMDs + 1] = {NAME = 'unloopxray', DESC = 'Unloops xray'}
-CMDs[#CMDs + 1] = {NAME = 'togglexray', DESC = 'Toggles xray'}
+CMDs[#CMDs + 1] = {NAME = 'unloopxray', DESC = 'Unloops X-ray'}
+CMDs[#CMDs + 1] = {NAME = 'togglexray', DESC = 'Toggles X-ray'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'spectate / view [player]', DESC = 'View a player'}
 CMDs[#CMDs + 1] = {NAME = 'viewpart / viewp [part name]', DESC = 'View a part'}
 CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
@@ -4579,7 +4592,9 @@ CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is
 CMDs[#CMDs + 1] = {NAME = 'fixcam / restorecam', DESC = 'Fixes camera'}
 CMDs[#CMDs + 1] = {NAME = 'enableshiftlock / enablesl', DESC = 'Enables the shift lock option'}
 CMDs[#CMDs + 1] = {NAME = 'lookat [player]', DESC = 'Moves your camera view to a player'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'btools (CLIENT)', DESC = 'Gives you building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'f3x (CLIENT)', DESC = 'Gives you F3X building tools (DOES NOT REPLICATE)'}
 CMDs[#CMDs + 1] = {NAME = 'partname / partpath', DESC = 'Allows you to click a part to see its path & name'}
@@ -4612,10 +4627,12 @@ CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Thaws 
 CMDs[#CMDs + 1] = {NAME = 'removeterrain / rterrain / noterrain', DESC = 'Removes all terrain'}
 CMDs[#CMDs + 1] = {NAME = 'clearnilinstances / nonilinstances / cni', DESC = 'Removes nil instances'}
 CMDs[#CMDs + 1] = {NAME = 'destroyheight / dh [num]', DESC = 'Sets FallenPartsDestroyHeight'}
-CMDs[#CMDs + 1] = {NAME = 'fakeout', DESC = 'Tp to the void and then back (useful to kill people attached to you)'}
+CMDs[#CMDs + 1] = {NAME = 'fakeout', DESC = 'Teleport to the void and back (useful to kill people attached to you)'}
 CMDs[#CMDs + 1] = {NAME = 'antivoid', DESC = 'Prevents you from falling into the void by launching you upwards'}
 CMDs[#CMDs + 1] = {NAME = 'unantivoid / noantivoid', DESC = 'Disables antivoid'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
 CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops fullbright'}
@@ -4629,7 +4646,9 @@ CMDs[#CMDs + 1] = {NAME = 'noglobalshadows / nogshadows (CLIENT)', DESC = 'Disab
 CMDs[#CMDs + 1] = {NAME = 'restorelighting / rlighting', DESC = 'Restores Lighting properties'}
 CMDs[#CMDs + 1] = {NAME = 'light [radius] [brightness] (CLIENT)', DESC = 'Gives your player dynamic light'}
 CMDs[#CMDs + 1] = {NAME = 'nolight / unlight', DESC = 'Removes dynamic light from your player'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'inspect / examine [player]', DESC = 'Opens InspectMenu for a certain player'}
 CMDs[#CMDs + 1] = {NAME = 'age [player]', DESC = 'Tells you the age of a player'}
 CMDs[#CMDs + 1] = {NAME = 'chatage [player]', DESC = 'Chats the age of a player'}
@@ -4672,13 +4691,15 @@ CMDs[#CMDs + 1] = {NAME = 'unwalkfling / nowalkfling', DESC = 'Disables walkflin
 CMDs[#CMDs + 1] = {NAME = 'invisfling', DESC = 'Enables invisible fling (the invis part is patched, try using the god command before using this)'}
 CMDs[#CMDs + 1] = {NAME = 'antifling', DESC = 'Disables player collisions to prevent you from being flung'}
 CMDs[#CMDs + 1] = {NAME = 'unantifling', DESC = 'Disables antifling'}
-CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (everyone can hear)'}
+CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = "Loops everyone's character sounds (everyone can hear)"}
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
-CMDs[#CMDs + 1] = {NAME = 'muteboombox [player]', DESC = 'Mutes someones boombox'}
-CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [player]', DESC = 'Unmutes someones boombox'}
+CMDs[#CMDs + 1] = {NAME = 'muteboombox [player]', DESC = "Mutes someone's boombox"}
+CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [player]', DESC = "Unmutes someone's boombox"}
 CMDs[#CMDs + 1] = {NAME = 'hitbox [player] [size] [transparency]', DESC = 'Expands the hitbox for players HumanoidRootPart (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'headsize [player] [size]', DESC = 'Expands the head size for players Head (default is 1)'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
@@ -4733,28 +4754,30 @@ CMDs[#CMDs + 1] = {NAME = 'blocktool', DESC = 'Turns the currently selected tool
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
 CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
-CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
+CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = "Spins your character's accessories"}
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = 'clearhats / cleanhats', DESC = 'Clears hats in the workspace'}
 CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
 CMDs[#CMDs + 1] = {NAME = 'chardeleteclass / cdc [class name]', DESC = 'Removes any part with a certain classname from your character'}
 CMDs[#CMDs + 1] = {NAME = 'deletevelocity / dv / removeforces', DESC = 'Removes any velocity / force instances in your character'}
 CMDs[#CMDs + 1] = {NAME = 'weaken [num]', DESC = 'Makes your character less dense'}
-CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysicalProperties to default'}
+CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = "Sets your character's CustomPhysicalProperties to default"}
 CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense (CustomPhysicalProperties)'}
-CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
-CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
+CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = "Sets your character's CustomPhysicalProperties to default"}
+CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = "Sets your character's velocity to 0"}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
-CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = 'Sets your characters parent to nil'}
-CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = 'Sets your characters parent to workspace'}
-CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = 'Removes your characters HumanoidRootPart'}
-CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'nilchar', DESC = "Sets your character's parent to nil"}
+CMDs[#CMDs + 1] = {NAME = 'unnilchar / nonilchar', DESC = "Sets your character's parent to workspace"}
+CMDs[#CMDs + 1] = {NAME = 'noroot / removeroot / rroot', DESC = "Removes your character's HumanoidRootPart"}
+CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = "Replaces your character's HumanoidRootPart"}
 CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
-CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be an animation on the marketplace or by roblox/stickmasterluke to replicate)'}
-CMDs[#CMDs + 1] = {NAME = 'emote / em [ID] [speed]', DESC = 'Makes your character perform an emote (must be on the marketplace or by roblox/stickmasterluke to replicate)'}
+
+CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be an animation on the marketplace or by Roblox/Stickmasterluke to replicate)'}
+CMDs[#CMDs + 1] = {NAME = 'emote / em [ID] [speed]', DESC = 'Makes your character perform an emote (must be on the marketplace or by Roblox/Stickmasterluke to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
 CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
 CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
@@ -4763,14 +4786,16 @@ CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'
 CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
-CMDs[#CMDs + 1] = {NAME = 'copyanimation / copyanim / copyemote [player]', DESC = 'Copies someone elses animation'}
-CMDs[#CMDs + 1] = {NAME = 'copyanimationid / copyanimid / copyemoteid [player]', DESC = 'Copies your animation id or someone elses to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyanimation / copyanim / copyemote [player]', DESC = "Copies someone else's animation"}
+CMDs[#CMDs + 1] = {NAME = 'copyanimationid / copyanimid / copyemoteid [player]', DESC = "Copies your animation id or someone else's to your clipboard"}
 CMDs[#CMDs + 1] = {NAME = 'loopanimation / loopanim', DESC = 'Loops your current animation'}
 CMDs[#CMDs + 1] = {NAME = 'stopanimations / stopanims', DESC = 'Stops running animations'}
 CMDs[#CMDs + 1] = {NAME = 'refreshanimations / refreshanims', DESC = 'Refreshes animations'}
-CMDs[#CMDs + 1] = {NAME = 'allowcustomanim / allowcustomanimations', DESC = 'Lets you use custom animation packs instead'}
-CMDs[#CMDs + 1] = {NAME = 'unallowcustomanim / unallowcustomanimations', DESC = 'Doesn\'t let you use custom animation packs instead'}
+CMDs[#CMDs + 1] = {NAME = 'allowcustomanim / allowcustomanimations', DESC = 'Lets you use custom animation packs'}
+CMDs[#CMDs + 1] = {NAME = 'unallowcustomanim / unallowcustomanimations', DESC = "Stops let you use custom animation packs"}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'autoclick [click delay] [release delay]', DESC = 'Automatically clicks your mouse with a set delay'}
 CMDs[#CMDs + 1] = {NAME = 'unautoclick / noautoclick', DESC = 'Turns off autoclick'}
 CMDs[#CMDs + 1] = {NAME = 'autokeypress [key] [down delay] [up delay]', DESC = 'Automatically presses a key with a set delay'}
@@ -4781,7 +4806,9 @@ CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mous
 CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to Settings > Keybinds > Add for click delete'}
 CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to Settings > Keybinds > Add for click teleport'}
 CMDs[#CMDs + 1] = {NAME = 'mouseteleport / mousetp', DESC = 'Teleports your character to your mouse. This is recommended as a keybind'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
 CMDs[#CMDs + 1] = {NAME = 'notools / removetools / deletetools', DESC = 'Removes tools from character and backpack'}
 CMDs[#CMDs + 1] = {NAME = 'deleteselectedtool / dst', DESC = 'Removes any currently selected tools'}
@@ -4796,21 +4823,27 @@ CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are cu
 CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically remove a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
-CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
-CMDs[#CMDs + 1] = {NAME = 'boxreach [num]', DESC = 'Increases the hitbox of your held tool in a box shape'}
+CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of the tool you are holding'}
+CMDs[#CMDs + 1] = {NAME = 'boxreach [num]', DESC = 'Increases the hitbox of the tool you are holding in a box shape'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
 CMDs[#CMDs + 1] = {NAME = 'usetools [amount] [delay]', DESC = 'Activates all tools in your backpack at the same time'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'addalias [cmd] [alias]', DESC = 'Adds an alias to a command'}
 CMDs[#CMDs + 1] = {NAME = 'removealias [alias]', DESC = 'Removes a custom alias'}
 CMDs[#CMDs + 1] = {NAME = 'clraliases', DESC = 'Removes all custom aliases'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'addplugin / plugin [name]', DESC = 'Add a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'removeplugin / deleteplugin [name]', DESC = 'Remove a plugin via command'}
 CMDs[#CMDs + 1] = {NAME = 'reloadplugin [name]', DESC = 'Reloads a plugin'}
 CMDs[#CMDs + 1] = {NAME = 'addallplugins / loadallplugins', DESC = 'Adds all available plugins from the workspace folder'}
+
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+
 CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cmd loops (;100^1^cmd)'}
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
@@ -6897,7 +6930,7 @@ addcmd("autorejoin", {"autorj"}, function(args, speaker)
 	notify("Auto Rejoin", "Auto rejoin enabled")
 end)
 
-addcmd("serverhop", {"shop"}, function(args, speaker)
+addcmd("serverhop", {"shop", "hop"}, function(args, speaker)
     -- thanks to Amity for fixing
     local servers = {}
     local req = game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true")
@@ -6920,6 +6953,10 @@ end)
 
 addcmd("exit", {}, function(args, speaker)
     game:Shutdown()
+end)
+
+addcmd("crash", {}, function(args, speaker)
+    while true do end
 end)
 
 local Noclipping = nil
@@ -7399,7 +7436,7 @@ addcmd('unswim',{'noswim'},function(args, speaker)
 	end
 end)
 
-addcmd('toggleswim',{},function(args, speaker)
+addcmd('toggleswim',{'tswim'},function(args, speaker)
 	if swimming then
 		execCmd('unswim')
 	else
@@ -7771,7 +7808,7 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd("savegame", {"saveplace"}, function(args, speaker)
+addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
     if saveinstance then
         notify("Loading", "Downloading game. This will take a while")
         saveinstance()
@@ -8412,17 +8449,17 @@ function StopFreecam()
 	fcRunning = false
 end
 
-addcmd('freecam',{'fc'},function(args, speaker)
+addcmd('freecam',{'fc', 'fcam'},function(args, speaker)
 	StartFreecam()
 end)
 
-addcmd('freecampos',{'fcpos','fcp','freecamposition','fcposition'},function(args, speaker)
+addcmd('freecampos',{'fcpos', 'fcampos', 'fcp','freecamposition','fcposition'},function(args, speaker)
 	if not args[1] then return end
 	local freecamPos = CFrame.new(args[1],args[2],args[3])
 	StartFreecam(freecamPos)
 end)
 
-addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
+addcmd('freecamwaypoint',{'fcwp', 'fcamwp'},function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if speaker.Character then
 		for i,_ in pairs(WayPoints) do
@@ -8441,25 +8478,25 @@ addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
 	end
 end)
 
-addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},function(args, speaker)
+addcmd('freecamgoto',{'fcgoto', 'fcamgoto', 'freecamtp','fctp'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		StartFreecam(getRoot(Players[v].Character).CFrame)
 	end
 end)
 
-addcmd('unfreecam',{'nofreecam','unfc','nofc'},function(args, speaker)
+addcmd('unfreecam',{'nofreecam', 'unfcam', 'unfc','nofc'},function(args, speaker)
 	StopFreecam()
 end)
 
-addcmd('freecamspeed',{'fcspeed'},function(args, speaker)
+addcmd('freecamspeed',{'fcspeed', 'fcamspeed'},function(args, speaker)
 	local FCspeed = args[1] or 1
 	if isNumber(FCspeed) then
 		NAV_KEYBOARD_SPEED = Vector3.new(FCspeed, FCspeed, FCspeed)
 	end
 end)
 
-addcmd('notifyfreecamposition',{'notifyfcpos'},function(args, speaker)
+addcmd('notifyfreecamposition',{'notifyfcpos', 'notifyfcampos'},function(args, speaker)
 	if fcRunning then
 		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
 		local Format, Round = string.format, math.round
@@ -8467,7 +8504,7 @@ addcmd('notifyfreecamposition',{'notifyfcpos'},function(args, speaker)
 	end
 end)
 
-addcmd('copyfreecamposition',{'copyfcpos'},function(args, speaker)
+addcmd('copyfreecamposition',{'copyfcpos', 'copyfcampos'},function(args, speaker)
 	if fcRunning then
 		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
 		local Format, Round = string.format, math.round
@@ -12515,7 +12552,7 @@ addcmd("jerk", {}, function(args, speaker)
     humanoid.Died:Connect(stopTomfoolery)
 
     while task.wait() do
-        if not jorkin then continue end
+        if jorkin then
 
         local isR15 = r15(speaker)
         if not track then
@@ -12533,6 +12570,7 @@ addcmd("jerk", {}, function(args, speaker)
             track:Stop()
             track = nil
         end
+		else end
     end
 end)
 
