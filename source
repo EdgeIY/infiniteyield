@@ -11,6 +11,25 @@ function missing(t, f, fallback)
     return fallback
 end
 
+local newEnv=getfenv(loadstring(""))
+local isExploitShit=typeof(checkcaller)~="function"
+local currentEnv={}
+local envSecurity={
+	__index=setfenv(function(self,index)
+		if isExploitShit==false and newEnv.checkcaller()==false then newEnv.print(index,"nuh uh fuck you") return nil end
+		return newEnv[index]
+	end,{}),
+	__newindex=setfenv(function(self,index,value)
+		if isExploitShit==false and newEnv.checkcaller()==false then return nil end
+		newEnv.rawset(self,index,value)
+	end,{}),
+	__metatable="The metatable is locked",
+}
+
+setmetatable(currentEnv, envSecurity)
+if setreadonly then setreadonly(envSecurity,true) else table.freeze(envSecurity) end
+setfenv(0,currentEnv);setfenv(1,currentEnv)
+
 cloneref = missing("function", cloneref, function(...) return ... end)
 sethidden =  missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
 gethidden =  missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
@@ -4835,6 +4854,8 @@ CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendchat', DESC = 'Unsuspends you from text chat'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'disablevehiclecamera / dvc / novehiclecam', DESC = "Disables annoying vehicle camera that makes you lose control of your camera"}
+CMDs[#CMDs + 1] = {NAME = 'enablevehiclecamera / evc / vehiclecam', DESC = "Enables vehicle camera back after disabling it"}
 wait()
 
 for i = 1, #CMDs do
@@ -12795,6 +12816,55 @@ end)
 addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},function(args, speaker)
 	autoKeyPressing = false
 	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
+end)
+
+local vehiclecamfuncs={}
+addcmd('disablevehiclecamera',{"dvc","novehiclecam","disablevehcam"},function(args, speaker)
+	if typeof(filtergc)~="function" or typeof(hookfunction)~="function" then
+		return notify('Disable Vehicle Camera',"Your exploit doesn't have the ability to disable vehicle camera")
+	end
+
+	for i,v in filtergc("function",{
+		Name="ShouldUseVehicleCamera",
+		IgnoreExecutor=true,
+	}) do
+		table.insert(vehiclecamfuncs,v)
+		hookfunction(v,function()return false end)
+	end
+
+	local realCamTable=filtergc("table",{
+		Keys={"activeCameraController"}
+	},true)
+	local activatecam=filtergc("function",{
+		Name="ActivateCameraController",
+		IgnoreExecutor=true,
+	},true)
+	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
+
+
+	notify('Disable Vehicle Camera',"Vehicle camera successfully disabled.")
+end)
+
+addcmd('enablevehiclecamera',{"evc","vehiclecam","enablevehcam"},function(args, speaker)
+	if typeof(filtergc)~="function" or typeof(restorefunction)~="function" then
+		return notify('Enable Vehicle Camera',"Your exploit doesn't have the ability to enable vehicle camera")
+	end
+
+	for i,v in vehiclecamfuncs do
+		pcall(restorefunction,v)
+	end
+	table.clear(vehiclecamfuncs)
+
+	local realCamTable=filtergc("table",{
+		Keys={"activeCameraController"}
+	},true)
+	local activatecam=filtergc("function",{
+		Name="ActivateCameraController",
+		IgnoreExecutor=true,
+	},true)
+	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
+
+	notify('Enable Vehicle Camera',"Vehicle camera successfully enabled.")
 end)
 
 addcmd('addplugin',{'plugin'},function(args, speaker)
