@@ -12835,7 +12835,7 @@ end
 
 addcmd('disablevehiclecamera',{"dvc","novehiclecam","disablevehcam"},function(args, speaker)
 	if typeof(filtergc)~="function" or typeof(hookfunction)~="function" then
-		return notify('Disable Vehicle Camera',"Your exploit doesn't have the ability to disable vehicle camera")
+		return notify('Disable Vehicle Camera',"Your exploit doesn't have the ability to use this command (missing filtergc, hookfunction)")
 	end
 
 	for i,v in filtergc("function",{
@@ -12852,7 +12852,7 @@ end)
 
 addcmd('enablevehiclecamera',{"evc","vehiclecam","enablevehcam"},function(args, speaker)
 	if typeof(filtergc)~="function" or typeof(restorefunction)~="function" then
-		return notify('Enable Vehicle Camera',"Your exploit doesn't have the ability to enable vehicle camera")
+		return notify('Enable Vehicle Camera',"Your exploit doesn't have the ability to use this command (missing filtergc, restorefunction)")
 	end
 
 	for i,v in vehiclecamfuncs do
