@@ -44,36 +44,51 @@ newcclosure = missing("function", newcclosure)
 getgc = missing("function", getgc or get_gc_objects)
 setthreadidentity = missing("function", setthreadidentity or (syn and syn.set_thread_identity) or syn_context_set or setthreadcontext)
 replicatesignal = missing("function", replicatesignal)
+getconnections = missing("function", getconnections or get_signal_cons)
 
-COREGUI = cloneref(game:GetService("CoreGui"))
-Players = cloneref(game:GetService("Players"))
-UserInputService = cloneref(game:GetService("UserInputService"))
-TweenService = cloneref(game:GetService("TweenService"))
-HttpService = cloneref(game:GetService("HttpService"))
-MarketplaceService = cloneref(game:GetService("MarketplaceService"))
-RunService = cloneref(game:GetService("RunService"))
-TeleportService = cloneref(game:GetService("TeleportService"))
-StarterGui = cloneref(game:GetService("StarterGui"))
-GuiService = cloneref(game:GetService("GuiService"))
-Lighting = cloneref(game:GetService("Lighting"))
-ContextActionService = cloneref(game:GetService("ContextActionService"))
-ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
-GroupService = cloneref(game:GetService("GroupService"))
-PathService = cloneref(game:GetService("PathfindingService"))
-SoundService = cloneref(game:GetService("SoundService"))
-Teams = cloneref(game:GetService("Teams"))
-StarterPlayer = cloneref(game:GetService("StarterPlayer"))
-InsertService = cloneref(game:GetService("InsertService"))
-ChatService = cloneref(game:GetService("Chat"))
-ProximityPromptService = cloneref(game:GetService("ProximityPromptService"))
-ContentProvider = cloneref(game:GetService("ContentProvider"))
-StatsService = cloneref(game:GetService("Stats"))
-MaterialService = cloneref(game:GetService("MaterialService"))
-AvatarEditorService = cloneref(game:GetService("AvatarEditorService"))
-TextService = cloneref(game:GetService("TextService"))
-TextChatService = cloneref(game:GetService("TextChatService"))
-CaptureService = cloneref(game:GetService("CaptureService"))
-VoiceChatService = cloneref(game:GetService("VoiceChatService"))
+Services = setmetatable({}, {
+    __index = function(self, name)
+        local success, cache = pcall(function()
+            return cloneref(game:GetService(name))
+        end)
+        if success then
+            rawset(self, name, cache)
+            return cache
+        else
+            error("Invalid Roblox Service: " .. tostring(name))
+        end
+    end
+})
+
+COREGUI = Services.CoreGui
+Players = Services.Players
+UserInputService = Services.UserInputService
+TweenService = Services.TweenService
+HttpService = Services.HttpService
+MarketplaceService = Services.MarketplaceService
+RunService = Services.RunService
+TeleportService = Services.TeleportService
+StarterGui = Services.StarterGui
+GuiService = Services.GuiService
+Lighting = Services.Lighting
+ContextActionService = Services.ContextActionService
+ReplicatedStorage = Services.ReplicatedStorage
+GroupService = Services.GroupService
+PathService = Services.PathfindingService
+SoundService = Services.SoundService
+Teams = Services.Teams
+StarterPlayer = Services.StarterPlayer
+InsertService = Services.InsertService
+ChatService = Services.Chat
+ProximityPromptService = Services.ProximityPromptService
+ContentProvider = Services.ContentProvider
+StatsService = Services.Stats
+MaterialService = Services.MaterialService
+AvatarEditorService = Services.AvatarEditorService
+TextService = Services.TextService
+TextChatService = Services.TextChatService
+CaptureService = Services.CaptureService
+VoiceChatService = Services.VoiceChatService
 
 IYMouse = cloneref(Players.LocalPlayer:GetMouse())
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -4835,8 +4850,6 @@ CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendchat', DESC = 'Unsuspends you from text chat'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
-CMDs[#CMDs + 1] = {NAME = 'disablevehiclecamera / dvc / novehiclecam', DESC = "Disables annoying vehicle camera that makes you lose control of your camera"}
-CMDs[#CMDs + 1] = {NAME = 'enablevehiclecamera / evc / vehiclecam', DESC = "Enables vehicle camera back after disabling it"}
 wait()
 
 for i = 1, #CMDs do
@@ -8673,48 +8686,45 @@ addcmd('uninvisibleparts',{'uninvisparts'},function(args, speaker)
 	shownParts = {}
 end)
 
-addcmd('btools',{},function(args, speaker)
-	for i = 1, 4 do
-		local Tool = Instance.new("HopperBin")
-		Tool.BinType = i
-		Tool.Name = randomString()
-		Tool.Parent = speaker:FindFirstChildOfClass("Backpack")
-	end
+addcmd("btools", {}, function(args, speaker)
+    for i = 1, 4 do
+        local Tool = Instance.new("HopperBin")
+        Tool.BinType = i
+        Tool.Name = randomString()
+        Tool.Parent = speaker:FindFirstChildWhichIsA("Backpack")
+    end
 end)
 
-addcmd('f3x',{'fex'},function(args, speaker)
+addcmd("f3x", {"fex"}, function(args, speaker)
     loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua"))()
 end)
 
-addcmd('partpath',{'partname'},function(args, speaker)
-	selectPart()
+addcmd("partpath", {"partname"}, function(args, speaker)
+    selectPart()
 end)
 
-addcmd('antiafk',{'antiidle'},function(args, speaker)
-	local GC = getconnections or get_signal_cons
-	if GC then
-		for i,v in pairs(GC(Players.LocalPlayer.Idled)) do
-			if v["Disable"] then
-				v["Disable"](v)
-			elseif v["Disconnect"] then
-				v["Disconnect"](v)
-			end
-		end
-	else
-		local VirtualUser = cloneref(game:GetService("VirtualUser"))
-		Players.LocalPlayer.Idled:Connect(function()
-			VirtualUser:CaptureController()
-			VirtualUser:ClickButton2(Vector2.new())
-		end)
-	end
-	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('Anti Idle','Anti idle is enabled') end
+addcmd("antiafk", {"antiidle"}, function(args, speaker)
+    if getconnections then
+        for _, connection in pairs(getconnections(speaker.Idled)) do
+            if connection["Disable"] then
+                connection["Disable"](connection)
+            elseif connection["Disconnect"] then
+                connection["Disconnect"](connection)
+            end
+        end
+    else
+        speaker.Idled:Connect(function()
+            Services.VirtualUser:CaptureController()
+            Services.VirtualUser:ClickButton2(Vector2.new())
+        end)
+    end
+    if not (args[1] and tostring(args[1]) == "nonotify") then notify("Anti Idle", "Anti idle is enabled") end
 end)
 
 addcmd("datalimit", {}, function(args, speaker)
     local kbps = tonumber(args[1])
     if kbps then
-        local NetworkClient = cloneref(game:GetService("NetworkClient"))
-        NetworkClient:SetOutgoingKBPSLimit(kbps)
+        Services.NetworkClient:SetOutgoingKBPSLimit(kbps)
     end
 end)
 
@@ -11551,41 +11561,48 @@ addcmd('usetools', {}, function(args, speaker)
 	end
 end)
 
-addcmd('logs',{},function(args, speaker)
-	logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
+addcmd("logs", {}, function(args, speaker)
+    logsEnabled = true
+    jLogsEnabled = true
+    Toggle.Text = "Enabled"
+    Toggle_2.Text = "Enabled"
+    logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
 end)
 
-addcmd('chatlogs',{'clogs'},function(args, speaker)
-	join.Visible = false
-	chat.Visible = true
-	table.remove(shade3,table.find(shade3,selectChat))
-	table.remove(shade2,table.find(shade2,selectJoin))
-	table.insert(shade2,selectChat)
-	table.insert(shade3,selectJoin)
-	selectJoin.BackgroundColor3 = currentShade3
-	selectChat.BackgroundColor3 = currentShade2
-	logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
+addcmd("chatlogs", {"clogs"}, function(args, speaker)
+    logsEnabled = true
+    join.Visible = false
+    chat.Visible = true
+    table.remove(shade3, table.find(shade3, selectChat))
+    table.remove(shade2, table.find(shade2, selectJoin))
+    table.insert(shade2, selectChat)
+    table.insert(shade3, selectJoin)
+    selectJoin.BackgroundColor3 = currentShade3
+    selectChat.BackgroundColor3 = currentShade2
+    Toggle.Text = "Enabled"
+    logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
 end)
 
-addcmd('joinlogs',{'jlogs'},function(args, speaker)
-	chat.Visible = false
-	join.Visible = true	
-	table.remove(shade3,table.find(shade3,selectJoin))
-	table.remove(shade2,table.find(shade2,selectChat))
-	table.insert(shade2,selectJoin)
-	table.insert(shade3,selectChat)
-	selectChat.BackgroundColor3 = currentShade3
-	selectJoin.BackgroundColor3 = currentShade2
-	logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
+addcmd("joinlogs", {"jlogs"}, function(args, speaker)
+    jLogsEnabled = true
+    chat.Visible = false
+    join.Visible = true	
+    table.remove(shade3, table.find(shade3, selectJoin))
+    table.remove(shade2, table.find(shade2, selectChat))
+    table.insert(shade2, selectJoin)
+    table.insert(shade3, selectChat)
+    selectChat.BackgroundColor3 = currentShade3
+    selectJoin.BackgroundColor3 = currentShade2
+    Toggle_2.Text = "Enabled"
+    logs:TweenPosition(UDim2.new(0, 0, 1, -265), "InOut", "Quart", 0.3, true, nil)
 end)
 
 addcmd("chatlogswebhook", {"logswebhook"}, function(args, speaker)
-    if httprequest then
-        logsWebhook = args[1] or nil
-        updatesaves()
-    else
-        notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+    if not httprequest then
+        return notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
     end
+    logsWebhook = args[1] or nil
+    updatesaves()
 end)
 
 addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
@@ -12570,7 +12587,7 @@ addcmd("unsuspendvc", {}, function(args, speaker)
     	replicatesignal(VoiceChatService.ClientRetryJoin)
 
     	if typeof(onVoiceModerated) ~= "RBXScriptConnection" then
-        	onVoiceModerated = cloneref(game:GetService("VoiceChatInternal")).LocalPlayerModerated:Connect(function()
+        	onVoiceModerated = Services.VoiceChatInternal.LocalPlayerModerated:Connect(function()
             	task.wait(1)
             	replicatesignal(VoiceChatService.ClientRetryJoin)
         	end)
