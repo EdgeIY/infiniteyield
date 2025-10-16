@@ -13,21 +13,29 @@ end
 
 local newEnv=getfenv(loadstring(""))
 local isExploitShit=typeof(checkcaller)~="function"
+local rawset=rawset
 local currentEnv={}
-local envSecurity={
+local envMeta={
 	__index=setfenv(function(self,index)
 		if isExploitShit==false and newEnv.checkcaller()==false then newEnv.print(index,"nuh uh fuck you") return nil end
 		return newEnv[index]
 	end,{}),
-	__newindex=setfenv(function(self,index,value)
+	__newindex=setfenv(function(_,index,value)
 		if isExploitShit==false and newEnv.checkcaller()==false then return nil end
-		newEnv.rawset(self,index,value)
+		return rawset(newEnv,index,value)
 	end,{}),
-	__metatable="The metatable is locked",
 }
 
-setmetatable(currentEnv, envSecurity)
-if setreadonly then setreadonly(envSecurity,true) else table.freeze(envSecurity) end
+setmetatable(currentEnv, envMeta)
+if setreadonly then 
+	envMeta.__metatable="The metatable is locked"
+	setreadonly(currentEnv,true)
+	setreadonly(envMeta,true)
+else
+	table.freeze(currentEnv)
+	envMeta.__metatable="The metatable is locked"
+	table.freeze(envMeta) 
+end
 setfenv(0,currentEnv);setfenv(1,currentEnv)
 
 cloneref = missing("function", cloneref, function(...) return ... end)
