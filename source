@@ -11,33 +11,6 @@ function missing(t, f, fallback)
     return fallback
 end
 
-local newEnv=getfenv(loadstring(""))
-local isExploitShit=typeof(checkcaller)~="function"
-local rawset=rawset
-local currentEnv={}
-local envMeta={
-	__index=setfenv(function(self,index)
-		if isExploitShit==false and newEnv.checkcaller()==false then newEnv.print(index,"nuh uh fuck you") return nil end
-		return newEnv[index]
-	end,{}),
-	__newindex=setfenv(function(_,index,value)
-		if isExploitShit==false and newEnv.checkcaller()==false then return nil end
-		return rawset(newEnv,index,value)
-	end,{}),
-}
-
-setmetatable(currentEnv, envMeta)
-if setreadonly then 
-	envMeta.__metatable="The metatable is locked"
-	setreadonly(currentEnv,true)
-	setreadonly(envMeta,true)
-else
-	table.freeze(currentEnv)
-	envMeta.__metatable="The metatable is locked"
-	table.freeze(envMeta) 
-end
-setfenv(0,currentEnv);setfenv(1,currentEnv)
-
 cloneref = missing("function", cloneref, function(...) return ... end)
 sethidden =  missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
 gethidden =  missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
@@ -12827,6 +12800,22 @@ addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},function(ar
 end)
 
 local vehiclecamfuncs={}
+local function callActivateCameraController()
+	local realCamTable=filtergc("table",{
+		Keys={"activeCameraController"}
+	},true)
+	local activatecam=filtergc("function",{
+		Name="ActivateCameraController",
+		IgnoreExecutor=true,
+	},true)
+	
+	if typeof(activatecam)~="function" or typeof(realCamTable)~="table" then
+		return
+	end
+	
+	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
+end
+
 addcmd('disablevehiclecamera',{"dvc","novehiclecam","disablevehcam"},function(args, speaker)
 	if typeof(filtergc)~="function" or typeof(hookfunction)~="function" then
 		return notify('Disable Vehicle Camera',"Your exploit doesn't have the ability to disable vehicle camera")
@@ -12839,16 +12828,7 @@ addcmd('disablevehiclecamera',{"dvc","novehiclecam","disablevehcam"},function(ar
 		table.insert(vehiclecamfuncs,v)
 		hookfunction(v,function()return false end)
 	end
-
-	local realCamTable=filtergc("table",{
-		Keys={"activeCameraController"}
-	},true)
-	local activatecam=filtergc("function",{
-		Name="ActivateCameraController",
-		IgnoreExecutor=true,
-	},true)
-	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
-
+	callActivateCameraController()
 
 	notify('Disable Vehicle Camera',"Vehicle camera successfully disabled.")
 end)
@@ -12862,16 +12842,8 @@ addcmd('enablevehiclecamera',{"evc","vehiclecam","enablevehcam"},function(args, 
 		pcall(restorefunction,v)
 	end
 	table.clear(vehiclecamfuncs)
-
-	local realCamTable=filtergc("table",{
-		Keys={"activeCameraController"}
-	},true)
-	local activatecam=filtergc("function",{
-		Name="ActivateCameraController",
-		IgnoreExecutor=true,
-	},true)
-	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
-
+	callActivateCameraController()
+	
 	notify('Enable Vehicle Camera',"Vehicle camera successfully enabled.")
 end)
 
