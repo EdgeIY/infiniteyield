@@ -4850,6 +4850,10 @@ CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendchat', DESC = 'Unsuspends you from text chat'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'muteallvcs', DESC = 'Mute all players\' voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'unmuteallvcs', DESC = 'Unmutes all players\' voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mute a player\'s voice chat'}
+CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes a player\'s voice chat'}
 wait()
 
 for i = 1, #CMDs do
@@ -12595,6 +12599,26 @@ addcmd("unsuspendvc", {}, function(args, speaker)
     else
         notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
     end
+end)
+
+addcmd("muteallvcs", {}, function(args, speaker)
+	Services.VoiceChatInternal:SubscribePauseAll(true)
+end)
+
+addcmd("unmuteallvcs", {}, function(args, speaker)
+	Services.VoiceChatInternal:SubscribePauseAll(false)
+end)
+
+addcmd("mutevcs", {}, function(args, speaker)
+	for _, plr in getPlayer(args[1], speaker) do
+		Services.VoiceChatInternal:SubscribePause(plr.UserId, true)
+	end
+end)
+
+addcmd("unmutevcs", {}, function(args, speaker)
+	for _, plr in getPlayer(args[1], speaker) do
+		Services.VoiceChatInternal:SubscribePause(plr.UserId, false)
+	end
 end)
 
 addcmd("permadeath", {}, function(args, speaker)
