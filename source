@@ -12629,13 +12629,13 @@ end)
 
 addcmd("mutevcs", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		Services.VoiceChatInternal:SubscribePause(plr.UserId, true)
+		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true)
 	end
 end)
 
 addcmd("unmutevcs", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		Services.VoiceChatInternal:SubscribePause(plr.UserId, false)
+		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false)
 	end
 end)
 
