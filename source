@@ -7906,12 +7906,12 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 
 		oldTeleport=hookfunction(TeleportService.Teleport,function(self,...)
 			if self==TeleportService and allow_rj==false then return end
-			return oldTeleport(...)
+			return oldTeleport(self,...)
 		end)
 
 		oldToPlace=hookfunction(TeleportService.TeleportToPlaceInstance,function(self,...)
 			if self==TeleportService and allow_rj==false then return end
-			return oldToPlace(...)
+			return oldToPlace(self,...)
 		end)
 	else
 		local oldhmmi
