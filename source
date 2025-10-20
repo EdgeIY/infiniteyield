@@ -11704,7 +11704,7 @@ addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
             ["fire"] = function(msg)
                 return msg
             end,
-            ["task.wait"] = function()
+            ["wait"] = function()
                 return
             end,
             ["connect"] = function()
