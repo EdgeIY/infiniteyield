@@ -4554,6 +4554,8 @@ CMDs[#CMDs + 1] = {NAME = 'unpmspam [player]', DESC = 'Turns off pm spam'}
 CMDs[#CMDs + 1] = {NAME = 'spamspeed [num]', DESC = 'How quickly you spam (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for your client'}
 CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
+CMDs[#CMDs + 1] = {NAME = 'chatwindow', DESC = 'Enables the chat window for your client'}
+CMDs[#CMDs + 1] = {NAME = 'unchatwindow / nochatwindow', DESC = 'Disables the chat window for your client'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
 CMDs[#CMDs + 1] = {NAME = 'espteam', DESC = 'ESP but teammates are green and bad guys are red'}
@@ -4850,7 +4852,11 @@ CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendchat', DESC = 'Unsuspends you from text chat'}
 CMDs[#CMDs + 1] = {NAME = 'unsuspendvc', DESC = 'Unsuspends you from voice chat'}
-wait()
+CMDs[#CMDs + 1] = {NAME = 'muteallvcs', DESC = 'Mutes voice chat for all players'}
+CMDs[#CMDs + 1] = {NAME = 'unmuteallvcs', DESC = 'Unmutes voice chat for all players'}
+CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mutes the voice chat of a player'}
+CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes the voice chat of a player'}
+-- wait()
 
 for i = 1, #CMDs do
 	local newcmd = Example:Clone()
@@ -10609,6 +10615,14 @@ addcmd('unbubblechat',{'nobubblechat'},function(args, speaker)
 	end
 end)
 
+addcmd("chatwindow", {}, function(args, speaker)
+    TextChatService.ChatWindowConfiguration.Enabled = true
+end)
+
+addcmd("unchatwindow", {"nochatwindow"}, function(args, speaker)
+    TextChatService.ChatWindowConfiguration.Enabled = false
+end)
+
 addcmd('blockhead',{},function(args, speaker)
 	speaker.Character.Head:FindFirstChildOfClass("SpecialMesh"):Destroy()
 end)
@@ -12594,6 +12608,28 @@ addcmd("unsuspendvc", {}, function(args, speaker)
     	end
     else
         notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
+    end
+end)
+
+addcmd("muteallvcs", {}, function(args, speaker)
+    Services.VoiceChatInternal:SubscribePauseAll(true)
+end)
+
+addcmd("unmuteallvcs", {}, function(args, speaker)
+    Services.VoiceChatInternal:SubscribePauseAll(false)
+end)
+
+addcmd("mutevc", {}, function(args, speaker)
+    for _, plr in getPlayer(args[1], speaker) do
+        if Players[plr] == speaker then continue end
+        Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true)
+    end
+end)
+
+addcmd("unmutevc", {}, function(args, speaker)
+    for _, plr in getPlayer(args[1], speaker) do
+        if Players[plr] == speaker then continue end
+        Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false)
     end
 end)
 
