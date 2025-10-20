@@ -7904,13 +7904,13 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 		local oldTeleport
 		local oldToPlace
 
-		oldTeleport=hookfunction(TeleportService.Teleport,function(...)
-			if allow_rj==false then return end
+		oldTeleport=hookfunction(TeleportService.Teleport,function(self,...)
+			if self==TeleportService and allow_rj==false then return end
 			return oldTeleport(...)
 		end)
 
-		oldToPlace=hookfunction(TeleportService.TeleportToPlaceInstance,function(...)
-			if allow_rj==false then return end
+		oldToPlace=hookfunction(TeleportService.TeleportToPlaceInstance,function(self,...)
+			if self==TeleportService and allow_rj==false then return end
 			return oldToPlace(...)
 		end)
 	else
