@@ -9693,7 +9693,7 @@ addcmd("maxslopeangle", {"msa"}, function(args, speaker)
 end)
 
 addcmd("gravity", {"grav"}, function(args, speaker)
-	local grav = args[1] or 196.2
+	local grav = args[1] or oldgrav
 	if isNumber(grav) then
 		workspace.Gravity = grav
 	end
