@@ -4718,6 +4718,7 @@ CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your g
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
 CMDs[#CMDs + 1] = {NAME = 'lay / laydown', DESC = 'Makes your character lay down'}
 CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while still being able to walk'}
+CMDs[#CMDs + 1] = {NAME = 'unsitwalk', DESC = 'Stop your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'Disables nosit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
@@ -9734,6 +9735,27 @@ addcmd("sitwalk", {}, function(args, speaker)
 	anims.run:FindFirstChildWhichIsA("Animation").AnimationId = sit
 	anims.jump:FindFirstChildWhichIsA("Animation").AnimationId = sit
 	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = not r15(speaker) and -1.5 or 0.5
+end)
+
+addcmd("unsitwalk", {}, function(args, speaker)
+	local anims = speaker.Character.Animate
+	
+	-- Reset to default animation IDs based on R6/R15
+	if r15(speaker) then
+		-- R15 default animations
+		anims.idle:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=507766666"
+		anims.walk:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=507777826"
+		anims.run:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=507767714"
+		anims.jump:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=507765000"
+		speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = 0.5
+	else
+		-- R6 default animations
+		anims.idle:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=180435571"
+		anims.walk:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=180426354"
+		anims.run:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=180426354"
+		anims.jump:FindFirstChildWhichIsA("Animation").AnimationId = "http://www.roblox.com/asset/?id=125750702"
+		speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = 0
+	end
 end)
 
 addcmd("nosit", {}, function(args, speaker)
