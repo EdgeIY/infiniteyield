@@ -9951,12 +9951,7 @@ addcmd("animation", {"anim"}, function(args, speaker)
 end)
 
 addcmd("emote", {"em"}, function(args, speaker)
-    local animid = tostring(args[1])
-    if not animid:find("rbxassetid://") then
-        animid = "rbxassetid://" .. animid
-    end
-	
-    local anim = humanoid:PlayEmoteAndGetAnimTrackById(animid)
+    local anim = humanoid:PlayEmoteAndGetAnimTrackById(args[1])
     if args[2] then anim:AdjustSpeed(tostring(args[2])) end
 end)
 
