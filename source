@@ -45,7 +45,7 @@ pcall(function()
 		end)
 	end
 end)
-if IY_LOADED and not _G.IY_DEBUG == true then
+if IY_LOADED and not getgenv().IY_DEBUG == true then
     -- error("Infinite Yield is already running!", 0)
 	return
 end
@@ -2345,7 +2345,7 @@ eventEditor = (function()
 				end
 
 				if metCondition then
-					pcall(task.spawn(function()
+					pcall(task.spawn,(function()
 						local cmdStr = cmd[1]
 						for count, arg in pairs(args) do
 							cmdStr = cmdStr:gsub("%$" .. count, arg)
@@ -7898,7 +7898,7 @@ function execCmd(cmdStr, speaker, store)
 				if infTimes then
 					while lastBreakTime < cmdStartTime do
 						local success, err = pcall(cmd.FUNC, args, speaker)
-						if not success and _G.IY_DEBUG then
+						if not success and getgenv().IY_DEBUG then
 							warn("Command Error:", cmdName, err)
 						end
 						task.wait(cmdDelay)
@@ -7911,7 +7911,7 @@ function execCmd(cmdStr, speaker, store)
 						local success, err = pcall(function()
 							cmd.FUNC(args, speaker)
 						end)
-						if not success and _G.IY_DEBUG then
+						if not success and getgenv().IY_DEBUG then
 							warn("Command Error:", cmdName, err)
 						end
 						if cmdDelay ~= 0 then
