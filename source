@@ -7813,71 +7813,20 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 	    return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
+	local oldhmmi
 	local oldhmmnc
-	local oldnewindex
-	local kickFuncs={
-		["kick"]=true,
-		["Kick"]=true,
-		["Destroy"]=true,
-		["destroy"]=true,
-		["Remove"]=true,
-		["remove"]=true,
-	}
-
+	local oldKickFunction
 	if hookfunction then
-		local oldDestroy
-		local oldRemove
-		local oldKick
-
-		local function hookHandler(main)
-			if main.Args[1]==LocalPlayer then
-				return
-			end
-			return main.oldFunc(table.unpack(main.Args))
-		end
-
-		oldKick=hookfunction(LocalPlayer.Kick, function(...)
-			return hookHandler({Args={...},oldFunc=oldKick})
-		end)
-
-		local function Destroy(...)
-			return hookHandler({Args={...},oldFunc=oldDestroy})
-		end
-
-		local function Remove(...)
-			return hookHandler({Args={...},oldFunc=oldRemove})
-		end
-
-		oldDestroy=hookfunction(LocalPlayer.Destroy,Destroy)
-		hookfunction(LocalPlayer.destroy,Destroy)
-
-		oldRemove=hookfunction(LocalPlayer.Remove,Remove)
-		hookfunction(LocalPlayer.remove,Remove)
-	else
-		local oldhmmi
-		oldhmmi = hookmetamethod(game, "__index", function(self, method)
-			if self == LocalPlayer and typeof(method)=="string" and kickFuncs[method] then
-				if string.lower(method)=="destroy" then
-					return error("Expected ':' not '.' calling member function Destroy", 2)
-				elseif string.lower(method)=="remove" then
-					return error("Expected ':' not '.' calling member function Remove", 2)
-				end
-
-				return error("Expected ':' not '.' calling member function Kick", 2)
-			end
-			return oldhmmi(self, method)
-		end)
+	    oldKickFunction = hookfunction(LocalPlayer.Kick, function() end)
 	end
-
-	oldnewindex = hookmetamethod(game,"__newindex",function(self,index,value)
-		if self==LocalPlayer and index=="Parent" and value==nil then
-			return
-		end
-		return oldnewindex(self,index,value)
+	oldhmmi = hookmetamethod(game, "__index", function(self, method)
+	    if self == LocalPlayer and method:lower() == "kick" then
+	        return error("Expected ':' not '.' calling member function Kick", 2)
+	    end
+	    return oldhmmi(self, method)
 	end)
-
 	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
-	    if self == LocalPlayer and kickFuncs[getnamecallmethod()] then
+	    if self == LocalPlayer and getnamecallmethod():lower() == "kick" then
 	        return
 	    end
 	    return oldhmmnc(self, ...)
@@ -7886,49 +7835,26 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
 
-local allow_rj = false
+allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local TeleportService = TeleportService
+	local oldhmmi
 	local oldhmmnc
-	local teleportFuncs={
-		["teleport"]=true,
-		["Teleport"]=true,
-		["teleportToPlaceInstance"]=true,
-		["TeleportToPlaceInstance"]=true,
-	}
-
-	if hookfunction then
-		local oldTeleport
-		local oldToPlace
-
-		oldTeleport=hookfunction(TeleportService.Teleport,function(self,...)
-			if self==TeleportService and allow_rj==false then return end
-			return oldTeleport(self,...)
-		end)
-
-		oldToPlace=hookfunction(TeleportService.TeleportToPlaceInstance,function(self,...)
-			if self==TeleportService and allow_rj==false then return end
-			return oldToPlace(self,...)
-		end)
-	else
-		local oldhmmi
-		oldhmmi = hookmetamethod(game, "__index", function(self, method)
-			if self == TeleportService and allow_rj==false and typeof(method)=="string" and teleportFuncs[method] then
-				if string.lower(method)=="teleport" then
-					return error(`Expected ':' not '.' calling member function Teleport`,2)
-				end
-
-				return error(`Expected ':' not '.' calling member function TeleportToPlaceInstance`,2)
+	oldhmmi = hookmetamethod(game, "__index", function(self, method)
+		if self == TeleportService then
+			if method:lower() == "teleport" then
+				return error("Expected ':' not '.' calling member function Kick", 2)
+			elseif method == "TeleportToPlaceInstance" then
+				return error("Expected ':' not '.' calling member function TeleportToPlaceInstance", 2)
 			end
-			return oldhmmi(self, method)
-		end)
-	end
-
+		end
+		return oldhmmi(self, method)
+	end)
 	oldhmmnc = hookmetamethod(game, "__namecall", function(self, ...)
-		if self == TeleportService and allow_rj==false and teleportFuncs[getnamecallmethod()] then
+		if self == TeleportService and getnamecallmethod():lower() == "teleport" or getnamecallmethod() == "TeleportToPlaceInstance" then
 			return
 		end
 		return oldhmmnc(self, ...)
@@ -9693,7 +9619,7 @@ addcmd("maxslopeangle", {"msa"}, function(args, speaker)
 end)
 
 addcmd("gravity", {"grav"}, function(args, speaker)
-	local grav = args[1] or oldgrav
+	local grav = args[1] or 196.2
 	if isNumber(grav) then
 		workspace.Gravity = grav
 	end
@@ -11205,11 +11131,11 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 		end
 
 		for i = 1, #Hats do
-			repeat RunService.Heartbeat:Wait() until Hats[i]
+			repeat RunService.Heartbeat:wait() until Hats[i]
 			firetouchinterest(Hats[i].Handle,Character:FindFirstChild("HumanoidRootPart"),0)
-			repeat RunService.Heartbeat:Wait() until Character:FindFirstChildOfClass("Accessory")
+			repeat RunService.Heartbeat:wait() until Character:FindFirstChildOfClass("Accessory")
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
-			repeat RunService.Heartbeat:Wait() until not Character:FindFirstChildOfClass("Accessory")
+			repeat RunService.Heartbeat:wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
 
 		execCmd("reset")
