@@ -10198,7 +10198,7 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setspeed
+			local setspeed;
 			local index; index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					return setspeed or args[1]
@@ -10249,7 +10249,7 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setpower
+			local setpower;
 			local index; index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					return setpower or args[1]
