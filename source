@@ -4713,6 +4713,7 @@ CMDs[#CMDs + 1] = {NAME = 'jumppower / jpower / jp [num]', DESC = 'Change a play
 CMDs[#CMDs + 1] = {NAME = 'spoofjumppower / spoofjp [num]', DESC = 'Spoofs your JumpPower on the Client'}
 CMDs[#CMDs + 1] = {NAME = 'loopjumppower / loopjp [num]', DESC = 'Loops your jump height'}
 CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp', DESC = 'Turns off loopjumppower'}
+CMDs[#CMDs + 1] = {NAME = 'cframespeed / cfs [factor]', DESC = 'Increases your speed by teleporting every frame.' }
 CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
@@ -10303,6 +10304,45 @@ addcmd('unloopjumppower',{'unloopjp','unloopjpower'},function(args, speaker)
 		end
 	end
 end)
+
+local cframeSpeed = nil
+addcmd("cframespeed", { "cfs" }, function(args, speaker)
+	local Char = speaker.Character
+	local Human = Char and Char:FindFirstChildOfClass("Humanoid")
+
+	if not (Char and Human) then return end
+
+	local factor = tonumber(args[1]) or 1
+
+	if cframeSpeed then
+		cframeSpeed:Disconnect()
+		cframeSpeed = nil
+	end
+	cframeSpeed = RunService.Stepped:Connect(function()
+		if not (Char.Parent and Human.Parent) then
+			cframeSpeed:Disconnect()
+			cframeSpeed = nil
+			return
+		end
+
+		local move = Human.MoveDirection
+		if move.Magnitude <= 0 then return end
+
+		Char:TranslateBy(move.Unit * factor)
+	end)
+
+	notify("CFrame Speed", "CFrame Speed Enabled")
+end)
+
+addcmd("uncframespeed", { "cfs" }, function(args, speaker)
+	if cframeSpeed then
+		cframeSpeed:Disconnect()
+		cframeSpeed = nil
+	end
+
+	notify("CFrame Speed", "CFrame Speed Disabled")
+end)
+
 
 addcmd('tools',{'gears'},function(args, speaker)
 	local function copy(instance)
