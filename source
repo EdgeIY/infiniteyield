@@ -10199,15 +10199,13 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 		if hookmetamethod then
 			local char = speaker.Character
 			local setspeed
-			local index
-index = hookmetamethod(game, "__index", function(self, key)
+			local index; index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					return setspeed or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex
-newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					setspeed = tonumber(value)
 				end
@@ -10252,15 +10250,13 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 		if hookmetamethod then
 			local char = speaker.Character
 			local setpower
-			local index
-index = hookmetamethod(game, "__index", function(self, key)
+			local index; index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					return setpower or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex
-newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					setpower = tonumber(value)
 				end
