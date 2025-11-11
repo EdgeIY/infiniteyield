@@ -4714,6 +4714,7 @@ CMDs[#CMDs + 1] = {NAME = 'spoofjumppower / spoofjp [num]', DESC = 'Spoofs your 
 CMDs[#CMDs + 1] = {NAME = 'loopjumppower / loopjp [num]', DESC = 'Loops your jump height'}
 CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp', DESC = 'Turns off loopjumppower'}
 CMDs[#CMDs + 1] = {NAME = 'cframespeed / cfs [factor]', DESC = 'Increases your speed by teleporting every frame.' }
+CMDs[#CMDs + 1] = {NAME = 'uncframespeed / uncfs [factor]', DESC = 'Turns off cframe speed.' }
 CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
@@ -10197,14 +10198,16 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setspeed;
-			local index; index = hookmetamethod(game, "__index", function(self, key)
+			local setspeed
+			local index
+index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					return setspeed or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex
+newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					setspeed = tonumber(value)
 				end
@@ -10248,14 +10251,16 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setpower;
-			local index; index = hookmetamethod(game, "__index", function(self, key)
+			local setpower
+			local index
+index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					return setpower or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex
+newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					setpower = tonumber(value)
 				end
@@ -10334,7 +10339,7 @@ addcmd("cframespeed", { "cfs" }, function(args, speaker)
 	notify("CFrame Speed", "CFrame Speed Enabled")
 end)
 
-addcmd("uncframespeed", { "cfs" }, function(args, speaker)
+addcmd("uncframespeed", { "uncfs" }, function(args, speaker)
 	if cframeSpeed then
 		cframeSpeed:Disconnect()
 		cframeSpeed = nil
