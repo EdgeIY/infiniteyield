@@ -4857,8 +4857,8 @@ CMDs[#CMDs + 1] = {NAME = 'muteallvcs', DESC = 'Mutes voice chat for all players
 CMDs[#CMDs + 1] = {NAME = 'unmuteallvcs', DESC = 'Unmutes voice chat for all players'}
 CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mutes the voice chat of a player'}
 CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes the voice chat of a player'}
-CMDs[#CMDs + 1] = {NAME = 'disablevehiclecamera / dvc / novcam', DESC = "Disables annoying vehicle camera that makes you lose control of your camera"}
-CMDs[#CMDs + 1] = {NAME = 'enablevehiclecamera / evc / restorevcam', DESC = "Enables vehicle camera back after disabling it"}
+CMDs[#CMDs + 1] = {NAME = 'disablevehiclecamera / dvc / novcam', DESC = 'Disables annoying vehicle camera that makes you lose control of your camera'}
+CMDs[#CMDs + 1] = {NAME = 'enablevehiclecamera / evc / restorevcam', DESC = 'Enables vehicle camera back after disabling it'}
 CMDs[#CMDs + 1] = {NAME = 'phonebook / call', DESC = 'Prompts the Roblox phonebook UI to let you call your friends'}
 -- wait()
 
