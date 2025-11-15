@@ -4857,7 +4857,7 @@ CMDs[#CMDs + 1] = {NAME = 'muteallvcs', DESC = 'Mutes voice chat for all players
 CMDs[#CMDs + 1] = {NAME = 'unmuteallvcs', DESC = 'Unmutes voice chat for all players'}
 CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mutes the voice chat of a player'}
 CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes the voice chat of a player'}
-CMDs[#CMDs + 1] = {NAME = 'call', DESC = 'Prompts the Roblox call UI to let you call your friends'}
+CMDs[#CMDs + 1] = {NAME = 'phonebook / call', DESC = 'Prompts the Roblox phonebook UI to let you call your friends'}
 -- wait()
 
 for i = 1, #CMDs do
@@ -12630,14 +12630,14 @@ addcmd("unmutevc", {}, function(args, speaker)
     end
 end)
 
-addcmd("call", {}, function(args, speaker)
+addcmd("phonebook", {"call"}, function(args, speaker)
     local success, canInvite = pcall(function()
         return SocialService:CanSendCallInviteAsync(speaker)
     end)
     if success and canInvite then
         SocialService:PromptPhoneBook(speaker, "")
     else
-        notify("Call", "It seems you're not able to call anyone. Sorry!")
+        notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
     end
 end)
 
