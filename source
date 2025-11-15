@@ -4857,6 +4857,8 @@ CMDs[#CMDs + 1] = {NAME = 'muteallvcs', DESC = 'Mutes voice chat for all players
 CMDs[#CMDs + 1] = {NAME = 'unmuteallvcs', DESC = 'Unmutes voice chat for all players'}
 CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mutes the voice chat of a player'}
 CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes the voice chat of a player'}
+CMDs[#CMDs + 1] = {NAME = 'disablevehiclecamera / dvc / novcam', DESC = 'Disables annoying vehicle camera that makes you lose control of your camera'}
+CMDs[#CMDs + 1] = {NAME = 'enablevehiclecamera / evc / restorevcam', DESC = 'Enables vehicle camera back after disabling it'}
 CMDs[#CMDs + 1] = {NAME = 'phonebook / call', DESC = 'Prompts the Roblox phonebook UI to let you call your friends'}
 -- wait()
 
@@ -12858,6 +12860,55 @@ end)
 addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},function(args, speaker)
 	autoKeyPressing = false
 	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
+end)
+
+local vehiclecamfuncs={}
+local function callActivateCameraController()
+	local realCamTable,activatecam
+
+	for i,v in getgc(true) do
+		if activatecam and realCamTable then break end
+		if typeof(activatecam)~="function" and typeof(v)=="function" and isourclosure(v)==false and debug.info(v,"n")=="ActivateCameraController" then
+			activatecam=v
+		elseif typeof(realCamTable)~="table" and typeof(v)=="table" and typeof(rawget(v,"activeCameraController"))=="table" then
+			realCamTable=v
+		end
+	end
+
+	if typeof(activatecam)~="function" or typeof(realCamTable)~="table" then
+		return
+	end
+	
+	activatecam(realCamTable,Enum.ComputerCameraMovementMode.Classic)
+end
+
+addcmd('disablevehiclecamera',{"dvc","novcam","disablevcam"},function(args, speaker)
+	if typeof(getgc)~="function" or typeof(hookfunction)~="function" or typeof(isourclosure)~="function" or typeof(iscclosure)~="function" then
+		return notify('Disable Vehicle Camera',"Your exploit doesn't have the ability to use this command (missing getgc, hookfunction, isourclosure, iscclosure)")
+	end
+
+	for i,v in getgc(false) do
+		if typeof(v)~="function" or isourclosure(v) or iscclosure(v) or debug.info(v,"n")~="ShouldUseVehicleCamera" then continue end
+		table.insert(vehiclecamfuncs,v)
+		hookfunction(v,function()return false end)
+	end
+	callActivateCameraController()
+
+	notify('Disable Vehicle Camera',"Vehicle camera successfully disabled.")
+end)
+
+addcmd('enablevehiclecamera',{"evc","vehiclecam","restorevcam"},function(args, speaker)
+	if typeof(getgc)~="function" or typeof(restorefunction)~="function" then
+		return notify('Enable Vehicle Camera',"Your exploit doesn't have the ability to use this command (missing getgc, restorefunction)")
+	end
+
+	for i,v in vehiclecamfuncs do
+		pcall(restorefunction,v)
+	end
+	table.clear(vehiclecamfuncs)
+	callActivateCameraController()
+	
+	notify('Enable Vehicle Camera',"Vehicle camera successfully enabled.")
 end)
 
 addcmd('addplugin',{'plugin'},function(args, speaker)
