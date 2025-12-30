@@ -10866,9 +10866,9 @@ end)
 addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
 	if fireclickdetector then
 		if args[1] then
-			local name = getstring(1, args)
+			local name = getstring(1, args):lower()
 			for _, descendant in ipairs(workspace:GetDescendants()) do
-				if descendant:IsA("ClickDetector") and descendant.Name == name or descendant.Parent.Name == name then
+				if descendant:IsA("ClickDetector") and descendant.Name:lower() == name or descendant.Parent.Name:lower() == name then
 					fireclickdetector(descendant)
 				end
 			end
