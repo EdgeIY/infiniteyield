@@ -4448,6 +4448,8 @@ CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a ga
 CMDs[#CMDs + 1] = {NAME = 'antiidle / antiafk', DESC = 'Prevents the game from kicking you for being idle/afk'}
 CMDs[#CMDs + 1] = {NAME = 'datalimit [num]', DESC = 'Set outgoing KBPS limit'}
 CMDs[#CMDs + 1] = {NAME = 'replicationlag / backtrack [num]', DESC = 'Set IncomingReplicationLag'}
+CMDs[#CMDs + 1] = {NAME = 'freezeserver / lagserver [num]', DESC = 'Spam Emotes to lag the server'}
+CMDs[#CMDs + 1] = {NAME = 'unfreezeserver / unlagserver', DESC = 'Disables freezeserver/lagserver'}
 CMDs[#CMDs + 1] = {NAME = 'creatorid / creator', DESC = 'Notifies you the creators ID'}
 CMDs[#CMDs + 1] = {NAME = 'copycreatorid / copycreator', DESC = 'Copies the creators ID to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'setcreatorid / setcreator', DESC = 'Sets your userid to the creators ID'}
@@ -8732,6 +8734,61 @@ addcmd("datalimit", {}, function(args, speaker)
 		Services.NetworkClient:SetOutgoingKBPSLimit(kbps)
 	end
 end)
+
+-- Credits to shownape for the method all credits goes to him just adding this for everyone to use since he released it open-source to his discord server
+-- I just re-wrote it to Inf yeild
+
+local FreezeServerLagSpeed = 80 -- 10, 60, 80
+local FreezeTracks = {}
+local FreezeLoaded = nil
+
+addcmd("freezeserver", {"lagserver"}, function(args, speaker)
+	local FreezeServerPower = (tonumber(args[1]) or 100) / 100
+	local char = speaker.Character
+	local hum = char:FindFirstChildWhichIsA("Humanoid")
+
+    if char ~= FreezeLoaded then
+		FreezeLoaded = char
+        FreezeTracks = {}
+
+
+		for i = 1, math.round(240*FreezeServerPower) do
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "http"..HttpService:GenerateGUID().."="..tostring(132120738166011)
+
+            local track = hum:LoadAnimation(Anim)
+			track:AdjustWeight(.0001)
+            track:Play(0, .0001, FreezeServerLagSpeed)
+
+            FreezeTracks[#FreezeTracks + 1] = track
+
+			hum.Parent = Lighting
+			track:Stop()
+			hum.Parent = char
+            task.wait()
+        end
+	else
+		for i,v in pairs(FreezeTracks) do
+            v:Play(0, .0001, FreezeServerLagSpeed)
+			hum.Parent = Lighting
+			v:Stop()
+			hum.Parent = char
+            task.wait()
+        end
+	end
+end)
+
+addcmd("unfreezeserver", {"unlagserver"}, function(args, speaker)
+	for i = 1,3 do
+		for i,v in pairs(FreezeTracks) do
+			v:Play(0, .0001, 0)
+			v:Stop()
+			task.wait()
+		end
+	end
+end)
+
+
 
 addcmd("replicationlag", {"backtrack"}, function(args, speaker)
 	if tonumber(args[1]) then
