@@ -146,7 +146,7 @@ if makefolder and isfolder and writefile and isfile then
 	end)
 end
 
-currentVersion = "6.3.5"
+currentVersion = "6.3.6"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
@@ -2065,8 +2065,9 @@ function vtype(o, t)
 end
 
 function getRoot(char)
-	local rootPart = char:FindFirstChildOfClass('Humanoid').RootPart
-	return rootPart
+	if char and char:FindFirstChildOfClass('Humanoid') then
+		return char:FindFirstChildOfClass('Humanoid').RootPart
+	end
 end
 
 function tools(plr)
