@@ -2067,6 +2067,8 @@ end
 function getRoot(char)
 	if char and char:FindFirstChildOfClass('Humanoid') then
 		return char:FindFirstChildOfClass('Humanoid').RootPart
+	else
+		return nil
 	end
 end
 
