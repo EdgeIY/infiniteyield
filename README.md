@@ -8,7 +8,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/
 
  - Currently 400 commands
  - Open Source
- - 7+ years of development
+ - 8+ years of development
 
 ## Developers
 
