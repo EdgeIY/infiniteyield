@@ -10487,7 +10487,7 @@ addcmd('remotespy',{'rspy'},function(args, speaker)
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
 end)
 
-addcmd("executor", {}, function(args, speaker)
+addcmd("executor", {"exec"}, function(args, speaker)
     -- by dnezero
     notify("Loading", "Hold on a sec")
     loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/executor.lua"))()
