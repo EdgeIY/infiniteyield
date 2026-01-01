@@ -2060,7 +2060,7 @@ function readfileExploit()
 end
 
 function isNumber(str)
-	if tonumber(str) ~= nil or str == 'inf' then
+	if tonumber(str) ~= nil or str == "inf" then
 		return true
 	end
 end
@@ -2072,28 +2072,28 @@ function vtype(o, t)
 end
 
 function getRoot(char)
-	if char and char:FindFirstChildOfClass('Humanoid') then
-		return char:FindFirstChildOfClass('Humanoid').RootPart
+	if char and char:FindFirstChildOfClass("Humanoid") then
+		return char:FindFirstChildOfClass("Humanoid").RootPart
 	else
 		return nil
 	end
 end
 
 function tools(plr)
-	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
+	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass("Tool") or plr.Character:FindFirstChildOfClass("Tool") then
 		return true
 	end
 end
 
 function r15(plr)
-	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+	if plr.Character:FindFirstChildOfClass("Humanoid").RigType == Enum.HumanoidRigType.R15 then
 		return true
 	end
 end
 
 function toClipboard(txt)
 	if everyClipboard then
-		everyClipboard(tostring(txt))
+		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so dont call me out for this
 		notify("Clipboard", "Copied to clipboard")
 	else
 		notify("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
@@ -4549,6 +4549,8 @@ CMDs[#CMDs + 1] = {NAME = 'freeze / fr [player] (CLIENT)', DESC = 'Freezes a pla
 CMDs[#CMDs + 1] = {NAME = 'freezeanims', DESC = 'Freezes your animations / pauses your animations - Does not work on default animations'}
 CMDs[#CMDs + 1] = {NAME = 'unfreezeanims', DESC = 'Unfreezes your animations / plays your animations'}
 CMDs[#CMDs + 1] = {NAME = 'thaw / unfr [player] (CLIENT)', DESC = 'Unfreezes a player'}
+CMDs[#CMDs + 1] = {NAME = 'anchor', DESC = 'Anchors your characters HumanoidRootPart'}
+CMDs[#CMDs + 1] = {NAME = 'unanchor', DESC = 'Unanchors your characters HumanoidRootPart'}
 CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'tweentpposition / ttppos [X Y Z]', DESC = 'Tween to coordinates (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
@@ -9272,6 +9274,14 @@ addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 			end)
 		end
 	end
+end)
+
+addcmd("anchor", {}, function(args, speaker)
+    getRoot(speaker.Character).Anchored = true
+end)
+
+addcmd("unanchor", {}, function(args, speaker)
+    getRoot(speaker.Character).Anchored = false
 end)
 
 oofing = false
