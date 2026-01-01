@@ -60,7 +60,6 @@ Services = setmetatable({}, {
 	end
 })
 
-COREGUI = Services.CoreGui
 Players = Services.Players
 UserInputService = Services.UserInputService
 TweenService = Services.TweenService
@@ -91,8 +90,9 @@ CaptureService = Services.CaptureService
 VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
 
-IYMouse = cloneref(Players.LocalPlayer:GetMouse())
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
+COREGUI = Services.CoreGui or PlayerGui
+IYMouse = cloneref(Players.LocalPlayer:GetMouse())
 PlaceId, JobId = game.PlaceId, game.JobId
 xpcall(function()
 	IsOnMobile = table.find({Enum.Platform.Android, Enum.Platform.IOS}, UserInputService:GetPlatform())
@@ -142,7 +142,7 @@ if makefolder and isfolder and writefile and isfile then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
-		if IsOnMobile then writefile("infiniteyield/assets/.nomedia") end
+		if IsOnMobile then writefile("infiniteyield/assets/.nomedia", "") end
 	end)
 end
 
@@ -292,25 +292,32 @@ function randomString()
 end
 
 PARENT = nil
+MAX_DISPLAY_ORDER = 2147483647
 if get_hidden_gui or gethui then
-	local hiddenUI = get_hidden_gui or gethui
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = hiddenUI()
-	PARENT = Main
+    local hiddenUI = get_hidden_gui or gethui
+    local Main = Instance.new("ScreenGui")
+    Main.Name = randomString()
+    Main.ResetOnSpawn = false
+    Main.DisplayOrder = MAX_DISPLAY_ORDER
+    Main.Parent = hiddenUI()
+    PARENT = Main
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	syn.protect_gui(Main)
-	Main.Parent = COREGUI
-	PARENT = Main
+    local Main = Instance.new("ScreenGui")
+    Main.Name = randomString()
+    Main.ResetOnSpawn = false
+    Main.DisplayOrder = MAX_DISPLAY_ORDER
+    syn.protect_gui(Main)
+    Main.Parent = COREGUI
+    PARENT = Main
 elseif COREGUI:FindFirstChild("RobloxGui") then
-	PARENT = COREGUI.RobloxGui
+    PARENT = COREGUI.RobloxGui
 else
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = COREGUI
-	PARENT = Main
+    local Main = Instance.new("ScreenGui")
+    Main.Name = randomString()
+    Main.ResetOnSpawn = false
+    Main.DisplayOrder = MAX_DISPLAY_ORDER
+    Main.Parent = COREGUI
+    PARENT = Main
 end
 
 shade1 = {}
