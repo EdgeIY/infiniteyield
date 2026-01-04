@@ -4,7 +4,7 @@ if IY_LOADED and not _G.IY_DEBUG then
 end
 
 pcall(function() getgenv().IY_LOADED = true end)
-if not game:IsLoaded() then game.Loaded:task.wait() end
+if not game:IsLoaded() then game.Loaded:Wait() end
 
 function missing(t, f, fallback)
 	if type(f) == t then return f end
@@ -3365,7 +3365,7 @@ end
 
 IYMouse.KeyDown:Connect(function(Key)
 	if (Key==prefix) then
-		RunService.RenderStepped:task.wait()
+		RunService.RenderStepped:Wait()
 		Cmdbar:CaptureFocus()
 		maximizeHolder()
 	end
@@ -4434,7 +4434,7 @@ function autoComplete(str,curText)
 	end
 	if curText:sub(subPos+1,subPos+1) == "!" then subPos = subPos + 1 end
 	Cmdbar.Text = curText:sub(1,subPos) .. str:sub(1, stop - 1)..' '
-	RunService.RenderStepped:task.wait()
+	RunService.RenderStepped:Wait()
 	Cmdbar.Text = Cmdbar.Text:gsub( '\t', '' )
 	Cmdbar.CursorPosition = #Cmdbar.Text+1--1020
 end
@@ -4991,7 +4991,7 @@ function refresh(plr)
 	local pos1 = workspace.CurrentCamera.CFrame
 	respawn(plr)
 	task.spawn(function()
-		local char = plr.CharacterAdded:task.wait()
+		local char = plr.CharacterAdded:Wait()
 		local humanoid = char:FindFirstChildOfClass("Humanoid")
 		while not humanoid do
 			task.wait()
@@ -7005,7 +7005,7 @@ iyflyspeed = 1
 vehicleflyspeed = 1
 function sFLY(vfly)
 	local plr = Players.LocalPlayer
-	local char = plr.Character or plr.CharacterAdded:task.wait()
+	local char = plr.Character or plr.CharacterAdded:Wait()
 	local humanoid = char:FindFirstChildOfClass("Humanoid")
 	if not humanoid then
 		repeat task.wait() until char:FindFirstChildOfClass("Humanoid")
@@ -7936,7 +7936,7 @@ addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
 	workspace.DescendantAdded:Connect(function(child)
 		task.spawn(function()
 			if child:IsA("ForceField") or child:IsA("Sparkles") or child:IsA("Smoke") or child:IsA("Fire") or child:IsA("Beam") then
-				RunService.Heartbeat:task.wait()
+				RunService.Heartbeat:Wait()
 				child:Destroy()
 			elseif child:IsA("BasePart") then
 				child.CastShadow = false
@@ -8773,7 +8773,7 @@ promptNewRig = function(speaker, rig)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	if humanoid then
 		AvatarEditorService:PromptSaveAvatar(humanoid.HumanoidDescription, Enum.HumanoidRigType[rig])
-		local result = AvatarEditorService.PromptSaveAvatarCompleted:task.wait()
+		local result = AvatarEditorService.PromptSaveAvatarCompleted:Wait()
 		if result == Enum.AvatarPromptResult.Success then
 			execCmd("reset")
 		end
@@ -10015,7 +10015,7 @@ addcmd('copyanimation',{'copyanim','copyemote'},function(args, speaker)
 				ANIM:Play(.1, 1, v1.Speed)
 				ANIM.TimePosition = v1.TimePosition
 				task.spawn(function()
-					v1.Stopped:task.wait()
+					v1.Stopped:Wait()
 					ANIM:Stop()
 					ANIM:Destroy()
 				end)
@@ -10069,7 +10069,7 @@ addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
 end)
 
 addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'}, function(args, speaker)
-	local Char = speaker.Character or speaker.CharacterAdded:task.wait()
+	local Char = speaker.Character or speaker.CharacterAdded:Wait()
 	local Human = Char and Char:WaitForChild('Humanoid', 15)
 	local Animate = Char and Char:WaitForChild('Animate', 15)
 	if not Human or not Animate then
@@ -11164,19 +11164,19 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 		end
 
 		for i = 1, #Hats do
-			repeat RunService.Heartbeat:task.wait() until Hats[i]
+			repeat RunService.Heartbeat:Wait() until Hats[i]
 			firetouchinterest(Hats[i].Handle,getRoot(Character),0)
-			repeat RunService.Heartbeat:task.wait() until Character:FindFirstChildOfClass("Accessory")
+			repeat RunService.Heartbeat:Wait() until Character:FindFirstChildOfClass("Accessory")
 			Character:FindFirstChildOfClass("Accessory"):Destroy()
-			repeat RunService.Heartbeat:task.wait() until not Character:FindFirstChildOfClass("Accessory")
+			repeat RunService.Heartbeat:Wait() until not Character:FindFirstChildOfClass("Accessory")
 		end
 
 		execCmd("reset")
 
-		Player.CharacterAdded:task.wait()
+		Player.CharacterAdded:Wait()
 
 		for i = 1,20 do 
-			RunService.Heartbeat:task.wait()
+			RunService.Heartbeat:Wait()
 			if getRoot(Player.Character) then
 				getRoot(Player.Character).Humanoid.RootPart.CFrame = Old
 			end
@@ -11287,7 +11287,7 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 		end
 		task.wait(.1)
 		speaker.Character = speaker.Character:Destroy()
-		speaker.CharacterAdded:task.wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, task.wait(.1))
+		speaker.CharacterAdded:Wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, task.wait(.1))
 		if i == LOOP_NUM or i % 5 == 0 then
 			local HRP = speaker.Character.Humanoid.RootPart
 			if type(firetouchinterest) == "function" then
@@ -11757,13 +11757,13 @@ addcmd("walkfling", {}, function(args, speaker)
 
 	execCmd("noclip nonotify")
 	walkflinging = true
-	repeat RunService.Heartbeat:task.wait()
+	repeat RunService.Heartbeat:Wait()
 		local character = speaker.Character
 		local root = getRoot(character)
 		local vel, movel = nil, 0.1
 
 		while not (character and character.Parent and root and root.Parent) do
-			RunService.Heartbeat:task.wait()
+			RunService.Heartbeat:Wait()
 			character = speaker.Character
 			root = getRoot(character)
 		end
@@ -11771,12 +11771,12 @@ addcmd("walkfling", {}, function(args, speaker)
 		vel = root.Velocity
 		root.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
 
-		RunService.RenderStepped:task.wait()
+		RunService.RenderStepped:Wait()
 		if character and character.Parent and root and root.Parent then
 			root.Velocity = vel
 		end
 
-		RunService.Stepped:task.wait()
+		RunService.Stepped:Wait()
 		if character and character.Parent and root and root.Parent then
 			root.Velocity = vel + Vector3.new(0, movel, 0)
 			movel = movel * -1
@@ -11916,10 +11916,10 @@ function kill(speaker,target,fast)
 				task.wait()
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
 			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			local char = speaker.CharacterAdded:task.wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+			local char = speaker.CharacterAdded:Wait()
+			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			end
 			humanoid.RootPart.CFrame = NormPos
 		end
@@ -12003,10 +12003,10 @@ function bring(speaker,target,fast)
 				task.wait()
 				hrp.CFrame = NormPos
 			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			local char = speaker.CharacterAdded:task.wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+			local char = speaker.CharacterAdded:Wait()
+			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			end
 			humanoid.RootPart.CFrame = NormPos
 		end
@@ -12033,10 +12033,10 @@ function teleport(speaker,target,target2,fast)
 				hrp.CFrame = hrp2.CFrame
 			until not getRoot(target.Character) or not getRoot(speaker.Character)
 			task.wait(1)
-			local char = speaker.CharacterAdded:task.wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+			local char = speaker.CharacterAdded:Wait()
+			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:task.wait()
+				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
 			end
 			humanoid.RootPart.CFrame = NormPos
 		end
