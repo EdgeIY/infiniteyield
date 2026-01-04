@@ -5049,13 +5049,14 @@ local booly = {
 }
 
 function parseBoolean(raw, default)
+    raw = tostring(raw)
     if booly.truthy[raw] then return true end
     if booly.falsy[raw] then return false end
     return default or false
 end
 
 function getstring(begin, args)
-	return table.concat(args or cargs, " ", begin)
+    return table.concat(args or cargs, " ", begin)
 end
 
 findCmd=function(cmd_name)
@@ -11984,6 +11985,7 @@ addcmd("teleportwalk", {"tpwalk"}, function(args, speaker)
 end)
 
 addcmd("unteleportwalk", {"untpwalk"}, function(args, speaker)
+    tpwalkStack = 0
     tpwalking:Disconnect()
 end)
 
