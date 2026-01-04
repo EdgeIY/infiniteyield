@@ -4440,7 +4440,7 @@ function autoComplete(str,curText)
 end
 
 CMDs = {}
-CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
+CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield discord server.'}
 CMDs[#CMDs + 1] = {NAME = 'guiscale [number]', DESC = 'Changes the size of the gui. [number] accepts both decimals and whole numbers. Min is 0.4 and Max is 2'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
@@ -6528,10 +6528,10 @@ end)
 
 addcmd('discord', {'support', 'help'}, function(args, speaker)
 	if everyClipboard then
-		toClipboard('https://discord.com/invite/dYHag43eeU')
-		notify('Discord Invite', 'Copied to clipboard!\ndiscord.gg/dYHag43eeU')
+		toClipboard('https://discord.com/invite/78ZuWSq')
+		notify('Discord Invite', 'Copied to clipboard!\ndiscord.gg/78ZuWSq')
 	else
-		notify('Discord Invite', 'discord.gg/dYHag43eeU')
+		notify('Discord Invite', 'discord.gg/78ZuWSq')
 	end
 	if httprequest then
 		httprequest({
@@ -6544,7 +6544,7 @@ addcmd('discord', {'support', 'help'}, function(args, speaker)
 			Body = HttpService:JSONEncode({
 				cmd = 'INVITE_BROWSER',
 				nonce = HttpService:GenerateGUID(false),
-				args = {code = 'dYHag43eeU'}
+				args = {code = '78ZuWSq'}
 			})
 		})
 	end
@@ -7067,7 +7067,7 @@ function sFLY(vfly)
 	end
 
 	flyKeyDown = UserInputService.InputBegan:Connect(function(input, processed)
-        if processed then return end
+		if processed then return end
 		if input.KeyCode == Enum.KeyCode.W then
 			CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif input.KeyCode == Enum.KeyCode.S then
@@ -7085,7 +7085,7 @@ function sFLY(vfly)
 	end)
 
 	flyKeyUp = UserInputService.InputEnded:Connect(function(input, processed)
-        if processed then return end
+		if processed then return end
 		if input.KeyCode == Enum.KeyCode.W then
 			CONTROL.F = 0
 		elseif input.KeyCode == Enum.KeyCode.S then
