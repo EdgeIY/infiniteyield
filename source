@@ -5043,6 +5043,17 @@ end)
 
 onDied()
 
+local booly = {
+    truthy = { ["true"] = true, ["t"] = true, ["1"] = true, yes = true, y = true, on = true, enable = true, enabled = true },
+    falsy = { ["false"] = true, ["f"] = true, ["0"] = true, no = true, n = true, off = true, disable = true, disabled = true }
+}
+
+function parseBoolean(raw, default)
+    if booly.truthy[raw] then return true end
+    if booly.falsy[raw] then return false end
+    return default or false
+end
+
 function getstring(begin, args)
 	return table.concat(args or cargs, " ", begin)
 end
@@ -11948,11 +11959,17 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 	notify("Handle Kill", "Stopped!")
 end)
 
+tpwalkStack = 0
 addcmd("teleportwalk", {"tpwalk"}, function(args, speaker)
     pcall(function() tpwalking:Disconnect() end)
 
     local character = speaker.Character
     local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+    local speed = (args[1] and isNumber(args[1])) and tonumber(args[1]) or 1
+
+    if parseBoolean(args[2]) then
+        tpwalkStack = tpwalkStack + speed
+    end
 
     tpwalking = RunService.Heartbeat:Connect(function(delta)
         if not (character and humanoid and humanoid.Parent) then
@@ -11961,8 +11978,7 @@ addcmd("teleportwalk", {"tpwalk"}, function(args, speaker)
         end
 
         if humanoid.MoveDirection.Magnitude > 0 then
-            local speed = (args[1] and isNumber(args[1])) and tonumber(args[1]) or 1
-            character:TranslateBy(humanoid.MoveDirection * speed * delta * 10)
+            character:TranslateBy(humanoid.MoveDirection * (speed + tpwalkStack) * delta * 10)
         end
     end)
 end)
