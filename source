@@ -11950,25 +11950,27 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 	notify("Handle Kill", "Stopped!")
 end)
 
-local hb = RunService.Heartbeat
-addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
-	tpwalking = true
-	local chr = speaker.Character
-	local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-	while tpwalking and chr and hum and hum.Parent do
-		local delta = hb:Wait()
-		if hum.MoveDirection.Magnitude > 0 then
-			if args[1] and isNumber(args[1]) then
-				chr:TranslateBy(hum.MoveDirection * tonumber(args[1]) * delta * 10)
-			else
-				chr:TranslateBy(hum.MoveDirection * delta * 10)
-			end
-		end
-	end
+addcmd("teleportwalk", {"tpwalk"}, function(args, speaker)
+    pcall(function() tpwalking:Disconnect() end)
+
+    local character = speaker.Character
+    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+
+    tpwalking = RunService.Heartbeat:Connect(function(delta)
+        if not (character and humanoid and humanoid.Parent) then
+            tpwalking:Disconnect()
+            return
+        end
+
+        if humanoid.MoveDirection.Magnitude > 0 then
+            local speed = (args[1] and isNumber(args[1])) and tonumber(args[1]) or 1
+            character:TranslateBy(humanoid.MoveDirection * speed * delta * 10)
+        end
+    end)
 end)
 
-addcmd('untpwalk', {'unteleportwalk'}, function(args, speaker)
-	tpwalking = false
+addcmd("unteleportwalk", {"untpwalk"}, function(args, speaker)
+    tpwalking:Disconnect()
 end)
 
 function bring(speaker,target,fast)
