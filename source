@@ -4480,6 +4480,8 @@ CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggles keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
+CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box shown when a game is loading assets due to network lag'}
+CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
@@ -7826,8 +7828,22 @@ addcmd("savegame", {"saveplace"}, function(args, speaker)
 	end
 end)
 
-addcmd('clearerror',{'clearerrors'},function(args, speaker)
-	GuiService:ClearError()
+addcmd("clearerror", {"clearerrors"}, function(args, speaker)
+    GuiService:ClearError()
+end)
+
+addcmd("antigameplaypaused", {}, function(args, speaker)
+    pcall(function() networkPaused:Disconnect() end)
+    networkPaused = COREGUI.RobloxGui.ChildAdded:Connect(function(obj)
+        if obj.Name == "CoreScripts/NetworkPause" then
+            obj:Destroy()
+        end
+    end)
+    COREGUI.RobloxGui["CoreScripts/NetworkPause"]:Destroy()
+end)
+
+addcmd("unantigameplaypaused", {}, function(args, speaker)
+    networkPaused:Disconnect()
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
@@ -12937,6 +12953,12 @@ end)
 
 addcmd('removecmd',{'deletecmd'},function(args, speaker)
 	removecmd(args[1])
+end)
+
+addcmd("debug", {}, function(args, speaker)
+    local opt = parseBoolean(args[1], true)
+    _G.IY_DEBUG = opt
+    notify("debug", tostring(opt), 1)
 end)
 
 if IsOnMobile then
