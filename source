@@ -4581,6 +4581,7 @@ CMDs[#CMDs + 1] = {NAME = 'bubblechat (CLIENT)', DESC = 'Enables bubble chat for
 CMDs[#CMDs + 1] = {NAME = 'unbubblechat / nobubblechat', DESC = 'Disables the bubblechat command'}
 CMDs[#CMDs + 1] = {NAME = 'chatwindow', DESC = 'Enables the chat window for your client'}
 CMDs[#CMDs + 1] = {NAME = 'unchatwindow / nochatwindow', DESC = 'Disables the chat window for your client'}
+CMDs[#CMDs + 1] = {NAME = 'darkchat', DESC = 'Makes the chat window dark for your client'}
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with vc'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'muteallvoices / muteallvcs', DESC = 'Mutes voice chat for all players'}
@@ -10653,6 +10654,36 @@ end)
 
 addcmd("unchatwindow", {"nochatwindow"}, function(args, speaker)
 	TextChatService.ChatWindowConfiguration.Enabled = false
+end)
+
+addcmd("darkchat", {}, function(args, speaker)
+    local BCC = TextChatService:FindFirstChildOfClass("BubbleChatConfiguration")
+    local CWC = TextChatService:FindFirstChildOfClass("ChatWindowConfiguration")
+    local CIBC = TextChatService:FindFirstChildOfClass("ChatInputBarConfiguration")
+    if BCC then
+        BCC.Enabled = true
+        BCC.BackgroundColor3 = Color3.fromRGB()
+        BCC.BackgroundTransparency = 0.3
+        BCC.TailVisible = true
+        BCC.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF)
+    end
+    if CWC then
+        CWC.Enabled = true
+        CWC.BackgroundColor3 = Color3.fromRGB()
+        CWC.BackgroundTransparency = 0.3
+        CWC.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF)
+        CWC.TextStrokeColor3 = Color3.fromRGB()
+        CWC.TextStrokeTransparency = 0.5
+    end
+    if CIBC then
+        CIBC.Enabled = true
+        CIBC.BackgroundColor3 = Color3.fromRGB()
+        CIBC.BackgroundTransparency = 0.5
+        CIBC.PlaceholderColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF)
+        CIBC.TextColor3 = Color3.fromRGB(0xFF, 0xFF, 0xFF)
+        CIBC.TextStrokeColor3 = Color3.fromRGB()
+        CIBC.TextStrokeTransparency = 0.5
+    end
 end)
 
 addcmd('blockhead',{},function(args, speaker)
