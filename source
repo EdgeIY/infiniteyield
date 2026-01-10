@@ -6968,6 +6968,7 @@ addcmd("exit", {}, function(args, speaker)
 end)
 
 local Noclipping = nil
+local floatName
 addcmd('noclip',{},function(args, speaker)
 	Clip = false
 	wait(0.1)
@@ -7314,7 +7315,6 @@ floating = false
 local beganListener: RBXScriptConnection
 local endListener: RBXScriptConnection
 local floatingFunc: RBXScriptConnection
-local floatName
 
 addcmd('float', {'platform'},function(args, speaker)
 	local pchar = speaker.Character
