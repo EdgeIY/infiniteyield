@@ -7331,7 +7331,7 @@ addcmd('float', {'platform'},function(args, speaker)
 			floatPart.Size = Vector3.new(2, 0.2, 1.5)
 			floatPart.Anchored = true
 			
-			notify('Float', 'Floating enabled (Q = down & E = up)')
+			notify('Float', 'Started floating (Q = down & E = up)')
 			
 			beganListener = UserInputService.InputBegan:Connect(function(key, processed)
 				if processed then return end
