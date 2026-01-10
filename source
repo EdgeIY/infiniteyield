@@ -5025,7 +5025,7 @@ Clip = true
 spDelay = 0.1
 Players.LocalPlayer.CharacterAdded:Connect(function()
 	NOFLY()
-	Floating = false
+	floating = false
 
 	if not Clip then
 		execCmd('clip')
@@ -7310,88 +7310,93 @@ addcmd('cframeflyspeed',{'cflyspeed'},function(args, speaker)
 	end
 end)
 
-Floating = false
-floatName = randomString()
+floating = false
+local beganListener: RBXScriptConnection
+local endListener: RBXScriptConnection
+local floatingFunc: RBXScriptConnection
+local floatName
+
 addcmd('float', {'platform'},function(args, speaker)
-	Floating = true
 	local pchar = speaker.Character
+	floatName = randomString()
+	floating = true
+	
 	if pchar and not pchar:FindFirstChild(floatName) then
 		task.spawn(function()
-			local Float = Instance.new('Part')
-			Float.Name = floatName
-			Float.Parent = pchar
-			Float.Transparency = 1
-			Float.Size = Vector3.new(2,0.2,1.5)
-			Float.Anchored = true
-			local FloatValue = -3.1
-			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
-			notify('Float','Float Enabled (Q = down & E = up)')
-			qUp = IYMouse.KeyUp:Connect(function(KEY)
-				if KEY == 'q' then
-					FloatValue = FloatValue + 0.5
+			local floatPoint = -3.1
+			local floatPart = Instance.new('Part')
+			floatPart.Name = floatName
+			floatPart.Parent = pchar
+			floatPart.Transparency = 1
+			floatPart.Size = Vector3.new(2, 0.2, 1.5)
+			floatPart.Anchored = true
+			
+			notify('Float', 'Floating enabled (Q = down & E = up)')
+			
+			beganListener = UserInputService.InputBegan:Connect(function(key, processed)
+				if processed then return end
+
+				if key.KeyCode == Enum.KeyCode.Q then
+					floatPoint -= 0.5
+				end
+				if key.KeyCode == Enum.KeyCode.E then
+					floatPoint += 1.5
 				end
 			end)
-			eUp = IYMouse.KeyUp:Connect(function(KEY)
-				if KEY == 'e' then
-					FloatValue = FloatValue - 1.5
+			endListener = UserInputService.InputEnded:Connect(function(key, processed)
+				if processed then return end
+
+				if key.KeyCode == Enum.KeyCode.Q then
+					floatPoint += 0.5
+				end
+				if key.KeyCode == Enum.KeyCode.E then
+					floatPoint -= 1.5
 				end
 			end)
-			qDown = IYMouse.KeyDown:Connect(function(KEY)
-				if KEY == 'q' then
-					FloatValue = FloatValue - 0.5
-				end
-			end)
-			eDown = IYMouse.KeyDown:Connect(function(KEY)
-				if KEY == 'e' then
-					FloatValue = FloatValue + 1.5
-				end
-			end)
+			
 			floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-				FloatingFunc:Disconnect()
-				Float:Destroy()
-				qUp:Disconnect()
-				eUp:Disconnect()
-				qDown:Disconnect()
-				eDown:Disconnect()
+				floatingFunc:Disconnect()
+				floatPart:Destroy()
 				floatDied:Disconnect()
+				beganListener:Disconnect()
+				endListener:Disconnect()
+				floatName = nil
 			end)
-			local function FloatPadLoop()
+			local function floatPadLoop()
 				if pchar:FindFirstChild(floatName) and getRoot(pchar) then
-					Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
+					floatPart.CFrame = getRoot(pchar).CFrame * CFrame.new(0, floatPoint, 0)
 				else
-					FloatingFunc:Disconnect()
-					Float:Destroy()
-					qUp:Disconnect()
-					eUp:Disconnect()
-					qDown:Disconnect()
-					eDown:Disconnect()
+					floatingFunc:Disconnect()
+					floatPart:Destroy()
 					floatDied:Disconnect()
+					beganListener:Disconnect()
+					endListener:Disconnect()
+					floatName = nil
 				end
 			end			
-			FloatingFunc = RunService.Heartbeat:Connect(FloatPadLoop)
+			floatingFunc = RunService.PreAnimation:Connect(floatPadLoop)
 		end)
 	end
 end)
 
 addcmd('unfloat',{'nofloat','unplatform','noplatform'},function(args, speaker)
-	Floating = false
+	floating = false
 	local pchar = speaker.Character
-	notify('Float','Float Disabled')
+	notify('Float', 'Stopped floating')
 	if pchar:FindFirstChild(floatName) then
 		pchar:FindFirstChild(floatName):Destroy()
 	end
 	if floatDied then
-		FloatingFunc:Disconnect()
-		qUp:Disconnect()
-		eUp:Disconnect()
-		qDown:Disconnect()
-		eDown:Disconnect()
+		floatingFunc:Disconnect()
 		floatDied:Disconnect()
+		beganListener:Disconnect()
+		endListener:Disconnect()
+		floatName = nil
 	end
 end)
 
 addcmd('togglefloat',{},function(args, speaker)
-	if Floating then
+	if floating then
 		execCmd('unfloat')
 	else
 		execCmd('float')
