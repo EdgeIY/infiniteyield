@@ -2091,6 +2091,15 @@ function r15(plr)
 	end
 end
 
+function breakVelocity()
+    local V3 = Vector3.new(0, 0, 0)
+    for _, v in ipairs(Players.LocalPlayer.Character:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Velocity, v.RotVelocity = V3, V3
+        end
+    end
+end
+
 function toClipboard(txt)
 	if everyClipboard then
 		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so dont call me out for this
@@ -6256,6 +6265,7 @@ local function clicktpFunc()
 		) * CFrame.Angles(0, math.pi, 0)
 
 		rootPart.CFrame = newCFrame + Vector3.new(0, hipHeight or 4, 0)
+		breakVelocity()
 	end)
 end
 
@@ -10137,13 +10147,9 @@ addcmd('tweentpposition',{'ttppos'},function(args, speaker)
 	end
 end)
 
-addcmd('offset',{},function(args, speaker)
-	if #args < 3 then
-		return 
-	end
-	if speaker.Character then
-		speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
-	end
+addcmd("offset", {}, function(args, speaker)
+    if #args < 3 then return end
+    speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
 end)
 
 addcmd("tweenoffset", {"toffset"}, function(args, speaker)
@@ -10152,35 +10158,35 @@ addcmd("tweenoffset", {"toffset"}, function(args, speaker)
     local root = getRoot(speaker.Character)
     local pos = root.Position + Vector3.new(tpX, tpY, tpZ)
     TweenService:Create(root, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pos)}):Play()
+    breakVelocity()
 end)
 
-addcmd('clickteleport',{},function(args, speaker)
-	if speaker == Players.LocalPlayer then
-		notify('Click TP','Go to Settings > Keybinds > Add to set up click teleport')
-	end
+addcmd("clickteleport", {}, function(args, speaker)
+    if speaker ~= Players.LocalPlayer then return end
+    notify("Click TP", "Go to Settings > Keybinds > Add to set up click teleport")
 end)
 
 addcmd("mouseteleport", {"mousetp"}, function(args, speaker)
-	local root = getRoot(speaker.Character)
-	local pos = IYMouse.Hit
-	if root and pos then
-		root.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z, select(4, root.CFrame:components()))
-	end
+    local root = getRoot(speaker.Character)
+    local pos = IYMouse.Hit
+    if root and pos then
+        root.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z, select(4, root.CFrame:components()))
+        breakVelocity()
+    end
 end)
 
-addcmd('tptool', {'teleporttool'}, function(args, speaker)
-	local TpTool = Instance.new("Tool")
-	TpTool.Name = "Teleport Tool"
-	TpTool.RequiresHandle = false
-	TpTool.Parent = speaker.Backpack
-	TpTool.Activated:Connect(function()
-		local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
-		local HRP = getRoot(Char)
-		if not Char or not HRP then
-			return warn("Failed to find HumanoidRootPart")
-		end
-		HRP.CFrame = CFrame.new(IYMouse.Hit.X, IYMouse.Hit.Y + 3, IYMouse.Hit.Z, select(4, HRP.CFrame:components()))
-	end)
+addcmd("tptool", {"teleporttool"}, function(args, speaker)
+    local TpTool = Instance.new("Tool")
+    TpTool.Name = "Teleport Tool"
+    TpTool.RequiresHandle = false
+    TpTool.Parent = speaker:FindFirstChildOfClass("Backpack")
+    TpTool.Activated:Connect(function()
+        local root = getRoot(speaker.Character)
+        local pos = IYMouse.Hit
+        if not root or not pos then return end
+        root.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z, select(4, root.CFrame:components()))
+        breakVelocity()
+    end)
 end)
 
 addcmd('clickdelete',{},function(args, speaker)
