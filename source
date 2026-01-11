@@ -10146,15 +10146,15 @@ addcmd('offset',{},function(args, speaker)
 	end
 end)
 
-addcmd('tweenoffset',{'toffset'},function(args, speaker)
-	if #args < 3 then return end
-	local tpX,tpY,tpZ = tonumber(args[1]),tonumber(args[2]),tonumber(args[3])
-	local char = speaker.Character
-	local root = getRoot(char)
-	if char and root then
-		local target_position = root.Position + Vector3.new(tpX, tpY, tpZ)
-		TweenService:Create(root, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(target_position)}):Play()
-	end
+addcmd("tweenoffset", {"toffset"}, function(args, speaker)
+    if #args < 3 then return end
+    local tpX, tpY, tpZ = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+    local char = speaker.Character
+    local root = char and getRoot(char)
+    if root then
+        local pos = root.Position + Vector3.new(tpX, tpY, tpZ)
+        TweenService:Create(root, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pos)}):Play()
+    end
 end)
 
 addcmd('clickteleport',{},function(args, speaker)
