@@ -4717,6 +4717,7 @@ CMDs[#CMDs + 1] = {NAME = 'uncarpet', DESC = 'Undoes carpet'}
 CMDs[#CMDs + 1] = {NAME = 'friend [player]', DESC = 'Sends a friend request to certain players'}
 CMDs[#CMDs + 1] = {NAME = 'unfriend [player]', DESC = 'Unfriends certain players'}
 CMDs[#CMDs + 1] = {NAME = 'headsit [player]', DESC = 'Sit on a players head'}
+CMDs[#CMDs + 1] = {NAME = 'unheadsit', DESC = 'Stop sitting on a players head'}
 CMDs[#CMDs + 1] = {NAME = 'walkto / follow [player]', DESC = 'Follow a player'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalkto / pathfindfollow [player]', DESC = 'Follow a player using pathfinding'}
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]', DESC = 'Walk to a waypoint using pathfinding'}
@@ -10596,11 +10597,14 @@ addcmd('headsit',{},function(args, speaker)
 	end
 end)
 
+addcmd('unheadsit',{},function(args, speaker)
+	if headSit then headSit:Disconnect() end
+end)
+
 addcmd('chat',{'say'},function(args, speaker)
 	local cString = getstring(1, args)
 	chatMessage(cString)
 end)
-
 
 spamming = false
 spamspeed = 1
