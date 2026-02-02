@@ -10584,7 +10584,7 @@ end)
 
 addcmd('headsit',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	if headSit then headSit:Disconnect() end
+	if headSit then headSit:Disconnect() headSit = nil end
 	for i,v in pairs(players)do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
 		headSit = RunService.Heartbeat:Connect(function()
@@ -10598,7 +10598,7 @@ addcmd('headsit',{},function(args, speaker)
 end)
 
 addcmd('unheadsit',{},function(args, speaker)
-	if headSit then headSit:Disconnect() end
+	if headSit then headSit:Disconnect() headSit = nil end
 end)
 
 addcmd('chat',{'say'},function(args, speaker)
