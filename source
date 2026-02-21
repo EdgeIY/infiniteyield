@@ -9001,16 +9001,23 @@ end)
 
 addcmd('tweengoto',{'tgoto','tto','tweento'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	execCmd('nosit')
+
+	for _,v in pairs(players) do
 		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+            if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 				wait(.1)
 			end
-			TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)}):Play()
+
+			local tween = TweenService:Create(getRoot(speaker.Character),TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear),{CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)})
+			tween:Play()
+			tween.Completed:Wait()
 		end
 	end
+
 	execCmd('breakvelocity')
+    execCmd('unnosit')
 end)
 
 addcmd('vehiclegoto',{'vgoto','vtp','vehicletp'},function(args, speaker)
