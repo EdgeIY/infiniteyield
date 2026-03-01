@@ -6942,7 +6942,13 @@ addcmd('gametp',{'gameteleport'},function(args, speaker)
 end)
 
 addcmd("rejoin", {"rj"}, function(args, speaker)
-	TeleportService:TeleportReconnect()
+	if #Players:GetPlayers() <= 1 then
+		Players.LocalPlayer:Kick("\nRejoining...")
+		wait()
+		TeleportService:Teleport(PlaceId, Players.LocalPlayer)
+	else
+		TeleportService:TeleportReconnect()
+	end
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
