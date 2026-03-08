@@ -1,7 +1,7 @@
 # Infinite Yield
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MilkdromedaStudios/infiniteyieldplus/refs/heads/master/source"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MilkdromedaStudios/infiniteyieldplus/refs/heads/master/Files/InfiniteYieldPlus.lua"))()
 ```
 
  - Currently 400 commands
