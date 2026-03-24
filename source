@@ -8966,18 +8966,20 @@ addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
 	end
 end)
 
-addcmd('goto',{'to'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
-			end
-			getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(3,1,0)
-		end
-	end
-	execCmd('breakvelocity')
+addcmd("goto", {"to"}, function(args, speaker)
+    local character = speaker and speaker.Character
+    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+    local players = getPlayer(args[1], speaker)
+    for _, v in pairs(players) do
+        if Players[v].Character ~= nil then
+            if humanoid and humanoid.SeatPart then
+                humanoid.Sit = false
+                task.wait(0.1)
+            end
+            getRoot(speaker.Character).CFrame = getRoot(Players[v].Character):GetPivot() + Vector3.new(3, 1, 0)
+        end
+    end
+    execCmd("breakvelocity")
 end)
 
 addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
@@ -8990,7 +8992,10 @@ addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
     local players = getPlayer(args[1], speaker)
     for _, v in pairs(players) do
         if Players[v].Character ~= nil then
-            if humanoid then humanoid.Sit = false end
+            if humanoid and humanoid.SeatPart then
+                humanoid.Sit = false
+                task.wait(0.1)
+            end
             TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {
                 CFrame = getRoot(Players[v].Character):GetPivot() + Vector3.new(3, 1, 0)
             }):Play()
