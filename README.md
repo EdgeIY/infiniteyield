@@ -1,6 +1,8 @@
 # Infinite Yield
 
-<a href="https://discord.gg/78ZuWSq"><img src="https://files.catbox.moe/klbeou.png" alt="discord" width="48"></a> The best command line script for roblox.
+The best command line script for roblox.
+
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/78ZuWSq)](https://discord.gg/78ZuWSq)
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
