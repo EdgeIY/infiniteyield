@@ -100,6 +100,9 @@ end, function()
 	IsOnMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 end)
 isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
+--[[rcdEnabled = select(2, pcall(function()
+    return gethidden(workspace, "RejectCharacterDeletions") ~= Enum.RejectCharacterDeletions.Disabled
+end)) or false]]
 
 -- xylex & europa
 local iyassets = {
@@ -4752,7 +4755,6 @@ CMDs[#CMDs + 1] = {NAME = 'reset', DESC = 'Resets your character normally'}
 CMDs[#CMDs + 1] = {NAME = 'respawn', DESC = 'Respawns you'}
 CMDs[#CMDs + 1] = {NAME = 'refresh / re', DESC = 'Respawns and brings you back to the same position'}
 CMDs[#CMDs + 1] = {NAME = 'god', DESC = 'Makes your character difficult to kill in most games'}
-CMDs[#CMDs + 1] = {NAME = 'permadeath', DESC = 'Makes you unable to respawn after death'}
 CMDs[#CMDs + 1] = {NAME = 'invisible / invis', DESC = 'Makes you invisible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'visible / vis', DESC = 'Makes you visible to other players'}
 CMDs[#CMDs + 1] = {NAME = 'toolinvisible / toolinvis / tinvis', DESC = 'Makes you invisible to other players and able to use tools'}
@@ -4965,39 +4967,18 @@ function GetInTable(Table, Name)
 	return false
 end
 
-function permadeath(plr)
-	if replicatesignal then
-		replicatesignal(plr.ConnectDiedSignalBackend)
-		task.wait(Players.RespawnTime - 0.1)
-	end
-end
-
 function respawn(plr)
 	if invisRunning then TurnVisible() end
-
-	local rcdEnabled, wasHidden = false, false
-	if gethidden then
-		rcdEnabled, wasHidden = gethidden(workspace, "RejectCharacterDeletions") ~= Enum.RejectCharacterDeletions.Disabled
-	end
-
-	if rcdEnabled and replicatesignal then
-		replicatesignal(plr.ConnectDiedSignalBackend)
-		task.wait(Players.RespawnTime - 0.1)
-		replicatesignal(plr.Kill)
-	elseif rcdEnabled and not replicatesignal then
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
-	else
-		local char = plr.Character
-		local hum = char:FindFirstChildWhichIsA("Humanoid")
-		if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
-		char:ClearAllChildren()
-		local newChar = Instance.new("Model")
-		newChar.Parent = workspace
-		plr.Character = newChar
-		task.wait()
-		plr.Character = char
-		newChar:Destroy()
-	end
+    local char = plr.Character
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
+    char:ClearAllChildren()
+    local newChar = Instance.new("Model")
+    newChar.Parent = workspace
+    plr.Character = newChar
+    task.wait()
+    plr.Character = char
+    newChar:Destroy()
 end
 
 local refreshCmd = false
@@ -9389,9 +9370,7 @@ end)
 
 addcmd("reset", {}, function(args, speaker)
 	local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
-	if replicatesignal then
-		replicatesignal(speaker.Kill)
-	elseif humanoid then
+	if humanoid then
 		humanoid:ChangeState(Enum.HumanoidStateType.Dead)
 	else
 		speaker.Character:BreakJoints()
@@ -9423,7 +9402,6 @@ addcmd("refresh", {"re"}, function(args, speaker)
 end)
 
 addcmd("god", {}, function(args, speaker)
-	permadeath(speaker)
 	local Cam = workspace.CurrentCamera
 	local Char, Pos = speaker.Character, Cam.CFrame
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
@@ -12787,15 +12765,6 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 		SocialService:PromptPhoneBook(speaker, "")
 	else
 		notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
-	end
-end)
-
-addcmd("permadeath", {}, function(args, speaker)
-	if replicatesignal then
-		permadeath(speaker)
-		notify("Permadeath", "Enabled")
-	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing replicatesignal)")
 	end
 end)
 
