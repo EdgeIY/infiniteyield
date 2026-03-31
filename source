@@ -7871,7 +7871,12 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 	local oldhmmnc
 	local oldKickFunction
 	if hookfunction then
-		oldKickFunction = hookfunction(LocalPlayer.Kick, newcclosure(function() end))
+		oldKickFunction = hookfunction(LocalPlayer.Kick, newcclosure(function(...) 
+			if select(1, ...) == speaker then
+				return
+			end
+			return oldKickFunction(...)
+		end))
 	end
 	oldhmmi = hookmetamethod(game, "__index", newcclosure(function(self, method)
 		if self == LocalPlayer and method == "Kick" or method == "kick" then
