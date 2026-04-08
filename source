@@ -149,7 +149,7 @@ if makefolder and isfolder and writefile and isfile then
 	end)
 end
 
-currentVersion = "6.4"
+currentVersion = "6.4.1"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
@@ -10535,7 +10535,7 @@ end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
-	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
+	loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/audiologger/refs/heads/main/source'),true))()
 end)
 
 local loopgoto = nil
