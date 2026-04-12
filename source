@@ -4460,8 +4460,9 @@ CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infi
 CMDs[#CMDs + 1] = {NAME = 'guiscale [number]', DESC = 'Changes the size of the gui. [number] accepts both decimals and whole numbers. Min is 0.4 and Max is 2'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
-CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
-CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'explorer / dex / cdex', DESC = 'Opens Dex++ by Chillz'}
+CMDs[#CMDs + 1] = {NAME = 'moondex / mdex', DESC = 'Opens Dex by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old Dex by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
 CMDs[#CMDs + 1] = {NAME = 'executor', DESC = 'Opens an internal executor gui by dnezero'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
@@ -10435,13 +10436,18 @@ addcmd('oldconsole',{},function(args, speaker)
 	notify('Console','Press F9 to open the console')
 end)
 
-addcmd("explorer", {"dex"}, function(args, speaker)
-	notify("Loading", "Hold on a sec")
+addcmd("explorer", {"dex", "cdex"}, function(args, speaker)
+	notify("Loading Dex++ by Chillz", "Hold on a sec")
+	loadstring(game:HttpGet("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"))()
+end)
+
+addcmd("moondex", {"mdex"}, function(args, speaker)
+	notify("Loading Dex by Moon", "Hold on a sec")
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 
 addcmd('olddex', {'odex'}, function(args, speaker)
-	notify('Loading old explorer', 'Hold on a sec')
+	notify('Loading Old Dex by Moon', 'Hold on a sec')
 
 	local getobjects = function(a)
 		local Objects = {}
