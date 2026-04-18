@@ -8994,7 +8994,6 @@ addcmd("goto", {"to"}, function(args, speaker)
     local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
     local players = getPlayer(args[1], speaker)
     for _, v in pairs(players) do
-    for _, v in players do
         if Players[v].Character ~= nil then
             if humanoid and humanoid.SeatPart then
                 humanoid.Sit = false
