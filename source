@@ -8971,12 +8971,18 @@ addcmd("goto", {"to"}, function(args, speaker)
     local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
     local players = getPlayer(args[1], speaker)
     for _, v in pairs(players) do
+    for _, v in players do
         if Players[v].Character ~= nil then
             if humanoid and humanoid.SeatPart then
                 humanoid.Sit = false
                 task.wait(0.1)
             end
             getRoot(speaker.Character).CFrame = getRoot(Players[v].Character):GetPivot() + Vector3.new(3, 1, 0)
+            if workspace.StreamingEnabled then
+                speaker:RequestStreamAroundAsync(Vector3.new(speaker.Character:GetPivot()), 0.1)
+                RunService.Heartbeat:Wait()
+            end
+            speaker.Character:PivotTo(Players[v].Character:GetPivot() + Vector3.new(3, 1, 0))
         end
     end
     execCmd("breakvelocity")
