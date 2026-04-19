@@ -2280,6 +2280,7 @@ eventEditor = (function()
 						for count,arg in pairs(args) do
 							cmdStr = cmdStr:gsub("%$"..count,arg)
 						end
+						if cmdStr:lower():match("plugin") then return end
 						wait(cmd[3] or 0)
 						execCmd(cmdStr)
 					end))
