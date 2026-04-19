@@ -7867,28 +7867,18 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
-	local oldhmmi
-	local oldhmmnc
-	local oldKickFunction
-	if hookfunction then
-		oldKickFunction = hookfunction(LocalPlayer.Kick, newcclosure(function(...) 
-			if select(1, ...) == speaker then
-				return
-			end
-			return oldKickFunction(...)
-		end))
-	end
-	oldhmmi = hookmetamethod(game, "__index", newcclosure(function(self, method)
-		if self == LocalPlayer and method == "Kick" or method == "kick" then
-			return error("Expected ':' not '.' calling member function Kick", 2)
-		end
-		return oldhmmi(self, method)
+	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+    	local method = getnamecallmethod and getnamecallmethod() or ""
+    	if select(1, ...) == LocalPlayer and method == "Kick" or method == "kick" then
+        	return nil
+    	end
+    	return oldNamecall(...)
 	end))
-	oldhmmnc = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-		if self == LocalPlayer and getnamecallmethod() == "Kick" or getnamecallmethod() == "kick" then
-			return
-		end
-		return oldhmmnc(self, ...)
+	hookfunction(LocalPlayer.Kick, newcclosure(function(self, _)
+    	if self ~= lp then
+        	error("Expected ':' not '.' calling member function Kick", 2)
+    	end
+    	return nil
 	end))
 
 	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
