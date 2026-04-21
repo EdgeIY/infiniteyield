@@ -6928,7 +6928,7 @@ addcmd("rejoin", {"rj"}, function(args, speaker)
 		wait()
 		TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 	else
-		TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+		TeleportService:TeleportReconnect()
 	end
 end)
 
