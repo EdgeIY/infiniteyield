@@ -7889,42 +7889,58 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
-	local TeleportService = TeleportService
-	local oldhmmi
-	local oldhmmnc
-	oldhmmi = hookmetamethod(game, "__index", newcclosure(function(self, method)
-		if self == TeleportService then
-			if method == "teleport" or method == "Teleport" then
-				return error("Expected ':' not '.' calling member function Kick", 2)
-			elseif method == "TeleportToPlaceInstance" then
-				return error("Expected ':' not '.' calling member function TeleportToPlaceInstance", 2)
-			end
+
+	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
+		if checkcaller() or (allow_rj and select(2, ...) == game.PlaceId) then
+			return oldTp(...)
 		end
-		return oldhmmi(self, method)
-	end))
-	oldhmmnc = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-		local nmc = getnamecallmethod()
-		if self == TeleportService and nmc == "teleport" or nmc == "Teleport" or nmc == "TeleportToPlaceInstance" then
+		if self ~= TeleportService then
+			error("Expected ':' not '.' calling member function Teleport", 2)
+		end
+		if placeId == nil then
+			error("Argument 1 missing or nil", 2)
+		end
+		if typeof(placeId) ~= "number" and placeId ~= true then
+			error(`Unable to cast {typeof(placeId)} to int64`, 2)
+		elseif placeId == true then
+			-- somehow raise raiseTeleportInitFailedEvent
 			return
 		end
-		return oldhmmnc(self, ...)
+		if typeof(customLoadingScreen) ~= "Instance" and customLoadingScreen ~= nil then
+			error("Unable to cast value to Object", 2)
+		end
+		return nil
+	end))
+	hookfunction(TeleportService.TeleportAsync, newcclosure(function(self, placeId, players, teleportOptions)
+		if self ~= TeleportService then
+			error("Expected ':' not '.' calling member function TeleportAsync", 2)
+		end
+		if players == nil then
+			error("Argument 2 missing or nil", 2)
+		end
+		if typeof(players) ~= "table" then
+			error("Unable to cast value to Objects", 2)
+		end
+		error("TeleportUnknown must be called from a Server", 2)
+	end))
+	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+		local nmc = getnamecallmethod()
+		if select(1, ...) == TeleportService and nmc == "teleport" or nmc == "Teleport" or nmc == "TeleportToPlaceInstance" or nmc == "TeleportAsync" then
+			if checkcaller() or (allow_rj and select(2, ...) == game.PlaceId) then
+				return oldNamecall(...)
+			end
+			return
+		end
+		return oldNamecall(...)
 	end))
 
 	notify('Client AntiTP','Client anti teleport is now active (only effective on localscript teleport)')
 end)
 
---[[
-this literally does nothing?
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
-	if args[1] and args[1] == 'false' then
-		allow_rj = false
-		notify('Client AntiTP','Allow rejoin set to false')
-	else
-		allow_rj = true
-		notify('Client AntiTP','Allow rejoin set to true')
-	end
+	allow_rj = not allow_rj
+	notify("Client AntiTP", `Scripts now may{allow_rj and " not"} make you rejoin the server`)
 end)
-]]
 
 addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
 	TeleportService:TeleportCancel()
