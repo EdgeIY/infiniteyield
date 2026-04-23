@@ -4497,7 +4497,7 @@ CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box 
 CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
---CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj [true/false] (CLIENT)', DESC = 'Changes if antiteleport allows you to rejoin or not'}
+CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj (CLIENT)', DESC = 'Toggles if antiteleport allows you to rejoin or not'}
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality to boost FPS'}
@@ -7891,8 +7891,8 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	end
 
 	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
-		if checkcaller() or (allow_rj and select(2, ...) == game.PlaceId) then
-			return oldTp(...)
+		if checkcaller() or (allow_rj and placeId == game.PlaceId) then
+			return oldTp(self, placeId, player, _teleportData, customLoadingScreen)
 		end
 		if self ~= TeleportService then
 			error("Expected ':' not '.' calling member function Teleport", 2)
@@ -7939,7 +7939,7 @@ end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	allow_rj = not allow_rj
-	notify("Client AntiTP", `Scripts now may{allow_rj and " not"} make you rejoin the server`)
+	notify("Client AntiTP", `Scripts now may{allow_rj and "" or " not"} make you rejoin the server`)
 end)
 
 addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
