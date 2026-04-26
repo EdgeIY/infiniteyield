@@ -361,7 +361,6 @@ do
 		["01 01"] = "🎆",
 		["02 14"] = "💝",
 		["03 17"] = "☘️",
-		["04 01"] = "🤡",
 		[(function(Year)
 			local A = math.floor(Year/100)
 			local B = math.floor((13+8*A)/25)
@@ -4469,6 +4468,7 @@ CMDs[#CMDs + 1] = {NAME = 'olddex / odex', DESC = 'Opens Old DEX by Moon'}
 CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
+CMDs[#CMDs + 1] = {NAME = 'serverscan', DESC = 'Scans strings for server references and reconstructs them'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
@@ -6907,6 +6907,10 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 			wait(1)
 		until SINFOGUI.Parent == nil
 	end)
+end)
+
+addcmd("serverscan", {}, function(args, speaker)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/serverscanner.lua"))()
 end)
 
 addcmd("jobid", {}, function(args, speaker)
