@@ -359,6 +359,9 @@ Title.Text = "Infinite Yield FE v" .. currentVersion
 do
 	local emoji = ({
 		["01 01"] = "🎆",
+		["02 14"] = "💝",
+		["03 17"] = "☘️",
+		["04 01"] = "🤡",
 		[(function(Year)
 			local A = math.floor(Year/100)
 			local B = math.floor((13+8*A)/25)
