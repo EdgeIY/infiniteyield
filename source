@@ -3,6 +3,9 @@ if IY_LOADED and not _G.IY_DEBUG then
 	return
 end
 print("fe bypass")
+local imrcehacker = "HACKED"
+print(imrcehacker)
+
 pcall(function() getgenv().IY_LOADED = true end)
 if not game:IsLoaded() then game.Loaded:Wait() end
 
