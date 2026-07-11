@@ -5662,9 +5662,18 @@ Cmdbar.FocusLost:Connect(function(enterpressed)
 	if tabComplete then tabComplete:Disconnect() end
 	wait()
 	if not Cmdbar:IsFocused() then
-		Cmdbar.Text = ""
-		IndexContents('',true,false,true)
-		if SettingsOpen == true then
+		local mousePos = UserInputService:GetMouseLocation()
+		local holderPos = Holder.AbsolutePosition
+		local holderSize = Holder.AbsoluteSize
+		local overHolder = mousePos.X >= holderPos.X and mousePos.X <= holderPos.X + holderSize.X
+			and mousePos.Y >= holderPos.Y and mousePos.Y <= holderPos.Y + holderSize.Y
+
+		if not overHolder then
+			Cmdbar.Text = ""
+			IndexContents('',true,false,true)
+		end
+
+		if SettingsOpen == true and not overHolder then
 			wait(0.2)
 			Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.2, true, nil)
 			CMDsF.Visible = false
