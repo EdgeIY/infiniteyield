@@ -145,11 +145,12 @@ if makefolder and isfolder and writefile and isfile then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
+		-- honestly just blame your phone if the assets appear in your gallery
 		if IsOnMobile then writefile("infiniteyield/assets/.nomedia", "") end
 	end)
 end
 
-currentVersion = "6.4.1"
+currentVersion = "6.4.2"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
