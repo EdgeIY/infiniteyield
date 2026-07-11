@@ -4463,9 +4463,9 @@ CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infi
 CMDs[#CMDs + 1] = {NAME = 'guiscale [number]', DESC = 'Changes the size of the gui. [number] accepts decimals and whole numbers. Min is 0.4 and Max is 2'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Opens the Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads an old-themed Roblox console'}
-CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens DEX by Moon'}
+CMDs[#CMDs + 1] = {NAME = 'explorer / dex', DESC = 'Opens Dex++ by Chillz'}
+CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Cobalt to intercept incoming and outgoing network traffic'}
 CMDs[#CMDs + 1] = {NAME = 'cobalt / cspy', DESC = 'Opens Cobalt to intercept incoming and outgoing network traffic'}
-CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3 to intercept remote calls from the client to the server'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
@@ -10442,7 +10442,6 @@ end)
 addcmd("explorer", {"dex"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
     -- loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-    -- Dex++ by Chillz
     loadstring(game:HttpGet("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"))()
 end)
 
@@ -10452,11 +10451,10 @@ addcmd("cobalt", {"cspy"}, function(args, speaker)
     loadstring(game:HttpGet("https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"))()
 end)
 
-addcmd('remotespy',{'rspy'},function(args, speaker)
-	notify("Loading",'Hold on a sec')
-	-- Full credit to exx, creator of SimpleSpy
-	-- also thanks to Amity for fixing
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
+addcmd("remotespy", {"rspy"}, function(args, speaker)
+    notify("Loading", "Hold on a sec")
+    -- Full credit to notpoiu, creator of Cobalt
+    loadstring(game:HttpGet("https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"))()
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
