@@ -6970,39 +6970,43 @@ addcmd("exit", {}, function(args, speaker)
 	game:Shutdown()
 end)
 
+local NoclipParts = {}
 local Noclipping = nil
-addcmd('noclip',{},function(args, speaker)
-	Clip = false
-	wait(0.1)
-	local function NoclipLoop()
-		if Clip == false and speaker.Character ~= nil then
-			for _, child in pairs(speaker.Character:GetDescendants()) do
-				if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
-					child.CanCollide = false
-				end
-			end
-		end
-	end
-	Noclipping = RunService.Stepped:Connect(NoclipLoop)
-	if args[1] and args[1] == 'nonotify' then return end
-	notify('Noclip','Noclip Enabled')
+addcmd("noclip", {}, function(args, speaker)
+    pcall(function() Noclipping:Disconnect() end)
+    Clip = false
+    task.wait(0.1)
+    NoclipParts = {}
+    Noclipping = RunService.Stepped:Connect(function()
+        if Clip == false and speaker.Character ~= nil then
+            for _, child in pairs(speaker.Character:GetDescendants()) do
+                if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+                    child.CanCollide = false
+                    NoclipParts[child] = true
+                end
+            end
+        end
+    end)
+    if args[1] and args[1] == "nonotify" then return end
+    notify("Noclip", "Noclip Enabled")
 end)
 
-addcmd('clip',{'unnoclip'},function(args, speaker)
-	if Noclipping then
-		Noclipping:Disconnect()
-	end
-	Clip = true
-	if args[1] and args[1] == 'nonotify' then return end
-	notify('Noclip','Noclip Disabled')
+addcmd("unnoclip", {"clip"}, function(args, speaker)
+    pcall(function() Noclipping:Disconnect() end)
+    Clip = true
+    task.wait(0.1)
+    for child, _ in pairs(NoclipParts) do
+        if typeof(child) == "Instance" and child:IsA("BasePart") and child.Parent then
+            child.CanCollide = true
+        end
+    end
+    NoclipParts = {}
+    if args[1] and args[1] == "nonotify" then return end
+    notify("Noclip", "Noclip Disabled")
 end)
 
-addcmd('togglenoclip',{},function(args, speaker)
-	if Clip then
-		execCmd('noclip')
-	else
-		execCmd('clip')
-	end
+addcmd("togglenoclip", {}, function(args, speaker)
+    execCmd(Clip and "noclip" or "unnoclip")
 end)
 
 FLYING = false
