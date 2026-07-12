@@ -6993,6 +6993,14 @@ addcmd('clip',{'unnoclip'},function(args, speaker)
 		Noclipping:Disconnect()
 	end
 	Clip = true
+	-- Restore collision on all parts that were affected by noclip
+	if speaker and speaker.Character then
+		for _, child in pairs(speaker.Character:GetDescendants()) do
+			if child:IsA("BasePart") and child.Name ~= floatName then
+				child.CanCollide = true
+			end
+		end
+	end
 	if args[1] and args[1] == 'nonotify' then return end
 	notify('Noclip','Noclip Disabled')
 end)
