@@ -9275,7 +9275,7 @@ addcmd("orbit", {}, function(args, speaker)
 		orbit1 = RunService.Heartbeat:Connect(function()
 			pcall(function()
 				rotation = rotation + speed
-				root.CFrame = CFrame.new(getRoot(target.Character).Position) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0) * * CFrame.Angles(0, math.rad(90), 0)
+				root.CFrame = CFrame.new(getRoot(target.Character).Position) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0) * CFrame.Angles(0, math.rad(90), 0)
 			end)
 		end)
 		orbit2 = RunService.RenderStepped:Connect(function()
