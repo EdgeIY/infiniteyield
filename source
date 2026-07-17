@@ -11648,7 +11648,7 @@ addcmd('fling',{},function(args, speaker)
 			child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
 		end
 	end
-	execCmd('noclip')
+	execCmd('noclip nonotify')
 	wait(.1)
 	local bambam = Instance.new("BodyAngularVelocity")
 	bambam.Name = randomString()
@@ -11656,19 +11656,16 @@ addcmd('fling',{},function(args, speaker)
 	bambam.AngularVelocity = Vector3.new(0,99999,0)
 	bambam.MaxTorque = Vector3.new(0,math.huge,0)
 	bambam.P = math.huge
-	local Char = speaker.Character:GetChildren()
-	for i, v in next, Char do
+	for i, v in next, speaker.Character:GetChildren() do
 		if v:IsA("BasePart") then
-			v.CanCollide = false
 			v.Massless = true
-			v.Velocity = Vector3.new(0, 0, 0)
+			v.Velocity = Vector3.zero
 		end
 	end
 	flinging = true
-	local function flingDiedF()
+	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 		execCmd('unfling')
-	end
-	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(flingDiedF)
+	end)
 	repeat
 		bambam.AngularVelocity = Vector3.new(0,99999,0)
 		wait(.2)
@@ -11678,32 +11675,25 @@ addcmd('fling',{},function(args, speaker)
 end)
 
 addcmd('unfling',{'nofling'},function(args, speaker)
-	execCmd('clip')
-	if flingDied then
-		flingDied:Disconnect()
-	end
+	execCmd('clip nonotify')
+	if flingDied then flingDied:Disconnect() end
 	flinging = false
 	wait(.1)
 	local speakerChar = speaker.Character
 	if not speakerChar or not getRoot(speakerChar) then return end
-	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
-		if v.ClassName == 'BodyAngularVelocity' then
+	for _, v in next, speakerChar:GetDescendants() do
+		if v:IsA("BasePart") then
+			v.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+			v.Massless = false
+			v.Velocity = Vector3.zero
+		elseif v:IsA("BodyAngularVelocity") then
 			v:Destroy()
-		end
-	end
-	for _, child in pairs(speakerChar:GetDescendants()) do
-		if child.ClassName == "Part" or child.ClassName == "MeshPart" then
-			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
 		end
 	end
 end)
 
 addcmd('togglefling',{},function(args, speaker)
-	if flinging then
-		execCmd('unfling')
-	else
-		execCmd('fling')
-	end
+	execCmd(flinging and "unfling" or "fling")
 end)
 
 addcmd("flyfling", {}, function(args, speaker)
