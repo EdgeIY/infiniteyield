@@ -9265,26 +9265,31 @@ end)
 
 addcmd("orbit", {}, function(args, speaker)
 	execCmd("unorbit nonotify")
+
 	local target = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
 	local root = getRoot(speaker.Character)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+
 	if target and target.Character and getRoot(target.Character) and root and humanoid then
 		local rotation = 0
 		local speed = tonumber(args[2]) or 0.2
 		local distance = tonumber(args[3]) or 6
-		orbit1 = RunService.Heartbeat:Connect(function()
-			pcall(function()
-				rotation = rotation + speed
-				root.CFrame = CFrame.new(getRoot(target.Character).Position) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)
-			end)
+
+		orbit1 = RunService.Stepped:Connect(function()
+			breakVelocity()
+			rotation = rotation + speed
+
+			local targetRoot = getRoot(target.Character).Position
+			local orbitPosition = (CFrame.new(targetRoot) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)).Position
+			root.CFrame = CFrame.lookAt(orbitPosition, Vector3.new(targetRoot.X, orbitPosition.Y, targetRoot.Z))
 		end)
-		orbit2 = RunService.RenderStepped:Connect(function()
-			pcall(function()
-				root.CFrame = CFrame.new(root.Position, getRoot(target.Character).Position)
-			end)
+
+		orbit2 = humanoid.Died:Connect(function() execCmd("unorbit") end)
+
+		orbit3 = humanoid.Seated:Connect(function(value)
+			if value then execCmd("unorbit") end
 		end)
-		orbit3 = humanoid.Died:Connect(function() execCmd("unorbit") end)
-		orbit4 = humanoid.Seated:Connect(function(value) if value then execCmd("unorbit") end end)
+
 		notify("Orbit", "Started orbiting " .. formatUsername(target))
 	end
 end)
@@ -9293,9 +9298,9 @@ addcmd("unorbit", {}, function(args, speaker)
 	if orbit1 then orbit1:Disconnect() end
 	if orbit2 then orbit2:Disconnect() end
 	if orbit3 then orbit3:Disconnect() end
-	if orbit4 then orbit4:Disconnect() end
 	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
+
 
 addcmd('freeze',{'fr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
