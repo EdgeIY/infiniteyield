@@ -11648,57 +11648,51 @@ end)
 flinging = false
 addcmd('fling',{},function(args, speaker)
 	flinging = false
-	for _, child in pairs(speaker.Character:GetDescendants()) do
+	for _, child in next, speaker.Character:GetDescendants() do
 		if child:IsA("BasePart") then
 			child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
 		end
 	end
-	execCmd('noclip')
-	wait(.1)
+	execCmd('noclip nonotify')
+	task.wait(.1)
 	local bambam = Instance.new("BodyAngularVelocity")
 	bambam.Name = randomString()
 	bambam.Parent = getRoot(speaker.Character)
 	bambam.AngularVelocity = Vector3.new(0,99999,0)
 	bambam.MaxTorque = Vector3.new(0,math.huge,0)
 	bambam.P = math.huge
-	local Char = speaker.Character:GetChildren()
-	for i, v in next, Char do
+	for i, v in next, speaker.Character:GetChildren() do
 		if v:IsA("BasePart") then
-			v.CanCollide = false
 			v.Massless = true
-			v.Velocity = Vector3.new(0, 0, 0)
+			v.Velocity = Vector3.zero
 		end
 	end
 	flinging = true
-	local function flingDiedF()
+	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 		execCmd('unfling')
-	end
-	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(flingDiedF)
+	end)
 	repeat
 		bambam.AngularVelocity = Vector3.new(0,99999,0)
-		wait(.2)
+		task.wait(.2)
 		bambam.AngularVelocity = Vector3.new(0,0,0)
-		wait(.1)
+		task.wait(.1)
 	until flinging == false
 end)
 
 addcmd('unfling',{'nofling'},function(args, speaker)
-	execCmd('clip')
-	if flingDied then
-		flingDied:Disconnect()
-	end
+	execCmd('clip nonotify')
+	if flingDied then flingDied:Disconnect() end
 	flinging = false
-	wait(.1)
+	task.wait(.1)
 	local speakerChar = speaker.Character
 	if not speakerChar or not getRoot(speakerChar) then return end
-	for i,v in pairs(getRoot(speakerChar):GetChildren()) do
-		if v.ClassName == 'BodyAngularVelocity' then
+	for _, v in next, speakerChar:GetDescendants() do
+		if v:IsA("BasePart") then
+			v.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+			v.Massless = false
+			v.Velocity = Vector3.zero
+		elseif v:IsA("BodyAngularVelocity") then
 			v:Destroy()
-		end
-	end
-	for _, child in pairs(speakerChar:GetDescendants()) do
-		if child.ClassName == "Part" or child.ClassName == "MeshPart" then
-			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
 		end
 	end
 end)
