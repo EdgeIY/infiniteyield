@@ -4645,6 +4645,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the l
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
+CMDs[#CMDs + 1] = {NAME = 'unnoclipcam / unccam / clipcam / ccam', DESC = 'Reverts camera noclip'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Minimum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
@@ -8614,22 +8615,17 @@ addcmd('thirdp',{},function(args, speaker)
 end)
 
 addcmd('noclipcam', {'nccam'}, function(args, speaker)
-	local sc = (debug and debug.setconstant) or setconstant
-	local gc = (debug and debug.getconstants) or getconstants
-	if not sc or not getgc or not gc then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
-	end
-	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
-	for _, v in pairs(getgc()) do
-		if type(v) == 'function' and getfenv(v).script == pop then
-			for i, v1 in pairs(gc(v)) do
-				if tonumber(v1) == .25 then
-					sc(v, i, 0)
-				elseif tonumber(v1) == 0 then
-					sc(v, i, .25)
-				end
-			end
-		end
+	local pop = require(speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper)
+	getgenv().originalPopper = hookfunction(pop, function(focus, targetDist, focusExtrapolation)
+		return targetDist
+	end)
+end)
+
+addcmd('clipcam', {'ccam', 'unccam', 'unnoclipcam'}, function(args, speaker)
+	if getgenv().originalPopper then
+		local pop = require(speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper)
+		hookfunction(pop, getgenv().originalPopper)
+		getgenv().originalPopper = nil
 	end
 end)
 
