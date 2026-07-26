@@ -8987,7 +8987,7 @@ addcmd("goto", {"to"}, function(args, speaker)
                 task.wait(0.1)
             end
             if workspace.StreamingEnabled then
-                speaker:RequestStreamAroundAsync(Vector3.new(speaker.Character:GetPivot()), 0.1)
+                speaker:RequestStreamAroundAsync(Vector3.new(Players[v].Character:GetPivot()), 0.1)
                 RunService.Heartbeat:Wait()
             end
             speaker.Character:PivotTo(Players[v].Character:GetPivot() + Vector3.new(3, 1, 0))
