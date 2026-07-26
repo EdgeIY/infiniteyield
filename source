@@ -9036,7 +9036,7 @@ addcmd('vehiclegoto', { 'vgoto', 'vtp', 'vehicletp' }, function(args, speaker)
 		local root = getRoot(Players[v].Character)
 		if root == nil then continue end
 
-		vehicleModel:PivotTo(root.Position)
+		vehicleModel:PivotTo(root:GetPivot())
 		-- break -- uncomment this if you want to teleport to the first valid player instead of last
 	end
 end)
