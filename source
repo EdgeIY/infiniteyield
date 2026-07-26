@@ -9018,14 +9018,26 @@ addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
     end
 end)
 
-addcmd('vehiclegoto',{'vgoto','vtp','vehicletp'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			local seat = speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart
-			local vehicleModel = seat:FindFirstAncestorWhichIsA("Model")
-			vehicleModel:MoveTo(getRoot(Players[v].Character).Position)
-		end
+addcmd('vehiclegoto', { 'vgoto', 'vtp', 'vehicletp' }, function(args, speaker)
+	local character = speaker.Character
+	local humanoid = if character then character:FindFirstChildOfClass('Humanoid') else nil
+	if not humanoid then return end
+
+	local seat = humanoid.SeatPart
+	local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA('Model') else nil
+	if vehicleModel == nil then
+		notify('Vehicle Goto', 'Make sure you\'re sitting in a vehicle.')
+		return
+	end
+
+	for _, v in getPlayer(args[1], speaker) do
+		if Players[v].Character == nil then continue end
+
+		local root = getRoot(Players[v].Character)
+		if root == nil then continue end
+
+		vehicleModel:PivotTo(root.Position)
+		-- break -- uncomment this if you want to teleport to the first valid player instead of last
 	end
 end)
 
