@@ -8979,14 +8979,14 @@ end)
 addcmd("goto", { "to" }, function(args, speaker)
 	local character = speaker and speaker.Character
 	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
-	if not humanoid then return end
+	if humanoid == nil then return end
 
 	if humanoid and humanoid.SeatPart then
 		humanoid.Sit = false
 		task.wait(0.1)
 	end
 
-	local waitForStream = ({ ["true"] = true, ["y"] = true, ["yes"] = true })[(args[2] or ""):lower()] == true
+	local waitForStream = parseBoolean(args[2], false)
 	for _, name in getPlayer(args[1], speaker) do
 		local targetCharacter = Players[name].Character
 		if targetCharacter ~= nil then
@@ -9001,6 +9001,7 @@ addcmd("goto", { "to" }, function(args, speaker)
 
 			speaker.Character:PivotTo(CFrame.new(targetPosition + (targetPivot.LookVector * 3), targetPosition))
 			breakVelocity()
+			-- break -- uncomment if you only want to tp to the first valid target
 		end
 	end
 end)
