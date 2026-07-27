@@ -4558,7 +4558,7 @@ CMDs[#CMDs + 1] = {NAME = 'deletewaypoint / dwp [name]', DESC = 'Deletes a waypo
 CMDs[#CMDs + 1] = {NAME = 'clearwaypoints / cwp', DESC = 'Clears all waypoints'}
 CMDs[#CMDs + 1] = {NAME = 'cleargamewaypoints / cgamewp', DESC = 'Clears all waypoints for the game you are in'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
-CMDs[#CMDs + 1] = {NAME = 'goto [player]', DESC = 'Go to a player'}
+CMDs[#CMDs + 1] = {NAME = 'goto [player] [request stream]', DESC = 'Go to a player'}
 CMDs[#CMDs + 1] = {NAME = 'tweengoto / tgoto [player]', DESC = 'Tween to a player (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'tweenspeed / tspeed [num]', DESC = 'Sets how fast all tween commands go (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclegoto / vgoto [player]', DESC = 'Go to a player while in a vehicle'}
@@ -8976,24 +8976,34 @@ addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
 	end
 end)
 
-addcmd("goto", {"to"}, function(args, speaker)
-    local character = speaker and speaker.Character
-    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
-    local players = getPlayer(args[1], speaker)
-    for _, v in players do
-        if Players[v].Character ~= nil then
-            if humanoid and humanoid.SeatPart then
-                humanoid.Sit = false
-                task.wait(0.1)
-            end
-            if workspace.StreamingEnabled then
-                speaker:RequestStreamAroundAsync(Vector3.new(Players[v].Character:GetPivot()), 0.1)
-                RunService.Heartbeat:Wait()
-            end
-            speaker.Character:PivotTo(Players[v].Character:GetPivot() + Vector3.new(3, 1, 0))
-        end
-    end
-    execCmd("breakvelocity")
+addcmd("goto", { "to" }, function(args, speaker)
+	local character = speaker and speaker.Character
+	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+	if humanoid == nil then return end
+
+	if humanoid and humanoid.SeatPart then
+		humanoid.Sit = false
+		task.wait(0.1)
+	end
+
+	local waitForStream = parseBoolean(args[2], false)
+	for _, name in getPlayer(args[1], speaker) do
+		local targetCharacter = Players[name].Character
+		if targetCharacter ~= nil then
+			local targetPivot = targetCharacter:GetPivot()
+			local targetPosition = targetPivot.Position
+
+			if waitForStream and workspace.StreamingEnabled then
+				local timeout = 5 -- seconds
+				task.spawn(speaker.RequestStreamAroundAsync, speaker, targetPosition, timeout)
+				targetCharacter:WaitForChild("HumanoidRootPart", timeout)
+			end
+
+			speaker.Character:PivotTo(CFrame.new(targetPosition + (targetPivot.LookVector * 3), targetPosition))
+			breakVelocity()
+			-- break -- uncomment if you only want to tp to the first valid target
+		end
+	end
 end)
 
 addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
