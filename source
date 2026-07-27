@@ -8986,7 +8986,7 @@ addcmd("goto", { "to" }, function(args, speaker)
 		task.wait(0.1)
 	end
 
-	local waitForStream = args[2] == "true" or args[2] == "y" or args[2] == "yes" -- idk how iy handles boolean args
+	local waitForStream = ({ ["true"] = true, ["y"] = true, ["yes"] = true })[(args[2] or ""):lower()] == true
 	for _, name in getPlayer(args[1], speaker) do
 		local targetCharacter = Players[name].Character
 		if targetCharacter ~= nil then
