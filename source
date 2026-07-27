@@ -10032,12 +10032,20 @@ addcmd('unwallhop', {'nowallhop', 'unwh'}, function(args, speaker)
 	notify('Wallhop', 'Wallhop disabled')
 end)
 
-local fastladderConns = {}
-local flRayParams = RaycastParams.new()
-flRayParams.FilterType = Enum.RaycastFilterType.Exclude
-flRayParams.RespectCanCollide = true
+local fasttrussActive = false
+local fasttrussRS = nil
+local fasttrussInputConn = nil
+local fasttrussStateConn = nil
+local fasttrussPropConn = nil
+local fasttrussJumpReqConn = nil
+local fasttrussCharConn = nil
+local fasttrussFlicking = false
+local fasttrussRayParams = RaycastParams.new()
+fasttrussRayParams.FilterType = Enum.RaycastFilterType.Exclude
+fasttrussRayParams.RespectCanCollide = true
 
-local function getLadderNormal(root)
+local function getLadderNormal(char, root)
+	fasttrussRayParams.FilterDescendantsInstances = {char}
 	local directions = {
 		root.CFrame.LookVector,
 		-root.CFrame.LookVector,
@@ -10045,7 +10053,7 @@ local function getLadderNormal(root)
 		-root.CFrame.RightVector
 	}
 	for _, dir in ipairs(directions) do
-		local hit = workspace:Raycast(root.Position, dir * 3.5, flRayParams)
+		local hit = workspace:Raycast(root.Position, dir * 3.0, fasttrussRayParams)
 		if hit and hit.Instance and hit.Instance.CanCollide then
 			return hit.Normal
 		end
@@ -10053,83 +10061,144 @@ local function getLadderNormal(root)
 	return nil
 end
 
-addcmd('fastladder', {'fl'}, function(args, speaker)
-	for _, conn in ipairs(fastladderConns) do conn:Disconnect() end
-	table.clear(fastladderConns)
+local function triggerFastTrussFlick(speaker)
+	if fasttrussFlicking or not fasttrussActive then return end
+	local char = speaker.Character; if not char then return end
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not root or not hum then return end
 
-	local isFlicking = false
+	fasttrussFlicking = true
+	hum.AutoRotate = false
 
-	local function triggerFlick()
-		local char = speaker.Character
-		if not char or isFlicking then return end
+	local norm = getLadderNormal(char, root)
+	if not norm then
+		norm = -root.CFrame.LookVector
+	end
 
-		local root = char:FindFirstChild("HumanoidRootPart")
+	-- Nullify horizontal velocity and set upward boost
+	root.AssemblyLinearVelocity = Vector3.new(0, 60, 0)
+
+	local sideCF = CFrame.new(root.Position, root.Position + norm)
+	root.CFrame = sideCF
+
+	task.wait(0.015)
+	if hum and hum.Parent then hum.AutoRotate = true end
+
+	task.wait(0.05)
+	fasttrussFlicking = false
+end
+
+local function stopFastTruss(speaker)
+	fasttrussActive = false
+	if fasttrussRS then fasttrussRS:Disconnect(); fasttrussRS = nil end
+	if fasttrussInputConn then fasttrussInputConn:Disconnect(); fasttrussInputConn = nil end
+	if fasttrussStateConn then fasttrussStateConn:Disconnect(); fasttrussStateConn = nil end
+	if fasttrussPropConn then fasttrussPropConn:Disconnect(); fasttrussPropConn = nil end
+	if fasttrussJumpReqConn then fasttrussJumpReqConn:Disconnect(); fasttrussJumpReqConn = nil end
+	if fasttrussCharConn then fasttrussCharConn:Disconnect(); fasttrussCharConn = nil end
+	fasttrussFlicking = false
+	local char = speaker.Character
+	if char then
 		local hum = char:FindFirstChildOfClass("Humanoid")
-		if not root or not hum then return end
+		if hum then hum.AutoRotate = true end
+	end
+end
 
-		isFlicking = true
-		flRayParams.FilterDescendantsInstances = {char}
+local function startFastTruss(speaker)
+	fasttrussActive = true
+	if fasttrussRS then return end
 
-		local norm = getLadderNormal(root)
-		hum.AutoRotate = false
-
-		if norm then
-			root.CFrame = CFrame.new(root.Position, root.Position + norm)
+	fasttrussRS = RunService.Heartbeat:Connect(function()
+		if not fasttrussActive then return end
+		if fasttrussFlicking then
+			local char = speaker.Character
+			if char then
+				local root = char:FindFirstChild("HumanoidRootPart")
+				if root then
+					local currentVel = root.AssemblyLinearVelocity
+					root.AssemblyLinearVelocity = Vector3.new(0, math.max(currentVel.Y, 60), 0)
+				end
+			end
 		end
+	end)
 
-		root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, 60, root.AssemblyLinearVelocity.Z)
+	fasttrussInputConn = UserInputService.InputBegan:Connect(function(input, gpe)
+		if gpe or not fasttrussActive then return end
+		if input.KeyCode == Enum.KeyCode.Space then
+			local char = speaker.Character
+			if char then
+				local hum = char:FindFirstChildOfClass("Humanoid")
+				if hum then
+					local st = hum:GetState()
+					if st == Enum.HumanoidStateType.Climbing or st == Enum.HumanoidStateType.Jumping then
+						triggerFastTrussFlick(speaker)
+					end
+				end
+			end
+		end
+	end)
 
-		task.wait(0.015)
-		hum.AutoRotate = true
+	local function hookHumanoidState(hum)
+		if fasttrussStateConn then fasttrussStateConn:Disconnect(); fasttrussStateConn = nil end
+		if fasttrussPropConn then fasttrussPropConn:Disconnect(); fasttrussPropConn = nil end
+		if fasttrussJumpReqConn then fasttrussJumpReqConn:Disconnect(); fasttrussJumpReqConn = nil end
 
-		task.wait(0.05)
-		isFlicking = false
+		if hum then
+			local wasClimbing = false
+
+			fasttrussStateConn = hum.StateChanged:Connect(function(oldState, newState)
+				if not fasttrussActive then return end
+				if oldState == Enum.HumanoidStateType.Climbing then
+					wasClimbing = true
+					task.delay(0.15, function() wasClimbing = false end)
+				end
+				if hum.Jump or UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+					if oldState == Enum.HumanoidStateType.Climbing or newState == Enum.HumanoidStateType.Climbing or wasClimbing then
+						triggerFastTrussFlick(speaker)
+					end
+				end
+			end)
+
+			fasttrussPropConn = hum:GetPropertyChangedSignal("Jump"):Connect(function()
+				if not fasttrussActive then return end
+				if hum.Jump then
+					local st = hum:GetState()
+					if st == Enum.HumanoidStateType.Climbing or wasClimbing then
+						triggerFastTrussFlick(speaker)
+					end
+				end
+			end)
+
+			fasttrussJumpReqConn = UserInputService.JumpRequest:Connect(function()
+				if not fasttrussActive then return end
+				local st = hum:GetState()
+				if st == Enum.HumanoidStateType.Climbing or wasClimbing then
+					triggerFastTrussFlick(speaker)
+				end
+			end)
+		end
 	end
 
-	local function bindChar(char)
-		if not char then return end
-		local hum = char:WaitForChild("Humanoid", 5)
-		if not hum then return end
-
-		local wasClimbing = false
-
-		local stateConn = hum.StateChanged:Connect(function(oldState, newState)
-			if oldState == Enum.HumanoidStateType.Climbing then
-				wasClimbing = true
-				task.delay(0.1, function() wasClimbing = false end)
-			end
-			if (oldState == Enum.HumanoidStateType.Climbing or wasClimbing) and (newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall) then
-				triggerFlick()
-			end
-		end)
-
-		local jumpConn = UserInputService.JumpRequest:Connect(function()
-			if hum:GetState() == Enum.HumanoidStateType.Climbing or wasClimbing then
-				triggerFlick()
-			end
-		end)
-
-		table.insert(fastladderConns, stateConn)
-		table.insert(fastladderConns, jumpConn)
+	local char = speaker.Character
+	if char then
+		hookHumanoidState(char:FindFirstChildOfClass("Humanoid"))
 	end
 
-	local charConn = speaker.CharacterAdded:Connect(bindChar)
-	table.insert(fastladderConns, charConn)
+	fasttrussCharConn = speaker.CharacterAdded:Connect(function(newChar)
+		if not fasttrussActive then return end
+		local hum = newChar:WaitForChild("Humanoid", 5)
+		if hum then hookHumanoidState(hum) end
+	end)
+end
 
-	if speaker.Character then
-		bindChar(speaker.Character)
-	end
-
+addcmd('fastladder', {'fl'}, function(args, speaker)
+	startFastTruss(speaker)
 	notify('FastLadder', 'FastLadder enabled')
 end)
 
 addcmd('unfastladder', {'unfl', 'nofastladder'}, function(args, speaker)
-	for _, conn in ipairs(fastladderConns) do conn:Disconnect() end
-	table.clear(fastladderConns)
-
-	if speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid") then
-		speaker.Character:FindFirstChildOfClass("Humanoid").AutoRotate = true
-	end
+	stopFastTruss(speaker)
 	notify('FastLadder', 'FastLadder disabled')
 end)
 
