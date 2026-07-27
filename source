@@ -4789,6 +4789,10 @@ CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when y
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
 CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
 CMDs[#CMDs + 1] = {NAME = 'unedgejump / unejump', DESC = 'Disables edgejump'}
+CMDs[#CMDs + 1] = {NAME = 'wallhop / wh', DESC = 'Allows you to wallhop on walls and seams'}
+CMDs[#CMDs + 1] = {NAME = 'unwallhop / nowallhop / unwh', DESC = 'Disables wallhop'}
+CMDs[#CMDs + 1] = {NAME = 'fastladder / fl', DESC = 'Climbs ladders quickly by flicking upon jumping'}
+CMDs[#CMDs + 1] = {NAME = 'unfastladder / unfl / nofastladder', DESC = 'Disables fastladder'}
 CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'norotate / noautorotate', DESC = 'Disables AutoRotate'}
@@ -9935,6 +9939,198 @@ end)
 addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or nil
 	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or nil
+end)
+
+local wallhopConnection
+local rayParams = RaycastParams.new()
+rayParams.FilterType = Enum.RaycastFilterType.Exclude
+rayParams.RespectCanCollide = true
+
+local function checkSeam(oB, oT, dir)
+	local rB = workspace:Raycast(oB, dir, rayParams)
+	local rT = workspace:Raycast(oT, dir, rayParams)
+
+	local wB = rB and rB.Instance and rB.Instance.CanCollide
+	local wT = rT and rT.Instance and rT.Instance.CanCollide
+
+	if wB then
+		local seam = false
+		if not wT or rB.Instance ~= rT.Instance then
+			seam = true
+		else
+			local dB = (rB.Position - oB).Magnitude
+			local dT = (rT.Position - oT).Magnitude
+			if math.abs(dB - dT) > 0.02 or rB.Normal:Dot(rT.Normal) < 0.99 then
+				seam = true
+			end
+		end
+
+		if seam then
+			return rB
+		end
+	end
+	return nil
+end
+
+addcmd('wallhop', {'wh'}, function(args, speaker)
+	if wallhopConnection then wallhopConnection:Disconnect() end
+	local isFlicking = false
+
+	wallhopConnection = RunService.Heartbeat:Connect(function()
+		local char = speaker.Character
+		if not char then return end
+
+		local root = char:FindFirstChild("HumanoidRootPart")
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if not root or not hum or isFlicking then return end
+
+		local vy = root.AssemblyLinearVelocity.Y
+		local state = hum:GetState()
+
+		rayParams.FilterDescendantsInstances = {char}
+
+		local oB = root.Position - Vector3.new(0, 1.8, 0)
+		local oT = root.Position - Vector3.new(0, 1.0, 0)
+		local dir = root.CFrame.LookVector * 2.0
+
+		local resHit = checkSeam(oB, oT, dir)
+
+		if (state == Enum.HumanoidStateType.Freefall or state == Enum.HumanoidStateType.Jumping) and resHit then
+			local hitDist = (resHit.Position - oB).Magnitude
+			if vy <= 0 and hitDist <= 0.68 then
+				isFlicking = true
+				hum.AutoRotate = false
+
+				local angleSign = 1
+				if hum.MoveDirection.Magnitude > 0 then
+					if hum.MoveDirection:Dot(root.CFrame.RightVector) < 0 then
+						angleSign = -1
+					end
+				end
+
+				root.CFrame = CFrame.new(root.Position, root.Position - resHit.Normal) * CFrame.Angles(0, math.rad(45 * angleSign), 0)
+
+				task.wait(0.015)
+				hum.AutoRotate = true
+
+				task.wait(0.08)
+				isFlicking = false
+			end
+		end
+	end)
+	notify('Wallhop', 'Wallhop enabled')
+end)
+
+addcmd('unwallhop', {'nowallhop', 'unwh'}, function(args, speaker)
+	if wallhopConnection then
+		wallhopConnection:Disconnect()
+		wallhopConnection = nil
+	end
+	if speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid") then
+		speaker.Character:FindFirstChildOfClass("Humanoid").AutoRotate = true
+	end
+	notify('Wallhop', 'Wallhop disabled')
+end)
+
+local fastladderConns = {}
+local flRayParams = RaycastParams.new()
+flRayParams.FilterType = Enum.RaycastFilterType.Exclude
+flRayParams.RespectCanCollide = true
+
+local function getLadderNormal(root)
+	local directions = {
+		root.CFrame.LookVector,
+		-root.CFrame.LookVector,
+		root.CFrame.RightVector,
+		-root.CFrame.RightVector
+	}
+	for _, dir in ipairs(directions) do
+		local hit = workspace:Raycast(root.Position, dir * 3.5, flRayParams)
+		if hit and hit.Instance and hit.Instance.CanCollide then
+			return hit.Normal
+		end
+	end
+	return nil
+end
+
+addcmd('fastladder', {'fl'}, function(args, speaker)
+	for _, conn in ipairs(fastladderConns) do conn:Disconnect() end
+	table.clear(fastladderConns)
+
+	local isFlicking = false
+
+	local function triggerFlick()
+		local char = speaker.Character
+		if not char or isFlicking then return end
+
+		local root = char:FindFirstChild("HumanoidRootPart")
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if not root or not hum then return end
+
+		isFlicking = true
+		flRayParams.FilterDescendantsInstances = {char}
+
+		local norm = getLadderNormal(root)
+		hum.AutoRotate = false
+
+		if norm then
+			root.CFrame = CFrame.new(root.Position, root.Position + norm)
+		end
+
+		root.AssemblyLinearVelocity = Vector3.new(root.AssemblyLinearVelocity.X, 60, root.AssemblyLinearVelocity.Z)
+
+		task.wait(0.015)
+		hum.AutoRotate = true
+
+		task.wait(0.05)
+		isFlicking = false
+	end
+
+	local function bindChar(char)
+		if not char then return end
+		local hum = char:WaitForChild("Humanoid", 5)
+		if not hum then return end
+
+		local wasClimbing = false
+
+		local stateConn = hum.StateChanged:Connect(function(oldState, newState)
+			if oldState == Enum.HumanoidStateType.Climbing then
+				wasClimbing = true
+				task.delay(0.1, function() wasClimbing = false end)
+			end
+			if (oldState == Enum.HumanoidStateType.Climbing or wasClimbing) and (newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall) then
+				triggerFlick()
+			end
+		end)
+
+		local jumpConn = UserInputService.JumpRequest:Connect(function()
+			if hum:GetState() == Enum.HumanoidStateType.Climbing or wasClimbing then
+				triggerFlick()
+			end
+		end)
+
+		table.insert(fastladderConns, stateConn)
+		table.insert(fastladderConns, jumpConn)
+	end
+
+	local charConn = speaker.CharacterAdded:Connect(bindChar)
+	table.insert(fastladderConns, charConn)
+
+	if speaker.Character then
+		bindChar(speaker.Character)
+	end
+
+	notify('FastLadder', 'FastLadder enabled')
+end)
+
+addcmd('unfastladder', {'unfl', 'nofastladder'}, function(args, speaker)
+	for _, conn in ipairs(fastladderConns) do conn:Disconnect() end
+	table.clear(fastladderConns)
+
+	if speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid") then
+		speaker.Character:FindFirstChildOfClass("Humanoid").AutoRotate = true
+	end
+	notify('FastLadder', 'FastLadder disabled')
 end)
 
 addcmd("team", {}, function(args, speaker)
