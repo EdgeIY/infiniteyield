@@ -5048,8 +5048,8 @@ end)
 onDied()
 
 local booly = {
-	truthy = { ["true"] = true, ["t"] = true, ["1"] = true, ["yes"] = true, ["y"] = true, ["on"] = true, ["enable"] = true, ["enabled"] = true },
-	falsy = { ["false"] = true, ["f"] = true, ["0"] = true, ["no"] = true, ["n"] = true, ["off"] = true, ["disable"] = true, ["disabled"] = true },
+    truthy = { ["true"] = true, ["t"] = true, ["1"] = true, ["yes"] = true, ["y"] = true, ["on"] = true, ["enable"] = true, ["enabled"] = true },
+    falsy = { ["false"] = true, ["f"] = true, ["0"] = true, ["no"] = true, ["n"] = true, ["off"] = true, ["disable"] = true, ["disabled"] = true },
 }
 
 function parseBoolean(raw, default)
@@ -8976,7 +8976,7 @@ addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
 	end
 end)
 
-addcmd("goto", { "to" }, function(args, speaker)
+addcmd("goto", {"to"}, function(args, speaker)
 	local character = speaker and speaker.Character
 	local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
 	if humanoid == nil then return end
@@ -8994,14 +8994,13 @@ addcmd("goto", { "to" }, function(args, speaker)
 			local targetPosition = targetPivot.Position
 
 			if waitForStream and workspace.StreamingEnabled then
-				local timeout = 5 -- seconds
-				task.spawn(speaker.RequestStreamAroundAsync, speaker, targetPosition, timeout)
-				targetCharacter:WaitForChild("HumanoidRootPart", timeout)
+				task.spawn(speaker.RequestStreamAroundAsync, speaker, targetPosition, 5)
+				targetCharacter:WaitForChild("HumanoidRootPart", 5)
 			end
 
 			speaker.Character:PivotTo(CFrame.new(targetPosition + (targetPivot.LookVector * 3), targetPosition))
 			breakVelocity()
-			-- break -- uncomment if you only want to tp to the first valid target
+			break
 		end
 	end
 end)
@@ -9032,27 +9031,27 @@ addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
     end
 end)
 
-addcmd('vehiclegoto', { 'vgoto', 'vtp', 'vehicletp' }, function(args, speaker)
-	local character = speaker.Character
-	local humanoid = if character then character:FindFirstChildOfClass('Humanoid') else nil
-	if not humanoid then return end
+addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
+    local character = speaker.Character
+    local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+    if not humanoid then return end
 
-	local seat = humanoid.SeatPart
-	local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA('Model') else nil
-	if vehicleModel == nil then
-		notify('Vehicle Goto', 'Make sure you\'re sitting in a vehicle.')
-		return
-	end
+    local seat = humanoid.SeatPart
+    local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA("Model") else nil
+    if vehicleModel == nil then
+        notify("Vehicle Goto", "Make sure you're sitting in a vehicle.")
+        return
+    end
 
-	for _, v in getPlayer(args[1], speaker) do
-		if Players[v].Character == nil then continue end
+    for _, v in getPlayer(args[1], speaker) do
+        if Players[v].Character == nil then continue end
 
-		local root = getRoot(Players[v].Character)
-		if root == nil then continue end
+        local root = getRoot(Players[v].Character)
+        if root == nil then continue end
 
-		vehicleModel:PivotTo(root:GetPivot())
-		-- break -- uncomment this if you want to teleport to the first valid player instead of last
-	end
+        vehicleModel:PivotTo(root:GetPivot())
+        break
+    end
 end)
 
 addcmd('pulsetp',{'ptp'},function(args, speaker)
