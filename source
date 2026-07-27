@@ -8995,7 +8995,7 @@ addcmd("goto", { "to" }, function(args, speaker)
 
 			if waitForStream and workspace.StreamingEnabled then
 				local timeout = 5 -- seconds
-				speaker:RequestStreamAroundAsync(targetPosition, timeout)
+				task.spawn(speaker.RequestStreamAroundAsync, speaker, targetPosition, timeout)
 				targetCharacter:WaitForChild("HumanoidRootPart", timeout)
 			end
 
