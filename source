@@ -10820,17 +10820,16 @@ addcmd("bang", {"rape"}, function(args, speaker)
 		bangLoop:Disconnect()
 	end)
 	if args[1] then
-		local players = getPlayer(args[1], speaker)
-		for _, v in pairs(players) do
-			local bangplr = Players[v].Name
-			local bangOffet = CFrame.new(0, 0, 1.1)
-			bangLoop = RunService.Stepped:Connect(function()
-				pcall(function()
-					local otherRoot = getTorso(Players[bangplr].Character)
-					getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
-				end)
+		local player = getPlayer(args[1], speaker)[1]
+		if not player then return end
+		local bangplr = player
+		local bangOffet = CFrame.new(0, 0, 1.1)
+		bangLoop = RunService.Stepped:Connect(function()
+			pcall(function()
+				local otherRoot = getTorso(bangplr.Character)
+				getRoot(speaker.Character).CFrame = otherRoot.CFrame * bangOffet
 			end)
-		end
+		end)
 	end
 end)
 
