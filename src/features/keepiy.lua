@@ -26,13 +26,15 @@ local Players = Services.Players
 
 local M = {}
 
-local RELEASE_SOURCE = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"
+local RELEASE_SOURCE = "https://raw.githubusercontent.com/CarlDV/infiniteyield/master/source"
 
 --[[ What to run on the other side of the teleport. ]]
 local function payload()
 	local config = IY.config or {}
+	-- `entry` is "source" for the bundle and "loader.lua" for the remote
+	-- loader, so we come back the same way we came in.
 	if type(config.base) == "string" and config.base ~= "" then
-		return "loadstring(game:HttpGet('" .. config.base .. "loader.lua'))()"
+		return "loadstring(game:HttpGet('" .. config.base .. (config.entry or "source") .. "'))()"
 	end
 	return "loadstring(game:HttpGet('" .. RELEASE_SOURCE .. "'))()"
 end

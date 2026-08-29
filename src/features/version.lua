@@ -19,7 +19,14 @@ local Sched  = IY.import("core/scheduler")
 
 local M = {}
 
-local VERSION_URL = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version"
+--[[ Derived from the loader's own base URL, so a build loaded from a branch
+     checks that branch's version file rather than the release one. ]]
+local FALLBACK_BASE = "https://raw.githubusercontent.com/CarlDV/infiniteyield/master/"
+local function versionUrl()
+	local base = IY.config and IY.config.base
+	if type(base) ~= "string" or base == "" then base = FALLBACK_BASE end
+	return base .. "version"
+end
 
 M.checked      = false
 M.outdated     = false
@@ -33,7 +40,7 @@ M.error        = nil
 function M.check(opts)
 	opts = opts or {}
 	Sched.spawn("version.check", function()
-		local ok, body = pcall(function() return game:HttpGet(VERSION_URL, true) end)
+		local ok, body = pcall(function() return game:HttpGet(versionUrl(), true) end)
 		if not ok or type(body) ~= "string" then
 			M.error = tostring(body)
 			Log.debug("version", "could not read the version file: %s", tostring(body))

@@ -5,7 +5,7 @@ The best command line script for roblox.
 [![](https://dcbadge.limes.pink/api/server/https://discord.gg/78ZuWSq)](https://discord.gg/78ZuWSq)
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/CarlDV/infiniteyield/master/source"))()
 ```
 
  - 560 commands
@@ -73,7 +73,7 @@ Developing against a branch without rebuilding the bundle:
 
 ```lua
 getgenv().IY_CONFIG = { branch = "my-branch", debug = true }
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/loader.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/CarlDV/infiniteyield/master/loader.lua"))()
 ```
 
 Plugins written against the old `addcmd` API still work — `src/compat/legacy.lua`
@@ -82,6 +82,6 @@ provides that surface — but new plugins should use `IY.command{...}`.
 ## Contributing
 
 There are no strict rules; open a
-[pull request](https://github.com/EdgeIY/infiniteyield/pulls) and if it checks
+[pull request](https://github.com/CarlDV/infiniteyield/pulls) and if it checks
 out we will merge it. Two asks: run `python3 tools/check.py` and
 `luajit tests/run.lua` first, and edit `src/` rather than `source`.

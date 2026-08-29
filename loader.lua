@@ -1,7 +1,7 @@
 -- Infinite Yield remote loader (7.0.0)
 -- Fetches modules individually so a branch can be tested without rebuilding.
 --   getgenv().IY_CONFIG = { branch = "my-branch", debug = true }
---   loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/loader.lua"))()
+--   loadstring(game:HttpGet("https://raw.githubusercontent.com/CarlDV/infiniteyield/master/loader.lua"))()
 -- The release entry point is `source`, which embeds these same modules.
 
 local __IY_RUNTIME__ = (function(...)
@@ -300,7 +300,9 @@ end
 config.version = config.version or "7.0.0"
 config.channel = config.channel or "remote"
 config.branch  = config.branch or "master"
-config.base    = config.base or ("https://raw.githubusercontent.com/EdgeIY/infiniteyield/" .. config.branch .. "/")
+config.repo    = config.repo or "CarlDV/infiniteyield"
+config.base    = config.base or ("https://raw.githubusercontent.com/" .. config.repo .. "/" .. config.branch .. "/")
+config.entry   = config.entry or "loader.lua"
 
 local IY = __IY_RUNTIME__.new(config)
 

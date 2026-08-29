@@ -29,7 +29,7 @@ local function serve(url)
 	-- Only our own repository paths matter here; the interface also downloads
 	-- image assets from a separate repo, which a sandbox cannot reach and which
 	-- ui/assets already falls back from.
-	local path = string.match(url, "/EdgeIY/infiniteyield/[^/]+/(.+)$")
+	local path = string.match(url, "/[%w%-%.]+/infiniteyield/[^/]+/(.+)$")
 	if not path then return "" end
 	-- Matched before the file read so `src/features/version.lua` is served as
 	-- Lua and the bare `version` manifest as JSON.
