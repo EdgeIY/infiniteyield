@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LuaJIT
+        run: sudo apt-get update && sudo apt-get install -y luajit
+
+      - name: Static checks
+        run: python3 tools/check.py
+
+      - name: Roblox stub self-test
+        run: luajit tests/stub/selftest.lua
+
+      - name: Build the bundle
+        run: python3 tools/build.py
+
+      # `source` is committed, so a PR that edits src/ without rebuilding would
+      # ship a stale bundle. Fail loudly instead.
+      - name: Bundle is up to date
+        run: |
+          if ! git diff --quiet -- source loader.lua src/manifest.lua; then
+            echo "::error::source/loader.lua/src/manifest.lua are stale -- run python3 tools/build.py and commit the result"
+            git --no-pager diff --stat -- source loader.lua src/manifest.lua
+            exit 1
+          fi
+
+      - name: Test suite
+        run: luajit tests/run.lua
+
+      - name: Remote loader path
+        run: luajit tests/loader_test.lua
+
+      - name: Command reference is up to date
+        run: |
+          luajit tools/gendocs.lua
+          if ! git diff --quiet -- docs/COMMANDS.md; then
+            echo "::error::docs/COMMANDS.md is stale -- run luajit tools/gendocs.lua and commit the result"
+            exit 1
+          fi
