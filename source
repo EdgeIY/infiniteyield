@@ -13184,7 +13184,7 @@ function hookCharEvents(plr,instant)
 			eventEditor.FireEvent("OnDied",plr.Name)
 
 			local killedBy = humanoid:FindFirstChild("creator")
-			if killedBy and killedBy.Value and killedBy.Value.Parent then
+			if killedBy and killedBy:IsA("ObjectValue") and killedBy.Value and killedBy.Value.Parent then
 				eventEditor.FireEvent("OnKilled",plr.Name,killedBy.Name)
 			end
 		end)
