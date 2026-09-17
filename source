@@ -3330,60 +3330,57 @@ function CreateLabel(Name, Text)
 	end
 end
 
-function CreateJoinLabel(plr,ID)
-	if #scroll_3:GetChildren() >= 2546 then
-		scroll_3:ClearAllChildren()
-	end
-	local infoFrame = Instance.new("Frame")
-	local info1 = Instance.new("TextLabel")
-	local info2 = Instance.new("TextLabel")
-	local ImageLabel_3 = Instance.new("ImageLabel")
-	infoFrame.Name = randomString()
-	infoFrame.Parent = scroll_3
-	infoFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-	infoFrame.BackgroundTransparency = 1
-	infoFrame.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
-	infoFrame.Size = UDim2.new(1, 0, 0, 50)
-	info1.Name = randomString()
-	info1.Parent = infoFrame
-	info1.BackgroundTransparency = 1
-	info1.BorderSizePixel = 0
-	info1.Position = UDim2.new(0, 45, 0, 0)
-	info1.Size = UDim2.new(0, 135, 1, 0)
-	info1.ZIndex = 10
-	info1.Font = Enum.Font.SourceSans
-	info1.FontSize = Enum.FontSize.Size14
-	info1.Text = "Username: "..plr.Name.."\nJoined Server: "..Time()
-	info1.TextColor3 = Color3.new(1, 1, 1)
-	info1.TextWrapped = true
-	info1.TextXAlignment = Enum.TextXAlignment.Left
-	info2.Name = randomString()
-	info2.Parent = infoFrame
-	info2.BackgroundTransparency = 1
-	info2.BorderSizePixel = 0
-	info2.Position = UDim2.new(0, 185, 0, 0)
-	info2.Size = UDim2.new(0, 140, 1, -5)
-	info2.ZIndex = 10
-	info2.Font = Enum.Font.SourceSans
-	info2.FontSize = Enum.FontSize.Size14
-	info2.Text = "User ID: "..ID.."\nAccount Age: "..plr.AccountAge.."\nJoined Roblox: Loading..."
-	info2.TextColor3 = Color3.new(1, 1, 1)
-	info2.TextWrapped = true
-	info2.TextXAlignment = Enum.TextXAlignment.Left
-	info2.TextYAlignment = Enum.TextYAlignment.Center
-	ImageLabel_3.Parent = infoFrame
-	ImageLabel_3.BackgroundTransparency = 1
-	ImageLabel_3.BorderSizePixel = 0
-	ImageLabel_3.Size = UDim2.new(0, 45, 1, 0)
-	ImageLabel_3.Image = Players:GetUserThumbnailAsync(ID, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
-	scroll_3.CanvasSize = UDim2.new(0, 0, 0, listlayout.AbsoluteContentSize.Y)
-	scroll_3.CanvasPosition = Vector2.new(0,scroll_2.CanvasPosition.Y+infoFrame.AbsoluteSize.Y)
-	wait()
-	local user = game:HttpGet("https://users.roblox.com/v1/users/"..ID)
-	local json = HttpService:JSONDecode(user)
-	local date = json["created"]:sub(1,10)
-	local splitDates = string.split(date,"-")
-	info2.Text = string.gsub(info2.Text, "Loading...",splitDates[2].."/"..splitDates[3].."/"..splitDates[1])
+function CreateJoinLabel(player, userId)
+    if #scroll_3:GetChildren() >= 2546 then
+        scroll_3:ClearAllChildren()
+    end
+    local infoFrame = Instance.new("Frame")
+    local info1 = Instance.new("TextLabel")
+    local info2 = Instance.new("TextLabel")
+    local ImageLabel_3 = Instance.new("ImageLabel")
+    infoFrame.Name = randomString()
+    infoFrame.Parent = scroll_3
+    infoFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+    infoFrame.BackgroundTransparency = 1
+    infoFrame.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+    infoFrame.Size = UDim2.new(1, 0, 0, 50)
+    info1.Name = randomString()
+    info1.Parent = infoFrame
+    info1.BackgroundTransparency = 1
+    info1.BorderSizePixel = 0
+    info1.Position = UDim2.new(0, 45, 0, 0)
+    info1.Size = UDim2.new(0, 135, 1, 0)
+    info1.ZIndex = 10
+    info1.Font = Enum.Font.SourceSans
+    info1.FontSize = Enum.FontSize.Size14
+    info1.Text = "Username: " .. player.Name .. "\nJoined Server: " .. Time()
+    info1.TextColor3 = Color3.new(1, 1, 1)
+    info1.TextWrapped = true
+    info1.TextXAlignment = Enum.TextXAlignment.Left
+    info2.Name = randomString()
+    info2.Parent = infoFrame
+    info2.BackgroundTransparency = 1
+    info2.BorderSizePixel = 0
+    info2.Position = UDim2.new(0, 185, 0, 0)
+    info2.Size = UDim2.new(0, 140, 1, -5)
+    info2.ZIndex = 10
+    info2.Font = Enum.Font.SourceSans
+    info2.FontSize = Enum.FontSize.Size14
+    info2.Text = "User ID: " .. userId .. "\nAccount Age: " .. player.AccountAge .. "\nJoined Roblox: Loading..."
+    info2.TextColor3 = Color3.new(1, 1, 1)
+    info2.TextWrapped = true
+    info2.TextXAlignment = Enum.TextXAlignment.Left
+    info2.TextYAlignment = Enum.TextYAlignment.Center
+    ImageLabel_3.Parent = infoFrame
+    ImageLabel_3.BackgroundTransparency = 1
+    ImageLabel_3.BorderSizePixel = 0
+    ImageLabel_3.Size = UDim2.new(0, 45, 1, 0)
+    ImageLabel_3.Image = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420)
+    scroll_3.CanvasSize = UDim2.new(0, 0, 0, listlayout.AbsoluteContentSize.Y)
+    scroll_3.CanvasPosition = Vector2.new(0, scroll_2.CanvasPosition.Y + infoFrame.AbsoluteSize.Y)
+    local date = os.date("!%Y-%m-%d", os.time() - (player.AccountAge * 86400))
+    local splitDates = string.split(date, "-")
+    info2.Text = string.gsub(info2.Text, "Loading...", splitDates[2] .. "/" .. splitDates[3] .. "/" .. splitDates[1])
 end
 
 IYMouse.KeyDown:Connect(function(Key)
@@ -13169,29 +13166,29 @@ eventEditor.RegisterEvent("OnChatted",{
 	{Type="String",Name="Message Filter ($2)"}
 })
 
-function hookCharEvents(plr,instant)
+function hookCharEvents(plr, instant)
 	task.spawn(function()
 		local char = plr.Character
 		if not char then return end
 
-		local humanoid = char:WaitForChild("Humanoid",10)
+		local humanoid = char:WaitForChild("Humanoid", 10)
 		if not humanoid then return end
 
 		local oldHealth = humanoid.Health
 		humanoid.HealthChanged:Connect(function(health)
 			local change = math.abs(oldHealth - health)
 			if oldHealth > health then
-				eventEditor.FireEvent("OnDamage",plr.Name,tonumber(health))
+				eventEditor.FireEvent("OnDamage", plr.Name, tonumber(health))
 			end
 			oldHealth = health
 		end)
 
 		humanoid.Died:Connect(function()
-			eventEditor.FireEvent("OnDied",plr.Name)
+			eventEditor.FireEvent("OnDied", plr.Name)
 
 			local killedBy = humanoid:FindFirstChild("creator")
 			if killedBy and killedBy:IsA("ObjectValue") and killedBy.Value and killedBy.Value.Parent then
-				eventEditor.FireEvent("OnKilled",plr.Name,killedBy.Name)
+				eventEditor.FireEvent("OnKilled", plr.Name, killedBy.Name)
 			end
 		end)
 	end)
@@ -13231,9 +13228,9 @@ if not isLegacyChat then
 	end)
 end
 
-for _,plr in pairs(Players:GetPlayers()) do
+for _, plr in pairs(Players:GetPlayers()) do
 	pcall(function()
-		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn",tostring(plr)) hookCharEvents(plr) end)
+		plr.CharacterAdded:Connect(function() eventEditor.FireEvent("OnSpawn", tostring(plr)) hookCharEvents(plr) end)
 		hookCharEvents(plr)
 	end)
 end
