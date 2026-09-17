@@ -5104,31 +5104,33 @@ local historyCount = 0
 local split=" "
 local lastBreakTime = 0
 function execCmd(cmdStr,speaker,store)
-	cmdStr = cmdStr:gsub("%s+$","")
+	cmdStr = cmdStr:gsub("%s+$", "")
 	task.spawn(function()
 		local rawCmdStr = cmdStr
-		cmdStr = string.gsub(cmdStr,"\\\\","%%BackSlash%%")
-		local commandsToRun = splitString(cmdStr,"\\")
-		for i,v in pairs(commandsToRun) do
-			v = string.gsub(v,"%%BackSlash%%","\\")
-			local x,y,num = v:find("^(%d+)%^")
+		cmdStr = string.gsub(cmdStr, "\\\\", "%%BackSlash%%")
+
+		local commandsToRun = splitString(cmdStr, "\\")
+		for i, v in pairs(commandsToRun) do
+			v = string.gsub(v, "%%BackSlash%%", "\\")
+			local x, y, num = v:find("^(%d+)%^")
 			local cmdDelay = 0
 			local infTimes = false
+
 			if num then
-				v = v:sub(y+1)
-				local x,y,del = v:find("^([%d%.]+)%^")
+				v = v:sub(y + 1)
+				local x, y, del = v:find("^([%d%.]+)%^")
 				if del then
-					v = v:sub(y+1)
+					v = v:sub(y + 1)
 					cmdDelay = tonumber(del) or 0
 				end
 			else
-				local x,y = v:find("^inf%^")
+				local x, y = v:find("^inf%^")
 				if x then
 					infTimes = true
-					v = v:sub(y+1)
-					local x,y,del = v:find("^([%d%.]+)%^")
+					v = v:sub(y + 1)
+					local x, y, del = v:find("^([%d%.]+)%^")
 					if del then
-						v = v:sub(y+1)
+						v = v:sub(y + 1)
 						del = tonumber(del) or 1
 						cmdDelay = (del > 0 and del or 1)
 					else
@@ -5138,45 +5140,49 @@ function execCmd(cmdStr,speaker,store)
 			end
 			num = tonumber(num or 1)
 
-			if v:sub(1,1) == "!" then
-				local chunks = splitString(v:sub(2),split)
+			if v:sub(1, 1) == "!" then
+				local chunks = splitString(v:sub(2), split)
 				if chunks[1] and lastCmds[chunks[1]] then v = lastCmds[chunks[1]] end
 			end
 
-			local args = splitString(v,split)
+			local args = splitString(v, split)
 			local cmdName = args[1]
 			local cmd = findCmd(cmdName)
 			if cmd then
-				table.remove(args,1)
+				table.remove(args, 1)
 				cargs = args
 				if not speaker then speaker = Players.LocalPlayer end
+
 				if store then
 					if speaker == Players.LocalPlayer then
-						if cmdHistory[1] ~= rawCmdStr and rawCmdStr:sub(1,11) ~= 'lastcommand' and rawCmdStr:sub(1,7) ~= 'lastcmd' then
-							table.insert(cmdHistory,1,rawCmdStr)
+						if cmdHistory[1] ~= rawCmdStr and rawCmdStr:sub(1, 11) ~= "lastcommand" and rawCmdStr:sub(1, 7) ~= "lastcmd" then
+							table.insert(cmdHistory, 1, rawCmdStr)
 						end
 					end
 					if #cmdHistory > 30 then table.remove(cmdHistory) end
 
 					lastCmds[cmdName] = v
 				end
+
 				local cmdStartTime = tick()
 				if infTimes then
 					while lastBreakTime < cmdStartTime do
-						local success,err = pcall(cmd.FUNC,args, speaker)
+						local success, err = pcall(cmd.FUNC, args, speaker)
 						if not success and _G.IY_DEBUG then
 							warn("Command Error:", cmdName, err)
 						end
 						wait(cmdDelay)
 					end
 				else
-					for rep = 1,num do
+					for rep = 1, num do
 						if lastBreakTime > cmdStartTime then break end
-						local success,err = pcall(function()
-							cmd.FUNC(args, speaker)
-						end)
+						local success, err = pcall(cmd.FUNC, args, speaker)
 						if not success and _G.IY_DEBUG then
 							warn("Command Error:", cmdName, err)
+							notify("Command Error: " .. cmdName, "Check console")
+						end
+						if success and type(err) == "string" and not table.find(args, "nonotify") then
+							notify("Command: " .. cmdName, err)
 						end
 						if cmdDelay ~= 0 then wait(cmdDelay) end
 					end
@@ -5184,7 +5190,7 @@ function execCmd(cmdStr,speaker,store)
 			end
 		end
 	end)
-end	
+end
 
 function addcmd(name,alias,func,plgn)
 	cmds[#cmds+1]=
