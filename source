@@ -12982,7 +12982,7 @@ function hookCharEvents(plr,instant)
 		if not char then return end
 
 		local humanoid = char:WaitForChild("Humanoid",10)
-		if not humanoid then return end
+		if not humanoid or humanoid.ClassName~="Humanoid" then return end
 
 		local oldHealth = humanoid.Health
 		humanoid.HealthChanged:Connect(function(health)
