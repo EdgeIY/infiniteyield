@@ -4480,6 +4480,7 @@ CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Cobalt to intercept 
 CMDs[#CMDs + 1] = {NAME = 'simplespy / sspy', DESC = 'Opens Simple Spy V3 to intercept remote calls from the client to the server'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
+CMDs[#CMDs + 1] = {NAME = 'servers', DESC = 'Opens a list of public servers with player counts, performance info, and join buttons'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj [reposition]', DESC = 'Makes you rejoin the game'}
@@ -6929,6 +6930,315 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 			end
 			wait(1)
 		until SINFOGUI.Parent == nil
+	end)
+end)
+
+local serversFrame
+addcmd("servers", {}, function(args, speaker)
+	if serversFrame and serversFrame.Parent then
+		serversFrame:TweenPosition(UDim2.new(0.5, -205, 0.5, -167), "InOut", "Quart", 0.5, true, nil)
+		return
+	end
+
+	task.spawn(function()
+		local FRAME = Instance.new("Frame")
+		local shadow = Instance.new("Frame")
+		local PopupText = Instance.new("TextLabel")
+		local Exit = Instance.new("TextButton")
+		local ExitImage = Instance.new("ImageLabel")
+		local background = Instance.new("Frame")
+		local status = Instance.new("TextLabel")
+		local refresh = Instance.new("TextButton")
+		local serverList = Instance.new("ScrollingFrame")
+		local listLayout = Instance.new("UIListLayout")
+		local loadMore = Instance.new("TextButton")
+		local closed = false
+		local loading = false
+		local nextCursor
+		local serverCount = 0
+
+		local function addTheme(instance, backgroundTheme, textTheme)
+			if backgroundTheme then table.insert(backgroundTheme, instance) end
+			if textTheme then table.insert(textTheme, instance) end
+		end
+
+		FRAME.Name = randomString()
+		FRAME.Parent = ScaledHolder
+		FRAME.Active = true
+		FRAME.BackgroundTransparency = 1
+		FRAME.Position = UDim2.new(0.5, -205, 0, -355)
+		FRAME.Size = UDim2.new(0, 410, 0, 20)
+		FRAME.ZIndex = 10
+		serversFrame = FRAME
+		dragGUI(FRAME)
+
+		shadow.Name = "shadow"
+		shadow.Parent = FRAME
+		shadow.BackgroundColor3 = currentShade2
+		shadow.BorderSizePixel = 0
+		shadow.Size = UDim2.new(1, 0, 0, 20)
+		shadow.ZIndex = 10
+		addTheme(shadow, shade2)
+
+		PopupText.Name = "PopupText"
+		PopupText.Parent = shadow
+		PopupText.BackgroundTransparency = 1
+		PopupText.Size = UDim2.new(1, 0, 0.95, 0)
+		PopupText.Font = Enum.Font.SourceSans
+		PopupText.Text = "Servers"
+		PopupText.TextColor3 = currentText1
+		PopupText.TextSize = 14
+		PopupText.TextWrapped = true
+		PopupText.ZIndex = 10
+		addTheme(PopupText, nil, text1)
+
+		Exit.Name = "Exit"
+		Exit.Parent = shadow
+		Exit.BackgroundTransparency = 1
+		Exit.Position = UDim2.new(1, -20, 0, 0)
+		Exit.Size = UDim2.new(0, 20, 0, 20)
+		Exit.Text = ""
+		Exit.ZIndex = 10
+
+		ExitImage.Parent = Exit
+		ExitImage.BackgroundTransparency = 1
+		ExitImage.Position = UDim2.new(0, 5, 0, 5)
+		ExitImage.Size = UDim2.new(0, 10, 0, 10)
+		ExitImage.Image = getcustomasset("infiniteyield/assets/close.png")
+		ExitImage.ZIndex = 10
+
+		background.Name = "background"
+		background.Parent = FRAME
+		background.Active = true
+		background.BackgroundColor3 = currentShade1
+		background.BorderSizePixel = 0
+		background.Position = UDim2.new(0, 0, 1, 0)
+		background.Size = UDim2.new(1, 0, 0, 315)
+		background.ZIndex = 10
+		addTheme(background, shade1)
+
+		status.Name = "Status"
+		status.Parent = background
+		status.BackgroundTransparency = 1
+		status.Position = UDim2.new(0, 7, 0, 5)
+		status.Size = UDim2.new(1, -92, 0, 25)
+		status.Font = Enum.Font.SourceSans
+		status.Text = "Loading servers..."
+		status.TextColor3 = currentText1
+		status.TextSize = 14
+		status.TextXAlignment = Enum.TextXAlignment.Left
+		status.ZIndex = 10
+		addTheme(status, nil, text1)
+
+		refresh.Name = "Refresh"
+		refresh.Parent = background
+		refresh.BackgroundColor3 = currentShade2
+		refresh.BorderSizePixel = 0
+		refresh.Position = UDim2.new(1, -77, 0, 5)
+		refresh.Size = UDim2.new(0, 70, 0, 25)
+		refresh.Font = Enum.Font.SourceSans
+		refresh.Text = "Refresh"
+		refresh.TextColor3 = currentText1
+		refresh.TextSize = 14
+		refresh.ZIndex = 10
+		addTheme(refresh, shade2, text1)
+
+		serverList.Name = "ServerList"
+		serverList.Parent = background
+		serverList.BackgroundTransparency = 1
+		serverList.BorderSizePixel = 0
+		serverList.Position = UDim2.new(0, 5, 0, 35)
+		serverList.Size = UDim2.new(1, -10, 0, 240)
+		serverList.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+		serverList.CanvasSize = UDim2.new(0, 0, 0, 0)
+		serverList.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+		serverList.ScrollBarImageColor3 = currentScroll
+		serverList.ScrollBarThickness = 8
+		serverList.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+		serverList.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+		serverList.ZIndex = 10
+		table.insert(scroll, serverList)
+
+		listLayout.Parent = serverList
+		listLayout.Padding = UDim.new(0, 5)
+		listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+		loadMore.Name = "LoadMore"
+		loadMore.Parent = background
+		loadMore.BackgroundColor3 = currentShade2
+		loadMore.BorderSizePixel = 0
+		loadMore.Position = UDim2.new(0, 5, 1, -35)
+		loadMore.Size = UDim2.new(1, -10, 0, 25)
+		loadMore.Font = Enum.Font.SourceSans
+		loadMore.Text = "Load More"
+		loadMore.TextColor3 = currentText1
+		loadMore.TextSize = 14
+		loadMore.ZIndex = 10
+		addTheme(loadMore, shade2, text1)
+
+		local function createServerRow(server)
+			if closed or type(server) ~= "table" or type(server.id) ~= "string" then return end
+
+			local playing = tonumber(server.playing) or 0
+			local maxPlayers = tonumber(server.maxPlayers) or 0
+			local isCurrent = server.id == JobId
+			local isFull = maxPlayers > 0 and playing >= maxPlayers
+			local row = Instance.new("Frame")
+			local serverId = Instance.new("TextLabel")
+			local details = Instance.new("TextLabel")
+			local joinButton = Instance.new("TextButton")
+
+			serverCount = serverCount + 1
+			row.Name = "Server"
+			row.Parent = serverList
+			row.BackgroundColor3 = currentShade2
+			row.BorderSizePixel = 0
+			row.LayoutOrder = serverCount
+			row.Size = UDim2.new(1, -8, 0, 44)
+			row.ZIndex = 10
+			addTheme(row, shade2)
+
+			serverId.Name = "ServerId"
+			serverId.Parent = row
+			serverId.BackgroundTransparency = 1
+			serverId.Position = UDim2.new(0, 6, 0, 3)
+			serverId.Size = UDim2.new(1, -70, 0, 18)
+			serverId.Font = Enum.Font.SourceSans
+			serverId.Text = server.id
+			serverId.TextColor3 = currentText1
+			serverId.TextSize = 14
+			serverId.TextTruncate = Enum.TextTruncate.AtEnd
+			serverId.TextXAlignment = Enum.TextXAlignment.Left
+			serverId.ZIndex = 10
+			addTheme(serverId, nil, text1)
+
+			local ping = tonumber(server.ping)
+			local fps = tonumber(server.fps)
+			local detailParts = {playing .. "/" .. maxPlayers .. " players"}
+			if ping then table.insert(detailParts, math.floor(ping + 0.5) .. " ms") end
+			if fps then table.insert(detailParts, string.format("%.1f FPS", fps)) end
+			if isCurrent then table.insert(detailParts, "Current server") end
+
+			details.Name = "Details"
+			details.Parent = row
+			details.BackgroundTransparency = 1
+			details.Position = UDim2.new(0, 6, 0, 22)
+			details.Size = UDim2.new(1, -70, 0, 17)
+			details.Font = Enum.Font.SourceSans
+			details.Text = table.concat(detailParts, "  |  ")
+			details.TextColor3 = currentText1
+			details.TextSize = 13
+			details.TextTransparency = 0.2
+			details.TextTruncate = Enum.TextTruncate.AtEnd
+			details.TextXAlignment = Enum.TextXAlignment.Left
+			details.ZIndex = 10
+			addTheme(details, nil, text1)
+
+			joinButton.Name = "Join"
+			joinButton.Parent = row
+			joinButton.BackgroundColor3 = currentShade1
+			joinButton.BorderSizePixel = 0
+			joinButton.Position = UDim2.new(1, -59, 0.5, -12)
+			joinButton.Size = UDim2.new(0, 53, 0, 24)
+			joinButton.Font = Enum.Font.SourceSans
+			joinButton.Text = isCurrent and "Here" or (isFull and "Full" or "Join")
+			joinButton.TextColor3 = currentText1
+			joinButton.TextSize = 14
+			joinButton.ZIndex = 10
+			addTheme(joinButton, shade1, text1)
+
+			if isCurrent or isFull then
+				joinButton.AutoButtonColor = false
+				joinButton.Active = false
+			else
+				joinButton.MouseButton1Click:Connect(function()
+					if closed or joinButton.Text == "Joining..." then return end
+					joinButton.Text = "Joining..."
+					local success, teleportError = pcall(function()
+						TeleportService:TeleportToPlaceInstance(PlaceId, server.id, Players.LocalPlayer)
+					end)
+					if not success then
+						notify("Servers", "Could not join that server: " .. tostring(teleportError))
+					end
+					task.wait(2)
+					if joinButton.Parent then joinButton.Text = "Join" end
+				end)
+			end
+
+			serverList.CanvasSize = UDim2.new(0, 0, 0, serverCount * 49)
+		end
+
+		local function clearServers()
+			for _, child in pairs(serverList:GetChildren()) do
+				if child ~= listLayout then child:Destroy() end
+			end
+			serverCount = 0
+			nextCursor = nil
+			serverList.CanvasPosition = Vector2.new(0, 0)
+			serverList.CanvasSize = UDim2.new(0, 0, 0, 0)
+		end
+
+		local function fetchServers(reset)
+			if loading or closed then return end
+			loading = true
+			if reset then clearServers() end
+			status.Text = reset and "Loading servers..." or ("Loading more... (" .. serverCount .. " shown)")
+			refresh.Text = "Loading..."
+			loadMore.Text = "Loading..."
+
+			local url = "https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=false"
+			if not reset and nextCursor then
+				url = url .. "&cursor=" .. HttpService:UrlEncode(nextCursor)
+			end
+
+			local success, result = pcall(function()
+				return HttpService:JSONDecode(game:HttpGet(url))
+			end)
+			if closed then return end
+
+			if success and type(result) == "table" and type(result.data) == "table" then
+				for _, server in ipairs(result.data) do
+					createServerRow(server)
+				end
+				nextCursor = type(result.nextPageCursor) == "string" and result.nextPageCursor or nil
+				if serverCount == 0 then
+					status.Text = "No public servers found"
+				elseif nextCursor then
+					status.Text = serverCount .. " servers shown - more available"
+				else
+					status.Text = serverCount .. " servers shown"
+				end
+			else
+				status.Text = "Could not load servers"
+				notify("Servers", "Could not retrieve the public server list")
+			end
+
+			loading = false
+			refresh.Text = "Refresh"
+			loadMore.Text = nextCursor and "Load More" or "All Servers Loaded"
+			loadMore.AutoButtonColor = nextCursor ~= nil
+			loadMore.Active = nextCursor ~= nil
+		end
+
+		Exit.MouseButton1Click:Connect(function()
+			if closed then return end
+			closed = true
+			FRAME:TweenPosition(UDim2.new(0.5, -205, 0, -355), "InOut", "Quart", 0.5, true, nil)
+			task.wait(0.6)
+			FRAME:Destroy()
+			if serversFrame == FRAME then serversFrame = nil end
+		end)
+
+		refresh.MouseButton1Click:Connect(function()
+			task.spawn(fetchServers, true)
+		end)
+
+		loadMore.MouseButton1Click:Connect(function()
+			if nextCursor then task.spawn(fetchServers, false) end
+		end)
+
+		FRAME:TweenPosition(UDim2.new(0.5, -205, 0.5, -167), "InOut", "Quart", 0.5, true, nil)
+		task.spawn(fetchServers, true)
 	end)
 end)
 
