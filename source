@@ -13083,9 +13083,8 @@ addcmd('removecmd',{'deletecmd'},function(args, speaker)
 end)
 
 addcmd("debug", {}, function(args, speaker)
-    local opt = parseBoolean(args[1], true)
-    _G.IY_DEBUG = opt
-    notify("debug", tostring(opt), 1)
+    _G.IY_DEBUG = parseBoolean(args[1], true)
+    return _G.IY_DEBUG and "Enabled" or "Disabled"
 end)
 
 if IsOnMobile then
@@ -13217,7 +13216,8 @@ if not isLegacyChat then
 			if not player then return end
 
             local message = textChatMessage.Text
-            pcall(function() if textChatMessage.WasRewritten then message = "(rephrased) " .. textChatMessage.RewrittenText end end)
+            pcall(function() if textChatMessage.WasRewritten == true then message = "(rephrased) " .. textChatMessage.RewrittenText end end)
+            pcall(function() if type(textChatMessage.OriginalText) == "string" then message = textChatMessage.OriginalText end end)
 
 			if logsEnabled == true then
 				CreateLabel(player.Name, message)
