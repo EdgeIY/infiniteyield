@@ -4884,6 +4884,7 @@ CMDs[#CMDs + 1] = {NAME = 'ungrabtools / nograbtools', DESC = 'Disables grabtool
 CMDs[#CMDs + 1] = {NAME = 'copytools [player] (CLIENT)', DESC = 'Copies a players tools'}
 CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [num]', DESC = 'Duplicates your inventory tools a set amount of times'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
+CMDs[#CMDs + 1] = {NAME = 'agechecked / agecheckedplayers', DESC = 'Highlights players that are age checked (green = age checked, red = not age checked)'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
 CMDs[#CMDs + 1] = {NAME = 'equiptools', DESC = 'Equips every tool in your inventory at once'}
 CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are currently holding at once'}
@@ -10380,14 +10381,16 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setspeed;
-			local index; index = hookmetamethod(game, "__index", function(self, key)
+			local setspeed
+			local index
+index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					return setspeed or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex
+newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "WalkSpeed" or key == "walkSpeed") and self:IsDescendantOf(char) then
 					setspeed = tonumber(value)
 				end
@@ -10431,14 +10434,16 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
 			local char = speaker.Character
-			local setpower;
-			local index; index = hookmetamethod(game, "__index", function(self, key)
+			local setpower
+			local index
+index = hookmetamethod(game, "__index", function(self, key)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					return setpower or args[1]
 				end
 				return index(self, key)
 			end)
-			local newindex; newindex = hookmetamethod(game, "__newindex", function(self, key, value)
+			local newindex
+newindex = hookmetamethod(game, "__newindex", function(self, key, value)
 				if not checkcaller() and typeof(self) == "Instance" and self:IsA("Humanoid") and (key == "JumpPower" or key == "jumpPower") and self:IsDescendantOf(char) then
 					setpower = tonumber(value)
 				end
@@ -10508,6 +10513,114 @@ addcmd('tools',{'gears'},function(args, speaker)
 	end
 	copy(ReplicatedStorage)
 	notify('Tools','Copied tools from ReplicatedStorage and Lighting')
+end)
+
+function AGECHECK_CHMS(plr, checked)
+	task.spawn(function()
+		for i, v in pairs(COREGUI:GetChildren()) do
+			if v.Name == plr.Name .. "_AGECHECK_CHMS" then
+				v:Destroy()
+			end
+		end
+		wait()
+		if
+			plr.Character
+			and plr.Name ~= Players.LocalPlayer.Name
+			and not COREGUI:FindFirstChild(plr.Name .. "_AGECHECK_CHMS")
+		then
+			local ESPholder = Instance.new("Folder")
+			ESPholder.Name = plr.Name .. "_AGECHECK_CHMS"
+			ESPholder.Parent = COREGUI
+			repeat
+				wait(1)
+			until plr.Character and getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid")
+			for b, n in pairs(plr.Character:GetChildren()) do
+				if n:IsA("BasePart") then
+					local a = Instance.new("BoxHandleAdornment")
+					a.Name = plr.Name .. "_AGECHECK_ESP"
+					a.Parent = ESPholder
+					a.Adornee = n
+					a.AlwaysOnTop = true
+					a.ZIndex = 10
+					a.Size = n.Size
+					a.Transparency = espTransparency
+					a.Color = checked and BrickColor.new("Bright green") or BrickColor.new("Bright red")
+				end
+			end
+			local addedFunc
+			local teamChange
+			local CHMSremoved
+			addedFunc = plr.CharacterAdded:Connect(function()
+				if CHMSenabled then
+					ESPholder:Destroy()
+					teamChange:Disconnect()
+					repeat
+						wait(1)
+					until getRoot(plr.Character) and plr.Character:FindFirstChildOfClass("Humanoid")
+					AGECHECK_CHMS(plr, checked)
+					addedFunc:Disconnect()
+				else
+					teamChange:Disconnect()
+					addedFunc:Disconnect()
+				end
+			end)
+			CHMSremoved = ESPholder.AncestryChanged:Connect(function()
+				teamChange:Disconnect()
+				addedFunc:Disconnect()
+				CHMSremoved:Disconnect()
+			end)
+		end
+	end)
+end
+
+local function isAgeChecked(player)
+	return player.AgeChecked == Enum.AgeCheckStatus.Checked
+end
+
+local AgeCheckConnections = {}
+
+addcmd("agecheckedplayers", { "agechecked" }, function(args, speaker)
+	AgeCheckConnections["playeradded"] = Players.PlayerAdded:Connect(function(plr)
+		if isAgeChecked(plr) then
+			AGECHECK_CHMS(plr, true)
+			AgeCheckConnections[plr] = plr.CharacterAdded:Connect(function()
+				plr.Character:WaitForChild("HumanoidRootPart")
+				AGECHECK_CHMS(plr, true)
+			end)
+		else
+			AGECHECK_CHMS(plr, false)
+			AgeCheckConnections[plr] = plr.CharacterAdded:Connect(function()
+				AGECHECK_CHMS(plr, false)
+			end)
+		end
+	end)
+	for i, v in pairs(Players:GetPlayers()) do
+		if isAgeChecked(v) then
+			AGECHECK_CHMS(v, true)
+			AgeCheckConnections[v] = v.CharacterAdded:Connect(function()
+				v.Character:WaitForChild("HumanoidRootPart")
+				AGECHECK_CHMS(v, true)
+			end)
+		else
+			AGECHECK_CHMS(v, false)
+			AgeCheckConnections[v] = v.CharacterAdded:Connect(function()
+				AGECHECK_CHMS(v, false)
+			end)
+		end
+	end
+end)
+
+addcmd("removeagechecked", {}, function(args, speaker)
+	AgeCheckConnections["playeradded"]:Disconnect()
+	for i, v in pairs(Players:GetPlayers()) do
+		if AgeCheckConnections[v] then
+			AgeCheckConnections[v]:Disconnect()
+			AgeCheckConnections[v] = nil
+		end
+		if COREGUI:FindFirstChild(v.Name .. "_AGECHECK_CHMS") then
+			COREGUI:FindFirstChild(v.Name .. "_AGECHECK_CHMS"):Destroy()
+		end
+	end
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},function(args, speaker)
