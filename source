@@ -426,11 +426,11 @@ CMDsF.BorderSizePixel = 0
 CMDsF.Position = UDim2.new(0, 5, 0, 45)
 CMDsF.Size = UDim2.new(0, 245, 0, 175)
 CMDsF.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-CMDsF.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+CMDsF.BottomImage = "rbxassetid://75024581433929"
 CMDsF.CanvasSize = UDim2.new(0, 0, 0, 0)
-CMDsF.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+CMDsF.MidImage = "rbxassetid://75024581433929"
 CMDsF.ScrollBarThickness = 8
-CMDsF.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+CMDsF.TopImage = "rbxassetid://75024581433929"
 CMDsF.VerticalScrollBarInset = 'Always'
 CMDsF.ZIndex = 10
 table.insert(scroll,CMDsF)
@@ -471,11 +471,11 @@ SettingsHolder.BackgroundTransparency = 1
 SettingsHolder.BorderSizePixel = 0
 SettingsHolder.Size = UDim2.new(1,0,1,0)
 SettingsHolder.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-SettingsHolder.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.BottomImage = "rbxassetid://75024581433929"
 SettingsHolder.CanvasSize = UDim2.new(0, 0, 0, 235)
-SettingsHolder.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.MidImage = "rbxassetid://75024581433929"
 SettingsHolder.ScrollBarThickness = 8
-SettingsHolder.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+SettingsHolder.TopImage = "rbxassetid://75024581433929"
 SettingsHolder.VerticalScrollBarInset = 'Always'
 SettingsHolder.ZIndex = 10
 table.insert(scroll,SettingsHolder)
@@ -834,11 +834,11 @@ Holder_2.BorderSizePixel = 0
 Holder_2.Position = UDim2.new(0, 0, 0, 0)
 Holder_2.Size = UDim2.new(0, 250, 0, 145)
 Holder_2.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_2.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_2.BottomImage = "rbxassetid://75024581433929"
 Holder_2.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_2.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_2.MidImage = "rbxassetid://75024581433929"
 Holder_2.ScrollBarThickness = 0
-Holder_2.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_2.TopImage = "rbxassetid://75024581433929"
 Holder_2.VerticalScrollBarInset = 'Always'
 Holder_2.ZIndex = 10
 
@@ -985,10 +985,10 @@ Toggles.BorderSizePixel = 0
 Toggles.Position = UDim2.new(0, 150, 0, 125)
 Toggles.Size = UDim2.new(0, 200, 0, 50)
 Toggles.ZIndex = 10
-Toggles.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Toggles.BottomImage = "rbxassetid://75024581433929"
 Toggles.CanvasSize = UDim2.new(0, 0, 0, 50)
 Toggles.ScrollBarThickness = 8
-Toggles.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Toggles.TopImage = "rbxassetid://75024581433929"
 Toggles.VerticalScrollBarInset = Enum.ScrollBarInset.Always
 table.insert(scroll,Toggles)
 
@@ -1210,11 +1210,11 @@ Holder_4.Position = UDim2.new(0, 0, 0, 0)
 Holder_4.Selectable = false
 Holder_4.Size = UDim2.new(0, 250, 0, 145)
 Holder_4.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_4.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_4.BottomImage = "rbxassetid://75024581433929"
 Holder_4.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_4.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_4.MidImage = "rbxassetid://75024581433929"
 Holder_4.ScrollBarThickness = 0
-Holder_4.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_4.TopImage = "rbxassetid://75024581433929"
 Holder_4.VerticalScrollBarInset = 'Always'
 Holder_4.ZIndex = 10
 
@@ -1316,11 +1316,11 @@ Holder_3.BorderSizePixel = 0
 Holder_3.Position = UDim2.new(0, 0, 0, 0)
 Holder_3.Size = UDim2.new(0, 250, 0, 145)
 Holder_3.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_3.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_3.BottomImage = "rbxassetid://75024581433929"
 Holder_3.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_3.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_3.MidImage = "rbxassetid://75024581433929"
 Holder_3.ScrollBarThickness = 0
-Holder_3.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_3.TopImage = "rbxassetid://75024581433929"
 Holder_3.VerticalScrollBarInset = 'Always'
 Holder_3.ZIndex = 10
 
@@ -1408,11 +1408,11 @@ Holder_5.Position = UDim2.new(0, 0, 0, 0)
 Holder_5.Selectable = false
 Holder_5.Size = UDim2.new(0, 250, 0, 145)
 Holder_5.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_5.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_5.BottomImage = "rbxassetid://75024581433929"
 Holder_5.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_5.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_5.MidImage = "rbxassetid://75024581433929"
 Holder_5.ScrollBarThickness = 0
-Holder_5.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+Holder_5.TopImage = "rbxassetid://75024581433929"
 Holder_5.VerticalScrollBarInset = 'Always'
 Holder_5.ZIndex = 10
 
@@ -1873,10 +1873,10 @@ scroll_2.BorderSizePixel = 0
 scroll_2.Position = UDim2.new(0, 5, 0, 25)
 scroll_2.Size = UDim2.new(0, 328, 0, 190)
 scroll_2.ZIndex = 10
-scroll_2.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+scroll_2.BottomImage = "rbxassetid://75024581433929"
 scroll_2.CanvasSize = UDim2.new(0, 0, 0, 10)
 scroll_2.ScrollBarThickness = 8
-scroll_2.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+scroll_2.TopImage = "rbxassetid://75024581433929"
 table.insert(scroll,scroll_2)
 table.insert(shade2,scroll_2)
 
@@ -1926,10 +1926,10 @@ scroll_3.BorderSizePixel = 0
 scroll_3.Position = UDim2.new(0, 5, 0, 25)
 scroll_3.Size = UDim2.new(0, 328, 0, 190)
 scroll_3.ZIndex = 10
-scroll_3.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+scroll_3.BottomImage = "rbxassetid://75024581433929"
 scroll_3.CanvasSize = UDim2.new(0, 0, 0, 10)
 scroll_3.ScrollBarThickness = 8
-scroll_3.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+scroll_3.TopImage = "rbxassetid://75024581433929"
 table.insert(scroll,scroll_3)
 table.insert(shade2,scroll_3)
 
@@ -2302,13 +2302,13 @@ eventEditor = (function()
 		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
 		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image=getcustomasset("infiniteyield/assets/close.png"),Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
 		{6,"Frame",{BackgroundColor3=currentShade1,BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,202),ZIndex=10,}},
-		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={6},Position=UDim2.new(0,5,0,5),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,-10,1,-10),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={6},Position=UDim2.new(0,5,0,5),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,-10,1,-10),TopImage="rbxassetid://75024581433929",ZIndex=10,}},
 		{8,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={7},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{9,"UIListLayout",{Parent={8},SortOrder=2,}},
 		{10,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,ClipsDescendants=true,Name="Settings",Parent={6},Position=UDim2.new(1,0,0,0),Size=UDim2.new(0,150,1,0),ZIndex=10,}},
 		{11,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),Name="Slider",Parent={10},Position=UDim2.new(0,-150,0,0),Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{12,"Frame",{BackgroundColor3=Color3.new(0.23529413342476,0.23529413342476,0.23529413342476),BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,Name="Line",Parent={11},Size=UDim2.new(0,1,1,0),ZIndex=10,}},
-		{13,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={11},Position=UDim2.new(0,0,0,25),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,-25),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
+		{13,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={11},Position=UDim2.new(0,0,0,25),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,-25),TopImage="rbxassetid://75024581433929",ZIndex=10,}},
 		{14,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={13},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{15,"UIListLayout",{Parent={14},SortOrder=2,}},
 		{16,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={11},Size=UDim2.new(1,0,0,20),Text="Event Settings",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
@@ -2776,7 +2776,7 @@ reference = (function()
 		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
 		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image=getcustomasset("infiniteyield/assets/close.png"),Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
 		{6,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,300),ZIndex=10,}},
-		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,1313),Name="List",Parent={6},ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,0),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",VerticalScrollBarInset=2,ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,1313),Name="List",Parent={6},ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,0),TopImage="rbxassetid://75024581433929",VerticalScrollBarInset=2,ZIndex=10,}},
 		{8,"UIListLayout",{Parent={7},SortOrder=2,}},
 		{9,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,429),ZIndex=10,}},
 		{10,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={9},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Special Player Cases",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
