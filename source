@@ -4509,7 +4509,7 @@ CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport th
 CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggles keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
-CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
+CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace / saveinstance', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box shown when a game is loading assets due to network lag'}
 CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
@@ -7892,14 +7892,16 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd("savegame", {"saveplace"}, function(args, speaker)
-	if saveinstance then
-		notify("Loading", "Downloading game. This will take a while")
-		saveinstance()
+addcmd("savegame", { "saveplace", "saveinstance" }, function(args, speaker)
+	notify("Loading", "Downloading game. This will take a while");
+	(saveinstance or loadstring(
+		game:HttpGet(
+			"https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/refs/heads/main/saveinstance.luau",
+			true
+		),
+		"saveinstance"
+	)())()
 		notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
-	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
-	end
 end)
 
 addcmd("clearerror", {"clearerrors"}, function(args, speaker)
