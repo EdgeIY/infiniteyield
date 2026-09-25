@@ -121,7 +121,8 @@ local iyassets = {
 	["infiniteyield/assets/minimize.png"] = "rbxassetid://2406617031",
 	["infiniteyield/assets/pin.png"] = "rbxassetid://6234691350",
 	["infiniteyield/assets/reference.png"] = "rbxassetid://3523243755",
-	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029"
+	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029",
+	["infiniteyield/assets/scrollbar.png"] = "rbxassetid://75024581433929"
 }
 
 local function getcustomasset(asset)
