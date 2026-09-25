@@ -146,7 +146,7 @@ if makefolder and isfolder and writefile and isfile then
 			end
 		end
 		for path in iyassets do
-			if not isfile(path) then
+			if not isfile(path) and path ~= 'infiniteyield/assets/scrollbar.png' then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
