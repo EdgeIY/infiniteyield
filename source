@@ -121,7 +121,8 @@ local iyassets = {
 	["infiniteyield/assets/minimize.png"] = "rbxassetid://2406617031",
 	["infiniteyield/assets/pin.png"] = "rbxassetid://6234691350",
 	["infiniteyield/assets/reference.png"] = "rbxassetid://3523243755",
-	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029"
+	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029",
+	["infiniteyield/assets/scrollbar.png"] = "rbxassetid://75024581433929"
 }
 
 local function getcustomasset(asset)
@@ -145,7 +146,7 @@ if makefolder and isfolder and writefile and isfile then
 			end
 		end
 		for path in iyassets do
-			if not isfile(path) then
+			if not isfile(path) and path ~= 'infiniteyield/assets/scrollbar.png' then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
@@ -426,11 +427,11 @@ CMDsF.BorderSizePixel = 0
 CMDsF.Position = UDim2.new(0, 5, 0, 45)
 CMDsF.Size = UDim2.new(0, 245, 0, 175)
 CMDsF.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-CMDsF.BottomImage = "rbxassetid://75024581433929"
+CMDsF.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.CanvasSize = UDim2.new(0, 0, 0, 0)
-CMDsF.MidImage = "rbxassetid://75024581433929"
+CMDsF.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.ScrollBarThickness = 8
-CMDsF.TopImage = "rbxassetid://75024581433929"
+CMDsF.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 CMDsF.VerticalScrollBarInset = 'Always'
 CMDsF.ZIndex = 10
 table.insert(scroll,CMDsF)
@@ -471,11 +472,11 @@ SettingsHolder.BackgroundTransparency = 1
 SettingsHolder.BorderSizePixel = 0
 SettingsHolder.Size = UDim2.new(1,0,1,0)
 SettingsHolder.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-SettingsHolder.BottomImage = "rbxassetid://75024581433929"
+SettingsHolder.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 SettingsHolder.CanvasSize = UDim2.new(0, 0, 0, 235)
-SettingsHolder.MidImage = "rbxassetid://75024581433929"
+SettingsHolder.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 SettingsHolder.ScrollBarThickness = 8
-SettingsHolder.TopImage = "rbxassetid://75024581433929"
+SettingsHolder.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 SettingsHolder.VerticalScrollBarInset = 'Always'
 SettingsHolder.ZIndex = 10
 table.insert(scroll,SettingsHolder)
@@ -834,11 +835,11 @@ Holder_2.BorderSizePixel = 0
 Holder_2.Position = UDim2.new(0, 0, 0, 0)
 Holder_2.Size = UDim2.new(0, 250, 0, 145)
 Holder_2.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_2.BottomImage = "rbxassetid://75024581433929"
+Holder_2.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_2.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_2.MidImage = "rbxassetid://75024581433929"
+Holder_2.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_2.ScrollBarThickness = 0
-Holder_2.TopImage = "rbxassetid://75024581433929"
+Holder_2.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_2.VerticalScrollBarInset = 'Always'
 Holder_2.ZIndex = 10
 
@@ -985,10 +986,10 @@ Toggles.BorderSizePixel = 0
 Toggles.Position = UDim2.new(0, 150, 0, 125)
 Toggles.Size = UDim2.new(0, 200, 0, 50)
 Toggles.ZIndex = 10
-Toggles.BottomImage = "rbxassetid://75024581433929"
+Toggles.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Toggles.CanvasSize = UDim2.new(0, 0, 0, 50)
 Toggles.ScrollBarThickness = 8
-Toggles.TopImage = "rbxassetid://75024581433929"
+Toggles.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Toggles.VerticalScrollBarInset = Enum.ScrollBarInset.Always
 table.insert(scroll,Toggles)
 
@@ -1210,11 +1211,11 @@ Holder_4.Position = UDim2.new(0, 0, 0, 0)
 Holder_4.Selectable = false
 Holder_4.Size = UDim2.new(0, 250, 0, 145)
 Holder_4.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_4.BottomImage = "rbxassetid://75024581433929"
+Holder_4.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_4.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_4.MidImage = "rbxassetid://75024581433929"
+Holder_4.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_4.ScrollBarThickness = 0
-Holder_4.TopImage = "rbxassetid://75024581433929"
+Holder_4.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_4.VerticalScrollBarInset = 'Always'
 Holder_4.ZIndex = 10
 
@@ -1316,11 +1317,11 @@ Holder_3.BorderSizePixel = 0
 Holder_3.Position = UDim2.new(0, 0, 0, 0)
 Holder_3.Size = UDim2.new(0, 250, 0, 145)
 Holder_3.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_3.BottomImage = "rbxassetid://75024581433929"
+Holder_3.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_3.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_3.MidImage = "rbxassetid://75024581433929"
+Holder_3.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_3.ScrollBarThickness = 0
-Holder_3.TopImage = "rbxassetid://75024581433929"
+Holder_3.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_3.VerticalScrollBarInset = 'Always'
 Holder_3.ZIndex = 10
 
@@ -1408,11 +1409,11 @@ Holder_5.Position = UDim2.new(0, 0, 0, 0)
 Holder_5.Selectable = false
 Holder_5.Size = UDim2.new(0, 250, 0, 145)
 Holder_5.ScrollBarImageColor3 = Color3.fromRGB(78,78,79)
-Holder_5.BottomImage = "rbxassetid://75024581433929"
+Holder_5.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_5.CanvasSize = UDim2.new(0, 0, 0, 0)
-Holder_5.MidImage = "rbxassetid://75024581433929"
+Holder_5.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_5.ScrollBarThickness = 0
-Holder_5.TopImage = "rbxassetid://75024581433929"
+Holder_5.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 Holder_5.VerticalScrollBarInset = 'Always'
 Holder_5.ZIndex = 10
 
@@ -1873,10 +1874,10 @@ scroll_2.BorderSizePixel = 0
 scroll_2.Position = UDim2.new(0, 5, 0, 25)
 scroll_2.Size = UDim2.new(0, 328, 0, 190)
 scroll_2.ZIndex = 10
-scroll_2.BottomImage = "rbxassetid://75024581433929"
+scroll_2.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 scroll_2.CanvasSize = UDim2.new(0, 0, 0, 10)
 scroll_2.ScrollBarThickness = 8
-scroll_2.TopImage = "rbxassetid://75024581433929"
+scroll_2.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 table.insert(scroll,scroll_2)
 table.insert(shade2,scroll_2)
 
@@ -1926,10 +1927,10 @@ scroll_3.BorderSizePixel = 0
 scroll_3.Position = UDim2.new(0, 5, 0, 25)
 scroll_3.Size = UDim2.new(0, 328, 0, 190)
 scroll_3.ZIndex = 10
-scroll_3.BottomImage = "rbxassetid://75024581433929"
+scroll_3.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 scroll_3.CanvasSize = UDim2.new(0, 0, 0, 10)
 scroll_3.ScrollBarThickness = 8
-scroll_3.TopImage = "rbxassetid://75024581433929"
+scroll_3.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 table.insert(scroll,scroll_3)
 table.insert(shade2,scroll_3)
 
@@ -2302,13 +2303,13 @@ eventEditor = (function()
 		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
 		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image=getcustomasset("infiniteyield/assets/close.png"),Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
 		{6,"Frame",{BackgroundColor3=currentShade1,BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,202),ZIndex=10,}},
-		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={6},Position=UDim2.new(0,5,0,5),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,-10,1,-10),TopImage="rbxassetid://75024581433929",ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={6},Position=UDim2.new(0,5,0,5),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,-10,1,-10),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
 		{8,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={7},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{9,"UIListLayout",{Parent={8},SortOrder=2,}},
 		{10,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,ClipsDescendants=true,Name="Settings",Parent={6},Position=UDim2.new(1,0,0,0),Size=UDim2.new(0,150,1,0),ZIndex=10,}},
 		{11,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),Name="Slider",Parent={10},Position=UDim2.new(0,-150,0,0),Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{12,"Frame",{BackgroundColor3=Color3.new(0.23529413342476,0.23529413342476,0.23529413342476),BorderColor3=Color3.new(0.3137255012989,0.3137255012989,0.3137255012989),BorderSizePixel=0,Name="Line",Parent={11},Size=UDim2.new(0,1,1,0),ZIndex=10,}},
-		{13,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={11},Position=UDim2.new(0,0,0,25),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,-25),TopImage="rbxassetid://75024581433929",ZIndex=10,}},
+		{13,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,100),Name="List",Parent={11},Position=UDim2.new(0,0,0,25),ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,-25),TopImage="rbxasset://textures/ui/Scroll/scroll-middle.png",ZIndex=10,}},
 		{14,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Holder",Parent={13},Size=UDim2.new(1,0,1,0),ZIndex=10,}},
 		{15,"UIListLayout",{Parent={14},SortOrder=2,}},
 		{16,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Title",Parent={11},Size=UDim2.new(1,0,0,20),Text="Event Settings",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
@@ -2776,7 +2777,7 @@ reference = (function()
 		{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="Close",Parent={2},Position=UDim2.new(1,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,ZIndex=10,}},
 		{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image=getcustomasset("infiniteyield/assets/close.png"),Parent={4},Position=UDim2.new(0,5,0,5),Size=UDim2.new(0,10,0,10),ZIndex=10,}},
 		{6,"Frame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BorderSizePixel=0,Name="Content",Parent={1},Position=UDim2.new(0,0,0,20),Size=UDim2.new(1,0,0,300),ZIndex=10,}},
-		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxassetid://75024581433929",CanvasSize=UDim2.new(0,0,0,1313),Name="List",Parent={6},ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,0),TopImage="rbxassetid://75024581433929",VerticalScrollBarInset=2,ZIndex=10,}},
+		{7,"ScrollingFrame",{BackgroundColor3=Color3.new(0.14117647707462,0.14117647707462,0.14509804546833),BackgroundTransparency=1,BorderColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,BottomImage="rbxasset://textures/ui/Scroll/scroll-middle.png",CanvasSize=UDim2.new(0,0,0,1313),Name="List",Parent={6},ScrollBarImageColor3=Color3.new(0.30588236451149,0.30588236451149,0.3098039329052),ScrollBarThickness=8,Size=UDim2.new(1,0,1,0),TopImage=getcustomasset("infiniteyield/assets/scrollbar.png"),VerticalScrollBarInset=2,ZIndex=10,}},
 		{8,"UIListLayout",{Parent={7},SortOrder=2,}},
 		{9,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="Section",Parent={7},Size=UDim2.new(1,0,0,429),ZIndex=10,}},
 		{10,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=4,Name="Header",Parent={9},Position=UDim2.new(0,8,0,5),Size=UDim2.new(1,-8,0,20),Text="Special Player Cases",TextColor3=Color3.new(1,1,1),TextSize=20,TextXAlignment=0,ZIndex=10,}},
@@ -3429,7 +3430,7 @@ function updateColors(color,ctype)
 		for i,v in pairs(text1) do
 			v.TextColor3 = color
 			if v:IsA("TextBox") then
-				v.PlaceholderColor3 = color	
+				v.PlaceholderColor3 = color
 			end
 		end
 		currentText1 = color
@@ -3551,7 +3552,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 				local function colorStripInput()
 					local relativeY = mouse.Y - colorStrip.AbsolutePosition.Y
 
-					if relativeY < 0 then relativeY = 0 elseif relativeY > 199 then relativeY = 199 end	
+					if relativeY < 0 then relativeY = 0 elseif relativeY > 199 then relativeY = 199 end
 
 					val = (199 - relativeY)/199
 
@@ -3767,7 +3768,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 						local newColor = Color3.new(red,green,blue)
 						hue,sat,val = Color3.toHSV(newColor)
 						updateColor()
-					end)	
+					end)
 
 					newColor.Parent = basicColorsFrame
 					column = column + 1
@@ -3951,7 +3952,7 @@ end)
 
 selectJoin.MouseButton1Down:Connect(function()
 	chat.Visible = false
-	join.Visible = true	
+	join.Visible = true
 	table.remove(shade3,table.find(shade3,selectJoin))
 	table.remove(shade2,table.find(shade2,selectChat))
 	table.insert(shade2,selectJoin)
@@ -4971,7 +4972,7 @@ function FindInTable(tbl,val)
 	if tbl == nil then return false end
 	for _,v in pairs(tbl) do
 		if v == val then return true end
-	end 
+	end
 	return false
 end
 
@@ -5454,7 +5455,7 @@ SpecialPlayerCases = {
 		local returns = {}
 		local groupID = tonumber(args[1])
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr:IsInGroup(groupID) then  
+			if plr:IsInGroup(groupID) then
 				table.insert(returns,plr)
 			end
 		end
@@ -6273,7 +6274,7 @@ local function clicktpFunc()
 		local rootPartPosition = rootPart.Position
 		local hitPosition = IYMouse.Hit.Position
 		local newCFrame = CFrame.new(
-			hitPosition, 
+			hitPosition,
 			Vector3.new(rootPartPosition.X, hitPosition.Y, rootPartPosition.Z)
 		) * CFrame.Angles(0, math.pi, 0)
 
@@ -6429,7 +6430,7 @@ function LoadPlugin(val,startup)
 		addcmdtext('',val)
 		addcmdtext(string.upper('--'..plugin["PluginName"]),val,plugin["PluginDescription"])
 		if plugin["Commands"] then
-			for i,v in pairs(plugin["Commands"]) do 
+			for i,v in pairs(plugin["Commands"]) do
 				local cmdExt = ''
 				local cmdName = i
 				local function handleNames()
@@ -6884,10 +6885,10 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		table.insert(text1,CopyPlcName)
 
 		local SINFOGUI = background
-		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil) 
+		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil)
 		wait(0.5)
 		Exit.MouseButton1Click:Connect(function()
-			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil) 
+			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
 			wait(0.6)
 			FRAME:Destroy()
 			canOpenServerinfo = true
@@ -7389,7 +7390,7 @@ addcmd('float', {'platform'},function(args, speaker)
 	local pchar = speaker.Character
 	floatName = randomString()
 	floating = true
-	
+
 	if pchar and not pchar:FindFirstChild(floatName) then
 		task.spawn(function()
 			local floatPoint = -3.1
@@ -7399,9 +7400,9 @@ addcmd('float', {'platform'},function(args, speaker)
 			floatPart.Transparency = 1
 			floatPart.Size = Vector3.new(2, 0.2, 1.5)
 			floatPart.Anchored = true
-			
+
 			notify('Float', 'Started floating (Q = down & E = up)')
-			
+
 			beganListener = UserInputService.InputBegan:Connect(function(key, processed)
 				if processed then return end
 
@@ -7422,7 +7423,7 @@ addcmd('float', {'platform'},function(args, speaker)
 					floatPoint -= 1.5
 				end
 			end)
-			
+
 			floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 				floatingFunc:Disconnect()
 				floatPart:Destroy()
@@ -7442,7 +7443,7 @@ addcmd('float', {'platform'},function(args, speaker)
 					endListener:Disconnect()
 					floatName = nil
 				end
-			end			
+			end
 			floatingFunc = RunService.PreAnimation:Connect(floatPadLoop)
 		end)
 	end
@@ -7537,7 +7538,7 @@ addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(ar
 		if AllWaypoints ~= nil then
 			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
 		end
-	end	
+	end
 	refreshwaypoints()
 	updatesaves()
 end)
@@ -7550,7 +7551,7 @@ addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setway
 		if AllWaypoints ~= nil then
 			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
 		end
-	end	
+	end
 	refreshwaypoints()
 	updatesaves()
 end)
@@ -7921,7 +7922,7 @@ addcmd("unantigameplaypaused", {}, function(args, speaker)
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
-	if not hookmetamethod then 
+	if not hookmetamethod then
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
@@ -7944,7 +7945,7 @@ end)
 
 allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
-	if not hookmetamethod then 
+	if not hookmetamethod then
 		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 
@@ -8679,8 +8680,8 @@ addcmd('fixcam',{'restorecam'},function(args, speaker)
 end)
 
 addcmd("enableshiftlock", {"enablesl", "shiftlock"}, function(args, speaker)
-	local function enableShiftlock() 
-		speaker.DevEnableMouseLock = true 
+	local function enableShiftlock()
+		speaker.DevEnableMouseLock = true
 	end
 	speaker:GetPropertyChangedSignal("DevEnableMouseLock"):Connect(enableShiftlock)
 	enableShiftlock()
@@ -8744,7 +8745,7 @@ addcmd('unlockws',{'unlockworkspace'},function(args, speaker)
 	end
 end)
 
-addcmd('lockws',{'lockworkspace'},function(args, speaker) 
+addcmd('lockws',{'lockworkspace'},function(args, speaker)
 	for i,v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") then
 			v.Locked = true
@@ -9226,7 +9227,7 @@ addcmd('loopbring',{},function(args, speaker)
 								getRoot(pchar).CFrame = getRoot(speaker.Character).CFrame + Vector3.new(distance,1,0)
 							end
 							wait(lDelay)
-						else 
+						else
 							for a,b in pairs(bringT) do if b == plrName then table.remove(bringT, a) end end
 						end
 					end
@@ -9280,16 +9281,16 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 				local success, response = pcall(function()
 					path:ComputeAsync(getRoot(speaker.Character).Position, getRoot(Players[v].Character).Position)
 					local waypoints = path:GetWaypoints()
-					local distance 
+					local distance
 					for waypointIndex, waypoint in pairs(waypoints) do
 						local waypointPosition = waypoint.Position
 						hum:MoveTo(waypointPosition)
-						repeat 
+						repeat
 							distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
 							wait()
 						until
 						distance <= 5
-					end	 
+					end
 				end)
 				if not success then
 					speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
@@ -9318,11 +9319,11 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 					local success, response = pcall(function()
 						path:ComputeAsync(getRoot(speaker.Character).Position, TrueCoords)
 						local waypoints = path:GetWaypoints()
-						local distance 
+						local distance
 						for waypointIndex, waypoint in pairs(waypoints) do
 							local waypointPosition = waypoint.Position
 							hum:MoveTo(waypointPosition)
-							repeat 
+							repeat
 								distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
 								wait()
 							until
@@ -9347,11 +9348,11 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 					local success, response = pcall(function()
 						path:ComputeAsync(getRoot(speaker.Character).Position, TrueCoords)
 						local waypoints = path:GetWaypoints()
-						local distance 
+						local distance
 						for waypointIndex, waypoint in pairs(waypoints) do
 							local waypointPosition = waypoint.Position
 							hum:MoveTo(waypointPosition)
-							repeat 
+							repeat
 								distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
 								wait()
 							until
@@ -11091,8 +11092,8 @@ addcmd('grabtools', {}, function(args, speaker)
 		end
 	end
 
-	if grabtoolsFunc then 
-		grabtoolsFunc:Disconnect() 
+	if grabtoolsFunc then
+		grabtoolsFunc:Disconnect()
 	end
 
 	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
@@ -11105,8 +11106,8 @@ addcmd('grabtools', {}, function(args, speaker)
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
-	if grabtoolsFunc then 
-		grabtoolsFunc:Disconnect() 
+	if grabtoolsFunc then
+		grabtoolsFunc:Disconnect()
 	end
 
 	notify("Grabtools", "Grabtools has been disabled")
@@ -11286,7 +11287,7 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 
 		Player.CharacterAdded:Wait()
 
-		for i = 1,20 do 
+		for i = 1,20 do
 			RunService.Heartbeat:Wait()
 			if getRoot(Player.Character) then
 				getRoot(Player.Character).Humanoid.RootPart.CFrame = Old
@@ -11736,7 +11737,7 @@ end)
 addcmd("joinlogs", {"jlogs"}, function(args, speaker)
 	jLogsEnabled = true
 	chat.Visible = false
-	join.Visible = true	
+	join.Visible = true
 	table.remove(shade3, table.find(shade3, selectJoin))
 	table.remove(shade2, table.find(shade2, selectChat))
 	table.insert(shade2, selectJoin)
@@ -13281,7 +13282,7 @@ CaptureService.CaptureEnded:Connect(function()
 end)
 
 task.spawn(function()
-	local success, latestVersionInfo = pcall(function() 
+	local success, latestVersionInfo = pcall(function()
 		local versionJson = game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version")
 		return HttpService:JSONDecode(versionJson)
 	end)
