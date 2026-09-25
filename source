@@ -2102,8 +2102,10 @@ function r15(plr)
 end
 
 function breakVelocity()
+    local char = Players.LocalPlayer.Character
+    if not char then return end
     local V3 = Vector3.new(0, 0, 0)
-    for _, v in ipairs(Players.LocalPlayer.Character:GetDescendants()) do
+    for _, v in ipairs(char:GetDescendants()) do
         if v:IsA("BasePart") then
             v.Velocity, v.RotVelocity = V3, V3
         end
@@ -2282,15 +2284,17 @@ eventEditor = (function()
 				end
 
 				if metCondition then
-					pcall(task.spawn(function()
-						local cmdStr = cmd[1]
-						for count,arg in pairs(args) do
-							cmdStr = cmdStr:gsub("%$"..count,arg)
-						end
-						if cmdStr:lower():match("plugin") then return end
-						wait(cmd[3] or 0)
-						execCmd(cmdStr)
-					end))
+					task.spawn(function()
+						pcall(function()
+							local cmdStr = cmd[1]
+							for count,arg in pairs(args) do
+								cmdStr = cmdStr:gsub("%$"..count,arg)
+							end
+							if cmdStr:lower():match("plugin") then return end
+							wait(cmd[3] or 0)
+							execCmd(cmdStr)
+						end)
+					end)
 				end
 			end
 		end
@@ -5010,13 +5014,21 @@ function refresh(plr)
 	local pos1 = workspace.CurrentCamera.CFrame
 	respawn(plr)
 	task.spawn(function()
-		local char = plr.CharacterAdded:Wait()
-		local humanoid = char:FindFirstChildOfClass("Humanoid")
-		while not humanoid do
-			wait()
-			humanoid = char:FindFirstChildOfClass("Humanoid")
-		end
-		humanoid.RootPart.CFrame, workspace.CurrentCamera.CFrame = pos, task.wait() and pos1
+		pcall(function()
+			local char = plr.CharacterAdded:Wait()
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
+			while char.Parent and not humanoid do
+				wait()
+				humanoid = char:FindFirstChildOfClass("Humanoid")
+			end
+			if not humanoid then return end
+
+			while char.Parent and not humanoid.RootPart do wait() end
+			local root = humanoid.RootPart
+			if not root then return end
+
+			root.CFrame, workspace.CurrentCamera.CFrame = pos, task.wait() and pos1
+		end)
 		refreshCmd = false
 	end)
 end
@@ -5025,10 +5037,13 @@ local lastDeath
 
 function onDied()
 	task.spawn(function()
-		if pcall(function() Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') end) and Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
-			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-				if getRoot(Players.LocalPlayer.Character) then
-					lastDeath = getRoot(Players.LocalPlayer.Character).CFrame
+		local char = Players.LocalPlayer.Character
+		local humanoid = char and char:FindFirstChildOfClass('Humanoid')
+		if humanoid then
+			humanoid.Died:Connect(function()
+				local root = getRoot(Players.LocalPlayer.Character)
+				if root then
+					lastDeath = root.CFrame
 				end
 			end)
 		else
@@ -7226,7 +7241,13 @@ local mobilefly = function(speaker, vfly)
 	bg.P = 1000
 	bg.D = 50
 
-	mfly1 = speaker.CharacterAdded:Connect(function()
+	mfly1 = speaker.CharacterAdded:Connect(function(char)
+		repeat
+			task.wait()
+			root = getRoot(char)
+		until root or not char.Parent
+		if not root then return end
+
 		local bv = Instance.new("BodyVelocity")
 		bv.Name = velocityHandlerName
 		bv.Parent = root
@@ -7424,12 +7445,14 @@ addcmd('float', {'platform'},function(args, speaker)
 				end
 			end)
 			
-			floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-				floatingFunc:Disconnect()
+			local humanoid = pchar:FindFirstChildOfClass('Humanoid')
+			if not humanoid then return end
+			floatDied = humanoid.Died:Connect(function()
+				if floatingFunc then floatingFunc:Disconnect() end
 				floatPart:Destroy()
-				floatDied:Disconnect()
-				beganListener:Disconnect()
-				endListener:Disconnect()
+				if floatDied then floatDied:Disconnect() end
+				if beganListener then beganListener:Disconnect() end
+				if endListener then endListener:Disconnect() end
 				floatName = nil
 			end)
 			local function floatPadLoop()
@@ -9207,10 +9230,12 @@ addcmd('loopbring',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
-			if Players[v].Name ~= speaker.Name and not FindInTable(bringT, Players[v].Name) then
-				table.insert(bringT, Players[v].Name)
-				local plrName = Players[v].Name
-				local pchar=Players[v].Character
+			local player = Players:FindFirstChild(v)
+			if not player then return end
+			if player.Name ~= speaker.Name and not FindInTable(bringT, player.Name) then
+				table.insert(bringT, player.Name)
+				local plrName = player.Name
+				local pchar = player.Character
 				local distance = 3
 				if args[2] and isNumber(args[2]) then
 					distance = args[2]
@@ -9221,9 +9246,9 @@ addcmd('loopbring',{},function(args, speaker)
 				end
 				repeat
 					for i,c in pairs(players) do
-						if Players:FindFirstChild(v) then
-							pchar = Players[v].Character
-							if pchar~= nil and Players[v].Character ~= nil and getRoot(pchar) and speaker.Character ~= nil and getRoot(speaker.Character) then
+						if player.Parent then
+							pchar = player.Character
+							if pchar and getRoot(pchar) and speaker.Character and getRoot(speaker.Character) then
 								getRoot(pchar).CFrame = getRoot(speaker.Character).CFrame + Vector3.new(distance,1,0)
 							end
 							wait(lDelay)
@@ -9241,7 +9266,7 @@ addcmd('unloopbring',{'noloopbring'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
-			for a,b in pairs(bringT) do if b == Players[v].Name then table.remove(bringT, a) end end
+			for a,b in pairs(bringT) do if b == v then table.remove(bringT, a) end end
 		end)
 	end
 end)
@@ -9386,10 +9411,15 @@ addcmd("orbit", {}, function(args, speaker)
 		local distance = tonumber(args[3]) or 6
 
 		orbit1 = RunService.Stepped:Connect(function()
+			local currentRoot = getRoot(speaker.Character)
+			local targetRootPart = target.Character and getRoot(target.Character)
+			if not currentRoot or not targetRootPart then return end
+			root = currentRoot
+
 			breakVelocity()
 			rotation = rotation + speed
 
-			local targetRoot = getRoot(target.Character).Position
+			local targetRoot = targetRootPart.Position
 			local orbitPosition = (CFrame.new(targetRoot) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)).Position
 			root.CFrame = CFrame.lookAt(orbitPosition, Vector3.new(targetRoot.X, orbitPosition.Y, targetRoot.Z))
 		end)
@@ -9417,7 +9447,10 @@ addcmd('freeze',{'fr'},function(args, speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
 			task.spawn(function()
-				for i, x in next, Players[v].Character:GetDescendants() do
+				local player = Players:FindFirstChild(v)
+				local char = player and player.Character
+				if not char then return end
+				for i, x in next, char:GetDescendants() do
 					if x:IsA("BasePart") and not x.Anchored then
 						x.Anchored = true
 					end
@@ -9433,7 +9466,10 @@ addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
 			task.spawn(function()
-				for i, x in next, Players[v].Character:GetDescendants() do
+				local player = Players:FindFirstChild(v)
+				local char = player and player.Character
+				if not char then return end
+				for i, x in next, char:GetDescendants() do
 					if x.Name ~= floatName and x:IsA("BasePart") and x.Anchored then
 						x.Anchored = false
 					end
@@ -9476,12 +9512,19 @@ addcmd('muteboombox',{},function(args, speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
 			task.spawn(function()
-				for i, x in next, Players[v].Character:GetDescendants() do
-					if x:IsA("Sound") and x.Playing == true then
-						x.Playing = false
+				local player = Players:FindFirstChild(v)
+				if not player then return end
+				local char = player.Character
+				if char then
+					for i, x in next, char:GetDescendants() do
+						if x:IsA("Sound") and x.Playing == true then
+							x.Playing = false
+						end
 					end
 				end
-				for i, x in next, Players[v]:FindFirstChildOfClass("Backpack"):GetDescendants() do
+				local backpack = player:FindFirstChildOfClass("Backpack")
+				if not backpack then return end
+				for i, x in next, backpack:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == true then
 						x.Playing = false
 					end
@@ -9497,7 +9540,10 @@ addcmd('unmuteboombox',{},function(args, speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
 			task.spawn(function()
-				for i, x in next, Players[v].Character:GetDescendants() do
+				local player = Players:FindFirstChild(v)
+				local char = player and player.Character
+				if not char then return end
+				for i, x in next, char:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == false then
 						x.Playing = true
 					end
@@ -9706,13 +9752,17 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	box.Position = Vector3.new(0,10000,0)
 	box.Parent = workspace
 	local boxTouched = box.Touched:connect(function(part)
-		if (part.Parent.Name == Players.LocalPlayer.Name) then
+		local parent = part.Parent
+		if parent and parent.Name == Players.LocalPlayer.Name then
 			if touched == false then
 				touched = true
 				local function apply()
-					local no = Char.Humanoid.RootPart:Clone()
+					local root = Char and getRoot(Char)
+					if not root then touched = false return end
+					local no = root:Clone()
 					task.wait(.25)
-					Char.Humanoid.RootPart:Destroy()
+					if not Char.Parent or not root.Parent then touched = false return end
+					root:Destroy()
 					no.Parent = Char
 					Char:MoveTo(loc)
 					touched = false
@@ -9939,7 +9989,8 @@ addcmd("infjump", {"infinitejump"}, function(args, speaker)
 	infJump = UserInputService.JumpRequest:Connect(function()
 		if not infJumpDebounce then
 			infJumpDebounce = true
-			speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+			local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
+			if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
 			wait()
 			infJumpDebounce = false
 		end
@@ -9955,7 +10006,8 @@ local flyjump
 addcmd("flyjump", {}, function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
 	flyjump = UserInputService.JumpRequest:Connect(function()
-		speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+		local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
+		if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
 	end)
 end)
 
@@ -9969,8 +10021,10 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
 	local function autoJump()
 		if Char and Human then
-			local check1 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position-Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
-			local check2 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position+Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
+			local root = Human.RootPart
+			if not root then return end
+			local check1 = workspace:FindPartOnRay(Ray.new(root.Position-Vector3.new(0,1.5,0), root.CFrame.lookVector*3), Human.Parent)
+			local check2 = workspace:FindPartOnRay(Ray.new(root.Position+Vector3.new(0,1.5,0), root.CFrame.lookVector*3), Human.Parent)
 			if check1 or check2 then
 				Human.Jump = true
 			end
@@ -9979,7 +10033,9 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	autoJump()
 	HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
 	HumanModCons.ajCA = (HumanModCons.ajCA and HumanModCons.ajCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
-		Char, Human = nChar, nChar:WaitForChild("Humanoid")
+		local humanoid = nChar:WaitForChild("Humanoid", 10)
+		if not humanoid or not humanoid:IsA("Humanoid") then return end
+		Char, Human = nChar, humanoid
 		autoJump()
 		HumanModCons.ajLoop = (HumanModCons.ajLoop and HumanModCons.ajLoop:Disconnect() and false) or RunService.RenderStepped:Connect(autoJump)
 	end)
@@ -9999,19 +10055,23 @@ addcmd('edgejump',{'ejump'},function(args, speaker)
 	local lastcf
 	local function edgejump()
 		if Char and Human then
+			local root = Human.RootPart
+			if not root then return end
 			laststate = state
 			state = Human:GetState()
-			if laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping then
-				Char.Humanoid.RootPart.CFrame = lastcf
-				Char.Humanoid.RootPart.Velocity = Vector3.new(Char.Humanoid.RootPart.Velocity.X, Human.JumpPower or Human.JumpHeight, Char.Humanoid.RootPart.Velocity.Z)
+			if lastcf and laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping then
+				root.CFrame = lastcf
+				root.Velocity = Vector3.new(root.Velocity.X, Human.JumpPower or Human.JumpHeight, root.Velocity.Z)
 			end
-			lastcf = Char.Humanoid.RootPart.CFrame
+			lastcf = root.CFrame
 		end
 	end
 	edgejump()
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
 	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
-		Char, Human = nChar, nChar:WaitForChild("Humanoid")
+		local humanoid = nChar:WaitForChild("Humanoid", 10)
+		if not humanoid or not humanoid:IsA("Humanoid") then return end
+		Char, Human = nChar, humanoid
 		edgejump()
 		HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or RunService.RenderStepped:Connect(edgejump)
 	end)
@@ -10416,7 +10476,9 @@ addcmd('loopspeed',{'loopws'},function(args, speaker)
 		WalkSpeedChange()
 		HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
 		HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
-			Char, Human = nChar, nChar:WaitForChild("Humanoid")
+			local humanoid = nChar:WaitForChild("Humanoid", 10)
+			if not humanoid or not humanoid:IsA("Humanoid") then return end
+			Char, Human = nChar, humanoid
 			WalkSpeedChange()
 			HumanModCons.wsLoop = (HumanModCons.wsLoop and HumanModCons.wsLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("WalkSpeed"):Connect(WalkSpeedChange)
 		end)
@@ -10468,7 +10530,9 @@ addcmd('loopjumppower',{'loopjp','loopjpower'},function(args, speaker)
 		JumpPowerChange()
 		HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
 		HumanModCons.jpCA = (HumanModCons.jpCA and HumanModCons.jpCA:Disconnect() and false) or speaker.CharacterAdded:Connect(function(nChar)
-			Char, Human = nChar, nChar:WaitForChild("Humanoid")
+			local humanoid = nChar:WaitForChild("Humanoid", 10)
+			if not humanoid or not humanoid:IsA("Humanoid") then return end
+			Char, Human = nChar, humanoid
 			JumpPowerChange()
 			HumanModCons.jpLoop = (HumanModCons.jpLoop and HumanModCons.jpLoop:Disconnect() and false) or Human:GetPropertyChangedSignal("JumpPower"):Connect(JumpPowerChange)
 		end)
@@ -10662,7 +10726,7 @@ addcmd('whisper',{'pm'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
-			local plrName = Players[v].Name
+			local plrName = v
 			local pmstring = getstring(2, args)
 			chatMessage("/w "..plrName.." "..pmstring)
 		end)
@@ -10674,7 +10738,7 @@ addcmd('pmspam',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
-			local plrName = Players[v].Name
+			local plrName = v
 			if FindInTable(pmspamming, plrName) then return end
 			table.insert(pmspamming, plrName)
 			local pmspamstring = getstring(2, args)
@@ -10695,7 +10759,7 @@ addcmd('nopmspam',{'unpmspam'},function(args, speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
 			for a,b in pairs(pmspamming) do
-				if b == Players[v].Name then
+				if b == v then
 					table.remove(pmspamming, a)
 				end
 			end
@@ -11171,7 +11235,10 @@ addcmd('copytools',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		task.spawn(function()
-			for i,v in pairs(Players[v]:FindFirstChildOfClass("Backpack"):GetChildren()) do
+			local player = Players:FindFirstChild(v)
+			local backpack = player and player:FindFirstChildOfClass("Backpack")
+			if not backpack then return end
+			for i,v in pairs(backpack:GetChildren()) do
 				if v:IsA('Tool') or v:IsA('HopperBin') then
 					v:Clone().Parent = speaker:FindFirstChildOfClass("Backpack")
 				end
@@ -11290,7 +11357,7 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 		for i = 1,20 do 
 			RunService.Heartbeat:Wait()
 			if getRoot(Player.Character) then
-				getRoot(Player.Character).Humanoid.RootPart.CFrame = Old
+				getRoot(Player.Character).CFrame = Old
 			end
 		end
 	else
@@ -12160,7 +12227,9 @@ end)
 xrayEnabled = false
 function xray()
 	for _, v in pairs(workspace:GetDescendants()) do
-		if v:IsA("BasePart") and not v.Parent:FindFirstChildWhichIsA("Humanoid") and not v.Parent.Parent:FindFirstChildWhichIsA("Humanoid") then
+		local parent = v.Parent
+		local grandparent = parent and parent.Parent
+		if v:IsA("BasePart") and parent and grandparent and not parent:FindFirstChildWhichIsA("Humanoid") and not grandparent:FindFirstChildWhichIsA("Humanoid") then
 			v.LocalTransparencyModifier = xrayEnabled and 0.5 or 0
 		end
 	end
@@ -12204,13 +12273,16 @@ addcmd('walltp',{},function(args, speaker)
 		torso = speaker.Character.Torso
 	end
 	local function touchedFunc(hit)
-		local Root = getRoot(speaker.Character)
-		if hit:IsA("BasePart") and hit.Position.Y > Root.Position.Y - speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight then
-			local hitP = getRoot(hit.Parent)
+		local char = speaker.Character
+		local Root = getRoot(char)
+		local humanoid = char and char:FindFirstChildOfClass('Humanoid')
+		if not Root or not humanoid then return end
+		if hit:IsA("BasePart") and hit.Position.Y > Root.Position.Y - humanoid.HipHeight then
+			local hitP = hit.Parent and getRoot(hit.Parent)
 			if hitP ~= nil then
-				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hitP.Size.Z/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.lookVector.Z)
-			elseif hitP == nil then
-				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hit.Size.Y/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.lookVector.Z)
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hitP.Size.Z/2 + humanoid.HipHeight,Root.CFrame.lookVector.Z)
+			else
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hit.Size.Y/2 + humanoid.HipHeight,Root.CFrame.lookVector.Z)
 			end
 		end
 	end
@@ -12723,9 +12795,13 @@ addcmd("listento", {}, function(args, speaker)
 
 	if root then
 		SoundService:SetListener(Enum.ListenerType.ObjectPosition, root)
-		listentoChar = player.CharacterAdded:Connect(function()
-			repeat task.wait() until Players[player.Name].Character ~= nil and getRoot(Players[player.Name].Character)
-			SoundService:SetListener(Enum.ListenerType.ObjectPosition, getRoot(Players[player.Name].Character))
+		listentoChar = player.CharacterAdded:Connect(function(char)
+			local root = getRoot(char)
+			while player.Parent and char.Parent and not root do
+				task.wait()
+				root = getRoot(char)
+			end
+			if root then SoundService:SetListener(Enum.ListenerType.ObjectPosition, root) end
 		end)
 	end
 end)
@@ -13168,28 +13244,31 @@ eventEditor.RegisterEvent("OnChatted",{
 
 function hookCharEvents(plr, instant)
 	task.spawn(function()
-		local char = plr.Character
-		if not char then return end
+		pcall(function()
+			local char = plr.Character
+			if not char then return end
 
-		local humanoid = char:WaitForChild("Humanoid", 10)
-		if not humanoid or not humanoid:IsA("Humanoid") then return end
+			local humanoid = char:WaitForChild("Humanoid", 10)
+			if not humanoid or not humanoid:IsA("Humanoid") then return end
 
-		local oldHealth = humanoid.Health
-		humanoid.HealthChanged:Connect(function(health)
-			local change = math.abs(oldHealth - health)
-			if oldHealth > health then
-				eventEditor.FireEvent("OnDamage", plr.Name, tonumber(health))
-			end
-			oldHealth = health
-		end)
+			local oldHealth = humanoid.Health
+			humanoid.HealthChanged:Connect(function(health)
+				local change = math.abs(oldHealth - health)
+				if oldHealth > health then
+					eventEditor.FireEvent("OnDamage", plr.Name, tonumber(health))
+				end
+				oldHealth = health
+			end)
 
-		humanoid.Died:Connect(function()
-			eventEditor.FireEvent("OnDied", plr.Name)
+			humanoid.Died:Connect(function()
+				eventEditor.FireEvent("OnDied", plr.Name)
 
-			local killedBy = humanoid:FindFirstChild("creator")
-			if killedBy and killedBy:IsA("ObjectValue") and killedBy.Value and killedBy.Value.Parent then
-				eventEditor.FireEvent("OnKilled", plr.Name, killedBy.Name)
-			end
+				local killedBy = humanoid:FindFirstChild("creator")
+				local killer = killedBy and killedBy:IsA("ObjectValue") and killedBy.Value
+				if killer and killer.Parent then
+					eventEditor.FireEvent("OnKilled", plr.Name, killedBy.Name)
+				end
+			end)
 		end)
 	end)
 end
