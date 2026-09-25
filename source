@@ -121,7 +121,8 @@ local iyassets = {
 	["infiniteyield/assets/minimize.png"] = "rbxassetid://2406617031",
 	["infiniteyield/assets/pin.png"] = "rbxassetid://6234691350",
 	["infiniteyield/assets/reference.png"] = "rbxassetid://3523243755",
-	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029"
+	["infiniteyield/assets/settings.png"] = "rbxassetid://1204397029",
+	["infiniteyield/assets/scrollbar.png"] = "rbxassetid://75024581433929"
 }
 
 local function getcustomasset(asset)
@@ -145,7 +146,7 @@ if makefolder and isfolder and writefile and isfile then
 			end
 		end
 		for path in iyassets do
-			if not isfile(path) then
+			if not isfile(path) and path ~= 'infiniteyield/assets/scrollbar.png' then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
