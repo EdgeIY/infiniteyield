@@ -3975,7 +3975,7 @@ function sendChatWebhook(player, message)
 				Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. id .. "&size=420x420&format=Png&isCircular=false",
 				Method = "GET"
 			}).Body)["data"]
-			avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
+			avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/assets/plain.png"
 			avatarcache[id] = avatar
 		end
 		local log = HttpService:JSONEncode({
