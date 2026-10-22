@@ -2112,7 +2112,7 @@ end
 
 function toClipboard(txt)
 	if everyClipboard then
-		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so dont call me out for this
+		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so don't call me out for this
 		notify("Clipboard", "Copied to clipboard")
 	else
 		notify("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
@@ -2125,6 +2125,16 @@ function chatMessage(str)
 		TextChatService.TextChannels.RBXGeneral:SendAsync(str)
 	else
 		ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+	end
+end
+
+function tryLoading(ls)
+	local success, err = pcall(function()
+    	loadstring(game:HttpGet(ls))()
+	end)
+
+	if not success then 
+   		notify("Load Failed", "Error: " .. tostring(err)) 
 	end
 end
 
@@ -3961,8 +3971,8 @@ selectJoin.MouseButton1Down:Connect(function()
 	selectJoin.BackgroundColor3 = currentShade2
 end)
 
-if not writefileExploit() then
-	notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
+if not writefileExploit() or not readfileExploit() then
+	notify("Saves", "Your exploit does not support readfile/writefile. Your settings will not save.")
 end
 
 avatarcache = {}
@@ -4037,7 +4047,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 			notify('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
 		end
 	else
-		notify('Chat Logs','Your exploit does not support write file. You cannot save chat logs.')
+		notify('Chat Logs','Your exploit does not support writefile. You cannot save chat logs.')
 	end
 end)
 
@@ -4545,14 +4555,14 @@ CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
 CMDs[#CMDs + 1] = {NAME = 'flyspeed [num]', DESC = 'Set fly speed (default is 20)'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclefly / vfly [speed]', DESC = 'Makes you fly in a vehicle'}
 CMDs[#CMDs + 1] = {NAME = 'unvehiclefly / unvfly', DESC = 'Disables vehicle fly'}
-CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed  / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
+CMDs[#CMDs + 1] = {NAME = 'vehicleflyspeed / vflyspeed [num]', DESC = 'Set vehicle fly speed'}
 CMDs[#CMDs + 1] = {NAME = 'cframefly / cfly [speed]', DESC = 'Makes you fly, bypassing some anti cheats (works on mobile)'}
 CMDs[#CMDs + 1] = {NAME = 'uncframefly / uncfly', DESC = 'Disables cfly'}
-CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed  / cflyspeed [num]', DESC = 'Sets cfly speed'}
+CMDs[#CMDs + 1] = {NAME = 'cframeflyspeed / cflyspeed [num]', DESC = 'Sets cfly speed'}
 CMDs[#CMDs + 1] = {NAME = 'qefly [true / false]', DESC = 'Enables or disables the Q and E hotkeys for fly'}
 CMDs[#CMDs + 1] = {NAME = 'vehiclenoclip / vnoclip', DESC = 'Turns off vehicle collision'}
 CMDs[#CMDs + 1] = {NAME = 'vehicleclip / vclip / unvnoclip', DESC = 'Enables vehicle collision'}
-CMDs[#CMDs + 1] = {NAME = 'float /  platform', DESC = 'Spawns a platform beneath you causing you to float'}
+CMDs[#CMDs + 1] = {NAME = 'float / platform', DESC = 'Spawns a platform beneath you causing you to float'}
 CMDs[#CMDs + 1] = {NAME = 'unfloat / noplatform', DESC = 'Removes the platform'}
 CMDs[#CMDs + 1] = {NAME = 'swim', DESC = 'Allows you to swim in the air'}
 CMDs[#CMDs + 1] = {NAME = 'unswim / noswim', DESC = 'Stops you from swimming everywhere'}
@@ -6494,7 +6504,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
+		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing readfile/writefile)')
 	end
 end)
 
@@ -8834,7 +8844,7 @@ addcmd("btools", {}, function(args, speaker)
 end)
 
 addcmd("f3x", {"fex"}, function(args, speaker)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua"))()
+	tryLoading("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua")
 end)
 
 addcmd("partpath", {"partname"}, function(args, speaker)
@@ -8902,7 +8912,7 @@ addcmd("promptr15", {}, function(args, speaker)
 end)
 
 addcmd("wallwalk", {"walkonwalls"}, function(args, speaker)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua"))()
+	tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua")
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -10562,30 +10572,30 @@ end)
 
 addcmd("explorer", {"dex"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
-    loadstring(game:HttpGet("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"))()
+    tryLoading("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua")
 end)
 
 addcmd("moondex", {"mdex"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua")
 end)
 
 addcmd("remotespy", {"rspy", "cobalt", "cspy"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
     -- Full credit to notpoiu, creator of Cobalt
-    loadstring(game:HttpGet("https://gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau"))()
+    tryLoading("https://gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau")
 end)
 
 addcmd("simplespy", {"sspy"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
     -- Full credit to exx, creator of SimpleSpy
     -- also thanks to Amity for fixing
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
+    tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua")
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
-	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
+	tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua")
 end)
 
 local loopgoto = nil
@@ -12248,7 +12258,7 @@ addcmd('autoclick',{},function(args, speaker)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+		notify('Incompatible Exploit',"Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
