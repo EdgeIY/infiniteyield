@@ -4510,7 +4510,7 @@ CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport th
 CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggles keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
-CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
+CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace / saveinstance', DESC = 'Uses saveinstance/USSI to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box shown when a game is loading assets due to network lag'}
 CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
@@ -7893,13 +7893,24 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd("savegame", {"saveplace"}, function(args, speaker)
+addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
 	if saveinstance then
-		notify("Loading", "Downloading game. This will take a while")
+		notify("Loading", "Downloading game. This will take a while.")
 		saveinstance()
 		notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
 	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+		if writefileExploit() then
+			local synsaveinstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/saveinstance.luau", true), "saveinstance")()
+			if synsaveinstance then
+				notify("Loading", "Downloading game. This will take a while.")
+				synsaveinstance({})
+				notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+			else
+				notify("Unable to Save Game", "Unable to load USSI.")
+			end
+		else
+			notify("Unable to Save Game", "Place cannot be saved (missing writefile).")
+		end
 	end
 end)
 
