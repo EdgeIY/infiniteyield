@@ -4484,7 +4484,7 @@ CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the 
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj [reposition]', DESC = 'Makes you rejoin the game'}
-CMDs[#CMDs + 1] = {NAME = 'inviteprompt', DESC = 'Prompts the user of your choice that they had invited you. Requires a rejoin to function.'}
+CMDs[#CMDs + 1] = {NAME = 'inviteprompt [player]', DESC = 'Prompts the user of your choice that they had invited you. Requires a rejoin to function.'}
 CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
 CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
 CMDs[#CMDs + 1] = {NAME = 'gameteleport / gametp [place ID]', DESC = 'Joins a game by ID'}
@@ -6992,14 +6992,15 @@ addcmd("rejoin", {"rj"}, function(args, speaker)
 end)
 
 addcmd("inviteprompt", {}, function(args, speaker)
-	local plrs = getPlayer(args[1], speaker)
-	if #plrs > 0 then
-		ExperienceService:LaunchExperience({
-			placeId = PlaceId,
-			gameInstanceId = JobId,
-			referredByPlayerId = plr[1].UserId
-		})
-	end
+    local player = getPlayer(args[1], speaker)[1]
+    local target = player and Players:FindFirstChild(player)
+    if not target then return end
+    ExperienceService:LaunchExperience({
+        placeId = PlaceId,
+        gameInstanceId = JobId,
+        referredByPlayerId = target.UserId
+    })
+    return "Prompted user. Rejoin for it to work."
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
