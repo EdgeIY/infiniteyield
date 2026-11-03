@@ -7881,7 +7881,7 @@ addcmd('showiy',{'unhideiy'},function(args, speaker)
 	end
 end)
 
-addcmd('rec', {'record', 'recorder'}, function(args, speaker)
+addcmd('rec', {'record'}, function(args, speaker)
 	return COREGUI:ToggleRecording()
 end)
 
