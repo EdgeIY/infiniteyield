@@ -8122,7 +8122,7 @@ addcmd('esp',{},function(args, speaker)
 			end
 		end
 	else
-		notify('ESP','Disable chams (nochams) before using esp')
+		notify('ESP','Disable chams (nochams) before using ESP')
 	end
 end)
 
@@ -8135,7 +8135,7 @@ addcmd('espteam',{},function(args, speaker)
 			end
 		end
 	else
-		notify('ESP','Disable chams (nochams) before using esp')
+		notify('ESP','Disable chams (nochams) before using ESP')
 	end
 end)
 
