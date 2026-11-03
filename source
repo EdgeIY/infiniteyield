@@ -81,17 +81,13 @@ PathService = Services.PathfindingService
 SoundService = Services.SoundService
 Teams = Services.Teams
 StarterPlayer = Services.StarterPlayer
-InsertService = Services.InsertService
 ChatService = Services.Chat
 ProximityPromptService = Services.ProximityPromptService
-ContentProvider = Services.ContentProvider
-StatsService = Services.Stats
 MaterialService = Services.MaterialService
 AvatarEditorService = Services.AvatarEditorService
 TextService = Services.TextService
 TextChatService = Services.TextChatService
 CaptureService = Services.CaptureService
-VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
 
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
