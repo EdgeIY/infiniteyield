@@ -4525,9 +4525,9 @@ CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = '
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj (CLIENT)', DESC = 'Toggles if antiteleport allows you to rejoin or not'}
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
-CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality to boost FPS'}
-CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts Roblox recorder'}
-CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
+CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality in an attempt to boost FPS'}
+CMDs[#CMDs + 1] = {NAME = 'record / rec / recorder', DESC = 'Starts Roblox recorder'}
+CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot / ss', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
@@ -7880,11 +7880,11 @@ addcmd('showiy',{'unhideiy'},function(args, speaker)
 	end
 end)
 
-addcmd('rec', {'record'}, function(args, speaker)
+addcmd('rec', {'record', 'recorder'}, function(args, speaker)
 	return COREGUI:ToggleRecording()
 end)
 
-addcmd('screenshot', {'scrnshot'}, function(args, speaker)
+addcmd('screenshot', {'scrnshot', 'ss'}, function(args, speaker)
 	return COREGUI:TakeScreenshot()
 end)
 
