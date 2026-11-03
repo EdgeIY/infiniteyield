@@ -12259,7 +12259,7 @@ addcmd('autoclick',{},function(args, speaker)
 			end
 		end)
 
-		if not isOnMobile then
+		if not IsOnMobile then
 			notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
 		else
 			notify('Auto Clicker',"Type 'unautoclick' to stop")
