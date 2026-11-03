@@ -12274,11 +12274,7 @@ addcmd('autoclick',{},function(args, speaker)
 			end
 		end)
 
-		if not IsOnMobile then
-			notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop")
-		else
-			notify('Auto Clicker', "Type 'unautoclick' to stop")
-		end
+		notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop (or type 'unautoclick').")
 
 		repeat wait(clickDelay)
 			mouse1press()
@@ -13067,11 +13063,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 			end
 		end)
 
-		if not IsOnMobile then
-			notify('Auto Key Press', "Press [backspace] and [=] at the same time to stop")
-		else
-			notify('Auto Key Press', "Type 'unautokeypress' to stop")
-		end
+		notify('Auto Key Press', "Press [backspace] and [=] at the same time to stop (or type 'unautokeypress').")
 
 		repeat wait(clickDelay)
 			keypress(code)
