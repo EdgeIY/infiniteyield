@@ -13065,7 +13065,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Auto Key Press', "Your exploit does not support this command (missing keypress or keyrelease)")
+		notify('Incompatible Exploit', "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
