@@ -12260,9 +12260,9 @@ addcmd('autoclick',{},function(args, speaker)
 		end)
 
 		if not IsOnMobile then
-			notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+			notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop")
 		else
-			notify('Auto Clicker',"Type 'unautoclick' to stop")
+			notify('Auto Clicker', "Type 'unautoclick' to stop")
 		end
 
 		repeat wait(clickDelay)
@@ -12271,7 +12271,7 @@ addcmd('autoclick',{},function(args, speaker)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Incompatible Exploit',"Your exploit does not support this command (missing mouse1press or mouse1release)")
+		notify('Incompatible Exploit', "Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
@@ -13051,7 +13051,13 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+
+		if not IsOnMobile then
+			notify('Auto Key Press', "Press [backspace] and [=] at the same time to stop")
+		else
+			notify('Auto Key Press', "Type 'unautokeypress' to stop")
+		end
+
 		repeat wait(clickDelay)
 			keypress(code)
 			wait(releaseDelay)
@@ -13059,7 +13065,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		notify('Auto Key Press', "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
