@@ -4533,8 +4533,8 @@ CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscr
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
 CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
-CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease the amount of CPU the client uses'}
-CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
+CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3D Rendering to decrease the amount of CPU the client uses'}
+CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3D Rendering'}
 CMDs[#CMDs + 1] = {NAME = 'use2022materials / 2022materials', DESC = 'Enables 2022 material textures'}
 CMDs[#CMDs + 1] = {NAME = 'unuse2022materials / un2022materials', DESC = 'Disables 2022 material textures'}
 CMDs[#CMDs + 1] = {NAME = 'alignmentkeys', DESC = 'Enables the left and right alignment keys (comma and period)'}
@@ -9067,7 +9067,7 @@ addcmd('2022materials',{'use2022materials'},function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", true)
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
@@ -9075,7 +9075,7 @@ addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", false)
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
