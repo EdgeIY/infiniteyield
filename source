@@ -7909,7 +7909,7 @@ addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
 		if writefileExploit() then
 			local synsaveinstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/saveinstance.luau", true), "saveinstance")()
 			if synsaveinstance then
-				notify("Loading", "Downloading game. This will take a while.")
+				notify("Loading", "Downloading game via USSI. This will take a while.")
 				synsaveinstance({})
 				notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
 			else
