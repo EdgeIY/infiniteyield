@@ -9146,13 +9146,13 @@ addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
     end
 
     for _, v in getPlayer(args[1], speaker) do
-        if Players[v].Character == nil then continue end
-
-        local root = getRoot(Players[v].Character)
-        if root == nil then continue end
-
-        vehicleModel:PivotTo(root:GetPivot())
-        break
+        if Players[v].Character ~= nil then
+        	local root = getRoot(Players[v].Character)
+        	if root ~= nil then
+				vehicleModel:PivotTo(root:GetPivot())
+				break
+			end
+		end
     end
 end)
 
@@ -12585,14 +12585,15 @@ addcmd("findfriendgroups", {}, function(args, speaker)
     local found = 0
 
     for _, group in ipairs(groups) do
-        if #group == 1 then continue end
-        local names = {}
-        for _, player in ipairs(group) do
-            table.insert(names, playerList and player.DisplayName or player.Name)
-        end
-        result = result .. index .. ". " .. table.concat(names, ", ") .. "\n"
-        index = index + 1
-        found = found + 1
+        if #group ~= 1 then
+        	local names = {}
+        	for _, player in ipairs(group) do
+            	table.insert(names, playerList and player.DisplayName or player.Name)
+        	end
+        	result = result .. index .. ". " .. table.concat(names, ", ") .. "\n"
+        	index = index + 1
+        	found = found + 1
+		end
     end
 
     createPopup("Friend Groups", found == 0 and "None" or result)
@@ -12845,15 +12846,13 @@ end)
 
 addcmd("mutevc", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		if Players[plr] == speaker then continue end
-		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true)
+		if Players[plr] ~= speaker then Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true) end
 	end
 end)
 
 addcmd("unmutevc", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		if Players[plr] == speaker then continue end
-		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false)
+		if Players[plr] ~= speaker then Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false) end
 	end
 end)
 
