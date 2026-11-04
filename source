@@ -4040,10 +4040,10 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 				end
 			end
 			nameFile()
-			notify('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
+			notify('Chat Logs', 'Saved chat logs to the workspace folder within your exploit folder.')
 		end
 	else
-		notify('Chat Logs','Your exploit does not support writefile. You cannot save chat logs.')
+		notify('Chat Logs', 'Your exploit does not support writefile. You cannot save chat logs.')
 	end
 end)
 
@@ -7722,7 +7722,7 @@ addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'},function(args
 	refreshwaypoints()
 	updatesaves()
 	AllWaypoints = {}
-	notify('Modified Waypoints','Removed all waypoints')
+	notify('Modified Waypoints', 'Removed all waypoints')
 end)
 
 addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
@@ -7745,7 +7745,7 @@ addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 	end
 	refreshwaypoints()
 	updatesaves()
-	notify('Modified Waypoints','Deleted game waypoints')
+	notify('Modified Waypoints', 'Deleted game waypoints')
 end)
 
 
@@ -7848,12 +7848,12 @@ addcmd('guidelete',{},function(args, speaker)
 			end
 		end
 	end)
-	notify('GUI Delete Enabled','Hover over a GUI and press backspace to delete it')
+	notify('GUI Delete Enabled', 'Hover over a GUI and press backspace to delete it')
 end)
 
 addcmd('unguidelete',{'noguidelete'},function(args, speaker)
 	if deleteGuiInput then deleteGuiInput:Disconnect() end
-	notify('GUI Delete Disabled','GUI backspace delete has been disabled')
+	notify('GUI Delete Disabled', 'GUI backspace delete has been disabled')
 end)
 
 local wasStayOpen = StayOpen
@@ -7866,7 +7866,7 @@ addcmd('hideiy',{},function(args, speaker)
 	end
 	minimizeNum = 0
 	minimizeHolder()
-	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('IY Hidden','You can press the prefix key to access the command bar') end
+	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('IY Hidden', 'You can press the prefix key to access the command bar') end
 end)
 
 addcmd('showiy',{'unhideiy'},function(args, speaker)
@@ -11101,7 +11101,7 @@ addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
 			fireproximityprompt(prompt)
 		end)
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing fireproximityprompt)')
 	end
 end)
 
