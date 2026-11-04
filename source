@@ -9473,10 +9473,10 @@ oofing = false
 addcmd('loopoof',{},function(args, speaker)
 	oofing = true
 	repeat wait(0.1)
-		for i,v in pairs(Players:GetPlayers()) do
-			if v.Character ~= nil and v.Character:FindFirstChild'Head' then
+		for i, v in pairs(Players:GetPlayers()) do
+			if v.Character ~= nil and v.Character:FindFirstChild('Head') then
 				for _,x in pairs(v.Character.Head:GetChildren()) do
-					if x:IsA'Sound' then x.Playing = true end
+					if x:IsA('Sound') then x.Playing = true end
 				end
 			end
 		end
