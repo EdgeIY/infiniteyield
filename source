@@ -4728,12 +4728,12 @@ CMDs[#CMDs + 1] = {NAME = 'chatage [player]', DESC = 'Chats the age of a player'
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [player]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [player]', DESC = 'Chats the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [player]', DESC = 'Copies a players full username to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players UserID'}
-CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current GameId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current PlaceId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current GameId to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players UserID to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players AppearanceID'}
-CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players AppearanceID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players UserId'}
+CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players UserId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players AppearanceId'}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players AppearanceId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'bang [player] [speed]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
@@ -6501,7 +6501,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing readfile/writefile)')
+		notify('Incompatible Exploit', 'Your exploit is unable to use plugins (missing readfile/writefile)')
 	end
 end)
 
@@ -7693,7 +7693,7 @@ end)
 addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(args, speaker)
 	for i,v in pairs(WayPoints) do
 		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
-			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
+			notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
 			table.remove(WayPoints, i)
 		end
 	end
@@ -7708,7 +7708,7 @@ addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(arg
 	end
 	for i,v in pairs(pWayPoints) do
 		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
-			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
+			notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
 			table.remove(pWayPoints, i)
 		end
 	end
@@ -7941,7 +7941,7 @@ end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
 	if not hookmetamethod then 
-		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
 	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
@@ -7958,13 +7958,13 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
     	return nil
 	end))
 
-	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
+	notify('Client Antikick', 'Client anti kick is now active (only effective on localscript kick)')
 end)
 
 allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
-		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
 	end
 
 	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
@@ -8121,7 +8121,7 @@ addcmd('esp',{},function(args, speaker)
 			end
 		end
 	else
-		notify('ESP','Disable chams (nochams) before using ESP')
+		notify('ESP', 'Disable chams (nochams) before using ESP')
 	end
 end)
 
@@ -8134,7 +8134,7 @@ addcmd('espteam',{},function(args, speaker)
 			end
 		end
 	else
-		notify('ESP','Disable chams (nochams) before using ESP')
+		notify('ESP', 'Disable chams (nochams) before using ESP')
 	end
 end)
 
@@ -8230,7 +8230,7 @@ addcmd('chams',{},function(args, speaker)
 			end
 		end
 	else
-		notify('Chams','Disable ESP (noesp) before using chams')
+		notify('Chams', 'Disable ESP (noesp) before using chams')
 	end
 end)
 
@@ -8312,7 +8312,7 @@ addcmd('unview',{'unspectate'},function(args, speaker)
 	StopFreecam()
 	if viewing ~= nil then
 		viewing = nil
-		notify('Spectate','View turned off')
+		notify('Spectate', 'View turned off')
 	end
 	if viewDied then
 		viewDied:Disconnect()
@@ -8982,20 +8982,22 @@ addcmd('copyname',{'copyuser'},function(args, speaker)
 	end
 end)
 
-addcmd('userid',{'id'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		local id = tostring(Players[v].UserId)
-		notify('User ID',id)
-	end
-end)
-
 addcmd("copyplaceid", {"placeid"}, function(args, speaker)
 	toClipboard(PlaceId)
+	notify('Copied ID', 'Copied PlaceId to clipboard')
 end)
 
 addcmd("copygameid", {"gameid"}, function(args, speaker)
 	toClipboard(game.GameId)
+	notify('Copied ID', 'Copied GameId to clipboard')
+end)
+
+addcmd('userid',{'id'},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local id = tostring(Players[v].UserId)
+		notify('UserId', id)
+	end
 end)
 
 addcmd('copyid',{'copyuserid'},function(args, speaker)
@@ -9003,38 +9005,39 @@ addcmd('copyid',{'copyuserid'},function(args, speaker)
 	for i,v in pairs(players) do
 		local id = tostring(Players[v].UserId)
 		toClipboard(id)
+		notify('Copied ID', 'Copied UserId to clipboard')
 	end
 end)
 
 addcmd('creatorid',{'creator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
-		notify('Creator ID',game.CreatorId)
+		notify('Creator ID', game.CreatorId)
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
-		notify('Creator ID',OwnerID)
+		notify('CreatorId', OwnerID)
 	end
 end)
 
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
-		notify('Copied ID','Copied creator ID to clipboard')
+		notify('Copied ID', 'Copied CreatorID to clipboard')
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
-		notify('Copied ID','Copied creator ID to clipboard')
+		notify('Copied ID', 'Copied CreatorId to clipboard')
 	end
 end)
 
 addcmd('setcreatorid',{'setcreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		speaker.UserId = game.CreatorId
-		notify('Set ID','Set UserId to '..game.CreatorId)
+		notify('Set ID', 'Set UserId to '..game.CreatorId)
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
-		notify('Set ID','Set UserId to '..OwnerID)
+		notify('Set ID', 'Set UserId to '..OwnerID)
 	end
 end)
 
@@ -9042,7 +9045,7 @@ addcmd('appearanceid',{'aid'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
-		notify('Appearance ID',aid)
+		notify('AppearanceId', aid)
 	end
 end)
 
@@ -9051,6 +9054,7 @@ addcmd('copyappearanceid',{'caid'},function(args, speaker)
 	for i,v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
 		toClipboard(aid)
+		notify('Copied ID', 'Copied AppearanceId to clipboard')
 	end
 end)
 
@@ -10402,7 +10406,7 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+			notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -10464,7 +10468,7 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+			notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -12160,7 +12164,7 @@ function teleport(speaker,target,target2,fast)
 			humanoid.RootPart.CFrame = NormPos
 		end
 	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required', 'You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -12610,7 +12614,7 @@ addcmd('clearnilinstances',{'nonilinstances','cni'},function(args, speaker)
 			v:Destroy()
 		end
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing getnilinstances)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing getnilinstances)')
 	end
 end)
 
