@@ -9135,12 +9135,17 @@ end)
 
 addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
     local character = speaker.Character
-    local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+	local humanoid = nil
+	if character then
+    	humanoid = character:FindFirstChildOfClass("Humanoid")
+	end
     if not humanoid then return end
 
     local seat = humanoid.SeatPart
-    local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA("Model") else nil
-    if vehicleModel == nil then
+    local vehicleModel = nil
+	if seat then 
+		vehicleModel = seat:FindFirstAncestorWhichIsA("Model")
+	else
         notify("Vehicle Goto", "Make sure you're sitting in a vehicle.")
         return
     end
