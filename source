@@ -7978,7 +7978,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 			error("Argument 1 missing or nil", 2)
 		end
 		if typeof(placeId) ~= "number" and placeId ~= true then
-			error(`Unable to cast {typeof(placeId)} to int64`, 2)
+			error("Unable to cast " .. typeof(placeId) .. " to int64", 2)
 		elseif placeId == true then
 			-- somehow raise raiseTeleportInitFailedEvent
 			return
@@ -8016,7 +8016,6 @@ end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	allow_rj = not allow_rj
-	notify("Client AntiTP", `Scripts now may{allow_rj and "" or " not"} make you rejoin the server`)
 end)
 
 addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
