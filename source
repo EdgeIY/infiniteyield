@@ -9647,7 +9647,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 				Player.Character = Character
 				wait()
 				Character.Parent = workspace
-				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
 				IsInvis = false
 				InvisibleCharacter.Parent = nil
 				invisRunning = false
@@ -9657,14 +9657,14 @@ addcmd('invisible',{'invis'},function(args, speaker)
 				Player.Character = Character
 				wait()
 				Character.Parent = workspace
-				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
 				TurnVisible()
 			end)
 		end
 	end
 
 	local invisDied
-	invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+	invisDied = InvisibleCharacter:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 		Respawn()
 		invisDied:Disconnect()
 	end)
@@ -9700,7 +9700,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		IsInvis = false
 		Player.Character.Animate.Disabled = true
 		Player.Character.Animate.Disabled = false
-		invisDied = Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+		invisDied = Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 			Respawn()
 			invisDied:Disconnect()
 		end)
@@ -10892,7 +10892,7 @@ addcmd('carpet',{},function(args, speaker)
 			carpet = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(carpetAnim)
 			carpet:Play(.1, 1, 1)
 			local carpetplr = Players[v].Name
-			carpetDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+			carpetDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 				carpetLoop:Disconnect()
 				carpet:Stop()
 				carpetAnim:Destroy()
