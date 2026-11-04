@@ -4521,8 +4521,8 @@ CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace / saveinstance', DESC = 'Uses sa
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box shown when a game is loading assets due to network lag'}
 CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
-CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
-CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents localscripts from teleporting you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents LocalScripts from kicking you'}
+CMDs[#CMDs + 1] = {NAME = 'clientantiteleport / antiteleport (CLIENT)', DESC = 'Prevents LocalScripts from teleporting you'}
 CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj (CLIENT)', DESC = 'Toggles if antiteleport allows you to rejoin or not'}
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
@@ -6586,20 +6586,20 @@ end)
 addcmd('keepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = true
-		notify('KeepIY','Infinite Yield will now run after you teleport')
+		notify('KeepIY', 'Infinite Yield will now run after you teleport')
 		updatesaves()
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
 addcmd('unkeepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = false
-		notify('KeepIY','Infinite Yield will no longer run after you teleport')
+		notify('KeepIY', 'Infinite Yield will no longer run after you teleport')
 		updatesaves()
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
@@ -6608,7 +6608,7 @@ addcmd('togglekeepiy', {}, function(args, speaker)
 		KeepInfYield = not KeepInfYield
 		updatesaves()
 	else
-		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
