@@ -4881,8 +4881,8 @@ CMDs[#CMDs + 1] = {NAME = 'unautokeypress', DESC = 'Stops autokeypress'}
 CMDs[#CMDs + 1] = {NAME = 'hovername', DESC = 'Shows a players username when your mouse is hovered over them'}
 CMDs[#CMDs + 1] = {NAME = 'unhovername / nohovername', DESC = 'Turns off hovername'}
 CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mouse sensitivity (affects first person and right click drag) (default is 1)'}
-CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to Settings > Keybinds > Add for click delete'}
-CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to Settings > Keybinds > Add for click teleport'}
+CMDs[#CMDs + 1] = {NAME = 'clickdelete / clickdel', DESC = 'Go to Settings > Keybinds > Add for click delete'}
+CMDs[#CMDs + 1] = {NAME = 'clickteleport / clicktp', DESC = 'Go to Settings > Keybinds > Add for click teleport'}
 CMDs[#CMDs + 1] = {NAME = 'mouseteleport / mousetp', DESC = 'Teleports your character to your mouse. This is recommended as a keybind'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
@@ -9726,7 +9726,7 @@ addcmd("toggleinvis", {}, function(args, speaker)
 end)
 
 addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
-	local Char  = Players.LocalPlayer.Character
+	local Char = Players.LocalPlayer.Character
 	local touched = false
 	local tpdback = false
 	local box = Instance.new('Part')
@@ -10305,9 +10305,9 @@ addcmd("tweenoffset", {"toffset"}, function(args, speaker)
     breakVelocity()
 end)
 
-addcmd("clickteleport", {}, function(args, speaker)
+addcmd("clickteleport", {"clicktp"}, function(args, speaker)
     if speaker ~= Players.LocalPlayer then return end
-    notify("Click TP", "Go to Settings > Keybinds > Add to set up click teleport")
+    notify("Click Teleport", "Go to Settings > Keybinds > Add to set up click teleport")
 end)
 
 addcmd("mouseteleport", {"mousetp"}, function(args, speaker)
@@ -10340,9 +10340,9 @@ addcmd("thru", {}, function(args, speaker)
     root.CFrame = CFrame.new(pos, pos + root.CFrame.LookVector)
 end)
 
-addcmd('clickdelete',{},function(args, speaker)
+addcmd("clickdelete", {"clickdel"}, function(args, speaker)
 	if speaker ~= Players.LocalPlayer then return end
-	notify('Click Delete','Go to Settings > Keybinds > Add to set up click delete')
+	notify('Click Delete', 'Go to Settings > Keybinds > Add to set up click delete')
 end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
