@@ -9302,7 +9302,7 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
-	for i,v in pairs(players)do
+	for i,v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -10906,7 +10906,7 @@ addcmd('carpet',{},function(args, speaker)
 			end)
 			carpetLoop = RunService.Heartbeat:Connect(function()
 				pcall(function()
-					getRoot(Players.LocalPlayer.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
+					getRoot(speaker.Character).CFrame = getRoot(Players[carpetplr].Character).CFrame
 				end)
 			end)
 		end
@@ -11274,7 +11274,7 @@ addcmd('hatspin',{'spinhats'},function(args, speaker)
 		keep.D = 50
 		spinhats = RunService.Stepped:Connect(function()
 			pcall(function()
-				keep.Position = Players.LocalPlayer.Character.Head.Position
+				keep.Position = speaker.Character.Head.Position
 			end)
 		end)
 	end
@@ -11628,13 +11628,13 @@ addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},function(args, speaker)
-	for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+	for i,v in pairs(speaker.Backpack:GetChildren()) do
 		if v:IsA("Tool") then
-			v.Parent = Players.LocalPlayer.Character
+			v.Parent = speaker.Character
 		end
 	end
 	wait()
-	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+	for i,v in pairs(speaker.Character:GetChildren()) do
 		if v:IsA("Tool") then
 			v.Parent = workspace
 		end
