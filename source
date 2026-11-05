@@ -4665,6 +4665,8 @@ CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the l
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
+CMDs[#CMDs + 1] = {NAME = 'unnoclipcam / unnccam', DESC = 'Stops camera going through objects like walls'}
+CMDs[#CMDs + 1] = {NAME = 'togglenoclipcam / tnccam', DESC = 'Toggles noclipcam'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Sets maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Sets minimum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
@@ -8714,7 +8716,8 @@ addcmd('thirdp',{},function(args, speaker)
 	speaker.CameraMode = "Classic"
 end)
 
-addcmd('noclipcam', {'nccam'}, function(args, speaker)
+local cnoclip = false
+function noclipcam(state, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
 	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
@@ -8724,14 +8727,29 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	for _, v in pairs(getgc()) do
 		if type(v) == 'function' and getfenv(v).script == pop then
 			for i, v1 in pairs(gc(v)) do
-				if tonumber(v1) == .25 then
+				if state == true and tonumber(v1) == .25 then
 					sc(v, i, 0)
-				elseif tonumber(v1) == 0 then
+				elseif state == false and tonumber(v1) == 0 then
 					sc(v, i, .25)
 				end
 			end
 		end
 	end
+	cnoclip = state
+end
+
+addcmd('noclipcam', {'nccam'}, function(args, speaker)
+	if cnoclip then return end
+	noclipcam(true, speaker)
+end)
+
+addcmd('unnoclipcam', {'unnccam'}, function(args, speaker)
+	if not cnoclip then return end
+	noclipcam(false, speaker)
+end)
+
+addcmd('togglenoclipcam', {'tnccam'}, function(args, speaker)
+	noclipcam(not cnoclip, speaker)
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
@@ -9481,7 +9499,7 @@ addcmd("unanchor", {}, function(args, speaker)
     getRoot(speaker.Character).Anchored = false
 end)
 
-oofing = false
+local oofing = false
 addcmd('loopoof',{},function(args, speaker)
 	oofing = true
 	repeat wait(0.1)
