@@ -4068,7 +4068,7 @@ Players.PlayerRemoving:Connect(function(player)
 			viewDied:Disconnect()
 			viewChanged:Disconnect()
 		end
-		notify('Spectate','View turned off (player left)')
+		notify('Spectate', 'View turned off (player left)')
 	end
 	eventEditor.FireEvent("OnLeave", player.Name)
 end)
@@ -4193,7 +4193,7 @@ CopyPath.MouseButton1Click:Connect(function()
 	if Path.Text ~= "" then
 		toClipboard(Path.Text)
 	else
-		notify('Copy Path','Select a part to copy its path')
+		notify('Copy Path', 'Select a part to copy its path')
 	end
 end)
 
@@ -4208,7 +4208,7 @@ ChoosePart.MouseButton1Click:Connect(function()
 				end
 			end
 			if not FoundDupe then
-				notify('Modified Waypoints',"Created waypoint: "..selected.Adornee.Name..tpNameExt)
+				notify('Modified Waypoints', "Created waypoint: "..selected.Adornee.Name..tpNameExt)
 				pWayPoints[#pWayPoints + 1] = {NAME = selected.Adornee.Name..tpNameExt, COORD = {selected.Adornee}}
 			else
 				if isNumber(tpNameExt) then
@@ -4231,7 +4231,7 @@ customAlias = {}
 Delete_3.MouseButton1Click:Connect(function()
 	customAlias = {}
 	aliases = {}
-	notify('Aliases Modified','Removed all aliases')
+	notify('Aliases Modified', 'Removed all aliases')
 	updatesaves()
 	refreshaliases()
 end)
@@ -6036,9 +6036,9 @@ function unkeybind(cmd,key)
 	refreshbinds()
 	updatesaves()
 	if key == 'RightClick' or key == 'LeftClick' then
-		notify('Keybinds Updated','Unbinded '..key..' from '..cmd)
+		notify('Keybinds Updated', 'Unbinded '..key..' from '..cmd)
 	else
-		notify('Keybinds Updated','Unbinded '..key:sub(14)..' from '..cmd)
+		notify('Keybinds Updated', 'Unbinded '..key:sub(14)..' from '..cmd)
 	end
 end
 
@@ -6163,7 +6163,7 @@ end)
 Add_2.MouseButton1Click:Connect(function()
 	if keySelected then
 		if string.find(Cmdbar_2.Text, "\\\\") or string.find(Cmdbar_3.Text, "\\\\") then
-			notify('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
+			notify('Keybind Error', 'Only use one backslash to keybind multiple commands into one keybind or command')
 		else
 			if newToggle and Cmdbar_3.Text ~= '' and Cmdbar_2.text ~= '' then
 				addbind(Cmdbar_2.Text,keyPressed,false,Cmdbar_3.Text)
@@ -6175,9 +6175,9 @@ Add_2.MouseButton1Click:Connect(function()
 			refreshbinds()
 			updatesaves()
 			if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-				notify('Keybinds Updated','Binded '..keyPressed..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
+				notify('Keybinds Updated', 'Binded '..keyPressed..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
 			else
-				notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
+				notify('Keybinds Updated', 'Binded '..keyPressed:sub(14)..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
 			end
 		end
 	end
@@ -6250,9 +6250,9 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to click tp')
+			notify('Keybinds Updated', 'Binded '..keyPressed..' to click tp')
 		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click tp')
+			notify('Keybinds Updated', 'Binded '..keyPressed:sub(14)..' to click tp')
 		end
 	end
 end)
@@ -6263,9 +6263,9 @@ ClickDelete.Select.MouseButton1Click:Connect(function()
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notify('Keybinds Updated','Binded '..keyPressed..' to click delete')
+			notify('Keybinds Updated', 'Binded '..keyPressed..' to click delete')
 		else
-			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
+			notify('Keybinds Updated', 'Binded '..keyPressed:sub(14)..' to click delete')
 		end
 	end
 end)
@@ -6321,7 +6321,7 @@ PluginsGUI = PluginEditor.background
 
 function addPlugin(name)
 	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.iy' or name == 'iy_fe' then
-		notify('Plugin Error','Please enter a valid plugin')
+		notify('Plugin Error', 'Please enter a valid plugin')
 	else
 		local file
 		local fileName
@@ -6339,10 +6339,10 @@ function addPlugin(name)
 				refreshplugins()
 				pcall(eventEditor.Refresh)
 			else
-				notify('Plugin Error','This plugin is already added')
+				notify('Plugin Error', 'This plugin is already added')
 			end
 		else
-			notify('Plugin Error','Cannot locate file "'..fileName..'". Is the file in the correct folder?')
+			notify('Plugin Error', 'Cannot locate file "'..fileName..'". Is the file in the correct folder?')
 		end
 	end
 end
@@ -6413,7 +6413,7 @@ function LoadPlugin(val,startup)
 	end
 
 	function handlePluginError(plerror)
-		notify('Plugin Error','An error occurred with the plugin, "'..val..'" and it could not be loaded')
+		notify('Plugin Error', 'An error occurred with the plugin, "'..val..'" and it could not be loaded')
 		if FindInTable(PluginsTable,val) then
 			for i,v in pairs(PluginsTable) do
 				if v == val then
@@ -6529,7 +6529,7 @@ addcmd('addalias',{},function(args, speaker)
 		if v.NAME:lower()==cmd or FindInTable(v.ALIAS,cmd) then
 			customAlias[alias] = v
 			aliases[#aliases + 1] = {CMD = cmd, ALIAS = alias}
-			notify('Aliases Modified',"Added "..alias.." as an alias to "..cmd)
+			notify('Aliases Modified', "Added "..alias.." as an alias to "..cmd)
 			updatesaves()
 			refreshaliases()
 			break
@@ -6548,7 +6548,7 @@ addcmd('removealias',{},function(args, speaker)
 				table.remove(aliases, i)
 			end
 		end
-		notify('Aliases Modified',"Removed the alias "..alias.." from "..cmd)
+		notify('Aliases Modified', "Removed the alias "..alias.." from "..cmd)
 		updatesaves()
 		refreshaliases()
 	end
@@ -6557,7 +6557,7 @@ end)
 addcmd('clraliases',{},function(args, speaker)
 	customAlias = {}
 	aliases = {}
-	notify('Aliases Modified','Removed all aliases')
+	notify('Aliases Modified', 'Removed all aliases')
 	updatesaves()
 	refreshaliases()
 end)
@@ -7542,7 +7542,7 @@ end)
 addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if getRoot(speaker.Character) then
-		notify('Modified Waypoints',"Created waypoint: "..getstring(1, args))
+		notify('Modified Waypoints', "Created waypoint: "..getstring(1, args))
 		local torso = getRoot(speaker.Character)
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
@@ -7556,7 +7556,7 @@ end)
 addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if getRoot(speaker.Character) then
-		notify('Modified Waypoints',"Created waypoint: "..getstring(1, args))
+		notify('Modified Waypoints', "Created waypoint: "..getstring(1, args))
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
 			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
@@ -13073,7 +13073,7 @@ cancelAutoKeyPress = nil
 addcmd('autokeypress',{'keypress'},function(args, speaker)
 	if keypress and keyrelease and args[1] then
 		local code = keycodeMap[args[1]:lower()]
-		if not code then notify('Auto Key Press',"Invalid key") return end
+		if not code then notify('Auto Key Press', "Invalid key") return end
 		execCmd('unautokeypress')
 		wait()
 		local clickDelay = 0.1
