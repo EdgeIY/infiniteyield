@@ -9615,7 +9615,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	local invisFix = RunService.Stepped:Connect(function()
 		pcall(function()
 			local IsInteger
-			if tostring(Void):find'-' then
+			if tostring(Void):find('-') then
 				IsInteger = true
 			else
 				IsInteger = false
@@ -9714,7 +9714,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		end)
 		invisRunning = false
 	end
-	notify('Invisible','You now appear invisible to other players')
+	notify('Invisible', 'You now appear invisible to other players')
 end)
 
 addcmd("visible", {"vis","uninvisible"}, function(args, speaker)
@@ -10106,7 +10106,7 @@ addcmd('spasm',{},function(args, speaker)
 		Spasm:Play()
 		Spasm:AdjustSpeed(99)
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required', 'This command requires the r6 rig type')
 	end
 end)
 
@@ -10124,7 +10124,7 @@ addcmd('headthrow',{},function(args, speaker)
 		k:Play(0)
 		k:AdjustSpeed(1)
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required', 'This command requires the r6 rig type')
 	end
 end)
 
@@ -10341,9 +10341,8 @@ addcmd("thru", {}, function(args, speaker)
 end)
 
 addcmd('clickdelete',{},function(args, speaker)
-	if speaker == Players.LocalPlayer then
-		notify('Click Delete','Go to Settings > Keybinds > Add to set up click delete')
-	end
+	if speaker ~= Players.LocalPlayer then return end
+	notify('Click Delete','Go to Settings > Keybinds > Add to set up click delete')
 end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
@@ -10534,7 +10533,7 @@ addcmd('tools',{'gears'},function(args, speaker)
 		end
 	end
 	copy(ReplicatedStorage)
-	notify('Tools','Copied tools from ReplicatedStorage and Lighting')
+	notify('Tools', 'Copied tools from ReplicatedStorage and Lighting')
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},function(args, speaker)
@@ -10682,7 +10681,6 @@ addcmd('chat',{'say'},function(args, speaker)
 	local cString = getstring(1, args)
 	chatMessage(cString)
 end)
-
 
 spamming = false
 spamspeed = 1
@@ -10913,7 +10911,7 @@ addcmd('carpet',{},function(args, speaker)
 			end)
 		end
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required', 'This command requires the r6 rig type')
 	end
 end)
 
@@ -11240,12 +11238,12 @@ addcmd('spawnpoint',{'spawn'},function(args, speaker)
 	spawnpos = getRoot(speaker.Character).CFrame
 	spawnpoint = true
 	spDelay = tonumber(args[1]) or 0.1
-	notify('Spawn Point','Spawn point created at '..tostring(spawnpos))
+	notify('Spawn Point', 'Spawn point created at '..tostring(spawnpos))
 end)
 
 addcmd('nospawnpoint',{'nospawn','removespawnpoint'},function(args, speaker)
 	spawnpoint = false
-	notify('Spawn Point','Removed spawn point')
+	notify('Spawn Point', 'Removed spawn point')
 end)
 
 addcmd('flashback',{'diedtp'},function(args, speaker)
@@ -11342,7 +11340,7 @@ addcmd('split',{},function(args, speaker)
 	if r15(speaker) then
 		speaker.Character.UpperTorso.Waist:Destroy()
 	else
-		notify('R15 Required','This command requires the r15 rig type')
+		notify('R15 Required', 'This command requires the r15 rig type')
 	end
 end)
 
@@ -11360,7 +11358,7 @@ end)
 
 addcmd('noroot',{'removeroot','rroot'},function(args, speaker)
 	if speaker.Character ~= nil then
-		local char = Players.LocalPlayer.Character
+		local char = speaker.Character
 		char.Parent = nil
 		char.Humanoid.RootPart:Destroy()
 		char.Parent = workspace
