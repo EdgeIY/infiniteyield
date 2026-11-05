@@ -9028,7 +9028,7 @@ end)
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
-		notify('Copied ID', 'Copied CreatorID to clipboard')
+		notify('Copied ID', 'Copied CreatorId to clipboard')
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
