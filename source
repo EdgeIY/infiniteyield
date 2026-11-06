@@ -7014,7 +7014,18 @@ addcmd("inviteprompt", {}, function(args, speaker)
     local player = getPlayer(args[1], speaker)[1]
     local target = player and Players:FindFirstChild(player)
     if not target then return end
-	return "Prompted user. Rejoin for it to work."
+	local success, err = pcall(function()
+    	ExperienceService:LaunchExperience({
+        	placeId = PlaceId,
+        	gameInstanceId = JobId,
+        	referredByPlayerId = target.UserId
+    	})
+	end)
+    if success then
+		return "Prompted user. Rejoin for it to work."
+	else
+		return "There was an error in game:GetService('ExperienceService'):LaunchExperience(). Contact the developer of your exploit."
+	end
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
