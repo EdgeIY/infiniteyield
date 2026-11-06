@@ -9522,7 +9522,11 @@ end)
 
 local notifiedRespectFiltering = false
 addcmd('muteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true 
+		notify('RespectFilteringEnabled', 'RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
+
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9543,7 +9547,11 @@ addcmd('muteboombox',{},function(args, speaker)
 end)
 
 addcmd('unmuteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true 
+		notify('RespectFilteringEnabled', 'RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
+
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9592,26 +9600,26 @@ addcmd("refresh", {"re"}, function(args, speaker)
 end)
 
 addcmd("god", {}, function(args, speaker)
-	local Cam = workspace.CurrentCamera
-	local Char, Pos = speaker.Character, Cam.CFrame
-	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
-	local nHuman = Human:Clone()
-	nHuman.Parent = Char
+	local cam = workspace.CurrentCamera
+	local char, pos = speaker.Character, cam.CFrame
+	local human = char and char:FindFirstChildWhichIsA("Humanoid")
+	local nHuman = human:Clone()
+	human.Parent = char
 	speaker.Character = nil
 	nHuman:SetStateEnabled(15, false)
 	nHuman:SetStateEnabled(1, false)
 	nHuman:SetStateEnabled(0, false)
 	nHuman.BreakJointsOnDeath = true
-	Human:Destroy()
-	speaker.Character = Char
-	Cam.CameraSubject = nHuman
-	Cam.CFrame = task.wait() and Pos
+	human:Destroy()
+	speaker.Character = char
+	cam.CameraSubject = nHuman
+	cam.CFrame = task.wait() and pos
 	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-	local Script = Char:FindFirstChild("Animate")
-	if Script then
-		Script.Disabled = true
+	local anscript = char:FindFirstChild("Animate")
+	if anscript then
+		anscript.Disabled = true
 		task.wait()
-		Script.Disabled = false
+		anscript.Disabled = false
 	end
 	nHuman.Health = nHuman.MaxHealth
 end)
