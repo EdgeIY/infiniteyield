@@ -9605,18 +9605,22 @@ addcmd("god", {}, function(args, speaker)
 	local cam = workspace.CurrentCamera
 	local char, pos = speaker.Character, cam.CFrame
 	local human = char and char:FindFirstChildWhichIsA("Humanoid")
+	if not human then return end
+	
 	local nHuman = human:Clone()
-	human.Parent = char
 	speaker.Character = nil
 	nHuman:SetStateEnabled(15, false)
 	nHuman:SetStateEnabled(1, false)
 	nHuman:SetStateEnabled(0, false)
 	nHuman.BreakJointsOnDeath = true
 	human:Destroy()
+	
+	nHuman.Parent = char
 	speaker.Character = char
 	cam.CameraSubject = nHuman
 	cam.CFrame = task.wait() and pos
 	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
 	local anscript = char:FindFirstChild("Animate")
 	if anscript then
 		anscript.Disabled = true
