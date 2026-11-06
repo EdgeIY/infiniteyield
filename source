@@ -9019,12 +9019,10 @@ end)
 
 addcmd("copyplaceid", {"placeid"}, function(args, speaker)
 	toClipboard(PlaceId)
-	notify('Copied ID', 'Copied PlaceId to clipboard')
 end)
 
 addcmd("copygameid", {"gameid"}, function(args, speaker)
 	toClipboard(game.GameId)
-	notify('Copied ID', 'Copied GameId to clipboard')
 end)
 
 addcmd('userid',{'id'},function(args, speaker)
@@ -9040,13 +9038,12 @@ addcmd('copyid',{'copyuserid'},function(args, speaker)
 	for i, v in pairs(players) do
 		local id = tostring(Players[v].UserId)
 		toClipboard(id)
-		notify('Copied ID', 'Copied UserId to clipboard')
 	end
 end)
 
 addcmd('creatorid',{'creator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
-		notify('Creator ID', game.CreatorId)
+		notify('CreatorId', game.CreatorId)
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
@@ -9057,11 +9054,9 @@ end)
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
-		notify('Copied ID', 'Copied CreatorId to clipboard')
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
-		notify('Copied ID', 'Copied CreatorId to clipboard')
 	end
 end)
 
@@ -9089,7 +9084,6 @@ addcmd('copyappearanceid',{'caid'},function(args, speaker)
 	for i, v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
 		toClipboard(aid)
-		notify('Copied ID', 'Copied AppearanceId to clipboard')
 	end
 end)
 
