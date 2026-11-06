@@ -151,7 +151,7 @@ if makefolder and isfolder and writefile and isfile then
 	end)
 end
 
-currentVersion = "6.4.2R"
+currentVersion = "6.4.2E"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
@@ -7011,14 +7011,15 @@ addcmd("rejoin", {"rj"}, function(args, speaker)
 end)
 
 addcmd("inviteprompt", {}, function(args, speaker)
-	local plrs = getPlayer(args[1], speaker)
-	if #plrs > 0 then
-		ExperienceService:LaunchExperience({
-			placeId = PlaceId,
-			gameInstanceId = JobId,
-			referredByPlayerId = plr[1].UserId
-		})
-	end
+    local player = getPlayer(args[1], speaker)[1]
+    local target = player and Players:FindFirstChild(player)
+    if not target then return end
+	return "Prompted user. Rejoin for it to work."
+    ExperienceService:LaunchExperience({
+        placeId = PlaceId,
+        gameInstanceId = JobId,
+        referredByPlayerId = target.UserId
+    })
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
