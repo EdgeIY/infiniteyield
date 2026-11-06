@@ -10660,30 +10660,32 @@ local loopgoto = nil
 addcmd('loopgoto',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i, v in pairs(players) do
-		loopgoto = nil
-		if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-			wait(.1)
-		end
-		loopgoto = Players[v]
-		local distance = 3
-		if args[2] and isNumber(args[2]) then
-			distance = args[2]
-		end
-		local lDelay = 0
-		if args[3] and isNumber(args[3]) then
-			lDelay = args[3]
-		end
-		repeat
-			if Players:FindFirstChild(v) then
-				if Players[v].Character ~= nil then
-					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(distance,1,0)
-				end
-				wait(lDelay)
-			else
-				loopgoto = nil
+		if Players[v] ~= speaker then
+			loopgoto = nil
+			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+				wait(.1)
 			end
-		until loopgoto ~= Players[v]
+			loopgoto = Players[v]
+			local distance = 3
+			if args[2] and isNumber(args[2]) then
+				distance = args[2]
+			end
+			local lDelay = 0
+			if args[3] and isNumber(args[3]) then
+				lDelay = args[3]
+			end
+			repeat
+				if Players:FindFirstChild(v) then
+					if Players[v].Character ~= nil then
+						getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame + Vector3.new(distance,1,0)
+					end
+					wait(lDelay)
+				else
+					loopgoto = nil
+				end
+			until loopgoto ~= Players[v]
+		end
 	end
 end)
 
@@ -10695,14 +10697,18 @@ addcmd('headsit',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if headSit then headSit:Disconnect() end
 	for i, v in pairs(players) do
-		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		headSit = RunService.Heartbeat:Connect(function()
-			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
-				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0) * CFrame.new(0,1.6,0.4)
-			else
-				headSit:Disconnect()
-			end
-		end)
+		if Players[v] ~= speaker then
+			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
+			headSit = RunService.Heartbeat:Connect(function()
+				if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
+					getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0) * CFrame.new(0,1.6,0.4)
+				else
+					headSit:Disconnect()
+				end
+			end)
+		else
+			notify('Error', 'You cannot use headsit on yourself.')
+		end
 	end
 end)
 
@@ -12451,23 +12457,29 @@ end)
 addcmd('stareat',{'stare'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i, v in pairs(players) do
-		if stareLoop then
-			stareLoop:Disconnect()
-		end
-		if not getRoot(Players.LocalPlayer.Character) and getRoot(Players[v].Character) then return end
-		local function stareFunc()
-			if Players.LocalPlayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
-				local chrPos = Players.LocalPlayer.Character.PrimaryPart.Position
-				local tPos = getRoot(Players[v].Character).Position
-				local modTPos = Vector3.new(tPos.X,chrPos.Y,tPos.Z)
-				local newCF = CFrame.new(chrPos,modTPos)
-				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
-			elseif not Players:FindFirstChild(v) then
+		if Players[v] ~= speaker then
+			if stareLoop then
 				stareLoop:Disconnect()
 			end
-		end
+			
+			if not getRoot(speaker.Character) and getRoot(Players[v].Character) then return end
+			
+			local function stareFunc()
+				if speaker.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
+					local chrPos = speaker.Character.PrimaryPart.Position
+					local tPos = getRoot(Players[v].Character).Position
+					local modTPos = Vector3.new(tPos.X,chrPos.Y,tPos.Z)
+					local newCF = CFrame.new(chrPos,modTPos)
+					speaker.Character:SetPrimaryPartCFrame(newCF)
+				elseif not Players:FindFirstChild(v) then
+					stareLoop:Disconnect()
+				end
+			end
 
-		stareLoop = RunService.RenderStepped:Connect(stareFunc)
+			stareLoop = RunService.RenderStepped:Connect(stareFunc)
+		else
+			notify('Error', 'You cannot stare at yourself.')
+		end
 	end
 end)
 
