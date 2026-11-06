@@ -7000,7 +7000,7 @@ addcmd("inviteprompt", {}, function(args, speaker)
         gameInstanceId = JobId,
         referredByPlayerId = target.UserId
     })
-    return "Prompted user. Rejoin for it to work."
+    notify("Prompted User", "Rejoin for it to work")
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
