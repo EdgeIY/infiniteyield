@@ -11536,7 +11536,7 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 	end
 end)
 
-addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
+addcmd('fullbright', {'fb', 'fullbrightness'}, function(args, speaker)
 	Lighting.Brightness = 2
 	Lighting.ClockTime = 14
 	Lighting.FogEnd = 100000
@@ -11544,7 +11544,7 @@ addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
 	Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
 end)
 
-addcmd('loopfullbright',{'loopfb'},function(args, speaker)
+addcmd('loopfullbright', {'loopfb'}, function(args, speaker)
 	if brightLoop then
 		brightLoop:Disconnect()
 	end
@@ -11559,26 +11559,26 @@ addcmd('loopfullbright',{'loopfb'},function(args, speaker)
 	brightLoop = RunService.RenderStepped:Connect(brightFunc)
 end)
 
-addcmd('unloopfullbright',{'unloopfb'},function(args, speaker)
+addcmd('unloopfullbright', {'unloopfb'}, function(args, speaker)
 	if brightLoop then
 		brightLoop:Disconnect()
 	end
 end)
 
-addcmd('ambient',{},function(args, speaker)
+addcmd('ambient', {}, function(args, speaker)
 	Lighting.Ambient = Color3.new(args[1],args[2],args[3])
 	Lighting.OutdoorAmbient = Color3.new(args[1],args[2],args[3])
 end)
 
-addcmd('day',{},function(args, speaker)
+addcmd('day', {}, function(args, speaker)
 	Lighting.ClockTime = 14
 end)
 
-addcmd('night',{},function(args, speaker)
+addcmd('night', {}, function(args, speaker)
 	Lighting.ClockTime = 0
 end)
 
-addcmd('nofog',{},function(args, speaker)
+addcmd('nofog', {}, function(args, speaker)
 	Lighting.FogEnd = 100000
 	for i,v in pairs(Lighting:GetDescendants()) do
 		if v:IsA("Atmosphere") then
@@ -11587,21 +11587,23 @@ addcmd('nofog',{},function(args, speaker)
 	end
 end)
 
-addcmd('brightness',{},function(args, speaker)
-	Lighting.Brightness = args[1]
+addcmd('brightness', {}, function(args, speaker)
+	if isNumber(args[1]) then
+		Lighting.Brightness = args[1]
+	end
 end)
 
-addcmd('globalshadows',{'gshadows'},function(args, speaker)
+addcmd('globalshadows', {'gshadows'}, function(args, speaker)
 	Lighting.GlobalShadows = true
 end)
 
-addcmd('unglobalshadows',{'nogshadows','ungshadows','noglobalshadows'},function(args, speaker)
+addcmd('unglobalshadows', {'nogshadows', 'ungshadows', 'noglobalshadows'}, function(args, speaker)
 	Lighting.GlobalShadows = false
 end)
 
 origsettings = {abt = Lighting.Ambient, oabt = Lighting.OutdoorAmbient, brt = Lighting.Brightness, time = Lighting.ClockTime, fe = Lighting.FogEnd, fs = Lighting.FogStart, gs = Lighting.GlobalShadows}
 
-addcmd('restorelighting',{'rlighting'},function(args, speaker)
+addcmd('restorelighting', {'rlighting'}, function(args, speaker)
 	Lighting.Ambient = origsettings.abt
 	Lighting.OutdoorAmbient = origsettings.oabt
 	Lighting.Brightness = origsettings.brt
@@ -11611,23 +11613,23 @@ addcmd('restorelighting',{'rlighting'},function(args, speaker)
 	Lighting.GlobalShadows = origsettings.gs
 end)
 
-addcmd('stun',{'platformstand'},function(args, speaker)
+addcmd('stun', {'platformstand'}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 end)
 
-addcmd('unstun',{'nostun','unplatformstand','noplatformstand'},function(args, speaker)
+addcmd('unstun', {'nostun', 'unplatformstand', 'noplatformstand'}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
 end)
 
-addcmd('norotate',{'noautorotate'},function(args, speaker)
+addcmd('norotate', {'noautorotate'}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = false
 end)
 
-addcmd('unnorotate',{'autorotate'},function(args, speaker)
+addcmd('unnorotate', {'autorotate'}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = true
 end)
 
-addcmd('enablestate',{},function(args, speaker)
+addcmd('enablestate', {}, function(args, speaker)
 	local x = args[1]
 	if not tonumber(x) then
 		local x = Enum.HumanoidStateType[args[1]]
