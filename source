@@ -151,7 +151,7 @@ if makefolder and isfolder and writefile and isfile then
 	end)
 end
 
-currentVersion = "6.4.2"
+currentVersion = "6.4.3"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
@@ -9626,6 +9626,7 @@ addcmd("god", {}, function(args, speaker)
 	cam.CameraSubject = nHuman
 	cam.CFrame = task.wait() and pos
 	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	nHuman.Health = nHuman.MaxHealth
 
 	local anscript = char:FindFirstChild("Animate")
 	if anscript then
@@ -9633,7 +9634,6 @@ addcmd("god", {}, function(args, speaker)
 		task.wait()
 		anscript.Disabled = false
 	end
-	nHuman.Health = nHuman.MaxHealth
 end)
 
 invisRunning = false
@@ -13474,5 +13474,5 @@ task.spawn(function()
 end)
 
 if _G.IY_DEBUG then
-	-- print("Infinite Yield has executed: v" .. currentVersion)
+	print("Infinite Yield has executed: v" .. currentVersion)
 end
