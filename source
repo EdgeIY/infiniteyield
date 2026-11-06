@@ -7015,11 +7015,6 @@ addcmd("inviteprompt", {}, function(args, speaker)
     local target = player and Players:FindFirstChild(player)
     if not target then return end
 	return "Prompted user. Rejoin for it to work."
-    ExperienceService:LaunchExperience({
-        placeId = PlaceId,
-        gameInstanceId = JobId,
-        referredByPlayerId = target.UserId
-    })
 end)
 
 addcmd("autorejoin", {"autorj"}, function(args, speaker)
