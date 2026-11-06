@@ -13469,5 +13469,5 @@ task.spawn(function()
 end)
 
 if _G.IY_DEBUG then
-	print("Infinite Yield has executed: v" .. currentVersion)
+	-- print("Infinite Yield has executed: v" .. currentVersion)
 end
