@@ -4672,7 +4672,7 @@ CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the l
 CMDs[#CMDs + 1] = {NAME = 'firstp', DESC = 'Forces camera to go into first person'}
 CMDs[#CMDs + 1] = {NAME = 'thirdp', DESC = 'Allows camera to go into third person'}
 CMDs[#CMDs + 1] = {NAME = 'noclipcam / nccam', DESC = 'Allows camera to go through objects like walls'}
-CMDs[#CMDs + 1] = {NAME = 'unnoclipcam / unnccam', DESC = 'Stops camera going through objects like walls'}
+CMDs[#CMDs + 1] = {NAME = 'unnoclipcam / unnccam / clipcam', DESC = 'Stops camera going through objects like walls'}
 CMDs[#CMDs + 1] = {NAME = 'togglenoclipcam / tnccam', DESC = 'Toggles noclipcam'}
 CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Sets maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Sets minimum camera zoom'}
@@ -8754,7 +8754,7 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	noclipcam(true, speaker)
 end)
 
-addcmd('unnoclipcam', {'unnccam'}, function(args, speaker)
+addcmd('unnoclipcam', {'unnccam', 'clipcam'}, function(args, speaker)
 	if not cnoclip then return end
 	noclipcam(false, speaker)
 end)
