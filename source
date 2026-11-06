@@ -10382,35 +10382,33 @@ addcmd("clickdelete", {"clickdel"}, function(args, speaker)
 	notify('Click Delete', 'Go to Settings > Keybinds > Add to set up click delete')
 end)
 
-addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+function getposer(arg, speaker, state)
+	local players = getPlayer(arg, speaker)
+	for i, v in pairs(players) do
 		local char = Players[v].Character
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
-			return notify('Getposition Error', 'Missing character')
+			return notify('Position Error', 'Missing character')
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		notify('Current Position', roundedPos)
-	end
-end)
-
-addcmd('copyposition',{'copypos'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		local char = Players[v].Character
-		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
-		pos = pos and pos.Position
-		if not pos then
-			return notify('Getposition Error', 'Missing character')
+		if state then
+			notify('Current Position', roundedPos)
+		else
+			toClipboard(roundedPos)
 		end
-		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		toClipboard(roundedPos)
 	end
+end
+
+addcmd('getposition', {'getpos', 'notifypos', 'notifyposition'}, function(args, speaker)
+	getposer(args[1], speaker, true)
 end)
 
-addcmd('walktopos',{'walktoposition'},function(args, speaker)
+addcmd('copyposition', {'copypos'}, function(args, speaker)
+	getposer(args[1], speaker, false)
+end)
+
+addcmd('walktopos', {'walktoposition'}, function(args, speaker)
 	if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 		wait(.1)
@@ -10706,7 +10704,7 @@ addcmd('headsit',{},function(args, speaker)
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
 		headSit = RunService.Heartbeat:Connect(function()
 			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
-				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
+				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0) * CFrame.new(0,1.6,0.4)
 			else
 				headSit:Disconnect()
 			end
@@ -11448,6 +11446,7 @@ local function GetHandleTools(p)
 	end
 	return r
 end
+
 addcmd('dupetools', {'clonetools'}, function(args, speaker)
 	local LOOP_NUM = tonumber(args[1]) or 1
 	local OrigPos = speaker.Character.Humanoid.RootPart.Position
