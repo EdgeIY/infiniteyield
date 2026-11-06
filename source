@@ -12454,10 +12454,10 @@ addcmd('stareat',{'stare'},function(args, speaker)
 		if not getRoot(Players.LocalPlayer.Character) and getRoot(Players[v].Character) then return end
 		local function stareFunc()
 			if Players.LocalPlayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
-				local chrPos=Players.LocalPlayer.Character.PrimaryPart.Position
-				local tPos=getRoot(Players[v].Character).Position
-				local modTPos=Vector3.new(tPos.X,chrPos.Y,tPos.Z)
-				local newCF=CFrame.new(chrPos,modTPos)
+				local chrPos = Players.LocalPlayer.Character.PrimaryPart.Position
+				local tPos = getRoot(Players[v].Character).Position
+				local modTPos = Vector3.new(tPos.X,chrPos.Y,tPos.Z)
+				local newCF = CFrame.new(chrPos,modTPos)
 				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
 			elseif not Players:FindFirstChild(v) then
 				stareLoop:Disconnect()
@@ -13467,3 +13467,7 @@ task.spawn(function()
     IntroBackground:Destroy()
     minimizeHolder()
 end)
+
+if _G.IY_DEBUG then
+	print("Infinite Yield has executed: v" .. currentVersion)
+end
