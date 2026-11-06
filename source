@@ -9304,15 +9304,19 @@ local waypointwalkto = false
 addcmd('walkto',{'follow'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i, v in pairs(players) do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
+		if Players[v] ~= speaker then
+			if Players[v].Character ~= nil then
+				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+					wait(.1)
+				end
+				walkto = true
+				repeat wait()
+					speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
+				until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
 			end
-			walkto = true
-			repeat wait()
-				speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
-			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
+		else
+			notify("Walk To", "You cannot follow yourself.")
 		end
 	end
 end)
@@ -9468,7 +9472,7 @@ addcmd("unorbit", {}, function(args, speaker)
 	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
 
-addcmd('freeze',{'fr'},function(args, speaker)
+addcmd('freeze', {'fr'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i, v in pairs(players) do
@@ -9483,7 +9487,7 @@ addcmd('freeze',{'fr'},function(args, speaker)
 	end
 end)
 
-addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
+addcmd('thaw', {'unfreeze','unfr'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i, v in pairs(players) do
