@@ -1960,7 +1960,7 @@ table.insert(text1,selectJoin)
 
 function create(data)
 	local insts = {}
-	for i,v in pairs(data) do insts[v[1]] = Instance.new(v[2]) end
+	for i, v in pairs(data) do insts[v[1]] = Instance.new(v[2]) end
 
 	for _,v in pairs(data) do
 		for prop,val in pairs(v[3]) do
@@ -2400,7 +2400,7 @@ eventEditor = (function()
 	local function resizeList()
 		local size = 0
 
-		for i,v in pairs(eventListHolder:GetChildren()) do
+		for i, v in pairs(eventListHolder:GetChildren()) do
 			if v.Name == "EventTemplate" then
 				size = size + 20
 				if v.Expand.Rotation == 90 then
@@ -2421,7 +2421,7 @@ eventEditor = (function()
 	local function resizeSettingsList()
 		local size = 0
 
-		for i,v in pairs(settingsList:GetChildren()) do
+		for i, v in pairs(settingsList:GetChildren()) do
 			if v:IsA("Frame") then
 				size = size + v.AbsoluteSize.Y
 			end
@@ -2460,7 +2460,7 @@ eventEditor = (function()
 	local function openSettingsEditor(event,cmd)
 		currentlyEditingCmd = cmd
 
-		for i,v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
+		for i, v in pairs(settingsList:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
 		local delayEditor = settingsTemplates.DelayEditor:Clone()
 		delayEditor.Secs.FocusLost:Connect(function()
@@ -2475,7 +2475,7 @@ eventEditor = (function()
 		table.insert(text1,delayEditor.Secs.Label)
 		delayEditor.Parent = settingsList
 
-		for i,v in pairs(event.sets) do
+		for i, v in pairs(event.sets) do
 			if v.Type == "Player" then
 				local template = settingsTemplates.Players:Clone()
 				template.Title.Text = v.Name or "Player"
@@ -2629,7 +2629,7 @@ eventEditor = (function()
 	local function defaultSettings(ev)
 		local res = {}
 
-		for i,v in pairs(ev.sets) do
+		for i, v in pairs(ev.sets) do
 			if v.Type == "Player" then
 				res[#res+1] = v.Default or 0
 			elseif v.Type == "String" then
@@ -2643,7 +2643,7 @@ eventEditor = (function()
 	end
 
 	local function refreshList()
-		for i,v in pairs(eventListHolder:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
+		for i, v in pairs(eventListHolder:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
 
 		for name,event in pairs(events) do
 			local eventF = eventTemplate:Clone()
@@ -2663,7 +2663,7 @@ eventEditor = (function()
 			end)
 
 			local function refreshCommands()
-				for i,v in pairs(eventF.Cmds.Holder:GetChildren()) do
+				for i, v in pairs(eventF.Cmds.Holder:GetChildren()) do
 					if v.Name == "CmdTemplate" then
 						v:Destroy()
 					end
@@ -2732,7 +2732,7 @@ eventEditor = (function()
 
 	local function saveData()
 		local result = {}
-		for i,v in pairs(events) do
+		for i, v in pairs(events) do
 			result[i] = v.commands
 		end
 		return HttpService:JSONEncode(result)
@@ -2740,7 +2740,7 @@ eventEditor = (function()
 
 	local function loadData(str)
 		local data = HttpService:JSONDecode(str)
-		for i,v in pairs(data) do
+		for i, v in pairs(data) do
 			if events[i] then
 				events[i].commands = v
 			end
@@ -2894,7 +2894,7 @@ reference = (function()
 		{115,"Frame",{BackgroundColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),BorderSizePixel=0,Name="Line",Parent={112},Position=UDim2.new(0,10,1,-1),Size=UDim2.new(1,-20,0,1),Visible=false,ZIndex=10,}},
 		{116,"TextButton",{BackgroundColor3=Color3.new(0.48627451062202,0.61960786581039,0.85098040103912),BorderColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),Font=4,Name="InviteButton",Parent={112},Position=UDim2.new(0,5,0,75),Size=UDim2.new(1,-10,0,25),Text="Copy Discord Invite Link (https://discord.gg/78ZuWSq)",TextColor3=Color3.new(0.1803921610117,0.1803921610117,0.1843137294054),TextSize=16,ZIndex=10,}},
 	})
-	for i,v in pairs(main.Content.List:GetDescendants()) do
+	for i, v in pairs(main.Content.List:GetDescendants()) do
 		if v:IsA("TextLabel") then
 			table.insert(text1,v)
 		end
@@ -3299,7 +3299,7 @@ function CreateLabel(Name, Text)
 			scroll_2:ClearAllChildren()
 		end
 		local alls = 0
-		for i,v in pairs(scroll_2:GetChildren()) do
+		for i, v in pairs(scroll_2:GetChildren()) do
 			if v then
 				alls = v.Size.Y.Offset + alls
 			end
@@ -3418,22 +3418,22 @@ end)
 
 function updateColors(color,ctype)
 	if ctype == shade1 then
-		for i,v in pairs(shade1) do
+		for i, v in pairs(shade1) do
 			v.BackgroundColor3 = color
 		end
 		currentShade1 = color
 	elseif ctype == shade2 then
-		for i,v in pairs(shade2) do
+		for i, v in pairs(shade2) do
 			v.BackgroundColor3 = color
 		end
 		currentShade2 = color
 	elseif ctype == shade3 then
-		for i,v in pairs(shade3) do
+		for i, v in pairs(shade3) do
 			v.BackgroundColor3 = color
 		end
 		currentShade3 = color
 	elseif ctype == text1 then
-		for i,v in pairs(text1) do
+		for i, v in pairs(text1) do
 			v.TextColor3 = color
 			if v:IsA("TextBox") then
 				v.PlaceholderColor3 = color	
@@ -3441,12 +3441,12 @@ function updateColors(color,ctype)
 		end
 		currentText1 = color
 	elseif ctype == text2 then
-		for i,v in pairs(text2) do
+		for i, v in pairs(text2) do
 			v.TextColor3 = color
 		end
 		currentText2 = color
 	elseif ctype == scroll then
-		for i,v in pairs(scroll) do
+		for i, v in pairs(scroll) do
 			v.ScrollBarImageColor3 = color
 		end
 		currentScroll = color
@@ -3764,7 +3764,7 @@ ColorsButton.MouseButton1Click:Connect(function()
 
 				local row = 0
 				local column = 0
-				for i,v in pairs(basicColors) do
+				for i, v in pairs(basicColors) do
 					local newColor = colorChoice:Clone()
 					newColor.BackgroundColor3 = v
 					newColor.Position = UDim2.new(0,1 + 30*column,0,21 + 23*row)
@@ -4055,7 +4055,7 @@ end
 
 Players.PlayerRemoving:Connect(function(player)
 	if ESPenabled or CHMSenabled or COREGUI:FindFirstChild(player.Name..'_LC') then
-		for i,v in pairs(COREGUI:GetChildren()) do
+		for i, v in pairs(COREGUI:GetChildren()) do
 			if v.Name == player.Name..'_ESP' or v.Name == player.Name..'_LC' or v.Name == player.Name..'_CHMS' then
 				v:Destroy()
 			end
@@ -4202,7 +4202,7 @@ ChoosePart.MouseButton1Click:Connect(function()
 		local tpNameExt = ''
 		local function handleWpNames()
 			local FoundDupe = false
-			for i,v in pairs(pWayPoints) do
+			for i, v in pairs(pWayPoints) do
 				if v.NAME:lower() == selected.Adornee.Name:lower()..tpNameExt then
 					FoundDupe = true
 				end
@@ -4359,7 +4359,7 @@ IndexContents = function(str,bool,cmdbar,Ianim)
 	end
 	if #chunks > 0 then str = chunks[#chunks] end
 	if str:sub(1,1) == "!" then str = str:sub(2) end
-	for i,v in next, frame:GetChildren() do
+	for i, v in next, frame:GetChildren() do
 		if v:IsA("TextButton") then
 			if bool then
 				if Match(v.Text,str) then
@@ -5100,7 +5100,7 @@ function getstring(begin, args)
 end
 
 findCmd=function(cmd_name)
-	for i,v in pairs(cmds)do
+	for i, v in pairs(cmds)do
 		if v.NAME:lower()==cmd_name:lower() or FindInTable(v.ALIAS,cmd_name:lower()) then
 			return v
 		end
@@ -5317,7 +5317,7 @@ SpecialPlayerCases = {
 	["all"] = function(speaker) return Players:GetPlayers() end,
 	["others"] = function(speaker)
 		local plrs = {}
-		for i,v in pairs(Players:GetPlayers()) do
+		for i, v in pairs(Players:GetPlayers()) do
 			if v ~= speaker then
 				table.insert(plrs,v)
 			end
@@ -5544,16 +5544,16 @@ end
 function onlyIncludeInTable(tab,matches)
 	local matchTable = {}
 	local resultTable = {}
-	for i,v in pairs(matches) do matchTable[v.Name] = true end
-	for i,v in pairs(tab) do if matchTable[v.Name] then table.insert(resultTable,v) end end
+	for i, v in pairs(matches) do matchTable[v.Name] = true end
+	for i, v in pairs(tab) do if matchTable[v.Name] then table.insert(resultTable,v) end end
 	return resultTable
 end
 
 function removeTableMatches(tab,matches)
 	local matchTable = {}
 	local resultTable = {}
-	for i,v in pairs(matches) do matchTable[v.Name] = true end
-	for i,v in pairs(tab) do if not matchTable[v.Name] then table.insert(resultTable,v) end end
+	for i, v in pairs(matches) do matchTable[v.Name] = true end
+	for i, v in pairs(tab) do if not matchTable[v.Name] then table.insert(resultTable,v) end end
 	return resultTable
 end
 
@@ -5584,7 +5584,7 @@ function getPlayer(list,speaker)
 		local tokens = toTokens(name)
 		local initialPlayers = Players:GetPlayers()
 
-		for i,v in pairs(tokens) do
+		for i, v in pairs(tokens) do
 			if v.Operator == "+" then
 				local tokenContent = v.Name
 				local foundCase = false
@@ -5614,11 +5614,11 @@ function getPlayer(list,speaker)
 			end
 		end
 
-		for i,v in pairs(initialPlayers) do table.insert(foundList,v) end
+		for i, v in pairs(initialPlayers) do table.insert(foundList,v) end
 	end
 
 	local foundNames = {}
-	for i,v in pairs(foundList) do table.insert(foundNames,v.Name) end
+	for i, v in pairs(foundList) do table.insert(foundNames,v.Name) end
 
 	return foundNames
 end
@@ -5746,7 +5746,7 @@ end
 
 function ESP(plr, logic)
 	task.spawn(function()
-		for i,v in pairs(COREGUI:GetChildren()) do
+		for i, v in pairs(COREGUI:GetChildren()) do
 			if v.Name == plr.Name..'_ESP' then
 				v:Destroy()
 			end
@@ -5842,7 +5842,7 @@ end
 
 function CHMS(plr)
 	task.spawn(function()
-		for i,v in pairs(COREGUI:GetChildren()) do
+		for i, v in pairs(COREGUI:GetChildren()) do
 			if v.Name == plr.Name..'_CHMS' then
 				v:Destroy()
 			end
@@ -5903,7 +5903,7 @@ end
 
 function Locate(plr)
 	task.spawn(function()
-		for i,v in pairs(COREGUI:GetChildren()) do
+		for i, v in pairs(COREGUI:GetChildren()) do
 			if v.Name == plr.Name..'_LC' then
 				v:Destroy()
 			end
@@ -6220,7 +6220,7 @@ function onInputBegan(input,gameProcessed)
 		keySelected = true
 	end
 	if not gameProcessed and #binds > 0 then
-		for i,v in pairs(binds) do
+		for i, v in pairs(binds) do
 			if not v.ISKEYUP then
 				if (input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower()) or (input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick') or (input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick') then
 					if v.TOGGLE then
@@ -6242,7 +6242,7 @@ end
 
 function onInputEnded(input,gameProcessed)
 	if not gameProcessed and #binds > 0 then
-		for i,v in pairs(binds) do
+		for i, v in pairs(binds) do
 			if v.ISKEYUP then
 				if (input.UserInputType == Enum.UserInputType.Keyboard and v.KEY:lower()==tostring(input.KeyCode):lower()) or (input.UserInputType == Enum.UserInputType.MouseButton1 and v.KEY:lower()=='leftclick') or (input.UserInputType == Enum.UserInputType.MouseButton2 and v.KEY:lower()=='rightclick') then
 					execCmd(v.COMMAND,Players.LocalPlayer)
@@ -6305,7 +6305,7 @@ local function clicktpFunc()
 end
 
 IYMouse.Button1Down:Connect(function()
-	for i,v in pairs(binds) do
+	for i, v in pairs(binds) do
 		if v.COMMAND == 'clicktp' then
 			local input = v.KEY
 			if input == 'RightClick' and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) and Players.LocalPlayer.Character then
@@ -6368,12 +6368,12 @@ function deletePlugin(name)
 			table.remove(cmds, i)
 		end
 	end
-	for i,v in pairs(CMDsF:GetChildren()) do
+	for i, v in pairs(CMDsF:GetChildren()) do
 		if v.Name == 'PLUGIN_'..pName then
 			v:Destroy()
 		end
 	end
-	for i,v in pairs(PluginsTable) do
+	for i, v in pairs(PluginsTable) do
 		if v == pName then
 			table.remove(PluginsTable, i)
 			notify('Removed Plugin',pName..' was removed')
@@ -6390,7 +6390,7 @@ function refreshplugins(dontSave)
 	if Holder_5 then
 		Holder_5:ClearAllChildren()
 		Holder_5.CanvasSize = UDim2.new(0, 0, 0, 10)
-		for i,v in pairs(PluginsTable) do
+		for i, v in pairs(PluginsTable) do
 			local pName = v
 			local YSize = 25
 			local Position = ((i * YSize) - YSize)
@@ -6426,7 +6426,7 @@ function LoadPlugin(val,startup)
 	function handlePluginError(plerror)
 		notify('Plugin Error', 'An error occurred with the plugin, "'..val..'" and it could not be loaded')
 		if FindInTable(PluginsTable,val) then
-			for i,v in pairs(PluginsTable) do
+			for i, v in pairs(PluginsTable) do
 				if v == val then
 					table.remove(PluginsTable,i)
 				end
@@ -6451,7 +6451,7 @@ function LoadPlugin(val,startup)
 		addcmdtext('',val)
 		addcmdtext(string.upper('--'..plugin["PluginName"]),val,plugin["PluginDescription"])
 		if plugin["Commands"] then
-			for i,v in pairs(plugin["Commands"]) do 
+			for i, v in pairs(plugin["Commands"]) do 
 				local cmdExt = ''
 				local cmdName = i
 				local function handleNames()
@@ -6472,7 +6472,7 @@ function LoadPlugin(val,startup)
 				if v["ListName"] then
 					local newName = v.ListName
 					local cmdNames = {i,unpack(v.Aliases)}
-					for i,v in pairs(cmdNames) do
+					for i, v in pairs(cmdNames) do
 						newName = newName:gsub(v,v..cmdExt)
 					end
 					addcmdtext(newName,val,v["Description"])
@@ -6489,7 +6489,7 @@ end
 
 function FindPlugins()
 	if PluginsTable ~= nil and type(PluginsTable) == "table" then
-		for i,v in pairs(PluginsTable) do
+		for i, v in pairs(PluginsTable) do
 			LoadPlugin(v,true)
 		end
 		refreshplugins(true)
@@ -6536,7 +6536,7 @@ addcmd('addalias',{},function(args, speaker)
 	if #args < 2 then return end
 	local cmd = string.lower(args[1])
 	local alias = string.lower(args[2])
-	for i,v in pairs(cmds) do
+	for i, v in pairs(cmds) do
 		if v.NAME:lower()==cmd or FindInTable(v.ALIAS,cmd) then
 			customAlias[alias] = v
 			aliases[#aliases + 1] = {CMD = cmd, ALIAS = alias}
@@ -7595,7 +7595,7 @@ waypointParts = {}
 addcmd('showwaypoints',{'showwp','showwps'},function(args, speaker)
 	execCmd('hidewaypoints')
 	wait()
-	for i,_ in pairs(WayPoints) do
+	for i, _ in pairs(WayPoints) do
 		local x = WayPoints[i].COORD[1]
 		local y = WayPoints[i].COORD[2]
 		local z = WayPoints[i].COORD[3]
@@ -7613,7 +7613,7 @@ addcmd('showwaypoints',{'showwp','showwps'},function(args, speaker)
 		view.Size = part.Size
 		view.Parent = part
 	end
-	for i,v in pairs(pWayPoints) do
+	for i, v in pairs(pWayPoints) do
 		local view = Instance.new("BoxHandleAdornment")
 		view.Adornee = pWayPoints[i].COORD[1]
 		view.AlwaysOnTop = true
@@ -7625,7 +7625,7 @@ addcmd('showwaypoints',{'showwp','showwps'},function(args, speaker)
 end)
 
 addcmd('hidewaypoints',{'hidewp','hidewps'},function(args, speaker)
-	for i,v in pairs(waypointParts) do
+	for i, v in pairs(waypointParts) do
 		v:Destroy()
 	end
 	waypointParts = {}
@@ -7634,7 +7634,7 @@ end)
 addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				local x = WayPoints[i].COORD[1]
 				local y = WayPoints[i].COORD[2]
@@ -7642,7 +7642,7 @@ addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},function(args, speaker)
 				getRoot(speaker.Character).CFrame = CFrame.new(x,y,z)
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				getRoot(speaker.Character).CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)
 			end
@@ -7661,7 +7661,7 @@ end)
 addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			local x = WayPoints[i].COORD[1]
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
@@ -7669,7 +7669,7 @@ addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 				TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pWayPoints[i].COORD[1].Position)}):Play()
 			end
@@ -7680,7 +7680,7 @@ end)
 addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			local x = WayPoints[i].COORD[1]
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
@@ -7692,7 +7692,7 @@ addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
 				speaker.Character:FindFirstChildOfClass('Humanoid').WalkToPoint = Vector3.new(x,y,z)
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -7705,14 +7705,14 @@ addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
 end)
 
 addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(args, speaker)
-	for i,v in pairs(WayPoints) do
+	for i, v in pairs(WayPoints) do
 		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
 			notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
 			table.remove(WayPoints, i)
 		end
 	end
 	if AllWaypoints ~= nil and #AllWaypoints > 0 then
-		for i,v in pairs(AllWaypoints) do
+		for i, v in pairs(AllWaypoints) do
 			if v.NAME:lower() == tostring(getstring(1, args)):lower() then
 				if not v.GAME or v.GAME == PlaceId then
 					table.remove(AllWaypoints, i)
@@ -7720,7 +7720,7 @@ addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(arg
 			end
 		end
 	end
-	for i,v in pairs(pWayPoints) do
+	for i, v in pairs(pWayPoints) do
 		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
 			notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
 			table.remove(pWayPoints, i)
@@ -7740,19 +7740,19 @@ addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'},function(args
 end)
 
 addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
-	for i,v in pairs(WayPoints) do
+	for i, v in pairs(WayPoints) do
 		if v.GAME == PlaceId then
 			table.remove(WayPoints, i)
 		end
 	end
 	if AllWaypoints ~= nil and #AllWaypoints > 0 then
-		for i,v in pairs(AllWaypoints) do
+		for i, v in pairs(AllWaypoints) do
 			if v.GAME == PlaceId then
 				table.remove(AllWaypoints, i)
 			end
 		end
 	end
-	for i,v in pairs(pWayPoints) do
+	for i, v in pairs(pWayPoints) do
 		if v.GAME == PlaceId then
 			table.remove(pWayPoints, i)
 		end
@@ -7806,7 +7806,7 @@ end)
 
 local invisGUIS = {}
 addcmd('showguis',{},function(args, speaker)
-	for i,v in pairs(PlayerGui:GetDescendants()) do
+	for i, v in pairs(PlayerGui:GetDescendants()) do
 		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and not v.Visible then
 			v.Visible = true
 			if not FindInTable(invisGUIS,v) then
@@ -7817,7 +7817,7 @@ addcmd('showguis',{},function(args, speaker)
 end)
 
 addcmd('unshowguis',{},function(args, speaker)
-	for i,v in pairs(invisGUIS) do
+	for i, v in pairs(invisGUIS) do
 		v.Visible = false
 	end
 	invisGUIS = {}
@@ -7825,7 +7825,7 @@ end)
 
 local hiddenGUIS = {}
 addcmd('hideguis',{},function(args, speaker)
-	for i,v in pairs(PlayerGui:GetDescendants()) do
+	for i, v in pairs(PlayerGui:GetDescendants()) do
 		if (v:IsA("Frame") or v:IsA("ImageLabel") or v:IsA("ScrollingFrame")) and v.Visible then
 			v.Visible = false
 			if not FindInTable(hiddenGUIS,v) then
@@ -7836,7 +7836,7 @@ addcmd('hideguis',{},function(args, speaker)
 end)
 
 addcmd('unhideguis',{},function(args, speaker)
-	for i,v in pairs(hiddenGUIS) do
+	for i, v in pairs(hiddenGUIS) do
 		v.Visible = true
 	end
 	hiddenGUIS = {}
@@ -8129,7 +8129,7 @@ end)
 addcmd('esp',{},function(args, speaker)
 	if not CHMSenabled then
 		ESPenabled = true
-		for i,v in pairs(Players:GetPlayers()) do
+		for i, v in pairs(Players:GetPlayers()) do
 			if v.Name ~= speaker.Name then
 				ESP(v)
 			end
@@ -8142,7 +8142,7 @@ end)
 addcmd('espteam',{},function(args, speaker)
 	if not CHMSenabled then
 		ESPenabled = true
-		for i,v in pairs(Players:GetPlayers()) do
+		for i, v in pairs(Players:GetPlayers()) do
 			if v.Name ~= speaker.Name then
 				ESP(v, true)
 			end
@@ -8193,7 +8193,7 @@ addcmd('partesp',{},function(args, speaker)
 	local partEspName = getstring(1, args):lower()
 	if not FindInTable(espParts,partEspName) then
 		table.insert(espParts,partEspName)
-		for i,v in pairs(workspace:GetDescendants()) do
+		for i, v in pairs(workspace:GetDescendants()) do
 			if v:IsA("BasePart") and v.Name:lower() == partEspName then
 				local a = Instance.new("BoxHandleAdornment")
 				a.Name = partEspName.."_PESP"
@@ -8218,7 +8218,7 @@ addcmd('unpartesp',{'nopartesp'},function(args, speaker)
 		if FindInTable(espParts,partEspName) then
 			table.remove(espParts, GetInTable(espParts, partEspName))
 		end
-		for i,v in pairs(workspace:GetDescendants()) do
+		for i, v in pairs(workspace:GetDescendants()) do
 			if v:IsA("BoxHandleAdornment") and v.Name == partEspName..'_PESP' then
 				v:Destroy()
 			end
@@ -8227,7 +8227,7 @@ addcmd('unpartesp',{'nopartesp'},function(args, speaker)
 		partEspTrigger:Disconnect()
 		partEspTrigger = nil
 		espParts = {}
-		for i,v in pairs(workspace:GetDescendants()) do
+		for i, v in pairs(workspace:GetDescendants()) do
 			if v:IsA("BoxHandleAdornment") and v.Name:sub(-5) == '_PESP' then
 				v:Destroy()
 			end
@@ -8238,7 +8238,7 @@ end)
 addcmd('chams',{},function(args, speaker)
 	if not ESPenabled then
 		CHMSenabled = true
-		for i,v in pairs(Players:GetPlayers()) do
+		for i, v in pairs(Players:GetPlayers()) do
 			if v.Name ~= speaker.Name then
 				CHMS(v)
 			end
@@ -8250,7 +8250,7 @@ end)
 
 addcmd('nochams',{'unchams'},function(args, speaker)
 	CHMSenabled = false
-	for i,v in pairs(Players:GetPlayers()) do
+	for i, v in pairs(Players:GetPlayers()) do
 		local chmsplr = v
 		for i,c in pairs(COREGUI:GetChildren()) do
 			if c.Name == chmsplr.Name..'_CHMS' then
@@ -8262,7 +8262,7 @@ end)
 
 addcmd('locate',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		Locate(Players[v])
 	end
 end)
@@ -8270,7 +8270,7 @@ end)
 addcmd('nolocate',{'unlocate'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if args[1] then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			for i,c in pairs(COREGUI:GetChildren()) do
 				if c.Name == Players[v].Name..'_LC' then
 					c:Destroy()
@@ -8290,7 +8290,7 @@ viewing = nil
 addcmd('view', {'spectate'},function(args, speaker)
 	StopFreecam()
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		if viewDied then
 			viewDied:Disconnect()
 			viewChanged:Disconnect()
@@ -8313,7 +8313,7 @@ end)
 addcmd('viewpart',{'viewp'},function(args, speaker)
 	StopFreecam()
 	if args[1] then
-		for i,v in pairs(workspace:GetDescendants()) do
+		for i, v in pairs(workspace:GetDescendants()) do
 			if v.Name:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 				wait(0.1)
 				workspace.CurrentCamera.CameraSubject = v
@@ -8609,7 +8609,7 @@ end)
 addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			local x = WayPoints[i].COORD[1]
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
@@ -8617,7 +8617,7 @@ addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
 				StartFreecam(CFrame.new(x,y,z))
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				StartFreecam(CFrame.new(pWayPoints[i].COORD[1].Position))
 			end
@@ -8627,7 +8627,7 @@ end)
 
 addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		StartFreecam(getRoot(Players[v].Character).CFrame)
 	end
 end)
@@ -8685,7 +8685,7 @@ addcmd('lookat',{},function(args, speaker)
 	speaker.CameraMinZoomDistance = 0.5
 	wait()
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local target = Players[v].Character
 		if target and target:FindFirstChild('Head') then
 			workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.p, target.Head.CFrame.p)
@@ -8785,7 +8785,7 @@ addcmd('camdistance',{},function(args, speaker)
 end)
 
 addcmd('unlockws',{'unlockworkspace'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") then
 			v.Locked = false
 		end
@@ -8793,7 +8793,7 @@ addcmd('unlockws',{'unlockworkspace'},function(args, speaker)
 end)
 
 addcmd('lockws',{'lockworkspace'},function(args, speaker) 
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") then
 			v.Locked = true
 		end
@@ -8801,7 +8801,7 @@ addcmd('lockws',{'lockworkspace'},function(args, speaker)
 end)
 
 addcmd('delete',{'remove'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() then
 			v:Destroy()
 		end
@@ -8810,7 +8810,7 @@ addcmd('delete',{'remove'},function(args, speaker)
 end)
 
 addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() then
 			v:Destroy()
 		end
@@ -8819,7 +8819,7 @@ addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},fu
 end)
 
 addcmd('chardelete',{'charremove','cd'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() then
 			v:Destroy()
 		end
@@ -8828,7 +8828,7 @@ addcmd('chardelete',{'charremove','cd'},function(args, speaker)
 end)
 
 addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremoveclassname','cdc'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() then
 			v:Destroy()
 		end
@@ -8837,7 +8837,7 @@ addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremovecla
 end)
 
 addcmd('deletevelocity',{'dv','removevelocity','removeforces'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("BodyVelocity") or v:IsA("BodyGyro") or v:IsA("RocketPropulsion") or v:IsA("BodyThrust") or v:IsA("BodyAngularVelocity") or v:IsA("AngularVelocity") or v:IsA("BodyForce") or v:IsA("VectorForce") or v:IsA("LineForce") then
 			v:Destroy()
 		end
@@ -8845,7 +8845,7 @@ addcmd('deletevelocity',{'dv','removevelocity','removeforces'},function(args, sp
 end)
 
 addcmd('deleteinvisparts',{'deleteinvisibleparts','dip'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") and v.Transparency == 1 and v.CanCollide then
 			v:Destroy()
 		end
@@ -8854,7 +8854,7 @@ end)
 
 local shownParts = {}
 addcmd('invisibleparts',{'invisparts'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") and v.Transparency == 1 then
 			if not table.find(shownParts,v) then
 				table.insert(shownParts,v)
@@ -8865,7 +8865,7 @@ addcmd('invisibleparts',{'invisparts'},function(args, speaker)
 end)
 
 addcmd('uninvisibleparts',{'uninvisparts'},function(args, speaker)
-	for i,v in pairs(shownParts) do
+	for i, v in pairs(shownParts) do
 		v.Transparency = 1
 	end
 	shownParts = {}
@@ -8960,7 +8960,7 @@ end)
 addcmd('age',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local ages = {}
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local p = Players[v]
 		table.insert(ages, p.Name.."'s age is: "..p.AccountAge)
 	end
@@ -8970,7 +8970,7 @@ end)
 addcmd('chatage',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local ages = {}
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local p = Players[v]
 		table.insert(ages, p.Name.."'s age is: "..p.AccountAge)
 	end
@@ -8981,7 +8981,7 @@ end)
 addcmd('joindate',{'jd'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local dates = {}
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local p = Players[v]
 
 		local secondsOld = p.AccountAge * 24 * 60 * 60
@@ -8996,7 +8996,7 @@ end)
 addcmd('chatjoindate',{'cjd'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local dates = {}
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local p = Players[v]
 
 		local secondsOld = p.AccountAge * 24 * 60 * 60
@@ -9011,7 +9011,7 @@ end)
 
 addcmd('copyname',{'copyuser'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local name = tostring(Players[v].Name)
 		toClipboard(name)
 	end
@@ -9029,7 +9029,7 @@ end)
 
 addcmd('userid',{'id'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local id = tostring(Players[v].UserId)
 		notify('UserId', id)
 	end
@@ -9037,7 +9037,7 @@ end)
 
 addcmd('copyid',{'copyuserid'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local id = tostring(Players[v].UserId)
 		toClipboard(id)
 		notify('Copied ID', 'Copied UserId to clipboard')
@@ -9078,7 +9078,7 @@ end)
 
 addcmd('appearanceid',{'aid'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
 		notify('AppearanceId', aid)
 	end
@@ -9086,7 +9086,7 @@ end)
 
 addcmd('copyappearanceid',{'caid'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
 		toClipboard(aid)
 		notify('Copied ID', 'Copied AppearanceId to clipboard')
@@ -9202,7 +9202,7 @@ end)
 
 addcmd('pulsetp',{'ptp'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		if Players[v].Character ~= nil then
 			local startPos = getRoot(speaker.Character).CFrame
 			local seconds = args[2] or 1
@@ -9230,7 +9230,7 @@ addcmd('vehiclenoclip',{'vnoclip'},function(args, speaker)
 	until vehicleModel.ClassName == "Model"
 	wait(0.1)
 	execCmd('noclip')
-	for i,v in pairs(vehicleModel:GetDescendants()) do
+	for i, v in pairs(vehicleModel:GetDescendants()) do
 		if v:IsA("BasePart") and v.CanCollide then
 			table.insert(vnoclipParts,v)
 			v.CanCollide = false
@@ -9252,7 +9252,7 @@ end)
 
 addcmd('clientbring',{'cbring'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if Players[v].Character:FindFirstChildOfClass('Humanoid') then
 				Players[v].Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9266,7 +9266,7 @@ end)
 local bringT = {}
 addcmd('loopbring',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
 			if Players[v].Name ~= speaker.Name and not FindInTable(bringT, Players[v].Name) then
 				table.insert(bringT, Players[v].Name)
@@ -9300,7 +9300,7 @@ end)
 
 addcmd('unloopbring',{'noloopbring'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
 			for a,b in pairs(bringT) do if b == Players[v].Name then table.remove(bringT, a) end end
 		end)
@@ -9311,7 +9311,7 @@ local walkto = false
 local waypointwalkto = false
 addcmd('walkto',{'follow'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9331,7 +9331,7 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9368,7 +9368,7 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9397,7 +9397,7 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 				until not speaker.Character or waypointwalkto == false
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9475,7 +9475,7 @@ end)
 addcmd('freeze',{'fr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("BasePart") and not x.Anchored then
@@ -9490,7 +9490,7 @@ end)
 addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x.Name ~= floatName and x:IsA("BasePart") and x.Anchored then
@@ -9537,7 +9537,7 @@ addcmd('muteboombox',{},function(args, speaker)
 
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == true then
@@ -9562,7 +9562,7 @@ addcmd('unmuteboombox',{},function(args, speaker)
 
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == false then
@@ -9675,7 +9675,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		end)
 	end)
 
-	for i,v in pairs(InvisibleCharacter:GetDescendants())do
+	for i, v in pairs(InvisibleCharacter:GetDescendants())do
 		if v:IsA("BasePart") then
 			if v.Name == "HumanoidRootPart" then
 				v.Transparency = 1
@@ -9889,7 +9889,7 @@ end)
 
 addcmd('nolimbs',{'rlimbs'},function(args, speaker)
 	if r15(speaker) then
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "RightUpperLeg" or
 				v.Name == "LeftUpperLeg" or
@@ -9899,7 +9899,7 @@ addcmd('nolimbs',{'rlimbs'},function(args, speaker)
 			end
 		end
 	else
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "Right Leg" or
 				v.Name == "Left Leg" or
@@ -9913,7 +9913,7 @@ end)
 
 addcmd('noarms',{'rarms'},function(args, speaker)
 	if r15(speaker) then
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "RightUpperArm" or
 				v.Name == "LeftUpperArm" then
@@ -9921,7 +9921,7 @@ addcmd('noarms',{'rarms'},function(args, speaker)
 			end
 		end
 	else
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "Right Arm" or
 				v.Name == "Left Arm" then
@@ -9933,7 +9933,7 @@ end)
 
 addcmd('nolegs',{'rlegs'},function(args, speaker)
 	if r15(speaker) then
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "RightUpperLeg" or
 				v.Name == "LeftUpperLeg" then
@@ -9941,7 +9941,7 @@ addcmd('nolegs',{'rlegs'},function(args, speaker)
 			end
 		end
 	else
-		for i,v in pairs(speaker.Character:GetChildren()) do
+		for i, v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
 				v.Name == "Right Leg" or
 				v.Name == "Left Leg" then
@@ -10105,7 +10105,7 @@ addcmd("team", {}, function(args, speaker)
 end)
 
 addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants())do
+	for i, v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
 		end
@@ -10113,7 +10113,7 @@ addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},fun
 end)
 
 addcmd('loopnobgui',{'loopunbgui','loopnobillboardgui','loopunbillboardgui','loopnoname','looprohg'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants())do
+	for i, v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
 		end
@@ -10207,7 +10207,7 @@ addcmd('animspeed',{},function(args, speaker)
 	local Char = speaker.Character
 	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
+	for i, v in next, Hum:GetPlayingAnimationTracks() do
 		v:AdjustSpeed(tonumber(args[1] or 1))
 	end
 end)
@@ -10273,7 +10273,7 @@ addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
 	local Char = speaker.Character
 	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
+	for i, v in next, Hum:GetPlayingAnimationTracks() do
 		v:Stop()
 	end
 end)
@@ -10572,12 +10572,12 @@ addcmd('tools',{'gears'},function(args, speaker)
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},function(args, speaker)
-	for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetDescendants()) do
+	for i, v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:Destroy()
 		end
 	end
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:Destroy()
 		end
@@ -10585,7 +10585,7 @@ addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},func
 end)
 
 addcmd('deleteselectedtool',{'dst'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:Destroy()
 		end
@@ -10665,7 +10665,7 @@ end)
 local loopgoto = nil
 addcmd('loopgoto',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		loopgoto = nil
 		if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 			speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -10700,7 +10700,7 @@ end)
 addcmd('headsit',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if headSit then headSit:Disconnect() end
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
 		headSit = RunService.Heartbeat:Connect(function()
 			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
@@ -10733,7 +10733,7 @@ end)
 
 addcmd('whisper',{'pm'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
 			local plrName = Players[v].Name
 			local pmstring = getstring(2, args)
@@ -10745,7 +10745,7 @@ end)
 pmspamming = {}
 addcmd('pmspam',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
 			local plrName = Players[v].Name
 			if FindInTable(pmspamming, plrName) then return end
@@ -10765,7 +10765,7 @@ end)
 
 addcmd('unpmspam',{'nopmspam'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
 			for a,b in pairs(pmspamming) do
 				if b == Players[v].Name then
@@ -10927,7 +10927,7 @@ addcmd('carpet',{},function(args, speaker)
 		execCmd('uncarpet')
 		wait()
 		local players = getPlayer(args[1], speaker)
-		for i,v in pairs(players)do
+		for i, v in pairs(players) do
 			carpetAnim = Instance.new("Animation")
 			carpetAnim.AnimationId = "rbxassetid://282574440"
 			carpet = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(carpetAnim)
@@ -10961,20 +10961,20 @@ end)
 
 addcmd('friend',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		speaker:RequestFriendship(Players[v])
 	end
 end)
 
 addcmd('unfriend',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		speaker:RevokeFriendship(Players[v])
 	end
 end)
 
 addcmd('bringpart',{},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			v.CFrame = getRoot(speaker.Character).CFrame
 		end
@@ -10982,7 +10982,7 @@ addcmd('bringpart',{},function(args, speaker)
 end)
 
 addcmd('bringpartclass',{'bpc'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			v.CFrame = getRoot(speaker.Character).CFrame
 		end
@@ -10991,7 +10991,7 @@ end)
 
 gotopartDelay = 0.1
 addcmd('gotopart',{'topart'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11004,7 +11004,7 @@ addcmd('gotopart',{'topart'},function(args, speaker)
 end)
 
 addcmd('tweengotopart',{'tgotopart','ttopart'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11017,7 +11017,7 @@ addcmd('tweengotopart',{'tgotopart','ttopart'},function(args, speaker)
 end)
 
 addcmd('gotopartclass',{'gpc'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11030,7 +11030,7 @@ addcmd('gotopartclass',{'gpc'},function(args, speaker)
 end)
 
 addcmd('tweengotopartclass',{'tgpc'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11043,7 +11043,7 @@ addcmd('tweengotopartclass',{'tgpc'},function(args, speaker)
 end)
 
 addcmd('gotomodel',{'tomodel'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() and v:IsA("Model") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11056,7 +11056,7 @@ addcmd('gotomodel',{'tomodel'},function(args, speaker)
 end)
 
 addcmd('tweengotomodel',{'tgotomodel','ttomodel'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() and v:IsA("Model") then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -11076,7 +11076,7 @@ addcmd('gotopartdelay',{},function(args, speaker)
 end)
 
 addcmd('noclickdetectorlimits',{'nocdlimits','removecdlimits'},function(args, speaker)
-	for i,v in ipairs(workspace:GetDescendants()) do
+	for i, v in ipairs(workspace:GetDescendants()) do
 		if v:IsA("ClickDetector") then
 			v.MaxActivationDistance = math.huge
 		end
@@ -11105,7 +11105,7 @@ addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
 end)
 
 addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, speaker)
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("ProximityPrompt") then
 			v.MaxActivationDistance = math.huge
 		end
@@ -11192,7 +11192,7 @@ addcmd('removespecifictool',{},function(args, speaker)
 		local tool = string.lower(getstring(1, args))
 		local RST = RunService.RenderStepped:Connect(function()
 			if speaker:FindFirstChildOfClass("Backpack") then
-				for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
+				for i, v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 					if v.Name:lower() == tool then
 						v:Remove()
 					end
@@ -11233,7 +11233,7 @@ addcmd('light',{},function(args, speaker)
 end)
 
 addcmd('unlight',{'nolight'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v.ClassName == "PointLight" then
 			v:Destroy()
 		end
@@ -11242,9 +11242,9 @@ end)
 
 addcmd('copytools',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		task.spawn(function()
-			for i,v in pairs(Players[v]:FindFirstChildOfClass("Backpack"):GetChildren()) do
+			for i, v in pairs(Players[v]:FindFirstChildOfClass("Backpack"):GetChildren()) do
 				if v:IsA('Tool') or v:IsA('HopperBin') then
 					v:Clone().Parent = speaker:FindFirstChildOfClass("Backpack")
 				end
@@ -11254,7 +11254,7 @@ addcmd('copytools',{},function(args, speaker)
 end)
 
 addcmd('naked',{},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Clothing") or v:IsA("ShirtGraphic") then
 			v:Destroy()
 		end
@@ -11262,7 +11262,7 @@ addcmd('naked',{},function(args, speaker)
 end)
 
 addcmd('noface',{'removeface'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Decal") and v.Name == 'face' then
 			v:Destroy()
 		end
@@ -11420,7 +11420,7 @@ addcmd('clearcharappearance',{'clearchar','clrchar'},function(args, speaker)
 end)
 
 addcmd('equiptools',{},function(args, speaker)
-	for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
+	for i, v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 		if v:IsA("Tool") or v:IsA("HopperBin") then
 			v.Parent = speaker.Character
 		end
@@ -11580,7 +11580,7 @@ end)
 
 addcmd('nofog', {}, function(args, speaker)
 	Lighting.FogEnd = 100000
-	for i,v in pairs(Lighting:GetDescendants()) do
+	for i, v in pairs(Lighting:GetDescendants()) do
 		if v:IsA("Atmosphere") then
 			v:Destroy()
 		end
@@ -11654,7 +11654,7 @@ addcmd('drophats',{'drophat'},function(args, speaker)
 end)
 
 addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
-	for i,v in next, speaker.Character:GetDescendants() do
+	for i, v in next, speaker.Character:GetDescendants() do
 		if v:IsA("Accessory") then
 			for i,p in next, v:GetDescendants() do
 				if p:IsA("Weld") then
@@ -11666,13 +11666,13 @@ addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},function(args, speaker)
-	for i,v in pairs(speaker.Backpack:GetChildren()) do
+	for i, v in pairs(speaker.Backpack:GetChildren()) do
 		if v:IsA("Tool") then
 			v.Parent = speaker.Character
 		end
 	end
 	wait()
-	for i,v in pairs(speaker.Character:GetChildren()) do
+	for i, v in pairs(speaker.Character:GetChildren()) do
 		if v:IsA("Tool") then
 			v.Parent = workspace
 		end
@@ -11701,7 +11701,7 @@ local currentGripPos = ""
 addcmd('reach',{},function(args, speaker)
 	execCmd('unreach')
 	wait()
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
 			if args[1] then
 				currentToolSize = v.Handle.Size
@@ -11751,7 +11751,7 @@ addcmd("boxreach", {}, function(args, speaker)
 end)
 
 addcmd('unreach',{'noreach','unboxreach'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
 			v.Handle.Size = currentToolSize
 			v.GripPos = currentGripPos
@@ -11761,7 +11761,7 @@ addcmd('unreach',{'noreach','unboxreach'},function(args, speaker)
 end)
 
 addcmd('grippos',{},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
+	for i, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
 			v.Parent = speaker:FindFirstChildOfClass("Backpack")
 			v.GripPos = Vector3.new(args[1],args[2],args[3])
@@ -11981,7 +11981,7 @@ addcmd('invisfling',{},function(args, speaker)
 	z2:Clone()
 	Hum.Parent = speaker.Character
 	local root =  getRoot(speaker.Character)
-	for i,v in pairs(speaker.Character:GetChildren()) do
+	for i, v in pairs(speaker.Character:GetChildren()) do
 		if v ~= root and  v.Name ~= "Humanoid" then
 			v:Destroy()
 		end
@@ -12213,7 +12213,7 @@ addcmd('spin',{},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		spinSpeed = args[1]
 	end
-	for i,v in pairs(getRoot(speaker.Character):GetChildren()) do
+	for i, v in pairs(getRoot(speaker.Character):GetChildren()) do
 		if v.Name == "Spinning" then
 			v:Destroy()
 		end
@@ -12226,7 +12226,7 @@ addcmd('spin',{},function(args, speaker)
 end)
 
 addcmd('unspin',{},function(args, speaker)
-	for i,v in pairs(getRoot(speaker.Character):GetChildren()) do
+	for i, v in pairs(getRoot(speaker.Character):GetChildren()) do
 		if v.Name == "Spinning" then
 			v:Destroy()
 		end
@@ -12407,7 +12407,7 @@ end)
 
 addcmd('headsize',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		if Players[v] ~= speaker and Players[v].Character:FindFirstChild('Head') then
 			local sizeArg = tonumber(args[2])
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
@@ -12427,7 +12427,7 @@ end)
 addcmd('hitbox',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local transparency = args[3] and tonumber(args[3]) or 0.4
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		if Players[v] ~= speaker and getRoot(Players[v].Character) then
 			local sizeArg = tonumber(args[2])
 			local Size = Vector3.new(sizeArg,sizeArg,sizeArg)
@@ -12456,7 +12456,7 @@ end)
 
 addcmd('stareat',{'stare'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		if stareLoop then
 			stareLoop:Disconnect()
 		end
@@ -12650,7 +12650,7 @@ end)
 
 addcmd('clearnilinstances',{'nonilinstances','cni'},function(args, speaker)
 	if getnilinstances then
-		for i,v in pairs(getnilinstances()) do
+		for i, v in pairs(getnilinstances()) do
 			v:Destroy()
 		end
 	else
@@ -12973,7 +12973,7 @@ addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
 			end
 		end
 	end
-	for i,v in pairs(workspace:GetDescendants()) do
+	for i, v in pairs(workspace:GetDescendants()) do
 		FREEZENOOB(v)
 	end
 	freezingua = workspace.DescendantAdded:Connect(FREEZENOOB)
@@ -12983,7 +12983,7 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(ar
 	if freezingua then
 		freezingua:Disconnect()
 	end
-	for i,v in pairs(frozenParts) do
+	for i, v in pairs(frozenParts) do
 		for i,c in pairs(v:GetChildren()) do
 			if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
 				c:Destroy()
@@ -12995,7 +12995,7 @@ end)
 
 addcmd('tpunanchored',{'tpua'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
+	for i, v in pairs(players) do
 		local Forces = {}
 		for _,part in pairs(workspace:GetDescendants()) do
 			if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
@@ -13322,7 +13322,7 @@ for _, plr in pairs(Players:GetPlayers()) do
 end
 
 if spawnCmds and #spawnCmds > 0 then
-	for i,v in pairs(spawnCmds) do
+	for i, v in pairs(spawnCmds) do
 		eventEditor.AddCmd("OnSpawn",{v.COMMAND or "",{0},v.DELAY or 0})
 	end
 	updatesaves()
@@ -13335,7 +13335,7 @@ eventEditor.FireEvent("OnExecute")
 
 if aliases and #aliases > 0 then
 	local cmdMap = {}
-	for i,v in pairs(cmds) do
+	for i, v in pairs(cmds) do
 		cmdMap[v.NAME:lower()] = v
 		for _,alias in pairs(v.ALIAS) do
 			cmdMap[alias:lower()] = v
