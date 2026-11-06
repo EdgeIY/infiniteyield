@@ -8017,7 +8017,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 		return oldNamecall(...)
 	end))
 
-	notify('Client AntiTP','Client anti teleport is now active (only effective on localscript teleport)')
+	notify('Client AntiTP', 'Client anti teleport is now active (only effective on localscript teleport)')
 end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
@@ -9596,16 +9596,16 @@ addcmd("god", {}, function(args, speaker)
 	local Char, Pos = speaker.Character, Cam.CFrame
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
 	local nHuman = Human:Clone()
-	nHuman.Parent = char
+	nHuman.Parent = Char
 	speaker.Character = nil
 	nHuman:SetStateEnabled(15, false)
 	nHuman:SetStateEnabled(1, false)
 	nHuman:SetStateEnabled(0, false)
 	nHuman.BreakJointsOnDeath = true
 	Human:Destroy()
-	speaker.Character = char
+	speaker.Character = Char
 	Cam.CameraSubject = nHuman
-	Cam.CFrame = task.wait() and pos
+	Cam.CFrame = task.wait() and Pos
 	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
 	local Script = Char:FindFirstChild("Animate")
 	if Script then
@@ -10373,10 +10373,10 @@ addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, spea
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
-			return notify('Getposition Error','Missing character')
+			return notify('Getposition Error', 'Missing character')
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		notify('Current Position',roundedPos)
+		notify('Current Position', roundedPos)
 	end
 end)
 
@@ -10387,7 +10387,7 @@ addcmd('copyposition',{'copypos'},function(args, speaker)
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
-			return notify('Getposition Error','Missing character')
+			return notify('Getposition Error', 'Missing character')
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
 		toClipboard(roundedPos)
@@ -10603,7 +10603,7 @@ addcmd('oldconsole',{},function(args, speaker)
 		end
 	end
 	wait(1)
-	notify('Console','Press F9 to open the console')
+	notify('Console', 'Press F9 to open the console')
 end)
 
 addcmd("explorer", {"dex"}, function(args, speaker)
