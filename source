@@ -4814,10 +4814,8 @@ CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while stil
 CMDs[#CMDs + 1] = {NAME = 'nosit', DESC = 'Prevents your character from sitting'}
 CMDs[#CMDs + 1] = {NAME = 'unnosit', DESC = 'Disables nosit'}
 CMDs[#CMDs + 1] = {NAME = 'jump', DESC = 'Makes your character jump'}
-CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump', DESC = 'Allows you to jump before hitting the ground'}
-CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump', DESC = 'Disables infjump'}
-CMDs[#CMDs + 1] = {NAME = 'flyjump', DESC = 'Allows you to hold space to fly up'}
-CMDs[#CMDs + 1] = {NAME = 'unflyjump', DESC = 'Disables flyjump'}
+CMDs[#CMDs + 1] = {NAME = 'infinitejump / infjump / flyjump', DESC = 'Allows you to jump even when not touching the ground'}
+CMDs[#CMDs + 1] = {NAME = 'uninfinitejump / uninfjump / unflyjump', DESC = 'Disables infjump'}
 CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when you run into an object'}
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
 CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
@@ -9989,35 +9987,15 @@ addcmd("jump", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
-local infJump
-infJumpDebounce = false
-addcmd("infjump", {"infinitejump"}, function(args, speaker)
-	if infJump then infJump:Disconnect() end
-	infJumpDebounce = false
-	infJump = UserInputService.JumpRequest:Connect(function()
-		if not infJumpDebounce then
-			infJumpDebounce = true
-			speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
-			wait()
-			infJumpDebounce = false
-		end
-	end)
-end)
-
-addcmd("uninfjump", {"uninfinitejump", "noinfjump", "noinfinitejump"}, function(args, speaker)
-	if infJump then infJump:Disconnect() end
-	infJumpDebounce = false
-end)
-
 local flyjump
-addcmd("flyjump", {}, function(args, speaker)
+addcmd("infinitejump", {"infjump", "flyjump"}, function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
 	flyjump = UserInputService.JumpRequest:Connect(function()
 		speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
-addcmd("unflyjump", {"noflyjump"}, function(args, speaker)
+addcmd("uninfinitejump", {"uninfjump", "unflyjump", "noflyjump"}, function(args, speaker)
 	if flyjump then flyjump:Disconnect() end
 end)
 
