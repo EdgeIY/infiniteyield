@@ -9629,20 +9629,20 @@ addcmd("god", {}, function(args, speaker)
 	local human = char and char:FindFirstChildWhichIsA("Humanoid")
 	if not human then return end
 	
-	local nHuman = human:Clone()
+	local nhuman = human:Clone()
 	speaker.Character = nil
-	nHuman:SetStateEnabled(15, false)
-	nHuman:SetStateEnabled(1, false)
-	nHuman:SetStateEnabled(0, false)
-	nHuman.BreakJointsOnDeath = true
+	nhuman:SetStateEnabled(15, false)
+	nhuman:SetStateEnabled(1, false)
+	nhuman:SetStateEnabled(0, false)
+	nhuman.BreakJointsOnDeath = true
 	human:Destroy()
 	
-	nHuman.Parent = char
+	nhuman.Parent = char
 	speaker.Character = char
-	cam.CameraSubject = nHuman
+	cam.CameraSubject = nhuman
 	cam.CFrame = task.wait() and pos
-	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-	nHuman.Health = nHuman.MaxHealth
+	nhuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	nhuman.Health = nhuman.MaxHealth
 
 	local anscript = char:FindFirstChild("Animate")
 	if anscript then
