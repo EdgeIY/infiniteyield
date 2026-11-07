@@ -11299,6 +11299,8 @@ addcmd('flashback',{'diedtp'}, function(args, speaker)
 			wait(.1)
 		end
 		getRoot(speaker.Character).CFrame = lastDeath
+	else
+		notify("Flashback", "None saved.")
 	end
 end)
 
@@ -11371,7 +11373,7 @@ addcmd('clearhats',{'cleanhats'}, function(args, speaker)
 
 		Player.CharacterAdded:Wait()
 
-		for i = 1,20 do 
+		for i = 1, 20 do 
 			RunService.Heartbeat:Wait()
 			if getRoot(Player.Character) then
 				getRoot(Player.Character).Humanoid.RootPart.CFrame = Old
