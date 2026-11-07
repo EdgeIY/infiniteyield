@@ -4470,11 +4470,11 @@ function autoComplete(str,curText)
 	Cmdbar.CursorPosition = #Cmdbar.Text+1--1020
 end
 
+CMDs = {}
 function addcmddesc(name, desc)
     CMDs[#CMDs + 1] = { NAME = name, DESC = desc }
 end
 
-CMDs = {}
 addcmddesc('discord / support / help', 'Invite to the Infinite Yield discord server.'}
 addcmddesc('guiscale [number]', 'Changes the size of the gui. [number] accepts decimals and whole numbers. Min is 0.4 and Max is 2'}
 addcmddesc('console', 'Opens the Roblox console'}
