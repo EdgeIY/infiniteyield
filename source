@@ -12792,7 +12792,9 @@ addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
 	if type(alignmentKeysEmotes) == "boolean" then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
 	end
-	alignmentKeys:Disconnect()
+	if alignmentKeys then
+		alignmentKeys:Disconnect()
+	end
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12841,7 +12843,9 @@ end)
 
 addcmd("unlistento", {}, function(args, speaker)
 	SoundService:SetListener(Enum.ListenerType.Camera)
-	listentoChar:Disconnect()
+	if listentoChar then
+		listentoChar:Disconnect()
+	end
 end)
 
 addcmd("jerk", {}, function(args, speaker)
@@ -13019,7 +13023,7 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'}, function(a
 	frozenParts = {}
 end)
 
-addcmd('tpunanchored',{'tpua'}, function(args, speaker)
+addcmd('tpunanchored', {'tpua'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i, v in pairs(players) do
 		local Forces = {}
@@ -13149,16 +13153,16 @@ addcmd('autokeypress',{'keypress'}, function(args, speaker)
 	end
 end)
 
-addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'}, function(args, speaker)
+addcmd('unautokeypress', {'noautokeypress','unkeypress','nokeypress'}, function(args, speaker)
 	autoKeyPressing = false
 	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
 end)
 
-addcmd('addplugin',{'plugin'}, function(args, speaker)
+addcmd('addplugin', {'plugin'}, function(args, speaker)
 	addPlugin(getstring(1, args))
 end)
 
-addcmd('removeplugin',{'deleteplugin'}, function(args, speaker)
+addcmd('removeplugin', {'deleteplugin'}, function(args, speaker)
 	deletePlugin(getstring(1, args))
 end)
 
