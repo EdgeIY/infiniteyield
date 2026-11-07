@@ -4771,7 +4771,7 @@ CMDs[#CMDs + 1] = {NAME = 'findfriendgroups', DESC = 'Notifies you if any player
 CMDs[#CMDs + 1] = {NAME = 'handlekill / hkill [player] [radius] (TOOL)', DESC = 'Kills a player using tool damage (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'fling', DESC = 'Flings anyone you touch'}
 CMDs[#CMDs + 1] = {NAME = 'unfling', DESC = 'Disables the fling command'}
-CMDs[#CMDs + 1] = {NAME = 'togglefling', DESC = 'Toggles fling'}
+CMDs[#CMDs + 1] = {NAME = 'togglefling / tfling', DESC = 'Toggles fling'}
 CMDs[#CMDs + 1] = {NAME = 'flyfling [speed]', DESC = 'Basically the invisfling command but not invisible'}
 CMDs[#CMDs + 1] = {NAME = 'unflyfling', DESC = 'Disables the flyfling command'}
 CMDs[#CMDs + 1] = {NAME = 'walkfling', DESC = 'Basically fling but no spinning'}
@@ -6514,7 +6514,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notify('Incompatible Exploit', 'Your exploit is unable to use plugins (missing readfile/writefile)')
+		notify("Incompatible Exploit", 'Your exploit is unable to use plugins (missing readfile/writefile)')
 	end
 end)
 
@@ -6602,7 +6602,7 @@ addcmd('keepiy', {}, function(args, speaker)
 		notify('KeepIY', 'Infinite Yield will now run after you teleport')
 		updatesaves()
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
@@ -6612,7 +6612,7 @@ addcmd('unkeepiy', {}, function(args, speaker)
 		notify('KeepIY', 'Infinite Yield will no longer run after you teleport')
 		updatesaves()
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
@@ -6621,7 +6621,7 @@ addcmd('togglekeepiy', {}, function(args, speaker)
 		KeepInfYield = not KeepInfYield
 		updatesaves()
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing queue_on_teleport)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
@@ -7559,7 +7559,7 @@ addcmd('toggleswim', {'tswim'}, function(args, speaker)
 	end
 end)
 
-addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'}, function(args, speaker)
+addcmd('setwaypoint', {'swp','setwp','spos','saveposition','savepos'}, function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if getRoot(speaker.Character) then
 		notify('Modified Waypoints', "Created waypoint: "..getstring(1, args))
@@ -7573,7 +7573,7 @@ addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'}, function(a
 	updatesaves()
 end)
 
-addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'}, function(args, speaker)
+addcmd('waypointpos', {'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'}, function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if getRoot(speaker.Character) then
 		notify('Modified Waypoints', "Created waypoint: "..getstring(1, args))
@@ -7586,7 +7586,7 @@ addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setway
 	updatesaves()
 end)
 
-addcmd('waypoints',{'positions'}, function(args, speaker)
+addcmd('waypoints', {'positions'}, function(args, speaker)
 	if SettingsOpen == false then SettingsOpen = true
 		Settings:TweenPosition(UDim2.new(0, 0, 0, 45), "InOut", "Quart", 0.5, true, nil)
 		CMDsF.Visible = false
@@ -7601,7 +7601,7 @@ addcmd('waypoints',{'positions'}, function(args, speaker)
 end)
 
 waypointParts = {}
-addcmd('showwaypoints',{'showwp','showwps'}, function(args, speaker)
+addcmd('showwaypoints', {'showwp','showwps'}, function(args, speaker)
 	execCmd('hidewaypoints')
 	wait()
 	for i, _ in pairs(WayPoints) do
@@ -7633,14 +7633,14 @@ addcmd('showwaypoints',{'showwp','showwps'}, function(args, speaker)
 	end
 end)
 
-addcmd('hidewaypoints',{'hidewp','hidewps'}, function(args, speaker)
+addcmd('hidewaypoints', {'hidewp','hidewps'}, function(args, speaker)
 	for i, v in pairs(waypointParts) do
 		v:Destroy()
 	end
 	waypointParts = {}
 end)
 
-addcmd('waypoint',{'wp','lpos','loadposition','loadpos'}, function(args, speaker)
+addcmd('waypoint', {'wp','lpos','loadposition','loadpos'}, function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
 		for i, _ in pairs(WayPoints) do
@@ -7686,7 +7686,7 @@ addcmd('tweenwaypoint', {'twp'}, function(args, speaker)
 	end
 end)
 
-addcmd('walktowaypoint',{'wtwp'}, function(args, speaker)
+addcmd('walktowaypoint', {'wtwp'}, function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if speaker.Character then
 		for i, _ in pairs(WayPoints) do
@@ -7713,7 +7713,7 @@ addcmd('walktowaypoint',{'wtwp'}, function(args, speaker)
 	end
 end)
 
-addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'}, function(args, speaker)
+addcmd('deletewaypoint', {'dwp','dpos','deleteposition','deletepos'}, function(args, speaker)
 	for i, v in pairs(WayPoints) do
 		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
 			notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
@@ -7739,7 +7739,7 @@ addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'}, function(ar
 	updatesaves()
 end)
 
-addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'}, function(args, speaker)
+addcmd('clearwaypoints', {'cwp','clearpositions','cpos','clearpos'}, function(args, speaker)
 	WayPoints = {}
 	pWayPoints = {}
 	refreshwaypoints()
@@ -7748,7 +7748,7 @@ addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'}, function(arg
 	notify('Modified Waypoints', 'Removed all waypoints')
 end)
 
-addcmd('cleargamewaypoints',{'cgamewp'}, function(args, speaker)
+addcmd('cleargamewaypoints', {'cgamewp'}, function(args, speaker)
 	for i, v in pairs(WayPoints) do
 		if v.GAME == PlaceId then
 			table.remove(WayPoints, i)
@@ -7933,14 +7933,14 @@ addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
 		if writefileExploit() then
 			local synsaveinstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/saveinstance.luau", true), "saveinstance")()
 			if synsaveinstance then
-				notify("Loading", "Downloading game via USSI. This will take a while")
+				notify("Loading", "Downloading game via USSI. This will take a while.")
 				synsaveinstance({})
-				notify("Game Saved", "Saved place to the workspace folder within your exploit folder")
+				notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
 			else
-				notify("Unable to Save Game", "Unable to load USSI")
+				notify("Unable to Save Game", "Unable to load USSI.")
 			end
 		else
-			notify("Unable to Save Game", "Place cannot be saved (missing writefile)")
+			notify("Unable to Save Game", "Place cannot be saved (missing writefile).")
 		end
 	end
 end)
@@ -7965,7 +7965,7 @@ end)
 
 addcmd('clientantikick',{'antikick'}, function(args, speaker)
 	if not hookmetamethod then 
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
+		return notify("Incompatible Exploit", 'Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
 	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
@@ -7988,7 +7988,7 @@ end)
 allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'}, function(args, speaker)
 	if not hookmetamethod then 
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
+		return notify("Incompatible Exploit", 'Your exploit does not support this command (missing hookmetamethod)')
 	end
 
 	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
@@ -8746,7 +8746,7 @@ function noclipcam(state, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
 	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
+		return notify("Incompatible Exploit", 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
 	end
 	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
 	for _, v in pairs(getgc()) do
@@ -8978,7 +8978,7 @@ addcmd('age', {}, function(args, speaker)
 		local p = Players[v]
 		table.insert(ages, p.Name.."'s age is: "..p.AccountAge)
 	end
-	notify('Account Age',table.concat(ages, ',\n'))
+	notify('Account Age', table.concat(ages, ',\n'))
 end)
 
 addcmd('chatage', {}, function(args, speaker)
@@ -9113,7 +9113,7 @@ addcmd('2022materials',{'use2022materials'}, function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", true)
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing sethiddenproperty)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
@@ -9121,7 +9121,7 @@ addcmd('un2022materials',{'unuse2022materials'}, function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", false)
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing sethiddenproperty)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
@@ -10449,7 +10449,7 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'}, function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
+			notify("Incompatible Exploit", 'Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -10511,7 +10511,7 @@ addcmd('spoofjumppower',{'spoofjp'}, function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notify('Incompatible Exploit', 'Your exploit does not support this command (missing hookmetamethod)')
+			notify("Incompatible Exploit", 'Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -11153,7 +11153,7 @@ addcmd('instantproximityprompts',{'instantpp'}, function(args, speaker)
 			fireproximityprompt(prompt)
 		end)
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing fireproximityprompt)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing fireproximityprompt)')
 	end
 end)
 
@@ -11897,7 +11897,7 @@ addcmd('unfling',{'nofling'}, function(args, speaker)
 	end
 end)
 
-addcmd('togglefling', {}, function(args, speaker)
+addcmd('togglefling', {'tfling'}, function(args, speaker)
 	if flinging then
 		execCmd('unfling')
 	else
@@ -12343,7 +12343,7 @@ addcmd('autoclick', {}, function(args, speaker)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Incompatible Exploit', "Your exploit does not support this command (missing mouse1press or mouse1release)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
@@ -12677,7 +12677,7 @@ addcmd('clearnilinstances',{'nonilinstances','cni'}, function(args, speaker)
 			v:Destroy()
 		end
 	else
-		notify('Incompatible Exploit', 'Your exploit does not support this command (missing getnilinstances)')
+		notify("Incompatible Exploit", 'Your exploit does not support this command (missing getnilinstances)')
 	end
 end)
 
@@ -13152,7 +13152,7 @@ addcmd('autokeypress',{'keypress'}, function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Incompatible Exploit', "Your exploit does not support this command (missing keypress or keyrelease)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
