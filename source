@@ -9542,28 +9542,32 @@ addcmd("refresh", {"re"}, function(args, speaker)
 end)
 
 addcmd("god", {}, function(args, speaker)
-	local Cam = workspace.CurrentCamera
-	local Char, Pos = speaker.Character, Cam.CFrame
-	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
-	local nHuman = Human:Clone()
-	nHuman.Parent = char
+	local cam = workspace.CurrentCamera
+	local char, pos = speaker.Character, cam.CFrame
+	local human = char and char:FindFirstChildWhichIsA("Humanoid")
+	if not human then return end
+	
+	local nhuman = human:Clone()
 	speaker.Character = nil
-	nHuman:SetStateEnabled(15, false)
-	nHuman:SetStateEnabled(1, false)
-	nHuman:SetStateEnabled(0, false)
-	nHuman.BreakJointsOnDeath = true
-	Human:Destroy()
+	nhuman:SetStateEnabled(15, false)
+	nhuman:SetStateEnabled(1, false)
+	nhuman:SetStateEnabled(0, false)
+	nhuman.BreakJointsOnDeath = true
+	human:Destroy()
+	
+	nhuman.Parent = char
 	speaker.Character = char
-	Cam.CameraSubject = nHuman
-	Cam.CFrame = task.wait() and pos
-	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-	local Script = Char:FindFirstChild("Animate")
-	if Script then
-		Script.Disabled = true
+	cam.CameraSubject = nhuman
+	cam.CFrame = task.wait() and pos
+	nhuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	nhuman.Health = nhuman.MaxHealth
+
+	local anscript = char:FindFirstChild("Animate")
+	if anscript then
+		anscript.Disabled = true
 		task.wait()
-		Script.Disabled = false
+		anscript.Disabled = false
 	end
-	nHuman.Health = nHuman.MaxHealth
 end)
 
 invisRunning = false
