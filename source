@@ -8038,7 +8038,7 @@ addcmd('clientantiteleport',{'antiteleport'}, function(args, speaker)
 	notify('Client AntiTP', 'Client anti teleport is now active (only effective on localscript teleport)')
 end)
 
-addcmd('allowrejoin',{'allowrj'}, function(args, speaker)
+addcmd('allowrejoin', {'allowrj'}, function(args, speaker)
 	allow_rj = not allow_rj
 end)
 
@@ -8046,7 +8046,7 @@ addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
 	TeleportService:TeleportCancel()
 end)
 
-addcmd("volume",{ "vol"}, function(args, speaker)
+addcmd("volume" ,{"vol"}, function(args, speaker)
 	UserSettings():GetService("UserGameSettings").MasterVolume = args[1]/10
 end)
 
@@ -8130,7 +8130,7 @@ addcmd('notify', {}, function(args, speaker)
 	notify(getstring(1, args))
 end)
 
-addcmd('lastcommand',{'lastcmd'}, function(args, speaker)
+addcmd('lastcommand', {'lastcmd'}, function(args, speaker)
 	if cmdHistory[1]:sub(1,11) ~= 'lastcommand' and cmdHistory[1]:sub(1,7) ~= 'lastcmd' then
 		execCmd(cmdHistory[1])
 	end
@@ -8162,7 +8162,7 @@ addcmd('espteam', {}, function(args, speaker)
 	end
 end)
 
-addcmd('noesp',{'unesp','unespteam'}, function(args, speaker)
+addcmd('noesp', {'unesp', 'unespteam'}, function(args, speaker)
 	ESPenabled = false
 	for i,c in pairs(COREGUI:GetChildren()) do
 		if string.sub(c.Name, -4) == '_ESP' then
