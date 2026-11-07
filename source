@@ -15,10 +15,10 @@ cloneref = missing("function", cloneref, function(...) return ... end)
 gethui = missing("function", gethui or get_hidden_gui)
 syn = missing("table", syn)
 syn_protect_gui = missing("function", syn and syn.protect_gui)
-sethidden =  missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
-gethidden =  missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
-queueteleport =  missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
-httprequest =  missing("function", request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request))
+sethidden = missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
+gethidden = missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
+queueteleport = missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
+httprequest = missing("function", request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request))
 everyClipboard = missing("function", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
 firetouchinterest = missing("function", firetouchinterest)
 waxwritefile, waxreadfile = writefile, readfile
@@ -81,17 +81,13 @@ PathService = Services.PathfindingService
 SoundService = Services.SoundService
 Teams = Services.Teams
 StarterPlayer = Services.StarterPlayer
-InsertService = Services.InsertService
 ChatService = Services.Chat
 ProximityPromptService = Services.ProximityPromptService
-ContentProvider = Services.ContentProvider
-StatsService = Services.Stats
 MaterialService = Services.MaterialService
 AvatarEditorService = Services.AvatarEditorService
 TextService = Services.TextService
 TextChatService = Services.TextChatService
 CaptureService = Services.CaptureService
-VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
 
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -208,7 +204,7 @@ TriggerLabel = Instance.new("TextLabel")
 BindTriggerSelect = Instance.new("TextButton")
 Add_2 = Instance.new("TextButton")
 Toggles = Instance.new("ScrollingFrame")
-ClickTP  = Instance.new("TextLabel")
+ClickTP = Instance.new("TextLabel")
 Select = Instance.new("TextButton")
 ClickDelete = Instance.new("TextLabel")
 Select_2 = Instance.new("TextButton")
@@ -772,7 +768,7 @@ Credits.Position = UDim2.new(0, 0, 0.9, 30)
 Credits.Size = UDim2.new(0, 250, 0, 20)
 Credits.Font = Enum.Font.SourceSansLight
 Credits.FontSize = Enum.FontSize.Size14
-Credits.Text = "Edge // Zwolf // Moon // Toon // Peyton // ATP"
+Credits.Text = "Edge // Moon // Zwolf // Sleaze // Toon // Peyton // ATP"
 Credits.TextColor3 = Color3.new(1, 1, 1)
 Credits.ZIndex = 10
 
@@ -2112,7 +2108,7 @@ end
 
 function toClipboard(txt)
 	if everyClipboard then
-		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so dont call me out for this
+		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so don't call me out for this
 		notify("Clipboard", "Copied to clipboard")
 	else
 		notify("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
