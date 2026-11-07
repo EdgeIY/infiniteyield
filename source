@@ -6494,7 +6494,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
+		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing readfile/writefile)')
 	end
 end)
 
@@ -7010,7 +7010,7 @@ addcmd("autorejoin", {"autorj"}, function(args, speaker)
 	notify("Auto Rejoin", "Auto rejoin enabled")
 end)
 
-addcmd("serverhop", {"shop"}, function(args, speaker)
+addcmd("serverhop", {"shop", "hop"}, function(args, speaker)
 	-- thanks to Amity for fixing
 	local servers = {}
 	local req = game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true")
@@ -7070,7 +7070,7 @@ addcmd("unnoclip", {"clip"}, function(args, speaker)
     notify("Noclip", "Noclip Disabled")
 end)
 
-addcmd("togglenoclip", {}, function(args, speaker)
+addcmd("togglenoclip", {"tnoclip"}, function(args, speaker)
     execCmd(Clip and "noclip" or "unnoclip")
 end)
 
@@ -7310,7 +7310,7 @@ addcmd('vfly',{'vehiclefly'},function(args, speaker)
 	end
 end)
 
-addcmd('togglevfly',{},function(args, speaker)
+addcmd('togglevfly',{'tvfly'},function(args, speaker)
 	if FLYING then
 		if not IsOnMobile then NOFLY() else unmobilefly(speaker) end
 	else
@@ -7333,7 +7333,7 @@ addcmd('qefly',{'flyqe'},function(args, speaker)
 	end
 end)
 
-addcmd('togglefly',{},function(args, speaker)
+addcmd('togglefly',{'togglefly'},function(args, speaker)
 	if FLYING then
 		if not IsOnMobile then NOFLY() else unmobilefly(speaker) end
 	else
@@ -7382,10 +7382,11 @@ addcmd('cframeflyspeed',{'cflyspeed'},function(args, speaker)
 	end
 end)
 
+-- RBXScriptConnections
 floating = false
-local beganListener: RBXScriptConnection
-local endListener: RBXScriptConnection
-local floatingFunc: RBXScriptConnection
+local beganListener
+local endListener
+local floatingFunc
 
 addcmd('float', {'platform'},function(args, speaker)
 	local pchar = speaker.Character
@@ -7408,20 +7409,20 @@ addcmd('float', {'platform'},function(args, speaker)
 				if processed then return end
 
 				if key.KeyCode == Enum.KeyCode.Q then
-					floatPoint -= 0.5
+					floatPoint = floatPoint - 0.5
 				end
 				if key.KeyCode == Enum.KeyCode.E then
-					floatPoint += 1.5
+					floatPoint = floatPoint + 1.5
 				end
 			end)
 			endListener = UserInputService.InputEnded:Connect(function(key, processed)
 				if processed then return end
 
 				if key.KeyCode == Enum.KeyCode.Q then
-					floatPoint += 0.5
+					floatPoint = floatPoint + 0.5
 				end
 				if key.KeyCode == Enum.KeyCode.E then
-					floatPoint -= 1.5
+					floatPoint = floatPoint - 1.5
 				end
 			end)
 			
@@ -7479,6 +7480,7 @@ local oldgrav = workspace.Gravity
 local swimbeat = nil
 addcmd('swim',{},function(args, speaker)
 	if not swimming and speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
+		execCmd('unswim nonotify')
 		oldgrav = workspace.Gravity
 		workspace.Gravity = 0
 		local swimDied = function()
@@ -7522,7 +7524,7 @@ addcmd('unswim',{'noswim'},function(args, speaker)
 	end
 end)
 
-addcmd('toggleswim',{},function(args, speaker)
+addcmd('toggleswim',{'tswim'},function(args, speaker)
 	if swimming then
 		execCmd('unswim')
 	else
@@ -7633,8 +7635,8 @@ end)
 tweenSpeed = 1
 addcmd('tweenspeed',{'tspeed'},function(args, speaker)
 	local newSpeed = args[1] or 1
-	if tonumber(newSpeed) then
-		tweenSpeed = tonumber(newSpeed)
+	if isNumber(newSpeed) then
+		tweenSpeed = newSpeed
 	end
 end)
 
@@ -7835,6 +7837,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
+	if deleteGuiInput then deleteGuiInput:Disconnect() end
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
@@ -7879,7 +7882,7 @@ addcmd('rec', {'record'}, function(args, speaker)
 	return COREGUI:ToggleRecording()
 end)
 
-addcmd('screenshot', {'scrnshot'}, function(args, speaker)
+addcmd('screenshot', {'scrnshot', 'ss'}, function(args, speaker)
 	return COREGUI:TakeScreenshot()
 end)
 
@@ -7894,13 +7897,24 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd("savegame", {"saveplace"}, function(args, speaker)
+addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
 	if saveinstance then
 		notify("Loading", "Downloading game. This will take a while")
 		saveinstance()
-		notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+		notify("Game Saved", "Saved place to the workspace folder within your exploit folder")
 	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+		if writefileExploit() then
+			local synsaveinstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/saveinstance.luau", true), "saveinstance")()
+			if synsaveinstance then
+				notify("Loading", "Downloading game via USSI. This will take a while.")
+				synsaveinstance({})
+				notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+			else
+				notify("Unable to Save Game", "Unable to load USSI.")
+			end
+		else
+			notify("Unable to Save Game", "Place cannot be saved (missing writefile).")
+		end
 	end
 end)
 
@@ -7919,7 +7933,7 @@ addcmd("antigameplaypaused", {}, function(args, speaker)
 end)
 
 addcmd("unantigameplaypaused", {}, function(args, speaker)
-    networkPaused:Disconnect()
+    pcall(function() networkPaused:Disconnect() end)
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
@@ -7951,7 +7965,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	end
 
 	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
-		if checkcaller() or (allow_rj and placeId == game.PlaceId) then
+		if checkcaller() or (allow_rj and placeId == PlaceId) then
 			return oldTp(self, placeId, player, _teleportData, customLoadingScreen)
 		end
 		if self ~= TeleportService then
@@ -7961,7 +7975,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 			error("Argument 1 missing or nil", 2)
 		end
 		if typeof(placeId) ~= "number" and placeId ~= true then
-			error(`Unable to cast {typeof(placeId)} to int64`, 2)
+			error("Unable to cast " .. typeof(placeId) .. " to int64", 2)
 		elseif placeId == true then
 			-- somehow raise raiseTeleportInitFailedEvent
 			return
@@ -7986,7 +8000,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
 		local nmc = getnamecallmethod()
 		if select(1, ...) == TeleportService and nmc == "teleport" or nmc == "Teleport" or nmc == "TeleportToPlaceInstance" or nmc == "TeleportAsync" then
-			if checkcaller() or (allow_rj and select(2, ...) == game.PlaceId) then
+			if checkcaller() or (allow_rj and select(2, ...) == PlaceId) then
 				return oldNamecall(...)
 			end
 			return
@@ -7999,14 +8013,13 @@ end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	allow_rj = not allow_rj
-	notify("Client AntiTP", `Scripts now may{allow_rj and "" or " not"} make you rejoin the server`)
 end)
 
 addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
 	TeleportService:TeleportCancel()
 end)
 
-addcmd("volume",{ "vol"}, function(args, speaker)
+addcmd("volume", {"vol"}, function(args, speaker)
 	UserSettings():GetService("UserGameSettings").MasterVolume = args[1]/10
 end)
 
@@ -8053,6 +8066,10 @@ addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
 			end
 		end)
 	end)
+end)
+
+addcmd("unantilag", {"unboostfps", "unlowgraphics"}, function(args, speaker)
+	return "You must rejoin the server to undo antilag!"
 end)
 
 addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
@@ -8177,9 +8194,11 @@ addcmd('partesp',{},function(args, speaker)
 			end
 		end
 	end
-	if partEspTrigger == nil then
-		partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
+	if partEspTrigger then 
+		partEspTrigger:Disconnect() 
+		partEspTrigger = nil
 	end
+	partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
 end)
 
 addcmd('unpartesp',{'nopartesp'},function(args, speaker)
@@ -8566,7 +8585,7 @@ function StopFreecam()
 	fcRunning = false
 end
 
-addcmd('freecam',{'fc'},function(args, speaker)
+addcmd('freecam',{'fc', 'fcam'},function(args, speaker)
 	StartFreecam()
 end)
 
@@ -8697,24 +8716,40 @@ addcmd('thirdp',{},function(args, speaker)
 	speaker.CameraMode = "Classic"
 end)
 
-addcmd('noclipcam', {'nccam'}, function(args, speaker)
+local cnoclip = false
+function noclipcam(state, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
 	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
+		return notify("Incompatible Exploit", 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
 	end
 	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
 	for _, v in pairs(getgc()) do
 		if type(v) == 'function' and getfenv(v).script == pop then
 			for i, v1 in pairs(gc(v)) do
-				if tonumber(v1) == .25 then
+				if state == true and tonumber(v1) == .25 then
 					sc(v, i, 0)
-				elseif tonumber(v1) == 0 then
+				elseif state == false and tonumber(v1) == 0 then
 					sc(v, i, .25)
 				end
 			end
 		end
 	end
+	cnoclip = state
+end
+
+addcmd('noclipcam', {'nccam'}, function(args, speaker)
+	if cnoclip then return end
+	noclipcam(true, speaker)
+end)
+
+addcmd('unnoclipcam', {'unnccam', 'clipcam'}, function(args, speaker)
+	if not cnoclip then return end
+	noclipcam(false, speaker)
+end)
+
+addcmd('togglenoclipcam', {'tnccam'}, function(args, speaker)
+	execCmd(cnoclip and "clipcam" or "nccam")
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
