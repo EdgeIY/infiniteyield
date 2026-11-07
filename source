@@ -4515,10 +4515,11 @@ CMDs[#CMDs + 1] = {NAME = 'unguidelete / noguidelete', DESC = 'Disables guidelet
 CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
 CMDs[#CMDs + 1] = {NAME = 'showiy / unhideiy', DESC = 'Shows IY again'}
 CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport through servers'}
-CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
+CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disables keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggles keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'removeads / adblock', DESC = 'Automatically removes ad billboards'}
-CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace / saveinstance', DESC = 'Uses saveinstance to save the game'}
+CMDs[#CMDs + 1] = {NAME = 'unremoveads / unadblock', DESC = 'Disables removeads'}
+CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace / saveinstance', DESC = 'Saves the game you are in to a file'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'antigameplaypaused', DESC = 'Clears the annoying box shown when a game is loading assets due to network lag'}
 CMDs[#CMDs + 1] = {NAME = 'unantigameplaypaused', DESC = 'Disables antigameplaypaused'}
@@ -9883,7 +9884,7 @@ addcmd("hipheight", {"hheight"}, function(args, speaker)
 end)
 
 addcmd("dance", {}, function(args, speaker)
-	pcall(execCmd, "undance")
+	execCmd("undance nonotify")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 	if r15(speaker) then
 		dances = {"3333432454", "4555808220", "4049037604", "4555782893", "10214311282", "10714010337", "10713981723", "10714372526", "10714076981", "10714392151", "11444443576"}
@@ -9896,8 +9897,11 @@ addcmd("dance", {}, function(args, speaker)
 end)
 
 addcmd("undance", {"nodance"}, function(args, speaker)
-	danceTrack:Stop()
-	danceTrack:Destroy()
+	if danceTrack then
+		danceTrack:Stop()
+		danceTrack:Destroy()
+		danceTrack = nil
+	end
 end)
 
 addcmd('nolimbs',{'rlimbs'}, function(args, speaker)
@@ -12725,8 +12729,10 @@ addcmd("trip", {}, function(args, speaker)
 	end
 end)
 
+adblock = false
 addcmd("removeads", {"adblock"}, function(args, speaker)
-	while wait() do
+	adblock = true -- this command is coded like hot ass
+	repeat wait(0.1)
 		pcall(function()
 			for i, v in pairs(workspace:GetDescendants()) do
 				if v:IsA("PackageLink") then
@@ -12739,7 +12745,11 @@ addcmd("removeads", {"adblock"}, function(args, speaker)
 				end
 			end
 		end)
-	end
+	until adblock == false
+end)
+
+addcmd("unremoveads", {"unadblock"}, function(args, speaker)
+	adblock = false
 end)
 
 addcmd("scare", {"spook"}, function(args, speaker)
