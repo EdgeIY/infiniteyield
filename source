@@ -9279,7 +9279,7 @@ addcmd('loopbring', {}, function(args, speaker)
 			if Players[v].Name ~= speaker.Name and not FindInTable(bringT, Players[v].Name) then
 				table.insert(bringT, Players[v].Name)
 				local plrName = Players[v].Name
-				local pchar=Players[v].Character
+				local pchar = Players[v].Character
 				local distance = 3
 				if args[2] and isNumber(args[2]) then
 					distance = args[2]
@@ -10137,7 +10137,7 @@ end)
 
 addcmd('spasm', {}, function(args, speaker)
 	if not r15(speaker) then
-		local pchar=speaker.Character
+		local pchar = speaker.Character
 		local AnimationId = "33796059"
 		SpasmAnim = Instance.new("Animation")
 		SpasmAnim.AnimationId = "rbxassetid://"..AnimationId
@@ -10150,8 +10150,12 @@ addcmd('spasm', {}, function(args, speaker)
 end)
 
 addcmd('unspasm',{'nospasm'}, function(args, speaker)
-	Spasm:Stop()
-	SpasmAnim:Destroy()
+	if Spasm then
+		Spasm:Stop()
+	end
+	if SpasmAnim then
+		SpasmAnim:Destroy()
+	end
 end)
 
 addcmd('headthrow', {}, function(args, speaker)
@@ -10195,7 +10199,6 @@ addcmd("emote", {"em"}, function(args, speaker)
 	local anim = humanoid:PlayEmoteAndGetAnimTrackById(args[1])
 	if args[2] then anim:AdjustSpeed(tostring(args[2])) end
 end)
-
 
 addcmd('noanim', {}, function(args, speaker)
 	speaker.Character.Animate.Disabled = true
