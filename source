@@ -4529,6 +4529,7 @@ CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj (CLIENT)', DESC = 'Toggles if a
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality in an attempt to boost FPS'}
+CMDs[#CMDs + 1] = {NAME = 'unantilag / unboostfps', DESC = 'You must rejoin the server to undo antilag'}
 CMDs[#CMDs + 1] = {NAME = 'setfpscap / fpscap / maxfps', DESC = 'Sets FPS cap'}
 CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts Roblox recorder'}
 CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot / ss', DESC = 'Takes a screenshot'}
@@ -8093,6 +8094,10 @@ addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
 			end
 		end)
 	end)
+end)
+
+addcmd("unantilag", {"unboostfps", "unlowgraphics"}, function(args, speaker)
+	return "You must rejoin the server to undo antilag!"
 end)
 
 addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
