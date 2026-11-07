@@ -7863,6 +7863,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete', {}, function(args, speaker)
+	if deleteGuiInput then deleteGuiInput:Disconnect() end
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
@@ -7958,7 +7959,7 @@ addcmd("antigameplaypaused", {}, function(args, speaker)
 end)
 
 addcmd("unantigameplaypaused", {}, function(args, speaker)
-    networkPaused:Disconnect()
+    pcall(function() networkPaused:Disconnect() end)
 end)
 
 addcmd('clientantikick',{'antikick'}, function(args, speaker)
@@ -8215,9 +8216,14 @@ addcmd('partesp', {}, function(args, speaker)
 			end
 		end
 	end
-	if partEspTrigger == nil then
-		partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
+
+	if partEspTrigger then 
+		partEspTrigger:Disconnect() 
+		partEspTrigger = nil
 	end
+
+	partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
+
 end)
 
 addcmd('unpartesp',{'nopartesp'}, function(args, speaker)
@@ -12276,6 +12282,9 @@ addcmd('walltp', {}, function(args, speaker)
 		torso = speaker.Character.UpperTorso
 	else
 		torso = speaker.Character.Torso
+	end
+	if walltpTouch then
+		walltpTouch:Disconnect()
 	end
 	local function touchedFunc(hit)
 		local Root = getRoot(speaker.Character)
