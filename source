@@ -8860,7 +8860,7 @@ addcmd("btools", {}, function(args, speaker)
 end)
 
 addcmd("f3x", {"fex"}, function(args, speaker)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua"))()
+	tryLoading("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/f3x.lua")
 end)
 
 addcmd("partpath", {"partname"}, function(args, speaker)
@@ -8928,7 +8928,7 @@ addcmd("promptr15", {}, function(args, speaker)
 end)
 
 addcmd("wallwalk", {"walkonwalls"}, function(args, speaker)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua"))()
+	tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua")
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -10588,30 +10588,30 @@ end)
 
 addcmd("explorer", {"dex"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
-    loadstring(game:HttpGet("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"))()
+    tryLoading("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua")
 end)
 
 addcmd("moondex", {"mdex"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    tryLoading(https://raw.githubusercontent.com/infyiff/backup/main/dex.lua")
 end)
 
 addcmd("remotespy", {"rspy", "cobalt", "cspy"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
     -- Full credit to notpoiu, creator of Cobalt
-    loadstring(game:HttpGet("https://gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau"))()
+    tryLoading("https://gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau")
 end)
 
 addcmd("simplespy", {"sspy"}, function(args, speaker)
     notify("Loading", "Hold on a sec")
     -- Full credit to exx, creator of SimpleSpy
     -- also thanks to Amity for fixing
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
+    tryLoading("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua")
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
 	notify("Loading",'Hold on a sec')
-	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
+	tryLoading('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua')
 end)
 
 local loopgoto = nil
