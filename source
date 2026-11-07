@@ -7506,6 +7506,7 @@ local oldgrav = workspace.Gravity
 local swimbeat = nil
 addcmd('swim', {}, function(args, speaker)
 	if not swimming and speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
+		execCmd('unswim nonotify')
 		oldgrav = workspace.Gravity
 		workspace.Gravity = 0
 		local swimDied = function()
@@ -7529,7 +7530,7 @@ addcmd('swim', {}, function(args, speaker)
 	end
 end)
 
-addcmd('unswim',{'noswim'}, function(args, speaker)
+addcmd('unswim', {'noswim'}, function(args, speaker)
 	if speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
 		workspace.Gravity = oldgrav
 		swimming = false
@@ -7549,7 +7550,7 @@ addcmd('unswim',{'noswim'}, function(args, speaker)
 	end
 end)
 
-addcmd('toggleswim',{'tswim'}, function(args, speaker)
+addcmd('toggleswim', {'tswim'}, function(args, speaker)
 	if swimming then
 		execCmd('unswim')
 	else
