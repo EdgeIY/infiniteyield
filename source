@@ -9993,16 +9993,16 @@ addcmd("jump", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
-local flyjump
+local infjump
 addcmd("infinitejump", {"infjump", "flyjump"}, function(args, speaker)
-	if flyjump then flyjump:Disconnect() end
-	flyjump = UserInputService.JumpRequest:Connect(function()
+	if infjump then infjump:Disconnect() end
+	infjump = UserInputService.JumpRequest:Connect(function()
 		speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
 addcmd("uninfinitejump", {"uninfjump", "unflyjump", "noflyjump"}, function(args, speaker)
-	if flyjump then flyjump:Disconnect() end
+	if infjump then infjump:Disconnect() end
 end)
 
 local HumanModCons = {}
