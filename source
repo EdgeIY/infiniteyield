@@ -5587,7 +5587,7 @@ function getPlayer(list,speaker)
 			if v.Operator == "+" then
 				local tokenContent = v.Name
 				local foundCase = false
-				for regex,case in pairs(SpecialPlayerCases) do
+				for regex, case in pairs(SpecialPlayerCases) do
 					local matches = {string.match(tokenContent,"^"..regex.."$")}
 					if #matches > 0 then
 						foundCase = true
@@ -5600,7 +5600,7 @@ function getPlayer(list,speaker)
 			else
 				local tokenContent = v.Name
 				local foundCase = false
-				for regex,case in pairs(SpecialPlayerCases) do
+				for regex, case in pairs(SpecialPlayerCases) do
 					local matches = {string.match(tokenContent,"^"..regex.."$")}
 					if #matches > 0 then
 						foundCase = true
@@ -7344,7 +7344,7 @@ addcmd('togglevfly',{'tvfly'}, function(args, speaker)
 	end
 end)
 
-addcmd('vflyspeed',{'vflysp','vehicleflyspeed','vehicleflysp'}, function(args, speaker)
+addcmd('vflyspeed',{'vflysp', 'vehicleflyspeed', 'vehicleflysp'}, function(args, speaker)
 	local speed = args[1] or 1
 	if isNumber(speed) then
 		vehicleflyspeed = speed
