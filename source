@@ -1962,7 +1962,7 @@ function create(data)
 	local insts = {}
 	for i, v in pairs(data) do insts[v[1]] = Instance.new(v[2]) end
 
-	for _,v in pairs(data) do
+	for _, v in pairs(data) do
 		for prop,val in pairs(v[3]) do
 			if type(val) == "table" then
 				insts[v[1]][prop] = insts[val[1]]
@@ -4990,7 +4990,7 @@ end
 
 function FindInTable(tbl,val)
 	if tbl == nil then return false end
-	for _,v in pairs(tbl) do
+	for _, v in pairs(tbl) do
 		if v == val then return true end
 	end 
 	return false
@@ -5558,7 +5558,7 @@ end
 
 function getPlayersByName(Name)
 	local Name,Len,Found = string.lower(Name),#Name,{}
-	for _,v in pairs(Players:GetPlayers()) do
+	for _, v in pairs(Players:GetPlayers()) do
 		if Name:sub(0,1) == '@' then
 			if string.sub(string.lower(v.Name),1,Len-1) == Name:sub(2) then
 				table.insert(Found,v)
@@ -10219,7 +10219,7 @@ end)
 
 addcmd('copyanimation',{'copyanim','copyemote'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for _,v in ipairs(players)do
+	for _, v in ipairs(players)do
 		local char = Players[v].Character
 		for _, v1 in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetPlayingAnimationTracks()) do
 			v1:Stop()
@@ -10853,7 +10853,7 @@ addcmd('blockhead', {}, function(args, speaker)
 end)
 
 addcmd('blockhats', {}, function(args, speaker)
-	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+	for _, v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
 		for i,c in pairs(v:GetDescendants()) do
 			if c:IsA("SpecialMesh") then
 				c:Destroy()
@@ -10863,7 +10863,7 @@ addcmd('blockhats', {}, function(args, speaker)
 end)
 
 addcmd('blocktool', {}, function(args, speaker)
-	for _,v in pairs(speaker.Character:GetChildren()) do
+	for _, v in pairs(speaker.Character:GetChildren()) do
 		if v:IsA("Tool") or v:IsA("HopperBin") then
 			for i,c in pairs(v:GetDescendants()) do
 				if c:IsA("SpecialMesh") then
@@ -11305,7 +11305,7 @@ end)
 addcmd('hatspin',{'spinhats'}, function(args, speaker)
 	execCmd('unhatspin')
 	wait(.5)
-	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+	for _, v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
 		local keep = Instance.new("BodyPosition") keep.Name = randomString() keep.Parent = v.Handle
 		local spin = Instance.new("BodyAngularVelocity") spin.Name = randomString() spin.Parent = v.Handle
 		v.Handle:FindFirstChildOfClass("Weld"):Destroy()
@@ -11330,7 +11330,7 @@ addcmd('unhatspin',{'unspinhats'}, function(args, speaker)
 	if spinhats then
 		spinhats:Disconnect()
 	end
-	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+	for _, v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
 		v.Parent = workspace
 		for i,c in pairs(v.Handle) do
 			if c:IsA("BodyPosition") or c:IsA("BodyAngularVelocity") then
@@ -11656,18 +11656,18 @@ addcmd('disablestate', {}, function(args, speaker)
 	speaker.Character:FindFirstChildOfClass("Humanoid"):SetStateEnabled(x, false)
 end)
 
-addcmd('drophats',{'drophat'}, function(args, speaker)
+addcmd('drophats', {'drophat'}, function(args, speaker)
 	if speaker.Character then
-		for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+		for _, v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
 			v.Parent = workspace
 		end
 	end
 end)
 
-addcmd('deletehats',{'nohats','rhats'}, function(args, speaker)
+addcmd('deletehats', {'nohats', 'rhats'}, function(args, speaker)
 	for i, v in next, speaker.Character:GetDescendants() do
 		if v:IsA("Accessory") then
-			for i,p in next, v:GetDescendants() do
+			for i, p in next, v:GetDescendants() do
 				if p:IsA("Weld") then
 					p:Destroy()
 				end
@@ -12186,7 +12186,7 @@ function bring(speaker,target,fast)
 			humanoid.RootPart.CFrame = NormPos
 		end
 	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required', 'You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -12469,7 +12469,7 @@ addcmd("unhitboxes", {}, function(args, speaker)
     settings():GetService("RenderSettings").ShowBoundingBoxes = false
 end)
 
-addcmd('stareat',{'stare'}, function(args, speaker)
+addcmd('stareat', {'stare'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i, v in pairs(players) do
 		if Players[v] ~= speaker then
@@ -12498,7 +12498,7 @@ addcmd('stareat',{'stare'}, function(args, speaker)
 	end
 end)
 
-addcmd('unstareat',{'unstare','nostare','nostareat'}, function(args, speaker)
+addcmd('unstareat', {'unstare', 'nostare', 'nostareat'}, function(args, speaker)
 	if stareLoop then
 		stareLoop:Disconnect()
 	end
