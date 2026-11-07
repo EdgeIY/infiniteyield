@@ -4696,7 +4696,7 @@ addcmddesc('fireproximityprompts / firepp [name]', 'Uses all proximity prompts i
 addcmddesc('instantproximityprompts / instantpp', 'Disable the cooldown for proximity prompts'}
 addcmddesc('uninstantproximityprompts / uninstantpp', 'Undo the cooldown removal'}
 addcmddesc('tpunanchored / tpua [player]', 'Teleports unanchored parts to a player'}
-addcmddesc('animsunanchored / freezeua', 'Freezes unanchored parts'}
+addcmddesc('freezeunanchored / freezeua', 'Freezes unanchored parts'}
 addcmddesc('thawunanchored / thawua / unfreezeua', 'Thaws unanchored parts'}
 addcmddesc('removeterrain / rterrain / noterrain', 'Removes all terrain'}
 addcmddesc('clearnilinstances / nonilinstances / cni', 'Removes nil instances'}
