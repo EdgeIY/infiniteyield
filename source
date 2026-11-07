@@ -10104,6 +10104,11 @@ addcmd('loopnobgui',{'loopunbgui','loopnobillboardgui','loopunbillboardgui','loo
 			v:Destroy()
 		end
 	end
+
+	if charPartTrigger then
+		charPartTrigger:Disconnect()
+	end
+
 	local function charPartAdded(part)
 		if part:IsA("BillboardGui") or part:IsA("SurfaceGui") then
 			wait()
