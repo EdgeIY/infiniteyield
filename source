@@ -8767,7 +8767,7 @@ addcmd('unnoclipcam', {'unnccam', 'clipcam'}, function(args, speaker)
 end)
 
 addcmd('togglenoclipcam', {'tnccam'}, function(args, speaker)
-	noclipcam(not cnoclip, speaker)
+	execCmd(cnoclip and "clipcam" or "nccam")
 end)
 
 addcmd('maxzoom', {}, function(args, speaker)
