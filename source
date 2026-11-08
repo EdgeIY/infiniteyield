@@ -2963,6 +2963,8 @@ useFactorySettings = function()
 	logsEnabled = false
 	jLogsEnabled = false
 	logsWebhook = nil
+	apiKey = nil
+	aiModel = "openai/gpt-oss-120b"
 	aliases = {}
 	binds = {}
 	WayPoints = {}
@@ -3070,6 +3072,8 @@ function saves()
 					if vtype(json.logsEnabled, "boolean") then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if vtype(json.jLogsEnabled, "boolean") then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
+					if vtype(json.apiKey, "string") then apiKey = json.apiKey else apiKey = nil end
+					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = nil end
 					if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
 					if vtype(json.binds, "table") then binds = json.binds else binds = {} end
 					if vtype(json.spawnCmds, "table") then spawnCmds = json.spawnCmds end
@@ -3140,6 +3144,8 @@ function updatesaves()
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
 			logsWebhook = logsWebhook;
+			apiKey = apiKey;
+			aiModel = aiModel;
 			aliases = aliases;
 			binds = binds or {};
 			WayPoints = AllWaypoints;
@@ -4605,6 +4611,9 @@ CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a discord webhook for chatlogs to go to (provide no url to disable this)'}
+CMDs[#CMDs + 1] = {NAME = 'verity / aimode / ai [prompt]', DESC = 'Talk to AI'}
+CMDs[#CMDs + 1] = {NAME = 'apikey / aikey [key]', DESC = 'Sets API key so the AI can function'}
+CMDs[#CMDs + 1] = {NAME = 'aimodel [model]', DESC = 'Sets the AI model'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
@@ -11755,6 +11764,88 @@ addcmd("chatlogswebhook", {"logswebhook"}, function(args, speaker)
 	end
 	logsWebhook = args[1] or nil
 	updatesaves()
+end)
+
+function askGroq(prompt)
+	local success, response = pcall(function()
+		return httprequest({
+			Url = "https://api.groq.com/openai/v1/chat/completions",
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+				["Authorization"] = "Bearer " .. apiKey
+			},
+			Body = HttpService:JSONEncode({
+				model = aiModel,
+
+				messages = {
+					{
+						role = "user",
+						content = prompt
+					}
+				},
+
+				temperature = 0.7,
+				max_tokens = 200
+			})
+		})
+	end)
+
+	if success and response and response.Success then
+		local data = HttpService:JSONDecode(response.Body)
+
+		if data.choices
+			and data.choices[1]
+			and data.choices[1].message
+			and data.choices[1].message.content then
+
+			return data.choices[1].message.content
+		end
+	end
+
+	return "Error: Could not fetch response from AI."
+end
+
+addcmd("verity", {"aimode", "ai", "askai", "gpt"}, function(args, speaker)
+	if not httprequest then
+		return notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+	end
+
+	if not apiKey then 
+		return notify("Please set API key (apikey).")
+	end
+
+	if not aiModel then
+		return notify("Please set AI model (aimodel).")
+	end
+
+	if args[1] then
+		local prompt = table.concat(args, " ")
+		task.spawn(function()
+			local aiResponse = askGroq(prompt)
+			return notify("AI", aiResponse)
+		end)
+	end
+end)
+
+addcmd("apikey", {"aikey"}, function(args, speaker)
+	if args[1] then
+		apiKey = args[1]
+		notify("AI", "API key updated successfully.")
+		updatesaves()
+	else
+		notify("AI", "Please provide a valid API key.")
+	end
+end)
+
+addcmd("aimodel", {}, function(args, speaker)
+	if args[1] then
+		aiModel = table.concat(args, " ")
+		notify("AI", "Model updated to: " .. aiModel)
+		updatesaves()
+	else
+		notify("AI", "Current model: " .. tostring(aiModel))
+	end
 end)
 
 flinging = false
