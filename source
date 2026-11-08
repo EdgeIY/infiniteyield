@@ -9119,24 +9119,29 @@ end)
 
 addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
     local character = speaker.Character
-    local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+	local humanoid = nil
+	if character then
+    	humanoid = character:FindFirstChildOfClass("Humanoid")
+	end
     if not humanoid then return end
 
     local seat = humanoid.SeatPart
-    local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA("Model") else nil
-    if vehicleModel == nil then
+    local vehicleModel = nil
+	if seat then 
+		vehicleModel = seat:FindFirstAncestorWhichIsA("Model")
+	else
         notify("Vehicle Goto", "Make sure you're sitting in a vehicle.")
         return
     end
 
     for _, v in getPlayer(args[1], speaker) do
-        if Players[v].Character == nil then continue end
-
-        local root = getRoot(Players[v].Character)
-        if root == nil then continue end
-
-        vehicleModel:PivotTo(root:GetPivot())
-        break
+        if Players[v].Character ~= nil then
+        	local root = getRoot(Players[v].Character)
+        	if root ~= nil then
+				vehicleModel:PivotTo(root:GetPivot())
+				break
+			end
+		end
     end
 end)
 
@@ -12225,7 +12230,7 @@ addcmd('unwalltp',{'nowalltp'},function(args, speaker)
 end)
 
 autoclicking = false
-addcmd('autoclick',{},function(args, speaker)
+addcmd('autoclick', {}, function(args, speaker)
 	if mouse1press and mouse1release then
 		execCmd('unautoclick')
 		wait()
@@ -12242,29 +12247,31 @@ addcmd('autoclick',{},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+
+		notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop (or type 'unautoclick')")
+
 		repeat wait(clickDelay)
 			mouse1press()
 			wait(releaseDelay)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
-addcmd('unautoclick',{'noautoclick'},function(args, speaker)
+addcmd('unautoclick',{'noautoclick'}, function(args, speaker)
 	autoclicking = false
 	if cancelAutoClick then cancelAutoClick:Disconnect() end
 end)
 
-addcmd('mousesensitivity',{'ms'},function(args, speaker)
+addcmd('mousesensitivity',{'ms'}, function(args, speaker)
 	UserInputService.MouseDeltaSensitivity = args[1]
 end)
 
 local nameBox = nil
 local nbSelection = nil
-addcmd('hovername',{},function(args, speaker)
+addcmd('hovername', {}, function(args, speaker)
 	execCmd('unhovername')
 	wait()
 	nameBox = Instance.new("TextLabel")
@@ -12320,7 +12327,7 @@ addcmd('hovername',{},function(args, speaker)
 	nbUpdateFunc = IYMouse.Move:Connect(updateNameBox)
 end)
 
-addcmd('unhovername',{'nohovername'},function(args, speaker)
+addcmd('unhovername',{'nohovername'}, function(args, speaker)
 	if nbUpdateFunc then
 		nbUpdateFunc:Disconnect()
 		nameBox:Destroy()
@@ -12553,14 +12560,15 @@ addcmd("findfriendgroups", {}, function(args, speaker)
     local found = 0
 
     for _, group in ipairs(groups) do
-        if #group == 1 then continue end
-        local names = {}
-        for _, player in ipairs(group) do
-            table.insert(names, playerList and player.DisplayName or player.Name)
-        end
-        result = result .. index .. ". " .. table.concat(names, ", ") .. "\n"
-        index = index + 1
-        found = found + 1
+        if #group ~= 1 then
+        	local names = {}
+        	for _, player in ipairs(group) do
+            	table.insert(names, playerList and player.DisplayName or player.Name)
+        	end
+        	result = result .. index .. ". " .. table.concat(names, ", ") .. "\n"
+        	index = index + 1
+        	found = found + 1
+		end
     end
 
     createPopup("Friend Groups", found == 0 and "None" or result)
@@ -12634,8 +12642,10 @@ addcmd("trip", {}, function(args, speaker)
 	end
 end)
 
+adblock = false
 addcmd("removeads", {"adblock"}, function(args, speaker)
-	while wait() do
+	adblock = true -- this command is coded like hot ass
+	repeat wait(0.1)
 		pcall(function()
 			for i, v in pairs(workspace:GetDescendants()) do
 				if v:IsA("PackageLink") then
@@ -12648,12 +12658,20 @@ addcmd("removeads", {"adblock"}, function(args, speaker)
 				end
 			end
 		end)
-	end
+	until adblock == false
+end)
+
+addcmd("unremoveads", {"unadblock"}, function(args, speaker)
+	adblock = false
 end)
 
 addcmd("scare", {"spook"}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local oldpos = nil
+	local spooktime = 0.5
+	if args[2] and isNumber(args[2]) then
+		spooktime = args[2]
+	end
 
 	for _, v in pairs(players) do
 		local root = speaker.Character and getRoot(speaker.Character)
@@ -12662,9 +12680,9 @@ addcmd("scare", {"spook"}, function(args, speaker)
 
 		if root and targetRoot and target ~= speaker then
 			oldpos = root.CFrame
-			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.lookVector * 2
+			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.LookVector * 2
 			root.CFrame = CFrame.new(root.Position, targetRoot.Position)
-			task.wait(0.5)
+			task.wait(spooktime)
 			root.CFrame = oldpos
 		end
 	end
@@ -12684,7 +12702,9 @@ addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
 	if type(alignmentKeysEmotes) == "boolean" then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
 	end
-	alignmentKeys:Disconnect()
+	if alignmentKeys then
+		alignmentKeys:Disconnect()
+	end
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12733,8 +12753,11 @@ end)
 
 addcmd("unlistento", {}, function(args, speaker)
 	SoundService:SetListener(Enum.ListenerType.Camera)
-	listentoChar:Disconnect()
+	if listentoChar then
+		listentoChar:Disconnect()
+	end
 end)
+
 
 addcmd("jerk", {}, function(args, speaker)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
@@ -12763,23 +12786,23 @@ addcmd("jerk", {}, function(args, speaker)
 	humanoid.Died:Connect(stopTomfoolery)
 
 	while task.wait() do
-		if not jorkin then continue end
+		if jorkin then
+			local isR15 = r15(speaker)
+			if not track then
+				local anim = Instance.new("Animation")
+				anim.AnimationId = not isR15 and "rbxassetid://72042024" or "rbxassetid://698251653"
+				track = humanoid:LoadAnimation(anim)
+			end
 
-		local isR15 = r15(speaker)
-		if not track then
-			local anim = Instance.new("Animation")
-			anim.AnimationId = not isR15 and "rbxassetid://72042024" or "rbxassetid://698251653"
-			track = humanoid:LoadAnimation(anim)
-		end
-
-		track:Play()
-		track:AdjustSpeed(isR15 and 0.7 or 0.65)
-		track.TimePosition = 0.6
-		task.wait(0.1)
-		while track and track.TimePosition < (not isR15 and 0.65 or 0.7) do task.wait(0.1) end
-		if track then
-			track:Stop()
-			track = nil
+			track:Play()
+			track:AdjustSpeed(isR15 and 0.7 or 0.65)
+			track.TimePosition = 0.6
+			task.wait(0.1)
+			while track and track.TimePosition < (not isR15 and 0.65 or 0.7) do task.wait(0.1) end
+			if track then
+				track:Stop()
+				track = nil
+			end
 		end
 	end
 end)
@@ -12813,15 +12836,13 @@ end)
 
 addcmd("mutevc", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		if Players[plr] == speaker then continue end
-		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true)
+		if Players[plr] ~= speaker then Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, true) end
 	end
 end)
 
 addcmd("unmutevc", {}, function(args, speaker)
 	for _, plr in getPlayer(args[1], speaker) do
-		if Players[plr] == speaker then continue end
-		Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false)
+		if Players[plr] ~= speaker then Services.VoiceChatInternal:SubscribePause(Players[plr].UserId, false) end
 	end
 end)
 
@@ -12832,7 +12853,7 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 	if success and canInvite then
 		SocialService:PromptPhoneBook(speaker, "")
 	else
-		notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
+		notify("Phonebook", "It seems you're not able to call anyone.")
 	end
 end)
 
@@ -13010,10 +13031,10 @@ keycodeMap = {
 autoKeyPressing = false
 cancelAutoKeyPress = nil
 
-addcmd('autokeypress',{'keypress'},function(args, speaker)
+addcmd('autokeypress',{'keypress'}, function(args, speaker)
 	if keypress and keyrelease and args[1] then
 		local code = keycodeMap[args[1]:lower()]
-		if not code then notify('Auto Key Press',"Invalid key") return end
+		if not code then notify('Auto Key Press', "Invalid key") return end
 		execCmd('unautokeypress')
 		wait()
 		local clickDelay = 0.1
@@ -13029,7 +13050,9 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+
+		notify('Auto Key Press', "Press [backspace] and [=] at the same time to stop (or type 'unautokeypress')")
+
 		repeat wait(clickDelay)
 			keypress(code)
 			wait(releaseDelay)
@@ -13037,11 +13060,11 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
-addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},function(args, speaker)
+addcmd('unautokeypress', {'noautokeypress','unkeypress','nokeypress'}, function(args, speaker)
 	autoKeyPressing = false
 	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
 end)
