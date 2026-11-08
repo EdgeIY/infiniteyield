@@ -9936,16 +9936,36 @@ addcmd("jump", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
-local infjump
-addcmd("infinitejump", {"infjump", "flyjump"}, function(args, speaker)
-	if infjump then infjump:Disconnect() end
-	infjump = UserInputService.JumpRequest:Connect(function()
+local infJump
+infJumpDebounce = false
+addcmd("infjump", {"infinitejump"}, function(args, speaker)
+	if infJump then infJump:Disconnect() end
+	infJumpDebounce = false
+	infJump = UserInputService.JumpRequest:Connect(function()
+		if not infJumpDebounce then
+			infJumpDebounce = true
+			speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+			wait()
+			infJumpDebounce = false
+		end
+	end)
+end)
+
+addcmd("uninfjump", {"uninfinitejump", "noinfjump", "noinfinitejump"}, function(args, speaker)
+	if infJump then infJump:Disconnect() end
+	infJumpDebounce = false
+end)
+
+local flyjump
+addcmd("flyjump", {}, function(args, speaker)
+	if flyjump then flyjump:Disconnect() end
+	flyjump = UserInputService.JumpRequest:Connect(function()
 		speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
-addcmd("uninfinitejump", {"uninfjump", "unflyjump", "noflyjump"}, function(args, speaker)
-	if infjump then infjump:Disconnect() end
+addcmd("unflyjump", {"noflyjump"}, function(args, speaker)
+	if flyjump then flyjump:Disconnect() end
 end)
 
 local HumanModCons = {}
