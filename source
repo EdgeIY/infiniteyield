@@ -4661,6 +4661,8 @@ CMDs[#CMDs + 1] = {NAME = 'maxzoom [num]', DESC = 'Maximum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'minzoom [num]', DESC = 'Minimum camera zoom'}
 CMDs[#CMDs + 1] = {NAME = 'camdistance [num]', DESC = 'Changes camera distance from your player'}
 CMDs[#CMDs + 1] = {NAME = 'fov [num]', DESC = 'Adjusts field of view (default is 70)'}
+CMDs[#CMDs + 1] = {NAME = 'loopfov [num]', DESC = 'Makes sure FOV stays at num'}
+CMDs[#CMDs + 1] = {NAME = 'unloopfov', DESC = 'Disables loopfov'}
 CMDs[#CMDs + 1] = {NAME = 'fixcam / restorecam', DESC = 'Fixes camera'}
 CMDs[#CMDs + 1] = {NAME = 'enableshiftlock / enablesl', DESC = 'Enables the shift lock option'}
 CMDs[#CMDs + 1] = {NAME = 'lookat [player]', DESC = 'Moves your camera view to a player'}
@@ -8641,6 +8643,30 @@ addcmd('fov',{},function(args, speaker)
 	local fov = args[1] or 70
 	if isNumber(fov) then
 		workspace.CurrentCamera.FieldOfView = fov
+	end
+end)
+
+addcmd('loopfov',{},function(args, speaker)
+	local fov = args[1] or 70
+	if isNumber(fov) then
+		fov = tonumber(fov)
+		if loopingFov then
+			loopingFov:Disconnect()
+			loopingFov = nil
+		end
+		local function lfv()
+			if workspace.CurrentCamera.FieldOfView ~= fov then
+				workspace.CurrentCamera.FieldOfView = fov
+			end
+		end
+		loopingFov = RunService.RenderStepped:Connect(lfv)
+	end
+end)
+
+addcmd('unloopfov',{},function(args, speaker)
+	if loopingFov then
+		loopingFov:Disconnect()
+		loopingFov = nil
 	end
 end)
 
