@@ -4606,6 +4606,8 @@ CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whi
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a discord webhook for chatlogs to go to (provide no url to disable this)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
+CMDs[#CMDs + 1] = {NAME = 'parrot', DESC = 'Copy and chat what anyone says'}
+CMDs[#CMDs + 1] = {NAME = 'unparrot', DESC = 'Undoes parrot'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
 CMDs[#CMDs + 1] = {NAME = 'whisper / pm [player] [text]', DESC = 'Makes you whisper a string to someone (possible mute bypass)'}
@@ -10646,6 +10648,14 @@ addcmd('chat',{'say'},function(args, speaker)
 	chatMessage(cString)
 end)
 
+parroting = false
+addcmd('parrot',{},function(args, speaker)
+	parroting = true
+end)
+
+addcmd('unparrot',{},function(args, speaker)
+	parroting = false
+end)
 
 spamming = false
 spamspeed = 1
@@ -13278,6 +13288,11 @@ if not isLegacyChat then
 			end
 			eventEditor.FireEvent("OnChatted", player.Name, message)
 			sendChatWebhook(player, message)
+
+			if parroting then
+				if player == Players.LocalPlayer then return end
+				chatMessage(message)
+			end
 		end
 	end)
 end
