@@ -12388,30 +12388,36 @@ addcmd("unhitboxes", {}, function(args, speaker)
     settings():GetService("RenderSettings").ShowBoundingBoxes = false
 end)
 
-addcmd('stareat',{'stare'},function(args, speaker)
+addcmd('stareat', {'stare'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		if stareLoop then
-			stareLoop:Disconnect()
-		end
-		if not getRoot(Players.LocalPlayer.Character) and getRoot(Players[v].Character) then return end
-		local function stareFunc()
-			if Players.LocalPlayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
-				local chrPos=Players.LocalPlayer.Character.PrimaryPart.Position
-				local tPos=getRoot(Players[v].Character).Position
-				local modTPos=Vector3.new(tPos.X,chrPos.Y,tPos.Z)
-				local newCF=CFrame.new(chrPos,modTPos)
-				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
-			elseif not Players:FindFirstChild(v) then
+	for i, v in pairs(players) do
+		if Players[v] ~= speaker then
+			if stareLoop then
 				stareLoop:Disconnect()
 			end
-		end
+			
+			if not getRoot(speaker.Character) and getRoot(Players[v].Character) then return end
+			
+			local function stareFunc()
+				if speaker.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
+					local chrPos = speaker.Character.PrimaryPart.Position
+					local tPos = getRoot(Players[v].Character).Position
+					local modTPos = Vector3.new(tPos.X,chrPos.Y,tPos.Z)
+					local newCF = CFrame.new(chrPos,modTPos)
+					speaker.Character:SetPrimaryPartCFrame(newCF)
+				elseif not Players:FindFirstChild(v) then
+					stareLoop:Disconnect()
+				end
+			end
 
-		stareLoop = RunService.RenderStepped:Connect(stareFunc)
+			stareLoop = RunService.RenderStepped:Connect(stareFunc)
+		else
+			notify('Stare At', 'You cannot stare at yourself.')
+		end
 	end
 end)
 
-addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
+addcmd('unstareat', {'unstare', 'nostare', 'nostareat'}, function(args, speaker)
 	if stareLoop then
 		stareLoop:Disconnect()
 	end
