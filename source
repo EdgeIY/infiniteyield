@@ -4702,8 +4702,9 @@ CMDs[#CMDs + 1] = {NAME = 'antivoid', DESC = 'Prevents you from falling into the
 CMDs[#CMDs + 1] = {NAME = 'unantivoid / noantivoid', DESC = 'Disables antivoid'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
+CMDs[#CMDs + 1] = {NAME = 'unfullbright / unfb (CLIENT)', DESC = 'Undoes fullbright'}
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
-CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops fullbright'}
+CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops and undoes fullbright'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
 CMDs[#CMDs + 1] = {NAME = 'day (CLIENT)', DESC = 'Changes the time to day for the client'}
 CMDs[#CMDs + 1] = {NAME = 'night (CLIENT)', DESC = 'Changes the time to night for the client'}
@@ -11464,7 +11465,20 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 	end
 end)
 
-addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
+local oldfbsets, isfbac = nil, false
+
+addcmd('fullbright', {'fb', 'fullbrightness'}, function(args, speaker)
+	if not isfbac then
+		oldfbsets = {
+			Brightness = Lighting.Brightness,
+			ClockTime = Lighting.ClockTime,
+			FogEnd = Lighting.FogEnd,
+			GlobalShadows = Lighting.GlobalShadows,
+			OutdoorAmbient = Lighting.OutdoorAmbient
+		}
+		isfbac = true
+	end
+	
 	Lighting.Brightness = 2
 	Lighting.ClockTime = 14
 	Lighting.FogEnd = 100000
@@ -11473,6 +11487,7 @@ addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
 end)
 
 addcmd('loopfullbright',{'loopfb'},function(args, speaker)
+	execCmd("fb")
 	if brightLoop then
 		brightLoop:Disconnect()
 	end
@@ -11487,9 +11502,20 @@ addcmd('loopfullbright',{'loopfb'},function(args, speaker)
 	brightLoop = RunService.RenderStepped:Connect(brightFunc)
 end)
 
-addcmd('unloopfullbright',{'unloopfb'},function(args, speaker)
+addcmd('unloopfullbright',{'unloopfb', 'unfb', 'unfullbright', 'unfullbrightness'},function(args, speaker)
 	if brightLoop then
 		brightLoop:Disconnect()
+		brightLoop = nil
+	end
+    if isfbac and oldfbsets then		
+		Lighting.Brightness = oldfbsets.Brightness
+		Lighting.ClockTime = oldfbsets.ClockTime
+		Lighting.FogEnd = oldfbsets.FogEnd
+		Lighting.GlobalShadows = oldfbsets.GlobalShadows
+		Lighting.OutdoorAmbient = oldfbsets.OutdoorAmbient
+		
+		isfbac = false
+		oldfbsets = nil
 	end
 end)
 
