@@ -11955,6 +11955,7 @@ end)
 
 addcmd("clicktype", {}, function(args, speaker)
 	clickType = args[1]:lower() or "bang"
+	return "Assigned as " .. clickType
 end)
 
 addcmd("antifling", {}, function(args, speaker)
