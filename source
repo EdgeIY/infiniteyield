@@ -155,6 +155,7 @@ if makefolder and isfolder and writefile and isfile then
 	end)
 end
 
+scriptName = "Infinite Yield"
 currentVersion = "6.4.2"
 
 ScaledHolder = Instance.new("Frame")
@@ -359,7 +360,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "Infinite Yield FE v" .. currentVersion
+Title.Text = scriptName .. " FE v" .. currentVersion
 
 do
 	local emoji = ({
@@ -3119,7 +3120,7 @@ function saves()
 		if jsonAttempts >= 10 then
 			nosaves = true
 			useFactorySettings()
-			createPopup("File Error", "Sorry, we have attempted to parse your save file, but it is unreadable!\n\nInfinite Yield is now using factory settings until your exploit's file system works.\n\nYour save file has not been deleted.")
+			createPopup("File Error", "Sorry, we have attempted to parse your save file, but it is unreadable!\n\n" .. scriptName .. " is now using factory settings until your exploit's file system works.\n\nYour save file has not been deleted.")
 		else
 			nosaves = true
 			useFactorySettings()
@@ -4017,7 +4018,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
 			local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
-			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
+			local writelogs = '-- " .. scriptName .. " Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
 			end
@@ -6579,7 +6580,7 @@ end)
 addcmd('keepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = true
-		notify('KeepIY','Infinite Yield will now run after you teleport')
+		notify('KeepIY',scriptName .. ' will now run after you teleport')
 		updatesaves()
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
@@ -6589,7 +6590,7 @@ end)
 addcmd('unkeepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = false
-		notify('KeepIY','Infinite Yield will no longer run after you teleport')
+		notify('KeepIY',scriptName .. ' will no longer run after you teleport')
 		updatesaves()
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
