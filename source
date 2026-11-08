@@ -12226,12 +12226,17 @@ addcmd('walltp',{},function(args, speaker)
 			end
 		end
 	end
+	if walltpTouch then
+		walltpTouch:Disconnect()
+		walltpTouch = nil
+	end
 	walltpTouch = torso.Touched:Connect(touchedFunc)
 end)
 
 addcmd('unwalltp',{'nowalltp'},function(args, speaker)
 	if walltpTouch then
 		walltpTouch:Disconnect()
+		walltpTouch = nil
 	end
 end)
 
