@@ -3073,7 +3073,7 @@ function saves()
 					if vtype(json.jLogsEnabled, "boolean") then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
 					if vtype(json.apiKey, "string") then apiKey = json.apiKey else apiKey = nil end
-					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = nil end
+					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = "openai/gpt-oss-120b" end
 					if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
 					if vtype(json.binds, "table") then binds = json.binds else binds = {} end
 					if vtype(json.spawnCmds, "table") then spawnCmds = json.spawnCmds end
