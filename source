@@ -4481,7 +4481,7 @@ CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Cobalt to intercept 
 CMDs[#CMDs + 1] = {NAME = 'simplespy / sspy', DESC = 'Opens Simple Spy V3 to intercept remote calls from the client to the server'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
-CMDs[#CMDs + 1] = {NAME = 'identifyexecutor / identifyexec / iexec', DESC = 'Identifies the executor you are using, and uses WEAO for more info if possible'}
+CMDs[#CMDs + 1] = {NAME = 'execinfo [true/false]', DESC = 'Identifies the executor you are using. true = prints all WEAO info about your executor if available.'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj [reposition]', DESC = 'Makes you rejoin the game'}
@@ -6949,9 +6949,9 @@ function exploit_info(tbl, indent)
     end
 end
 
-addcmd('identifyexecutor', {'identifyexec', 'iexec', 'execinfo'}, function(args, speaker)
+addcmd('execinfo', {'identifyexec', 'iexec', 'identifyexecutor'}, function(args, speaker)
     local name, version = identifyexecutor()
-    local ise = name and (version and name .. " v" .. version or name) or "Unknown Executor"
+    local ise = name and (version and name .. " " .. version or name) or "Unknown Executor"
 
     if not httprequest then return notify('Executor Info', ise) end
 
@@ -6963,7 +6963,7 @@ addcmd('identifyexecutor', {'identifyexec', 'iexec', 'execinfo'}, function(args,
 
         local success, err = pcall(function()
             local response = httprequest({
-                Url = "https://weao.xyz",
+                Url = "https://weao.xyz/api/status/exploits",
                 Method = "GET",
                 Headers = {
                     ["User-Agent"] = "WEAO-3PService",
@@ -6976,17 +6976,18 @@ addcmd('identifyexecutor', {'identifyexec', 'iexec', 'execinfo'}, function(args,
                 
                 if type(data) == "table" then
                     for _, exploit in pairs(data) do
-                        if type(exploit) == "table" and exploit.title and string.lower(exploit.title) == string.lower(name or "") then
+                        if type(exploit) == "table" and exploit.title and (string.find(string.lower(name or ""), string.lower(exploit.title)) or string.find(string.lower(exploit.title), string.lower(name or ""))) then
                             foundex = exploit.title
                             statusText = exploit.updateStatus and "Updated" or "Outdated/Updating"
                             suncText = exploit.suncPercentage and (tostring(exploit.suncPercentage) .. "%") or "N/A"
                             safetyText = exploit.detected and "Detected" or "Undetected"
                             
-                            print("====== [WEAO RAW DATABASE RECORD] ======")
-                            exploit_info(exploit)
-							-- print(HttpService:JSONEncode(exploit))
-                            print("========================================")
-                            
+                            if args[1] then
+                                print("====== [WEAO RAW DATABASE RECORD] ======")
+                                exploit_info(exploit)
+							    --print(HttpService:JSONEncode(exploit))
+                                print("========================================")
+                            end
                             break
                         end
                     end
@@ -6998,7 +6999,7 @@ addcmd('identifyexecutor', {'identifyexec', 'iexec', 'execinfo'}, function(args,
             task.wait(0.5)                          
             notify(
                 "WEAO Network Status for " .. foundex, 
-                string.format("%s Status:\n• Database: %s\n• Stability (sUNC): %s\n• Detection: %s", foundex, statusText, suncText, safetyText)
+                string.format("•Status: %s\n• sUNC: %s\n• Detection: %s", statusText, suncText, safetyText)
             )
         else
             notify('Executor Info', ise)
