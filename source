@@ -4674,6 +4674,8 @@ CMDs[#CMDs + 1] = {NAME = 'lockworkspace / lockws', DESC = 'Locks the whole work
 CMDs[#CMDs + 1] = {NAME = 'unlockworkspace / unlockws', DESC = 'Unlocks the whole workspace'}
 CMDs[#CMDs + 1] = {NAME = 'invisibleparts / invisparts (CLIENT)', DESC = 'Shows invisible parts'}
 CMDs[#CMDs + 1] = {NAME = 'uninvisibleparts / uninvisparts (CLIENT)', DESC = 'Makes parts affected by invisparts return to normal'}
+CMDs[#CMDs + 1] = {NAME = 'hidechar [player] (CLIENT)', DESC = 'Hides a player(s)'}
+CMDs[#CMDs + 1] = {NAME = 'unhidechar [player] (CLIENT)', DESC = 'Unhides a player(s)'}
 CMDs[#CMDs + 1] = {NAME = 'deleteinvisparts / dip (CLIENT)', DESC = 'Deletes invisible parts'}
 CMDs[#CMDs + 1] = {NAME = 'gotopart [part name]', DESC = 'Moves your character to a part or multiple parts'}
 CMDs[#CMDs + 1] = {NAME = 'tweengotopart / tgotopart [part name]', DESC = 'Tweens your character to a part or multiple parts'}
@@ -4891,6 +4893,7 @@ CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are cu
 CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically remove a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
+CMDs[#CMDs + 1] = {NAME = 'viewbackpack / viewbp [player]', DESC = 'View the tools in a players backpack'}
 CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool'}
 CMDs[#CMDs + 1] = {NAME = 'boxreach [num]', DESC = 'Increases the hitbox of your held tool in a box shape'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach', DESC = 'Turns off reach'}
@@ -8825,6 +8828,38 @@ addcmd('uninvisibleparts',{'uninvisparts'},function(args, speaker)
 	shownParts = {}
 end)
 
+addcmd('hidechar',{},function(args, speaker)
+    local plr = getPlayer(args[1], speaker)
+    for i, x in pairs(plr) do
+        local plrvi = Players:FindFirstChild(x)
+        if plrvi and plrvi.Character then
+            for _, v in pairs(plrvi.Character:GetDescendants()) do
+                if v:IsA("BasePart") or v:IsA("Decal") then
+                    if v.Name ~= "HumanoidRootPart" then
+                        v.Transparency = 1
+                    end
+                end
+            end
+        end
+    end
+end)
+
+addcmd('unhidechar',{'showchar'},function(args, speaker)
+    local plr = getPlayer(args[1], speaker)
+    for i, x in pairs(plr) do
+        local plrvi = Players:FindFirstChild(x)
+        if plrvi and plrvi.Character then
+            for _, v in pairs(plrvi.Character:GetDescendants()) do
+                if v:IsA("BasePart") or v:IsA("Decal") then
+                    if v.Name ~= "HumanoidRootPart" then
+                        v.Transparency = 0
+                    end
+                end
+            end
+        end
+    end
+end)
+
 addcmd("btools", {}, function(args, speaker)
 	for i = 1, 4 do
 		local Tool = Instance.new("HopperBin")
@@ -11146,6 +11181,22 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 		specifictoolremoval[obj]:Disconnect()
 		specifictoolremoval[obj] = nil
 	end
+end)
+
+addcmd('viewbackpack',{'viewbp'},function(args, speaker)
+	local pl = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
+	if not pl then return end
+	if not pl.Backpack or not pl.Character then return end
+ 	local t, chartool = {}, pl.Character:FindFirstChildOfClass("Tool")
+	for _, v in pl.Backpack:GetChildren() do
+        if v:IsA("Tool") then table.insert(t, tostring(v)) end
+    end
+
+    if chartool then
+    	notify(("%s's tools"):format(tostring(pl)), tostring(chartool).. ", " ..table.concat(t, ", "))
+    else
+        notify(("%s's tools"):format(tostring(pl)), table.concat(t, ", "))
+    end
 end)
 
 addcmd('light',{},function(args, speaker)
