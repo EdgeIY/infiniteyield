@@ -4801,6 +4801,8 @@ CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when y
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
 CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
 CMDs[#CMDs + 1] = {NAME = 'unedgejump / unejump', DESC = 'Disables edgejump'}
+CMDs[#CMDs + 1] = {NAME = 'bunnyhop / bhop', DESC = 'Causes you to keep jumping even without holding jump'}
+CMDs[#CMDs + 1] = {NAME = 'unbunnyhop / unbhop', DESC = 'Disables bunnyhop'}
 CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'norotate / noautorotate', DESC = 'Disables AutoRotate'}
@@ -10021,6 +10023,31 @@ end)
 addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or nil
 	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or nil
+end)
+
+addcmd('bunnyhop',{'bhop'},function(args, speaker)
+	execCmd("unbhop")
+
+	if not speaker.Character then return end
+	local humanoid = speaker.Character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+
+	local function hoppster()
+		if humanoid.Health <= 0 then
+			execCmd("unbhop")
+		elseif humanoid.FloorMaterial ~= Enum.Material.Air then
+			humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		end
+	end
+
+	bHOP = RunService.Heartbeat:Connect(hoppster)
+end)
+
+addcmd('unbunnyhop',{'unbhop'},function(args, speaker)
+	if bHOP then
+		bHOP:Disconnect()
+		bHOP = nil
+	end
 end)
 
 addcmd("team", {}, function(args, speaker)
