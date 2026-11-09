@@ -11794,8 +11794,8 @@ function askGroq(prompt)
 		})
 	end)
 
+	--print(response.Body)
 	if success and response and response.Success then
-		-- print(response.Body)
 		local data = HttpService:JSONDecode(response.Body)
 
 		if data.choices
@@ -11807,8 +11807,7 @@ function askGroq(prompt)
 		end
 	end
 
-	print(response)
-	return "Error: Could not fetch response from AI."
+	return "Error: Could not fetch response from AI. \n Make sure your API key is from Groq, a valid AI model is set, and that the max tokens is not set too high."
 end
 
 local canOpenAIWindow = true
