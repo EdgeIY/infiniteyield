@@ -11806,6 +11806,167 @@ function askGroq(prompt)
 	return "Error: Could not fetch response from AI."
 end
 
+local canOpenAIWindow = true
+function createAIWindow(aiResponseText)
+	if not canOpenAIWindow then return end
+	canOpenAIWindow = false
+
+	task.spawn(function()
+		local FRAME = Instance.new("Frame")
+		local shadow = Instance.new("Frame")
+		local PopupText = Instance.new("TextLabel")
+		local Exit = Instance.new("TextButton")
+		local ExitImage = Instance.new("ImageLabel")
+		local background = Instance.new("Frame")
+		local scrollFrame = Instance.new("ScrollingFrame")
+		local a = Instance.new("TextLabel")
+		local UIListLayout = Instance.new("UIListLayout")
+		local CopyResponse = Instance.new("TextButton")
+
+		FRAME.Name = randomString()
+		FRAME.Parent = ScaledHolder
+		FRAME.Active = true
+		FRAME.BackgroundTransparency = 1
+		FRAME.Position = UDim2.new(0.5, -130, 0, -500)
+		FRAME.Size = UDim2.new(0, 250, 0, 20)
+		FRAME.ZIndex = 10
+		dragGUI(FRAME)
+
+		shadow.Name = "shadow"
+		shadow.Parent = FRAME
+		shadow.BackgroundColor3 = currentShade2
+		shadow.BorderSizePixel = 0
+		shadow.Size = UDim2.new(0, 250, 0, 20)
+		shadow.ZIndex = 11
+		table.insert(shade2, shadow)
+
+		PopupText.Name = "PopupText"
+		PopupText.Parent = shadow
+		PopupText.BackgroundTransparency = 1
+		PopupText.Size = UDim2.new(1, 0, 0.95, 0)
+		PopupText.ZIndex = 12
+		PopupText.Font = Enum.Font.SourceSans
+		PopupText.TextSize = 14
+		PopupText.Text = "AI Response"
+		PopupText.TextColor3 = currentText1
+		PopupText.TextWrapped = true
+		table.insert(text1, PopupText)
+
+		Exit.Name = "Exit"
+		Exit.Parent = shadow
+		Exit.BackgroundTransparency = 1
+		Exit.Position = UDim2.new(1, -20, 0, 0)
+		Exit.Size = UDim2.new(0, 20, 0, 20)
+		Exit.Text = ""
+		Exit.ZIndex = 12
+
+		ExitImage.Parent = Exit
+		ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+		ExitImage.BackgroundTransparency = 1
+		ExitImage.Position = UDim2.new(0, 5, 0, 5)
+		ExitImage.Size = UDim2.new(0, 10, 0, 10)
+		ExitImage.Image = getcustomasset("infiniteyield/assets/close.png")
+		ExitImage.ZIndex = 13
+
+		background.Name = "background"
+		background.Parent = FRAME
+		background.Active = true
+		background.BackgroundColor3 = currentShade1
+		background.BorderSizePixel = 0
+		background.Position = UDim2.new(0, 0, 1, 0)
+		background.Size = UDim2.new(0, 250, 0, 250)
+		background.ZIndex = 10
+		table.insert(shade1, background)
+
+		scrollFrame.Name = "ResponseScroller"
+		scrollFrame.Parent = background
+		scrollFrame.Active = true 
+		scrollFrame.ClipsDescendants = true
+		scrollFrame.Selectable = true
+		scrollFrame.ScrollingEnabled = true
+		scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+		scrollFrame.BackgroundTransparency = 1
+		scrollFrame.BorderSizePixel = 0
+		scrollFrame.Position = UDim2.new(0, 5, 0, 10)
+		scrollFrame.Size = UDim2.new(1, -10, 1, -45)
+		scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+		scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		scrollFrame.ScrollBarThickness = 6
+		scrollFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+		scrollFrame.ZIndex = 15
+		table.insert(scroll, scrollFrame)
+
+		a.Name = "a"
+		a.Parent = scrollFrame
+		a.BackgroundTransparency = 1.000
+		a.Size = UDim2.new(1, -5, 0, 0)
+		a.AutomaticSize = Enum.AutomaticSize.Y
+		a.ZIndex = 16
+		a.Font = Enum.Font.SourceSans
+		a.Text = ""
+		a.TextColor3 = Color3.fromRGB(255, 255, 255)
+		a.TextSize = 14.000
+		a.TextStrokeTransparency = 0.800
+		a.TextWrapped = true
+		a.TextXAlignment = Enum.TextXAlignment.Left
+		a.TextYAlignment = Enum.TextYAlignment.Top
+		a.Visible = false
+
+		UIListLayout.Parent = scrollFrame
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.Padding = UDim.new(0, 4)
+
+		CopyResponse.Name = "CopyResponse"
+		CopyResponse.Parent = background
+		CopyResponse.BackgroundColor3 = currentShade2
+		CopyResponse.BorderSizePixel = 0
+		CopyResponse.Position = UDim2.new(0, 5, 1, -25)
+		CopyResponse.Size = UDim2.new(1, -10, 0, 20)
+		CopyResponse.Font = Enum.Font.SourceSans
+		CopyResponse.TextSize = 14
+		CopyResponse.Text = "Copy Entire Response"
+		CopyResponse.TextColor3 = currentText1
+		CopyResponse.ZIndex = 14
+		table.insert(shade2, CopyResponse)
+		table.insert(text1, CopyResponse)
+
+		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil)
+		task.wait(0.5)
+
+		local function populateGrid()
+			local script = Instance.new('LocalScript', scrollFrame)
+
+			local function addLabel(txt)
+				local newLb = script.Parent.a:Clone()
+				newLb.Name = "TextLabel"
+				newLb.Text = txt
+				newLb.Visible = true
+				newLb.Parent = script.Parent
+				table.insert(text1, newLb)
+			end
+
+			for line in string.gmatch(aiResponseText, "[^\r\n]+") do
+				addLabel(line)
+			end
+		end
+		coroutine.wrap(populateGrid)()
+
+		CopyResponse.MouseButton1Click:Connect(function()
+			toClipboard(aiResponseText)
+			CopyResponse.Text = "Copied!"
+			task.wait(1)
+			CopyResponse.Text = "Copy Entire Response"
+		end)
+
+		Exit.MouseButton1Click:Connect(function()
+			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
+			task.wait(0.6)
+			FRAME:Destroy()
+			canOpenAIWindow = true
+		end)
+	end)
+end
+
 addcmd("verity", {"aimode", "ai", "askai", "gpt"}, function(args, speaker)
 	if not httprequest then
 		return notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
@@ -11822,8 +11983,10 @@ addcmd("verity", {"aimode", "ai", "askai", "gpt"}, function(args, speaker)
 	if args[1] then
 		local prompt = table.concat(args, " ")
 		task.spawn(function()
+			notify("AI Status", "Processing query...", 3)
 			local aiResponse = askGroq(prompt)
-			return notify("AI", aiResponse)
+			
+			createAIWindow(aiResponse)
 		end)
 	end
 end)
