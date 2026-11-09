@@ -11795,6 +11795,7 @@ function askGroq(prompt)
 	end)
 
 	if success and response and response.Success then
+		-- print(response.Body)
 		local data = HttpService:JSONDecode(response.Body)
 
 		if data.choices
@@ -11941,6 +11942,10 @@ function createAIWindow(aiResponseText)
 			local script = Instance.new('LocalScript', scrollFrame)
 
 			local function addLabel(txt)
+				if txt == "" or txt:gsub("%s", "") == "" then
+					txt = " "
+				end
+
 				local newLb = script.Parent.a:Clone()
 				newLb.Name = "TextLabel"
 				newLb.Text = txt
@@ -11949,7 +11954,8 @@ function createAIWindow(aiResponseText)
 				table.insert(text1, newLb)
 			end
 
-			for line in string.gmatch(aiResponseText, "[^\r\n]+") do
+			local cltext = aiResponseText:gsub("\r\n", "\n") .. "\n"
+			for line in cltext:gmatch("([^\n]*)\n") do
 				addLabel(line)
 			end
 		end
