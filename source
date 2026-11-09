@@ -2965,6 +2965,7 @@ useFactorySettings = function()
 	logsWebhook = nil
 	apiKey = nil
 	aiModel = "openai/gpt-oss-120b"
+	maxTokens = 200
 	aliases = {}
 	binds = {}
 	WayPoints = {}
@@ -3074,6 +3075,7 @@ function saves()
 					if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
 					if vtype(json.apiKey, "string") then apiKey = json.apiKey else apiKey = nil end
 					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = "openai/gpt-oss-120b" end
+					if vtype(json.maxTokens, "number") then maxTokens = json.maxTokens else maxTokens = 200 end
 					if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
 					if vtype(json.binds, "table") then binds = json.binds else binds = {} end
 					if vtype(json.spawnCmds, "table") then spawnCmds = json.spawnCmds end
@@ -3146,6 +3148,7 @@ function updatesaves()
 			logsWebhook = logsWebhook;
 			apiKey = apiKey;
 			aiModel = aiModel;
+			maxTokens = maxTokens;
 			aliases = aliases;
 			binds = binds or {};
 			WayPoints = AllWaypoints;
@@ -11786,7 +11789,7 @@ function askGroq(prompt)
 				},
 
 				temperature = 0.7,
-				max_tokens = 200
+				max_tokens = maxTokens
 			})
 		})
 	end)
@@ -11803,6 +11806,7 @@ function askGroq(prompt)
 		end
 	end
 
+	print(response)
 	return "Error: Could not fetch response from AI."
 end
 
@@ -12008,6 +12012,16 @@ addcmd("aimodel", {}, function(args, speaker)
 		updatesaves()
 	else
 		notify("AI", "Current model: " .. tostring(aiModel))
+	end
+end)
+
+addcmd("maxtokens", {"maxaitokens", "maxapitokens", "aitokens", "apitokens"}, function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		maxTokens = args[1]
+		notify("AI", "Maximum tokens updated successfully.")
+		updatesaves()
+	else
+		notify("AI", "Please provide a valid number.")
 	end
 end)
 
