@@ -4614,9 +4614,10 @@ CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a discord webhook for chatlogs to go to (provide no url to disable this)'}
-CMDs[#CMDs + 1] = {NAME = 'verity / aimode / ai [prompt]', DESC = 'Talk to AI'}
+CMDs[#CMDs + 1] = {NAME = 'ai / aimode / verity [prompt]', DESC = 'Talk to AI'}
 CMDs[#CMDs + 1] = {NAME = 'apikey / aikey [key]', DESC = 'Sets API key so the AI can function'}
 CMDs[#CMDs + 1] = {NAME = 'aimodel [model]', DESC = 'Sets the AI model'}
+CMDs[#CMDs + 1] = {NAME = 'maxtokens [tokens]', DESC = 'Sets the max number of tokens to use for an AI response'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam', DESC = 'Turns off spam'}
@@ -11807,16 +11808,18 @@ function askGroq(prompt)
 		end
 	end
 
-	return "Error: Could not fetch response from AI. \n Make sure your API key is from Groq, a valid AI model is set, and that the max tokens is not set too high."
+	return "Error: Could not fetch response from AI. \n\nMake sure your API key is from Groq, a valid AI model is set, and that max tokens is not set too high.\n\nBody:\n"..response.Body
 end
 
-local canOpenAIWindow = true
 function createAIWindow(aiResponseText)
-	if not canOpenAIWindow then return end
-	canOpenAIWindow = false
+	if FRAMEAI then
+		FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
+		task.wait(0.6)
+		FRAMEAI:Destroy()
+	end
 
 	task.spawn(function()
-		local FRAME = Instance.new("Frame")
+		FRAMEAI = Instance.new("Frame")
 		local shadow = Instance.new("Frame")
 		local PopupText = Instance.new("TextLabel")
 		local Exit = Instance.new("TextButton")
@@ -11827,17 +11830,17 @@ function createAIWindow(aiResponseText)
 		local UIListLayout = Instance.new("UIListLayout")
 		local CopyResponse = Instance.new("TextButton")
 
-		FRAME.Name = randomString()
-		FRAME.Parent = ScaledHolder
-		FRAME.Active = true
-		FRAME.BackgroundTransparency = 1
-		FRAME.Position = UDim2.new(0.5, -130, 0, -500)
-		FRAME.Size = UDim2.new(0, 250, 0, 20)
-		FRAME.ZIndex = 10
-		dragGUI(FRAME)
+		FRAMEAI.Name = randomString()
+		FRAMEAI.Parent = ScaledHolder
+		FRAMEAI.Active = true
+		FRAMEAI.BackgroundTransparency = 1
+		FRAMEAI.Position = UDim2.new(0.5, -130, 0, -500)
+		FRAMEAI.Size = UDim2.new(0, 250, 0, 20)
+		FRAMEAI.ZIndex = 10
+		dragGUI(FRAMEAI)
 
 		shadow.Name = "shadow"
-		shadow.Parent = FRAME
+		shadow.Parent = FRAMEAI
 		shadow.BackgroundColor3 = currentShade2
 		shadow.BorderSizePixel = 0
 		shadow.Size = UDim2.new(0, 250, 0, 20)
@@ -11873,7 +11876,7 @@ function createAIWindow(aiResponseText)
 		ExitImage.ZIndex = 13
 
 		background.Name = "background"
-		background.Parent = FRAME
+		background.Parent = FRAMEAI
 		background.Active = true
 		background.BackgroundColor3 = currentShade1
 		background.BorderSizePixel = 0
@@ -11934,7 +11937,7 @@ function createAIWindow(aiResponseText)
 		table.insert(shade2, CopyResponse)
 		table.insert(text1, CopyResponse)
 
-		FRAME:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil)
+		FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil)
 		task.wait(0.5)
 
 		local function populateGrid()
@@ -11968,15 +11971,14 @@ function createAIWindow(aiResponseText)
 		end)
 
 		Exit.MouseButton1Click:Connect(function()
-			FRAME:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
+			FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
 			task.wait(0.6)
-			FRAME:Destroy()
-			canOpenAIWindow = true
+			FRAMEAI:Destroy()
 		end)
 	end)
 end
 
-addcmd("verity", {"aimode", "ai", "askai", "gpt"}, function(args, speaker)
+addcmd("ai", {"aimode", "verity", "askai", "gpt"}, function(args, speaker)
 	if not httprequest then
 		return notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
 	end
@@ -12026,7 +12028,7 @@ addcmd("maxtokens", {"maxaitokens", "maxapitokens", "aitokens", "apitokens"}, fu
 		notify("AI", "Maximum tokens updated successfully.")
 		updatesaves()
 	else
-		notify("AI", "Please provide a valid number.")
+		notify("AI", "Current max tokens: " .. tostring(maxTokens))
 	end
 end)
 
