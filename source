@@ -11992,7 +11992,7 @@ addcmd("ai", {"aimode", "verity", "askai", "gpt"}, function(args, speaker)
 	end
 
 	if args[1] then
-		local prompt = table.concat(args, " ")
+		local prompt = getstring(1, args)
 		task.spawn(function()
 			notify("AI Status", "Processing query...", 3)
 			local aiResponse = askGroq(prompt)
