@@ -2138,6 +2138,16 @@ function tryLoading(ls)
 	end
 end
 
+function tryLoadingAsync(ls)
+	local success, err = pcall(function()
+    	loadstring(game:HttpGetAsync(ls))()
+	end)
+
+	if not success then 
+   		notify("Load Failed", "Error: " .. tostring(err)) 
+	end
+end
+
 function getHierarchy(obj)
 	local fullname
 	local period
