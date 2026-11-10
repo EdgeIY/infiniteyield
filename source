@@ -4610,6 +4610,8 @@ CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whi
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a Discord webhook for chatlogs to go to (provide no URL to disable this)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
+CMDs[#CMDs + 1] = {NAME = 'parrot', DESC = 'Copy and chat what anyone says'}
+CMDs[#CMDs + 1] = {NAME = 'unparrot', DESC = 'Undoes parrot'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam / nospam', DESC = 'Turns off spam'}
 CMDs[#CMDs + 1] = {NAME = 'whisper / pm [player] [text]', DESC = 'Makes you whisper a string to someone (possible mute bypass)'}
@@ -4706,8 +4708,9 @@ CMDs[#CMDs + 1] = {NAME = 'antivoid', DESC = 'Prevents you from falling into the
 CMDs[#CMDs + 1] = {NAME = 'unantivoid / noantivoid', DESC = 'Disables antivoid'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'fullbright / fb (CLIENT)', DESC = 'Makes the map brighter / more visible'}
+CMDs[#CMDs + 1] = {NAME = 'unfullbright / unfb (CLIENT)', DESC = 'Undoes fullbright'}
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
-CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops fullbright'}
+CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops and undoes fullbright'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
 CMDs[#CMDs + 1] = {NAME = 'day (CLIENT)', DESC = 'Changes the time to day for the client'}
 CMDs[#CMDs + 1] = {NAME = 'night (CLIENT)', DESC = 'Changes the time to night for the client'}
@@ -4847,7 +4850,8 @@ CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters Humano
 CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
-CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
+CMDs[#CMDs + 1] = {NAME = 'trip [num]', DESC = 'Makes your character fall over (higher num = more velocity/force)'}
+CMDs[#CMDs + 1] = {NAME = 'btrip [num]', DESC = 'trip but more volatile (higher num = more velocity/force)'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
@@ -8459,9 +8463,9 @@ function GetFocusDistance(cameraFrame)
 	local viewport = Camera.ViewportSize
 	local projy = 2*math.tan(cameraFov/2)
 	local projx = viewport.x/viewport.y*projy
-	local fx = cameraFrame.rightVector
-	local fy = cameraFrame.upVector
-	local fz = cameraFrame.lookVector
+	local fx = cameraFrame.RightVector
+	local fy = cameraFrame.UpVector
+	local fz = cameraFrame.LookVector
 
 	local minVect = Vector3.new()
 	local minDist = 512
@@ -9980,8 +9984,8 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
 	local function autoJump()
 		if Char and Human then
-			local check1 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position-Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
-			local check2 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position+Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
+			local check1 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position-Vector3.new(0,1.5,0), Human.RootPart.CFrame.LookVector*3), Human.Parent)
+			local check2 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position+Vector3.new(0,1.5,0), Human.RootPart.CFrame.LookVector*3), Human.Parent)
 			if check1 or check2 then
 				Human.Jump = true
 			end
@@ -10654,6 +10658,14 @@ addcmd('chat',{'say'},function(args, speaker)
 	chatMessage(cString)
 end)
 
+parroting = false
+addcmd('parrot',{},function(args, speaker)
+	parroting = true
+end)
+
+addcmd('unparrot',{},function(args, speaker)
+	parroting = false
+end)
 
 spamming = false
 spamspeed = 1
@@ -11473,7 +11485,20 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 	end
 end)
 
-addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
+local oldfbsets, isfbac = nil, false
+
+addcmd('fullbright', {'fb', 'fullbrightness'}, function(args, speaker)
+	if not isfbac then
+		oldfbsets = {
+			Brightness = Lighting.Brightness,
+			ClockTime = Lighting.ClockTime,
+			FogEnd = Lighting.FogEnd,
+			GlobalShadows = Lighting.GlobalShadows,
+			OutdoorAmbient = Lighting.OutdoorAmbient
+		}
+		isfbac = true
+	end
+	
 	Lighting.Brightness = 2
 	Lighting.ClockTime = 14
 	Lighting.FogEnd = 100000
@@ -11482,6 +11507,7 @@ addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
 end)
 
 addcmd('loopfullbright',{'loopfb'},function(args, speaker)
+	execCmd("fb")
 	if brightLoop then
 		brightLoop:Disconnect()
 	end
@@ -11496,9 +11522,20 @@ addcmd('loopfullbright',{'loopfb'},function(args, speaker)
 	brightLoop = RunService.RenderStepped:Connect(brightFunc)
 end)
 
-addcmd('unloopfullbright',{'unloopfb'},function(args, speaker)
+addcmd('unloopfullbright',{'unloopfb', 'unfb', 'unfullbright', 'unfullbrightness'},function(args, speaker)
 	if brightLoop then
 		brightLoop:Disconnect()
+		brightLoop = nil
+	end
+    if isfbac and oldfbsets then		
+		Lighting.Brightness = oldfbsets.Brightness
+		Lighting.ClockTime = oldfbsets.ClockTime
+		Lighting.FogEnd = oldfbsets.FogEnd
+		Lighting.GlobalShadows = oldfbsets.GlobalShadows
+		Lighting.OutdoorAmbient = oldfbsets.OutdoorAmbient
+		
+		isfbac = false
+		oldfbsets = nil
 	end
 end)
 
@@ -12219,9 +12256,9 @@ addcmd('walltp',{},function(args, speaker)
 		if hit:IsA("BasePart") and hit.Position.Y > Root.Position.Y - speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight then
 			local hitP = getRoot(hit.Parent)
 			if hitP ~= nil then
-				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hitP.Size.Z/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.lookVector.Z)
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.LookVector.X,hitP.Size.Z/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.LookVector.Z)
 			elseif hitP == nil then
-				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hit.Size.Y/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.lookVector.Z)
+				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.LookVector.X,hit.Size.Y/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.LookVector.Z)
 			end
 		end
 	end
@@ -12635,12 +12672,35 @@ addcmd("fakeout", {}, function(args, speaker)
 	end
 end)
 
-addcmd("trip", {}, function(args, speaker)
+function tripov(speaker, tri, state)
 	local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	local root = speaker.Character and getRoot(speaker.Character)
-	if humanoid and root then
+	if not humanoid or not root then return end
+	if state then
 		humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
-		root.Velocity = root.CFrame.LookVector * 30
+		root.AssemblyLinearVelocity = root.CFrame.LookVector * tri
+	else
+		humanoid.PlatformStand = true
+		root.AssemblyLinearVelocity = root.CFrame.LookVector * tri
+		root.AssemblyAngularVelocity = Vector3.new(0, 0, 4)
+		
+		task.delay(1.5, function()
+			if humanoid and humanoid.Parent then humanoid.PlatformStand = false end
+		end)
+	end
+end
+
+addcmd("trip", {}, function(args, speaker)
+	local tripster = args[1] or 30
+	if isNumber(tripster) then
+		tripov(speaker, tripster, true)
+	end
+end)
+
+addcmd("btrip", {}, function(args, speaker)
+	local tripster = args[1] or 30
+	if isNumber(tripster) then
+		tripov(speaker, tripster, false)
 	end
 end)
 
@@ -12672,7 +12732,7 @@ addcmd("scare", {"spook"}, function(args, speaker)
 
 		if root and targetRoot and target ~= speaker then
 			oldpos = root.CFrame
-			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.lookVector * 2
+			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.LookVector * 2
 			root.CFrame = CFrame.new(root.Position, targetRoot.Position)
 			task.wait(0.5)
 			root.CFrame = oldpos
@@ -13238,6 +13298,11 @@ if not isLegacyChat then
 			end
 			eventEditor.FireEvent("OnChatted", player.Name, message)
 			sendChatWebhook(player, message)
+
+			if parroting then
+				if player == Players.LocalPlayer then return end
+				chatMessage(message)
+			end
 		end
 	end)
 end
