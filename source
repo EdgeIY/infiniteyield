@@ -11621,66 +11621,53 @@ addcmd('droppabletools',{},function(args, speaker)
 	end
 end)
 
-local currentToolSize = ""
-local currentGripPos = ""
-addcmd('reach',{},function(args, speaker)
+local curtoolsize, curgrippos
+
+function updreach(speaker, sizeX, sizeY, sizeZ)
 	execCmd('unreach')
-	wait()
-	for i,v in pairs(speaker.Character:GetDescendants()) do
-		if v:IsA("Tool") then
-			if args[1] then
-				currentToolSize = v.Handle.Size
-				currentGripPos = v.GripPos
-				local a = Instance.new("SelectionBox")
-				a.Name = "SelectionBoxCreated"
-				a.Parent = v.Handle
-				a.Adornee = v.Handle
-				v.Handle.Massless = true
-				v.Handle.Size = Vector3.new(0.5,0.5,args[1])
-				v.GripPos = Vector3.new(0,0,0)
-				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
-			else
-				currentToolSize = v.Handle.Size
-				currentGripPos = v.GripPos
-				local a = Instance.new("SelectionBox")
-				a.Name = "SelectionBoxCreated"
-				a.Parent = v.Handle
-				a.Adornee = v.Handle
-				v.Handle.Massless = true
-				v.Handle.Size = Vector3.new(0.5,0.5,60)
-				v.GripPos = Vector3.new(0,0,0)
-				speaker.Character:FindFirstChildOfClass('Humanoid'):UnequipTools()
-			end
-		end
-	end
-end)
+	task.wait()
 
-addcmd("boxreach", {}, function(args, speaker)
-	execCmd("unreach")
-	wait()
-	for i, v in pairs(speaker.Character:GetDescendants()) do
-		if v:IsA("Tool") then
-			local size = tonumber(args[1]) or 60
-			currentToolSize = v.Handle.Size
-			currentGripPos = v.GripPos
-			local a = Instance.new("SelectionBox")
-			a.Name = "SelectionBoxCreated"
-			a.Parent = v.Handle
-			a.Adornee = v.Handle
+	if not speaker.Character then return end
+
+	local humanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
+	if not humanoid then return end
+
+	for _, v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") and v:FindFirstChild("Handle") then
+			curtoolsize = v.Handle.Size
+			curgrippos = v.GripPos
+			
+			local box = Instance.new("SelectionBox")
+			box.Name = "SelectionBoxCreated"
+			box.Adornee = v.Handle
+			box.Parent = v.Handle
+			
 			v.Handle.Massless = true
-			v.Handle.Size = Vector3.new(size, size, size)
+			v.Handle.Size = Vector3.new(sizeX, sizeY, sizeZ)
 			v.GripPos = Vector3.new(0, 0, 0)
-			speaker.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+			
+			humanoid:UnequipTools()
 		end
 	end
+end
+
+addcmd('reach', {}, function(args, speaker)
+	local length = tonumber(args[1]) or 60
+	updreach(speaker, 0.5, 0.5, length)
 end)
 
-addcmd('unreach',{'noreach','unboxreach'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
-		if v:IsA("Tool") then
-			v.Handle.Size = currentToolSize
-			v.GripPos = currentGripPos
-			v.Handle.SelectionBoxCreated:Destroy()
+addcmd('boxreach', {}, function(args, speaker)
+	local size = tonumber(args[1]) or 60
+	updreach(speaker, size, size, size)
+end)
+
+addcmd('unreach', {'noreach', 'unboxreach'}, function(args, speaker)
+	for _, v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("Tool") and v:FindFirstChild("Handle") then
+			v.Handle.Size = curtoolsize or v.Handle.Size
+			v.GripPos = curgrippos or v.GripPos
+			local box = v.Handle:FindFirstChild("SelectionBoxCreated")
+			if box then box:Destroy() end
 		end
 	end
 end)
