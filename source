@@ -10601,6 +10601,10 @@ addcmd('sunc', {}, function(args, speaker)
 	end
 end)
 
+addcmd('debunc', {}, function(args, speaker)
+	tryLoading("https://raw.githubusercontent.com/alyssagithub/debUNC/refs/heads/main/debUNC.luau")
+end)
+
 local loopgoto = nil
 addcmd('loopgoto', {}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
