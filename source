@@ -4787,6 +4787,7 @@ CMDs[#CMDs + 1] = {NAME = 'loopjumppower / loopjp [num]', DESC = 'Loops your jum
 CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp', DESC = 'Turns off loopjumppower'}
 CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
+CMDs[#CMDs + 1] = {NAME = 'setsimrad [num]', DESC = 'Sets how far physics around you gets simulated'}
 CMDs[#CMDs + 1] = {NAME = 'sit', DESC = 'Makes your character sit'}
 CMDs[#CMDs + 1] = {NAME = 'lay / laydown', DESC = 'Makes your character lay down'}
 CMDs[#CMDs + 1] = {NAME = 'sitwalk', DESC = 'Makes your character sit while still being able to walk'}
@@ -9804,6 +9805,15 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 	local grav = args[1] or oldgrav
 	if isNumber(grav) then
 		workspace.Gravity = grav
+	end
+end)
+
+addcmd("setsimrad", {"setsimulationradius"}, function(args, speaker)
+	if not setsimulationradius then return notify("Incompatible Exploit", "Your exploit does not support this command (missing setsimulationradius)") end
+	local ssr = args[1] or 1000
+	if isNumber(ssr) then
+		ssr = tonumber(ssr) 
+		setsimulationradius(ssr, ssr)
 	end
 end)
 
