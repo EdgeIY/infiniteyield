@@ -10605,6 +10605,15 @@ addcmd('debunc', {}, function(args, speaker)
 	tryLoading("https://raw.githubusercontent.com/alyssagithub/debUNC/refs/heads/main/debUNC.luau")
 end)
 
+addcmd('myriad', {}, function(args, speaker)
+	if PlaceId == 79035306837882 then -- geek
+		notify("Loading", "Hold on a sec")
+		tryLoadingAsync("https://github.com/Standard-2/Myriad/releases/latest/download/myriad.luau")
+	else
+		notify('Unable to Load', 'You are not in the Myriad testing game. Find it at https://myriad.tools/ to run the test.')
+	end
+end)
+
 local loopgoto = nil
 addcmd('loopgoto', {}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
