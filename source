@@ -9824,8 +9824,8 @@ addcmd("setfflag", {"fflag", "setflag"}, function(args, speaker)
 	if not setflag then return notify("Incompatible Exploit", "Your exploit does not support this command (missing setfflag)") end
 	if args[1] and args[2] then
 		local fflag = args[1]
-		local param = args[2]
-		setflag(fflag, param)
+		local val = args[2]
+		setflag(fflag, val)
 	end
 end)
 
