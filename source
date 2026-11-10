@@ -11662,6 +11662,7 @@ addcmd('boxreach', {}, function(args, speaker)
 end)
 
 addcmd('unreach', {'noreach', 'unboxreach'}, function(args, speaker)
+	if not speaker.Character then return end
 	for _, v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") and v:FindFirstChild("Handle") then
 			v.Handle.Size = curtoolsize or v.Handle.Size
@@ -11684,19 +11685,26 @@ end)
 
 addcmd('usetools', {}, function(args, speaker)
 	local Backpack = speaker:FindFirstChildOfClass("Backpack")
-	local amount = tonumber(args[1]) or 1
-	local delay_ = tonumber(args[2]) or false
+	if not Backpack then return end
+
+	local Character = speaker.Character
+	if not Character then return end
+
+	local amo = tonumber(args[1]) or 1
+	local adelay = tonumber(args[2]) or nil
+
 	for _, v in ipairs(Backpack:GetChildren()) do
-		v.Parent = speaker.Character
-		task.spawn(function()
-			for _ = 1, amount do
-				v:Activate()
-				if delay_ then
-					wait(delay_)
+		if v:IsA("Tool") then
+			v.Parent = speaker.Character
+			task.spawn(function()
+				for p = 1, amo do
+					v:Activate()
+					if adelay then task.wait(adelay) end
 				end
-			end
-			v.Parent = Backpack
-		end)
+				if not adelay then task.wait() end
+				v.Parent = Backpack
+			end)
+		end
 	end
 end)
 
