@@ -4880,6 +4880,9 @@ CMDs[#CMDs + 1] = {NAME = 'unhovername / nohovername', DESC = 'Turns off hoverna
 CMDs[#CMDs + 1] = {NAME = 'mousesensitivity / ms [0-10]', DESC = 'Sets your mouse sensitivity (affects first person and right click drag) (default is 1)'}
 CMDs[#CMDs + 1] = {NAME = 'clickdelete', DESC = 'Go to Settings > Keybinds > Add for click delete'}
 CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to Settings > Keybinds > Add for click teleport'}
+CMDs[#CMDs + 1] = {NAME = 'clickfor', DESC = 'Click a player to run (click type) (player)'}
+CMDs[#CMDs + 1] = {NAME = 'unclickfor', DESC = 'Disables clickfor'}
+CMDs[#CMDs + 1] = {NAME = 'clicktype [type]', DESC = 'Sets click type'}
 CMDs[#CMDs + 1] = {NAME = 'mouseteleport / mousetp', DESC = 'Teleports your character to your mouse. This is recommended as a keybind'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
@@ -6288,6 +6291,8 @@ local function clicktpFunc()
 	end)
 end
 
+clickFor = false
+clickType = "bang"
 IYMouse.Button1Down:Connect(function()
 	for i,v in pairs(binds) do
 		if v.COMMAND == 'clicktp' then
@@ -6309,6 +6314,18 @@ IYMouse.Button1Down:Connect(function()
 				pcall(function() IYMouse.Target:Destroy() end)
 			end
 		end
+	end
+
+	if clickFor and IYMouse.Target then
+		pcall(function()
+			local tmodel = IYMouse.Target:FindFirstAncestorOfClass("Model")
+			if tmodel and tmodel:FindFirstChild("Humanoid") then
+				local target = Players:GetPlayerFromCharacter(tmodel)
+				if target and target ~= Players.LocalPlayer then
+					execCmd(clickType .. " " .. target.Name) -- potential feat: save clickType to a file?
+				end
+			end
+		end)
 	end
 end)
 
@@ -7793,7 +7810,6 @@ addcmd('disable',{},function(args, speaker)
 		end
 	end
 end)
-
 
 local invisGUIS = {}
 addcmd('showguis',{},function(args, speaker)
@@ -11943,6 +11959,19 @@ addcmd('invisfling',{},function(args, speaker)
 	bambam.Parent = getRoot(speaker.Character)
 	bambam.Force = Vector3.new(99999,99999*10,99999)
 	bambam.Location = getRoot(speaker.Character).Position
+end)
+
+addcmd("clickfor", {}, function(args, speaker)
+	clickFor = true
+end)
+
+addcmd("unclickfor", {}, function(args, speaker)
+	clickFor = false
+end)
+
+addcmd("clicktype", {}, function(args, speaker)
+	clickType = args[1]:lower() or "bang"
+	return "Assigned as " .. clickType
 end)
 
 addcmd("antifling", {}, function(args, speaker)
