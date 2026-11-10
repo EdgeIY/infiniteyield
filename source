@@ -13039,7 +13039,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+		notify("Auto Key Press", "Press [backspace] and [=] at the same time to stop (or type 'unautokeypress')")
 		repeat wait(clickDelay)
 			keypress(code)
 			wait(releaseDelay)
@@ -13047,7 +13047,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		notify("Auto Key Press", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
