@@ -9113,29 +9113,24 @@ end)
 
 addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
     local character = speaker.Character
-	local humanoid = nil
-	if character then
-    	humanoid = character:FindFirstChildOfClass("Humanoid")
-	end
+    local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
     if not humanoid then return end
 
     local seat = humanoid.SeatPart
-    local vehicleModel = nil
-	if seat then 
-		vehicleModel = seat:FindFirstAncestorWhichIsA("Model")
-	else
+    local vehicleModel = if seat then seat:FindFirstAncestorWhichIsA("Model") else nil
+    if vehicleModel == nil then
         notify("Vehicle Goto", "Make sure you're sitting in a vehicle.")
         return
     end
 
     for _, v in getPlayer(args[1], speaker) do
-        if Players[v].Character ~= nil then
-        	local root = getRoot(Players[v].Character)
-        	if root ~= nil then
-				vehicleModel:PivotTo(root:GetPivot())
-				break
-			end
-		end
+        if Players[v].Character == nil then continue end
+
+        local root = getRoot(Players[v].Character)
+        if root == nil then continue end
+
+        vehicleModel:PivotTo(root:GetPivot())
+        break
     end
 end)
 
@@ -12258,14 +12253,14 @@ addcmd('autoclick',{},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+		notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop (or type 'unautoclick')")
 		repeat wait(clickDelay)
 			mouse1press()
 			wait(releaseDelay)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
@@ -12864,7 +12859,7 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 	if success and canInvite then
 		SocialService:PromptPhoneBook(speaker, "")
 	else
-		notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
+		notify("Phonebook", "It seems you're not able to call anyone.")
 	end
 end)
 
@@ -13061,7 +13056,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+		notify('Auto Key Press', "Press [backspace] and [=] at the same time to stop (or type 'unautokeypress')")
 		repeat wait(clickDelay)
 			keypress(code)
 			wait(releaseDelay)
@@ -13069,7 +13064,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
