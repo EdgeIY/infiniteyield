@@ -9074,9 +9074,9 @@ addcmd('agecheck',{},function(args, speaker)
 	if plr then
 		local z = (plr.AgeChecked == Enum.AgeCheckStatus.Checked)
 		if z then
-			return plr.Name .. " did age verification."
+			notify("Age Check", plr .. " did age verification.")
 		else
-			return plr.Name .. " did not do age verification."
+			notify("Age Check", plr .. " did not do age verification.")
 		end
 	end
 end)
