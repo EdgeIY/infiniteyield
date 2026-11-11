@@ -4861,6 +4861,7 @@ CMDs[#CMDs + 1] = {NAME = 'defemote [emote]', DESC = 'Plays default emote'}
 CMDs[#CMDs + 1] = {NAME = 'spasm', DESC = 'Makes you  c r a z y'}
 CMDs[#CMDs + 1] = {NAME = 'unspasm', DESC = 'Stops spasm'}
 CMDs[#CMDs + 1] = {NAME = 'headthrow', DESC = 'Simply makes you throw your head'}
+CMDs[#CMDs + 1] = {NAME = 'hug', DESC = 'cute'}
 CMDs[#CMDs + 1] = {NAME = 'noanim', DESC = 'Disables your animations'}
 CMDs[#CMDs + 1] = {NAME = 'reanim', DESC = 'Restores your animations'}
 CMDs[#CMDs + 1] = {NAME = 'animspeed [num]', DESC = 'Changes the speed of your current animation'}
@@ -10143,6 +10144,32 @@ addcmd('headthrow',{},function(args, speaker)
 		k:AdjustSpeed(1)
 	else
 		notify('R6 Required','This command requires the r6 rig type')
+	end
+end)
+
+addcmd('hug', {}, function(args, speaker)
+	if not r15(speaker) then
+		local Anim = Instance.new("Animation")
+		Anim.AnimationId = "rbxassetid://27432686"
+		local hummer = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid') 
+		if not hummer then return end
+		local k = hummer:LoadAnimation(Anim)
+		k:Play(0.1, 1, 1)
+		task.wait(0.8)
+		k:AdjustSpeed(0)
+	else
+		notify('R6 Required', 'This command requires the r6 rig type')
+	end
+end)
+
+addcmd('unhug', {}, function(args, speaker)
+	local Humanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+	if Humanoid then
+		for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
+			if v.Animation.AnimationId == "rbxassetid://27432686" then
+				v:Stop()
+			end
+		end
 	end
 end)
 
