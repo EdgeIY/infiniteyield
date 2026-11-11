@@ -4726,12 +4726,13 @@ CMDs[#CMDs + 1] = {NAME = 'chatage [player]', DESC = 'Chats the age of a player'
 CMDs[#CMDs + 1] = {NAME = 'joindate / jd [player]', DESC = 'Tells you the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'chatjoindate / cjd [player]', DESC = 'Chats the date the player joined Roblox'}
 CMDs[#CMDs + 1] = {NAME = 'copyname / copyuser [player]', DESC = 'Copies a players full username to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players UserId'}
-CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current PlaceId to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current GameId to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players UserId to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players AppearanceId'}
-CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players AppearanceId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'userid / id [player]', DESC = 'Notifies a players user ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyplaceid / placeid', DESC = 'Copies the current place id to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current game id to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players user ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players appearance ID'}
+CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players appearance ID to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'agecheck [player]', DESC = 'Check if a player did age verification'}
 CMDs[#CMDs + 1] = {NAME = 'bang [player] [speed]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
@@ -4806,6 +4807,8 @@ CMDs[#CMDs + 1] = {NAME = 'autojump / ajump', DESC = 'Automatically jumps when y
 CMDs[#CMDs + 1] = {NAME = 'unautojump / unajump', DESC = 'Disables autojump'}
 CMDs[#CMDs + 1] = {NAME = 'edgejump / ejump', DESC = 'Automatically jumps when you get to the edge of an object'}
 CMDs[#CMDs + 1] = {NAME = 'unedgejump / unejump', DESC = 'Disables edgejump'}
+CMDs[#CMDs + 1] = {NAME = 'bunnyhop / bhop', DESC = 'Causes you to keep jumping even without holding jump'}
+CMDs[#CMDs + 1] = {NAME = 'unbunnyhop / unbhop', DESC = 'Disables bunnyhop'}
 CMDs[#CMDs + 1] = {NAME = 'platformstand / stun', DESC = 'Enables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'unplatformstand / unstun', DESC = 'Disables PlatformStand'}
 CMDs[#CMDs + 1] = {NAME = 'norotate / noautorotate', DESC = 'Disables AutoRotate'}
@@ -9066,6 +9069,18 @@ addcmd('copyappearanceid',{'caid'},function(args, speaker)
 	end
 end)
 
+addcmd('agecheck',{},function(args, speaker)
+	local plr = getPlayer(args[1], speaker)[1]
+	if plr then
+		local z = (plr.AgeChecked == Enum.AgeCheckStatus.Checked)
+		if z then
+			notify("Age Check", plr .. " did age verification.")
+		else
+			notify("Age Check", plr .. " did not do age verification.")
+		end
+	end
+end)
+
 addcmd('norender',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(false)
 end)
@@ -10057,6 +10072,31 @@ end)
 addcmd('unedgejump',{'noedgejump', 'noejump', 'unejump'},function(args, speaker)
 	HumanModCons.ejLoop = (HumanModCons.ejLoop and HumanModCons.ejLoop:Disconnect() and false) or nil
 	HumanModCons.ejCA = (HumanModCons.ejCA and HumanModCons.ejCA:Disconnect() and false) or nil
+end)
+
+addcmd('bunnyhop',{'bhop'},function(args, speaker)
+	execCmd("unbhop")
+
+	if not speaker.Character then return end
+	local humanoid = speaker.Character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+
+	local function hoppster()
+		if humanoid.Health <= 0 then
+			execCmd("unbhop")
+		elseif humanoid.FloorMaterial ~= Enum.Material.Air then
+			humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		end
+	end
+
+	bHOP = RunService.Heartbeat:Connect(hoppster)
+end)
+
+addcmd('unbunnyhop',{'unbhop'},function(args, speaker)
+	if bHOP then
+		bHOP:Disconnect()
+		bHOP = nil
+	end
 end)
 
 addcmd("team", {}, function(args, speaker)
