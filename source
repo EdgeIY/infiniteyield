@@ -12743,9 +12743,7 @@ addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
 	if type(alignmentKeysEmotes) == "boolean" then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
 	end
-	if alignmentKeys then
-		alignmentKeys:Disconnect()
-	end
+	alignmentKeys:Disconnect()
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12794,9 +12792,7 @@ end)
 
 addcmd("unlistento", {}, function(args, speaker)
 	SoundService:SetListener(Enum.ListenerType.Camera)
-	if listentoChar then
-		listentoChar:Disconnect()
-	end
+	listentoChar:Disconnect()
 end)
 
 
