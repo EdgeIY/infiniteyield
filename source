@@ -7411,11 +7411,10 @@ addcmd('cframeflyspeed',{'cflyspeed'},function(args, speaker)
 	end
 end)
 
--- RBXScriptConnections
 floating = false
-local beganListener
-local endListener
-local floatingFunc
+local beganListener: RBXScriptConnection
+local endListener: RBXScriptConnection
+local floatingFunc: RBXScriptConnection
 
 addcmd('float', {'platform'},function(args, speaker)
 	local pchar = speaker.Character
@@ -7438,20 +7437,20 @@ addcmd('float', {'platform'},function(args, speaker)
 				if processed then return end
 
 				if key.KeyCode == Enum.KeyCode.Q then
-					floatPoint = floatPoint - 0.5
+					floatPoint -= 0.5
 				end
 				if key.KeyCode == Enum.KeyCode.E then
-					floatPoint = floatPoint + 1.5
+					floatPoint += 1.5
 				end
 			end)
 			endListener = UserInputService.InputEnded:Connect(function(key, processed)
 				if processed then return end
 
 				if key.KeyCode == Enum.KeyCode.Q then
-					floatPoint = floatPoint + 0.5
+					floatPoint += 0.5
 				end
 				if key.KeyCode == Enum.KeyCode.E then
-					floatPoint = floatPoint - 1.5
+					floatPoint -= 1.5
 				end
 			end)
 			
