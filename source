@@ -2965,6 +2965,7 @@ useFactorySettings = function()
 	logsWebhook = nil
 	apiKey = nil
 	aiModel = "openai/gpt-oss-120b"
+	aiProvider = "groq"
 	maxTokens = 200
 	aliases = {}
 	binds = {}
@@ -3075,6 +3076,7 @@ function saves()
 					if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
 					if vtype(json.apiKey, "string") then apiKey = json.apiKey else apiKey = nil end
 					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = "openai/gpt-oss-120b" end
+					if vtype(json.aiProvider, "string") then aiProvider = json.aiProvider else aiProvider = "groq" end
 					if vtype(json.maxTokens, "number") then maxTokens = json.maxTokens else maxTokens = 200 end
 					if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
 					if vtype(json.binds, "table") then binds = json.binds else binds = {} end
@@ -3148,6 +3150,7 @@ function updatesaves()
 			logsWebhook = logsWebhook;
 			apiKey = apiKey;
 			aiModel = aiModel;
+			aiProvider = aiProvider;
 			maxTokens = maxTokens;
 			aliases = aliases;
 			binds = binds or {};
@@ -4621,6 +4624,7 @@ CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a d
 CMDs[#CMDs + 1] = {NAME = 'ai / aimode / verity [prompt]', DESC = 'Talk to AI'}
 CMDs[#CMDs + 1] = {NAME = 'apikey / aikey [key]', DESC = 'Sets API key so the AI can function'}
 CMDs[#CMDs + 1] = {NAME = 'aimodel [model]', DESC = 'Sets the AI model'}
+CMDs[#CMDs + 1] = {NAME = 'aiprovider [provider]', DESC = 'Sets the AI provider (claude/deepseek/gemini/groq/openai'}
 CMDs[#CMDs + 1] = {NAME = 'maxtokens [tokens]', DESC = 'Sets the max number of tokens to use for an AI response'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'vsay [text]', DESC = 'Say anything uncensored (CLIENT)'}
@@ -11810,45 +11814,120 @@ addcmd("chatlogswebhook", {"logswebhook"}, function(args, speaker)
 	updatesaves()
 end)
 
-function askGroq(prompt)
-	local success, response = pcall(function()
-		return httprequest({
-			Url = "https://api.groq.com/openai/v1/chat/completions",
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json",
-				["Authorization"] = "Bearer " .. apiKey
-			},
-			Body = HttpService:JSONEncode({
-				model = aiModel,
+function askAI(prompt)    
+    local url, headers, bodyData
+    
+    if aiProvider == "openai" then
+        url = "https://api.openai.com/v1/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "groq" then
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "deepseek" then
+        url = "https://api.deepseek.com/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "claude" then
+        url = "https://api.anthropic.com/v1/messages"
+        headers = { 
+            ["Content-Type"] = "application/json", 
+            ["x-api-key"] = apiKey, 
+            ["anthropic-version"] = "2026-10-21" 
+        }
+    elseif aiProvider == "gemini" then
+        url = "https://generativelanguage.googleapis.com/v1beta/models/" .. aiModel .. ":generateContent?key=" .. apiKey
+        headers = { ["Content-Type"] = "application/json" }
+    else
+        return "Error: Unknown provider specified."
+    end
 
-				messages = {
-					{
-						role = "user",
-						content = prompt
-					}
-				},
+    if aiProvider == "claude" then
+        bodyData = {
+            model = aiModel,
+            max_tokens = maxTokens,
+            messages = { { role = "user", content = prompt } }
+        }
+    elseif aiProvider == "gemini" then
+        bodyData = {
+            contents = { { parts = { { text = prompt } } } },
+            generationConfig = {
+                maxOutputTokens = maxTokens,
+                temperature = 0.7
+            }
+        }
+    elseif aiProvider == "groq" or aiProvider == "deepseek" then
+        bodyData = {
+            model = aiModel,
+            messages = { { role = "user", content = prompt } },
+            temperature = 0.7,
+            max_tokens = maxTokens
+        }
+	elseif aiProvider == "openai" then
+		bodyData = {
+            model = aiModel,
+            messages = { { role = "user", content = prompt } },
+            temperature = 0.7,
+            max_completion_tokens = maxTokens
+        }
+    end
 
-				temperature = 0.7,
-				max_tokens = maxTokens
-			})
-		})
-	end)
+    local success, response = pcall(function()
+        return httprequest({
+            Url = url,
+            Method = "POST",
+            Headers = headers,
+            Body = HttpService:JSONEncode(bodyData)
+        })
+    end)
 
-	--print(response.Body)
-	if success and response and response.Success then
-		local data = HttpService:JSONDecode(response.Body)
+    if success and response then
+		local data, errno = nil, nil
+		local passed, failed = pcall(function()
+        	data = HttpService:JSONDecode(response.Body)
+    	end)
 
-		if data.choices
-			and data.choices[1]
-			and data.choices[1].message
-			and data.choices[1].message.content then
-
-			return data.choices[1].message.content
+		if not passed then
+			errno = tostring(failed)
 		end
+
+		if response.Success then
+			if not passed then
+    			return "Error: Invalid JSON from " .. aiProvider.. "\n\nError:\n" .. tostring(errno)
+			end
+        	if aiProvider == "claude" then
+            	if data and data.content and data.content[1] and data.content[1].text then
+                	return data.content[1].text
+            	end
+        	elseif aiProvider == "gemini" then
+            	if data and data.candidates and data.candidates[1] and data.candidates[1].content 
+                	and data.candidates[1].content.parts and data.candidates[1].content.parts[1].text then
+               		return data.candidates[1].content.parts[1].text
+            	end
+        	else
+            	if data and data.choices and data.choices[1] and data.choices[1].message and data.choices[1].message.content then
+                	return data.choices[1].message.content
+				end
+       	 	end
+			return "Error: Unexpected response structure from " .. aiProvider
+		else
+			if data and data.error then
+    			if type(data.error) == "table" then
+        			errno = data.error.message or errno
+    			else
+        			errno = tostring(data.error)
+				end
+    		end
+
+			return "Error: Fail from " .. aiProvider .. ".\n\nBody:\n" .. tostring(response and response.Body) .. "\n\nError:\n" .. tostring(errno or "Unknown API error")
+		end
+    end
+
+	if success and not response then
+    	return "Error: Empty HTTP response from " .. aiProvider
 	end
 
-	return "Error: Could not fetch response from AI. \n\nMake sure your API key is from Groq, a valid AI model is set, and that max tokens is not set too high.\n\nBody:\n"..response.Body
+	if not success then
+    	return "Error: HTTP request failed for " .. aiProvider.. "\n\nError:\n" .. tostring(response)
+	end
 end
 
 function createAIWindow(aiResponseText)
@@ -12035,7 +12114,7 @@ addcmd("ai", {"aimode", "verity", "askai", "gpt"}, function(args, speaker)
 		local prompt = getstring(1, args)
 		task.spawn(function()
 			notify("AI Status", "Processing query...", 3)
-			local aiResponse = askGroq(prompt)
+			local aiResponse = askAI(prompt)
 			
 			createAIWindow(aiResponse)
 		end)
@@ -12059,6 +12138,16 @@ addcmd("aimodel", {}, function(args, speaker)
 		updatesaves()
 	else
 		notify("AI", "Current model: " .. tostring(aiModel))
+	end
+end)
+
+addcmd("aiprovider", {}, function(args, speaker)
+	if args[1] then
+		aiProvider = table.concat(args, " ")
+		notify("AI", "Provider updated to: " .. aiProvider)
+		updatesaves()
+	else
+		notify("AI", "Current provider: " .. tostring(aiProvider))
 	end
 end)
 
