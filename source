@@ -9709,7 +9709,7 @@ addcmd("toggleinvis", {}, function(args, speaker)
 end)
 
 addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
-	local Char = Players.LocalPlayer.Character
+	local Char = speaker.Character
 	local touched = false
 	local tpdback = false
 	local box = Instance.new('Part')
@@ -9719,7 +9719,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	box.Position = Vector3.new(0,10000,0)
 	box.Parent = workspace
 	local boxTouched = box.Touched:connect(function(part)
-		if (part.Parent.Name == Players.LocalPlayer.Name) then
+		if (part.Parent.Name == speaker.Name) then
 			if touched == false then
 				touched = true
 				local function apply()
@@ -9738,7 +9738,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	end)
 	repeat wait() until Char
 	local cleanUp
-	cleanUp = Players.LocalPlayer.CharacterAdded:connect(function(char)
+	cleanUp = speaker.CharacterAdded:Connect(function(char)
 		boxTouched:Disconnect()
 		box:Destroy()
 		cleanUp:Disconnect()
@@ -11279,7 +11279,7 @@ end)
 
 addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	if firetouchinterest then
-		local Player = Players.LocalPlayer
+		local Player = speaker
 		local Character = Player.Character
 		local Old = getRoot(Character).CFrame
 		local Hats = {}
