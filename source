@@ -12283,7 +12283,7 @@ addcmd('unwalltp',{'nowalltp'},function(args, speaker)
 end)
 
 autoclicking = false
-addcmd('autoclick', {}, function(args, speaker)
+addcmd('autoclick',{},function(args, speaker)
 	if mouse1press and mouse1release then
 		execCmd('unautoclick')
 		wait()
@@ -12300,20 +12300,18 @@ addcmd('autoclick', {}, function(args, speaker)
 				end
 			end
 		end)
-
-		notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop (or type 'unautoclick')")
-
+		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
 		repeat wait(clickDelay)
 			mouse1press()
 			wait(releaseDelay)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing mouse1press or mouse1release)")
+		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
 	end
 end)
 
-addcmd('unautoclick',{'noautoclick'}, function(args, speaker)
+addcmd('unautoclick',{'noautoclick'},function(args, speaker)
 	autoclicking = false
 	if cancelAutoClick then cancelAutoClick:Disconnect() end
 end)
@@ -12896,7 +12894,7 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 	if success and canInvite then
 		SocialService:PromptPhoneBook(speaker, "")
 	else
-		notify("Phonebook", "It seems you're not able to call anyone.")
+		notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
 	end
 end)
 
@@ -13074,10 +13072,10 @@ keycodeMap = {
 autoKeyPressing = false
 cancelAutoKeyPress = nil
 
-addcmd('autokeypress',{'keypress'}, function(args, speaker)
+addcmd('autokeypress',{'keypress'},function(args, speaker)
 	if keypress and keyrelease and args[1] then
 		local code = keycodeMap[args[1]:lower()]
-		if not code then notify('Auto Key Press', "Invalid key") return end
+		if not code then notify('Auto Key Press',"Invalid key") return end
 		execCmd('unautokeypress')
 		wait()
 		local clickDelay = 0.1
@@ -13101,11 +13099,11 @@ addcmd('autokeypress',{'keypress'}, function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing keypress or keyrelease)")
+		notify("Auto Key Press", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
-addcmd('unautokeypress', {'noautokeypress','unkeypress','nokeypress'}, function(args, speaker)
+addcmd('unautokeypress',{'noautokeypress','unkeypress','nokeypress'},function(args, speaker)
 	autoKeyPressing = false
 	if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() end
 end)
