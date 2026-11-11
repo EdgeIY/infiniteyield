@@ -12695,10 +12695,8 @@ addcmd("trip", {}, function(args, speaker)
 	end
 end)
 
-adblock = false
 addcmd("removeads", {"adblock"}, function(args, speaker)
-	adblock = true -- this command is coded like hot ass
-	repeat wait(0.1)
+	while wait() do
 		pcall(function()
 			for i, v in pairs(workspace:GetDescendants()) do
 				if v:IsA("PackageLink") then
@@ -12711,20 +12709,12 @@ addcmd("removeads", {"adblock"}, function(args, speaker)
 				end
 			end
 		end)
-	until adblock == false
-end)
-
-addcmd("unremoveads", {"unadblock"}, function(args, speaker)
-	adblock = false
+	end
 end)
 
 addcmd("scare", {"spook"}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local oldpos = nil
-	local spooktime = 0.5
-	if args[2] and isNumber(args[2]) then
-		spooktime = args[2]
-	end
 
 	for _, v in pairs(players) do
 		local root = speaker.Character and getRoot(speaker.Character)
@@ -12733,9 +12723,9 @@ addcmd("scare", {"spook"}, function(args, speaker)
 
 		if root and targetRoot and target ~= speaker then
 			oldpos = root.CFrame
-			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.LookVector * 2
+			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.lookVector * 2
 			root.CFrame = CFrame.new(root.Position, targetRoot.Position)
-			task.wait(spooktime)
+			task.wait(0.5)
 			root.CFrame = oldpos
 		end
 	end
