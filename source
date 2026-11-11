@@ -6334,8 +6334,8 @@ IYMouse.Button1Down:Connect(function()
 		local touch = IYMouse.Target:FindFirstChildOfClass("TouchTransmitter")
 		if touch then
 			local character = Players.LocalPlayer.Character
-			if character and character:FindFirstChild("HumanoidRootPart") then
-				local hrp = character.HumanoidRootPart
+			if character and getRoot(character) then
+				local hrp = getRoot(character)
 				firetouchinterest(hrp, IYMouse.Target, 0)
 				task.wait()
 				firetouchinterest(hrp, IYMouse.Target, 1)
@@ -9628,7 +9628,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	local invisFix = RunService.Stepped:Connect(function()
 		pcall(function()
 			local IsInteger
-			if tostring(Void):find'-' then
+			if tostring(Void):find('-') then
 				IsInteger = true
 			else
 				IsInteger = false
