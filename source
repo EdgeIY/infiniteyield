@@ -7032,14 +7032,7 @@ local noclipConnection = nil
 local noclipParts = {}
 
 addcmd("noclip", {}, function(args, speaker)
-    if noclipConnection ~= nil then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-    for part in noclipParts do
-        part.CanCollide = true
-    end
-    table.clear(noclipParts)
+    execCmd("unnoclip nonotify")
 
     noclipConnection = RunService.Stepped:Connect(function()
         local character = speaker.Character
