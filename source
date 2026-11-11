@@ -5038,13 +5038,13 @@ function onDied()
 	end)
 end
 
-Clip = true
+isClipped = true
 spDelay = 0.1
 Players.LocalPlayer.CharacterAdded:Connect(function()
 	NOFLY()
 	floating = false
 
-	if not Clip then
+	if not isClipped then
 		execCmd('clip')
 	end
 
@@ -7046,7 +7046,7 @@ addcmd("noclip", {}, function(args, speaker)
         end
     end)
 
-    Clip = false
+    isClipped = false
 
     if args[1] ~= "nonotify" then notify("Noclip", "Noclip Enabled") end
 end)
@@ -7061,13 +7061,13 @@ addcmd("unnoclip", {"clip"}, function(args, speaker)
     end
     table.clear(noclipParts)
 
-    Clip = true
+    isClipped = true
 
     if args[1] ~= "nonotify" then notify("Noclip", "Noclip Disabled") end
 end)
 
 addcmd("togglenoclip", {}, function(args, speaker)
-    execCmd(Clip and "noclip" or "unnoclip")
+    execCmd(isClipped and "noclip" or "unnoclip")
 end)
 
 FLYING = false
@@ -9157,15 +9157,21 @@ end)
 
 local vnoclipParts = {}
 addcmd('vehiclenoclip',{'vnoclip'},function(args, speaker)
+	local character = speaker.Character
+	local humanoid = character and character:FindFirstChildOfClass('Humanoid')
+	if not humanoid then return end
+
+	local seat = humanoid.SeatPart
+	if not seat then return end
+
 	vnoclipParts = {}
-	local seat = speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart
 	local vehicleModel = seat.Parent
 	repeat
 		if vehicleModel.ClassName ~= "Model" then
 			vehicleModel = vehicleModel.Parent
 		end
 	until vehicleModel.ClassName == "Model"
-	wait(0.1)
+	task.wait(0.1)
 	execCmd('noclip')
 	for i,v in pairs(vehicleModel:GetDescendants()) do
 		if v:IsA("BasePart") and v.CanCollide then
@@ -9184,7 +9190,7 @@ addcmd("vehicleclip", {"vclip", "unvnoclip", "unvehiclenoclip"}, function(args, 
 end)
 
 addcmd("togglevnoclip", {}, function(args, speaker)
-	execCmd(Clip and "vnoclip" or "vclip")
+	execCmd(isClipped and "vnoclip" or "vclip")
 end)
 
 addcmd('clientbring',{'cbring'},function(args, speaker)
