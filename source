@@ -11591,13 +11591,16 @@ addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},function(args, speaker)
-	for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+	local Character = speaker.Character
+	local Backpack = speaker:FindFirstChildOfClass("Backpack")
+	if not Backpack or not Character then return end
+	for i,v in pairs(Backpack:GetChildren()) do
 		if v:IsA("Tool") then
-			v.Parent = Players.LocalPlayer.Character
+			v.Parent = Character
 		end
 	end
-	wait()
-	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+	task.wait()
+	for i,v in pairs(Character:GetChildren()) do
 		if v:IsA("Tool") then
 			v.Parent = workspace
 		end
@@ -11676,10 +11679,14 @@ addcmd('unreach', {'noreach', 'unboxreach'}, function(args, speaker)
 end)
 
 addcmd('grippos',{},function(args, speaker)
+	local grx = tonumber(args[1])
+	local gry = tonumber(args[2])
+	local grz = tonumber(args[3])
+	if not (grx and gry and grz) then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
 			v.Parent = speaker:FindFirstChildOfClass("Backpack")
-			v.GripPos = Vector3.new(args[1],args[2],args[3])
+			v.GripPos = Vector3.new(grx, gry, grz)
 			v.Parent = speaker.Character
 		end
 	end
