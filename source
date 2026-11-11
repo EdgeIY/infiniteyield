@@ -9481,29 +9481,33 @@ addcmd("unanchor", {}, function(args, speaker)
 end)
 
 oofing = false
-addcmd('loopoof',{},function(args, speaker)
+addcmd('loopoof', {'loopsounds'}, function(args, speaker)
 	oofing = true
 	repeat wait(0.1)
-		for i,v in pairs(Players:GetPlayers()) do
-			if v.Character ~= nil and v.Character:FindFirstChild'Head' then
+		for i, v in pairs(Players:GetPlayers()) do
+			if v.Character ~= nil and v.Character:FindFirstChild('Head') then
 				for _,x in pairs(v.Character.Head:GetChildren()) do
-					if x:IsA'Sound' then x.Playing = true end
+					if x:IsA('Sound') then x.Playing = true end
 				end
 			end
 		end
 	until oofing == false
 end)
 
-addcmd('unloopoof',{},function(args, speaker)
+addcmd('unloopoof', {'unloopsounds'}, function(args, speaker)
 	oofing = false
 end)
 
 local notifiedRespectFiltering = false
-addcmd('muteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+addcmd('muteboombox', {}, function(args, speaker)
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true 
+		notify('RespectFilteringEnabled', 'RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
+
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == true then
@@ -9520,11 +9524,15 @@ addcmd('muteboombox',{},function(args, speaker)
 	end
 end)
 
-addcmd('unmuteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+addcmd('unmuteboombox', {}, function(args, speaker)
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true 
+		notify('RespectFilteringEnabled', 'RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
+
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
-		for i,v in pairs(players) do
+		for i, v in pairs(players) do
 			task.spawn(function()
 				for i, x in next, Players[v].Character:GetDescendants() do
 					if x:IsA("Sound") and x.Playing == false then
@@ -9570,28 +9578,32 @@ addcmd("refresh", {"re"}, function(args, speaker)
 end)
 
 addcmd("god", {}, function(args, speaker)
-	local Cam = workspace.CurrentCamera
-	local Char, Pos = speaker.Character, Cam.CFrame
-	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
-	local nHuman = Human:Clone()
-	nHuman.Parent = char
+	local cam = workspace.CurrentCamera
+	local char, pos = speaker.Character, cam.CFrame
+	local human = char and char:FindFirstChildWhichIsA("Humanoid")
+	if not human then return end
+	
+	local nhuman = human:Clone()
 	speaker.Character = nil
-	nHuman:SetStateEnabled(15, false)
-	nHuman:SetStateEnabled(1, false)
-	nHuman:SetStateEnabled(0, false)
-	nHuman.BreakJointsOnDeath = true
-	Human:Destroy()
+	nhuman:SetStateEnabled(15, false)
+	nhuman:SetStateEnabled(1, false)
+	nhuman:SetStateEnabled(0, false)
+	nhuman.BreakJointsOnDeath = true
+	human:Destroy()
+	
+	nhuman.Parent = char
 	speaker.Character = char
-	Cam.CameraSubject = nHuman
-	Cam.CFrame = task.wait() and pos
-	nHuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-	local Script = Char:FindFirstChild("Animate")
-	if Script then
-		Script.Disabled = true
+	cam.CameraSubject = nhuman
+	cam.CFrame = task.wait() and pos
+	nhuman.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	nhuman.Health = nhuman.MaxHealth
+
+	local anscript = char:FindFirstChild("Animate")
+	if anscript then
+		anscript.Disabled = true
 		task.wait()
-		Script.Disabled = false
+		anscript.Disabled = false
 	end
-	nHuman.Health = nHuman.MaxHealth
 end)
 
 invisRunning = false
@@ -9614,7 +9626,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 	local invisFix = RunService.Stepped:Connect(function()
 		pcall(function()
 			local IsInteger
-			if tostring(Void):find'-' then
+			if tostring(Void):find('-') then
 				IsInteger = true
 			else
 				IsInteger = false
@@ -9654,7 +9666,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 				Player.Character = Character
 				wait()
 				Character.Parent = workspace
-				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
 				IsInvis = false
 				InvisibleCharacter.Parent = nil
 				invisRunning = false
@@ -9664,14 +9676,14 @@ addcmd('invisible',{'invis'},function(args, speaker)
 				Player.Character = Character
 				wait()
 				Character.Parent = workspace
-				Character:FindFirstChildWhichIsA'Humanoid':Destroy()
+				Character:FindFirstChildWhichIsA('Humanoid'):Destroy()
 				TurnVisible()
 			end)
 		end
 	end
 
 	local invisDied
-	invisDied = InvisibleCharacter:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+	invisDied = InvisibleCharacter:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 		Respawn()
 		invisDied:Disconnect()
 	end)
@@ -9707,7 +9719,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		IsInvis = false
 		Player.Character.Animate.Disabled = true
 		Player.Character.Animate.Disabled = false
-		invisDied = Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+		invisDied = Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
 			Respawn()
 			invisDied:Disconnect()
 		end)
@@ -9725,7 +9737,7 @@ addcmd("toggleinvis", {}, function(args, speaker)
 end)
 
 addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
-	local Char  = Players.LocalPlayer.Character
+	local Char = speaker.Character
 	local touched = false
 	local tpdback = false
 	local box = Instance.new('Part')
@@ -9735,7 +9747,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	box.Position = Vector3.new(0,10000,0)
 	box.Parent = workspace
 	local boxTouched = box.Touched:connect(function(part)
-		if (part.Parent.Name == Players.LocalPlayer.Name) then
+		if (part.Parent.Name == speaker.Name) then
 			if touched == false then
 				touched = true
 				local function apply()
@@ -9754,7 +9766,7 @@ addcmd('toolinvisible',{'toolinvis','tinvis'},function(args, speaker)
 	end)
 	repeat wait() until Char
 	local cleanUp
-	cleanUp = Players.LocalPlayer.CharacterAdded:connect(function(char)
+	cleanUp = speaker.CharacterAdded:Connect(function(char)
 		boxTouched:Disconnect()
 		box:Destroy()
 		cleanUp:Disconnect()
@@ -9810,17 +9822,6 @@ addcmd("breakvelocity", {}, function(args, speaker)
 	end
 end)
 
-addcmd('jpower',{'jumppower','jp'},function(args, speaker)
-	local jpower = args[1] or 50
-	if isNumber(jpower) then
-		if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
-			speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
-		else
-			speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight  = jpower
-		end
-	end
-end)
-
 addcmd("maxslopeangle", {"msa"}, function(args, speaker)
 	local sangle = args[1] or 89
 	if isNumber(sangle) then
@@ -9843,7 +9844,7 @@ addcmd("hipheight", {"hheight"}, function(args, speaker)
 end)
 
 addcmd("dance", {}, function(args, speaker)
-	pcall(execCmd, "undance")
+	execCmd("undance nonotify")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 	if r15(speaker) then
 		dances = {"3333432454", "4555808220", "4049037604", "4555782893", "10214311282", "10714010337", "10713981723", "10714372526", "10714076981", "10714392151", "11444443576"}
@@ -9856,8 +9857,11 @@ addcmd("dance", {}, function(args, speaker)
 end)
 
 addcmd("undance", {"nodance"}, function(args, speaker)
-	danceTrack:Stop()
-	danceTrack:Destroy()
+	if danceTrack then
+		danceTrack:Stop()
+		danceTrack:Destroy()
+		danceTrack = nil
+	end
 end)
 
 addcmd("defemote", {}, function(args, speaker)
@@ -10105,6 +10109,9 @@ addcmd('loopnobgui',{'loopunbgui','loopnobillboardgui','loopunbillboardgui','loo
 			part:Destroy()
 		end
 	end
+	if charPartTrigger then
+		charPartTrigger:Disconnect()
+	end
 	charPartTrigger = speaker.Character.DescendantAdded:Connect(charPartAdded)
 end)
 
@@ -10114,25 +10121,30 @@ addcmd('unloopnobgui',{'unloopunbgui','unloopnobillboardgui','unloopunbillboardg
 	end
 end)
 
-addcmd('spasm',{},function(args, speaker)
+addcmd('spasm', {}, function(args, speaker)
 	if not r15(speaker) then
-		local pchar=speaker.Character
+		local pchar = speaker.Character
 		local AnimationId = "33796059"
+		if SpasmAnim then
+			SpasmAnim:Destroy()
+			Spasm:Stop()
+		end
 		SpasmAnim = Instance.new("Animation")
 		SpasmAnim.AnimationId = "rbxassetid://"..AnimationId
 		Spasm = pchar:FindFirstChildOfClass('Humanoid'):LoadAnimation(SpasmAnim)
 		Spasm:Play()
 		Spasm:AdjustSpeed(99)
 	else
-		notify('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required', 'This command requires the r6 rig type')
 	end
 end)
 
-addcmd('unspasm',{'nospasm'},function(args, speaker)
-	Spasm:Stop()
-	SpasmAnim:Destroy()
+addcmd('unspasm',{'nospasm'}, function(args, speaker)
+	if SpasmAnim then
+		SpasmAnim:Destroy()
+		Spasm:Stop()
+	end
 end)
-
 addcmd('headthrow',{},function(args, speaker)
 	if not r15(speaker) then
 		local AnimationId = "35154961"
@@ -10322,7 +10334,7 @@ addcmd("tweenoffset", {"toffset"}, function(args, speaker)
     breakVelocity()
 end)
 
-addcmd("clickteleport", {}, function(args, speaker)
+addcmd("clickteleport", {"clicktp"}, function(args, speaker)
     if speaker ~= Players.LocalPlayer then return end
     notify("Click TP", "Go to Settings > Keybinds > Add to set up click teleport")
 end)
@@ -10357,10 +10369,9 @@ addcmd("thru", {}, function(args, speaker)
     root.CFrame = CFrame.new(pos, pos + root.CFrame.LookVector)
 end)
 
-addcmd('clickdelete',{},function(args, speaker)
-	if speaker == Players.LocalPlayer then
-		notify('Click Delete','Go to Settings > Keybinds > Add to set up click delete')
-	end
+addcmd("clickdelete", {"clickdel"}, function(args, speaker)
+	if speaker ~= Players.LocalPlayer then return end
+	notify('Click Delete', 'Go to Settings > Keybinds > Add to set up click delete')
 end)
 
 addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
@@ -10399,17 +10410,13 @@ addcmd('walktopos',{'walktoposition'},function(args, speaker)
 	speaker.Character:FindFirstChildOfClass('Humanoid').WalkToPoint = Vector3.new(args[1],args[2],args[3])
 end)
 
-addcmd('speed',{'ws','walkspeed'},function(args, speaker)
+addcmd('speed',{'ws','walkspeed'}, function(args, speaker)
+	local speed = args[1] or 16
 	if args[2] then
-		local speed = args[2] or 16
-		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
-		end
-	else
-		local speed = args[1] or 16
-		if isNumber(speed) then
-			speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
-		end
+		speed = args[2] or 16
+	end
+	if isNumber(speed) then
+		speaker.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = speed
 	end
 end)
 
@@ -10464,6 +10471,17 @@ addcmd('unloopspeed',{'unloopws'},function(args, speaker)
 	HumanModCons.wsCA = (HumanModCons.wsCA and HumanModCons.wsCA:Disconnect() and false) or nil
 end)
 
+addcmd('jpower',{'jumppower','jp'},function(args, speaker)
+	local jpower = args[1] or 50
+	if isNumber(jpower) then
+		if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
+			speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
+		else
+			speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight = jpower
+		end
+	end
+end)
+
 addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 	if args[1] and isNumber(args[1]) then
 		if hookmetamethod then
@@ -10497,7 +10515,7 @@ addcmd('loopjumppower',{'loopjp','loopjpower'},function(args, speaker)
 				if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
 					speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = jpower
 				else
-					speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight  = jpower
+					speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight = jpower
 				end
 			end
 		end
@@ -10520,7 +10538,7 @@ addcmd('unloopjumppower',{'unloopjp','unloopjpower'},function(args, speaker)
 		if speaker.Character:FindFirstChildOfClass('Humanoid').UseJumpPower then
 			speaker.Character:FindFirstChildOfClass('Humanoid').JumpPower = 50
 		else
-			speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight  = 50
+			speaker.Character:FindFirstChildOfClass('Humanoid').JumpHeight = 50
 		end
 	end
 end)
@@ -11301,7 +11319,7 @@ end)
 
 addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	if firetouchinterest then
-		local Player = Players.LocalPlayer
+		local Player = speaker
 		local Character = Player.Character
 		local Old = getRoot(Character).CFrame
 		local Hats = {}
@@ -11587,11 +11605,11 @@ addcmd('unstun',{'nostun','unplatformstand','noplatformstand'},function(args, sp
 end)
 
 addcmd('norotate',{'noautorotate'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = false
+	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate = false
 end)
 
 addcmd('unnorotate',{'autorotate'},function(args, speaker)
-	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate  = true
+	speaker.Character:FindFirstChildOfClass('Humanoid').AutoRotate = true
 end)
 
 addcmd('enablestate',{},function(args, speaker)
