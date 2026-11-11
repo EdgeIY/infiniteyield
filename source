@@ -12759,6 +12759,7 @@ addcmd("scare", {"spook"}, function(args, speaker)
 end)
 
 addcmd("alignmentkeys", {}, function(args, speaker)
+	execCmd("unalignmentkeys")
 	alignmentKeys = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		if gameProcessed then return end
 		if input.KeyCode == Enum.KeyCode.Comma then workspace.CurrentCamera:PanUnits(-1) end
@@ -12769,10 +12770,12 @@ addcmd("alignmentkeys", {}, function(args, speaker)
 end)
 
 addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
-	if type(alignmentKeysEmotes) == "boolean" then
+	if type(alignmentKeysEmotes) == "boolean" and alignmentKeysEmotes then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
 	end
-	alignmentKeys:Disconnect()
+	if alignmentKeys then
+		alignmentKeys:Disconnect()
+	end
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12821,7 +12824,9 @@ end)
 
 addcmd("unlistento", {}, function(args, speaker)
 	SoundService:SetListener(Enum.ListenerType.Camera)
-	listentoChar:Disconnect()
+	if listentoChar then
+		listentoChar:Disconnect()
+	end
 end)
 
 addcmd("jerk", {}, function(args, speaker)
