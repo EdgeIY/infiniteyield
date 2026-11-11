@@ -12005,11 +12005,7 @@ addcmd("clicktouch", {}, function(args, speaker)
 end)
 
 addcmd("unclicktouch", {}, function(args, speaker)
-	if firetouchinterest then
-		clickTouch = false
-	else
-		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
-	end
+	clickTouch = false
 end)
 
 addcmd("antifling", {}, function(args, speaker)
