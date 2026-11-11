@@ -4884,6 +4884,8 @@ CMDs[#CMDs + 1] = {NAME = 'clickteleport', DESC = 'Go to Settings > Keybinds > A
 CMDs[#CMDs + 1] = {NAME = 'clickfor', DESC = 'Click a player to run (click type) (player)'}
 CMDs[#CMDs + 1] = {NAME = 'unclickfor', DESC = 'Disables clickfor'}
 CMDs[#CMDs + 1] = {NAME = 'clicktype [type]', DESC = 'Sets click type'}
+CMDs[#CMDs + 1] = {NAME = 'clicktouch', DESC = 'Click a part with a TouchTransmitter to firetouchinterest'}
+CMDs[#CMDs + 1] = {NAME = 'unclicktouch', DESC = 'Disables clicktouch'}
 CMDs[#CMDs + 1] = {NAME = 'mouseteleport / mousetp', DESC = 'Teleports your character to your mouse. This is recommended as a keybind'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'tools', DESC = 'Copies tools from ReplicatedStorage and Lighting'}
@@ -6294,6 +6296,7 @@ end
 
 clickFor = false
 clickType = "bang"
+clickTouch = false
 IYMouse.Button1Down:Connect(function()
 	for i,v in pairs(binds) do
 		if v.COMMAND == 'clicktp' then
@@ -6327,6 +6330,17 @@ IYMouse.Button1Down:Connect(function()
 				end
 			end
 		end)
+	elseif clickTouch and IYMouse.Target then
+		local touch = IYMouse.Target:FindFirstChildOfClass("TouchTransmitter")
+		if touch then
+			local character = Players.LocalPlayer.Character
+			if character and character:FindFirstChild("HumanoidRootPart") then
+				local hrp = character.HumanoidRootPart
+				firetouchinterest(hrp, IYMouse.Target, 0)
+				task.wait()
+				firetouchinterest(hrp, IYMouse.Target, 1)
+			end
+		end
 	end
 end)
 
@@ -11980,6 +11994,22 @@ end)
 addcmd("clicktype", {}, function(args, speaker)
 	clickType = args[1]:lower() or "bang"
 	return "Assigned as " .. clickType
+end)
+
+addcmd("clicktouch", {}, function(args, speaker)
+	if firetouchinterest then
+		clickTouch = true
+	else
+		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
+	end
+end)
+
+addcmd("unclicktouch", {}, function(args, speaker)
+	if firetouchinterest then
+		clickTouch = false
+	else
+		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
+	end
 end)
 
 addcmd("antifling", {}, function(args, speaker)
