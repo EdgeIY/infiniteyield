@@ -6952,7 +6952,7 @@ end
 addcmd('execinfo', {'identifyexec', 'iexec', 'identifyexecutor'}, function(args, speaker)
     local name, version = identifyexecutor()
     local ise = name and (version and name .. " " .. version or name) or "Unknown Executor"
-
+	local rawd = args[1] and parseBoolean(args[1])
     if not httprequest then return notify('Executor Info', ise) end
 
     task.spawn(function()
@@ -6982,7 +6982,7 @@ addcmd('execinfo', {'identifyexec', 'iexec', 'identifyexecutor'}, function(args,
                             suncText = exploit.suncPercentage and (tostring(exploit.suncPercentage) .. "%") or "N/A"
                             safetyText = exploit.detected and "Detected" or "Undetected"
                             
-                            if args[1] then
+                            if rawd then
                                 print("====== [WEAO RAW DATABASE RECORD] ======")
                                 exploit_info(exploit)
 							    --print(HttpService:JSONEncode(exploit))
