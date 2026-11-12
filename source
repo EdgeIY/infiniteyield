@@ -74,6 +74,7 @@ TeleportService = Services.TeleportService
 StarterGui = Services.StarterGui
 GuiService = Services.GuiService
 Lighting = Services.Lighting
+ContentProvider = Services.ContentProvider
 ContextActionService = Services.ContextActionService
 ReplicatedStorage = Services.ReplicatedStorage
 GroupService = Services.GroupService
