@@ -2086,6 +2086,14 @@ function getRoot(char)
 	end
 end
 
+function getHum(char)
+	if char and char:FindFirstChildOfClass("Humanoid") then
+		return char:FindFirstChildOfClass("Humanoid")
+	else
+		return nil
+	end
+end
+
 function tools(plr)
 	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass("Tool") or plr.Character:FindFirstChildOfClass("Tool") then
 		return true
@@ -9803,6 +9811,7 @@ addcmd("unweaken", {"unstrengthen"}, function(args, speaker)
 end)
 
 addcmd("breakvelocity", {}, function(args, speaker)
+	if not speaker.Character then return end
 	local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
 	delay(1, function()
 		BeenASecond = true
@@ -9829,9 +9838,11 @@ addcmd('jpower',{'jumppower','jp'},function(args, speaker)
 end)
 
 addcmd("maxslopeangle", {"msa"}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	local sangle = args[1] or 89
 	if isNumber(sangle) then
-		speaker.Character:FindFirstChildWhichIsA("Humanoid").MaxSlopeAngle = sangle
+		hum.MaxSlopeAngle = sangle
 	end
 end)
 
@@ -9843,13 +9854,17 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 end)
 
 addcmd("hipheight", {"hheight"}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	local hipHeight = args[1] or (r15(speaker) and 2.1 or 0)
 	if isNumber(hipHeight) then
-		speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = hipHeight
+		hum.HipHeight = hipHeight
 	end
 end)
 
 addcmd("dance", {}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	pcall(execCmd, "undance")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 	if r15(speaker) then
@@ -9857,7 +9872,7 @@ addcmd("dance", {}, function(args, speaker)
 	end
 	local animation = Instance.new("Animation")
 	animation.AnimationId = "rbxassetid://" .. dances[math.random(1, #dances)]
-	danceTrack = speaker.Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(animation)
+	danceTrack = hum:LoadAnimation(animation)
 	danceTrack.Looped = true
 	danceTrack:Play()
 end)
@@ -9876,6 +9891,7 @@ addcmd("defemote", {}, function(args, speaker)
 end)
 
 addcmd('nolimbs',{'rlimbs'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9900,6 +9916,7 @@ addcmd('nolimbs',{'rlimbs'},function(args, speaker)
 end)
 
 addcmd('noarms',{'rarms'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9920,6 +9937,7 @@ addcmd('noarms',{'rarms'},function(args, speaker)
 end)
 
 addcmd('nolegs',{'rlegs'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9940,39 +9958,64 @@ addcmd('nolegs',{'rlegs'},function(args, speaker)
 end)
 
 addcmd("sit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum.Sit = true
 end)
 
 addcmd("lay", {"laydown"}, function(args, speaker)
-	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	local character = speaker.Character
+	local root = getRoot(character)
+	if not character or not root then return end
+	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	humanoid.Sit = true
 	task.wait(0.1)
-	humanoid.RootPart.CFrame = humanoid.RootPart.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
+	root.CFrame = root.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
 	for _, v in ipairs(humanoid:GetPlayingAnimationTracks()) do
 		v:Stop()
 	end
 end)
 
 addcmd("sitwalk", {}, function(args, speaker)
-	local anims = speaker.Character.Animate
-	local sit = anims.sit:FindFirstChildWhichIsA("Animation").AnimationId
-	anims.idle:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.walk:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.run:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.jump:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = not r15(speaker) and -1.5 or 0.5
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	local anims = speaker.Character:FindFirstChild("Animate")
+	if not anims then return end
+
+	local function getAnim(stateName)
+		local folder = anims:FindFirstChild(stateName)
+		return folder and folder:FindFirstChildWhichIsA("Animation")
+	end
+
+	local sitAnim = getAnim("sit")
+	if not sitAnim then return end
+
+	for _, state in ipairs({"idle", "walk", "run", "jump"}) do
+		local anim = getAnim(state)
+		if anim then
+			anim.AnimationId = sitAnim.AnimationId
+		end
+	end
+
+	hum.HipHeight = not r15(speaker) and -1.5 or 0.5
 end)
 
 addcmd("nosit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 end)
 
 addcmd("unnosit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
 local infJump
@@ -10093,6 +10136,7 @@ addcmd("team", {}, function(args, speaker)
 end)
 
 addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
@@ -10101,6 +10145,7 @@ addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},fun
 end)
 
 addcmd('loopnobgui',{'loopunbgui','loopnobillboardgui','loopunbillboardgui','loopnoname','looprohg'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
@@ -10183,19 +10228,27 @@ addcmd("emote", {"em"}, function(args, speaker)
 end)
 
 addcmd('noanim',{},function(args, speaker)
+	if not speaker.Character then return end
+	if not speaker.Character:FindFirstChild("Animate") then return end
 	speaker.Character.Animate.Disabled = true
 end)
 
 addcmd('reanim',{},function(args, speaker)
+	if not speaker.Character then return end
+	if not speaker.Character:FindFirstChild("Animate") then return end
 	speaker.Character.Animate.Disabled = false
 end)
 
-addcmd('animspeed',{},function(args, speaker)
-	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+addcmd('animspeed', {}, function(args, speaker)
+	local char = speaker.Character
+	if not char then return end
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
-		v:AdjustSpeed(tonumber(args[1] or 1))
+	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	if not hum then return end
+
+	local speed = tonumber(args[1]) or 1
+	for i, v in next, hum:GetPlayingAnimationTracks() do
+		v:AdjustSpeed(speed)
 	end
 end)
 
@@ -10257,26 +10310,32 @@ addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
 end)
 
 addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
-	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+	local char = speaker.Character
+	if not char then return end
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
+	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	if not hum then return end
+
+	for i,v in next, hum:GetPlayingAnimationTracks() do
 		v:Stop()
 	end
 end)
 
 addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'}, function(args, speaker)
-	local Char = speaker.Character or speaker.CharacterAdded:Wait()
-	local Human = Char and Char:WaitForChild('Humanoid', 15)
-	local Animate = Char and Char:WaitForChild('Animate', 15)
-	if not Human or not Animate then
-		return notify('Refresh Animations', 'Failed to get Animate/Humanoid')
-	end
-	Animate.Disabled = true
-	for _, v in ipairs(Human:GetPlayingAnimationTracks()) do
+	local char = speaker.Character
+	if not char then return end
+
+	local hum = getHum(char)
+	if not hum then return end
+
+	local animate = char:FindFirstChild("Animate")
+	if not animate then return end
+
+	animate.Disabled = true
+	for _, v in ipairs(hum:GetPlayingAnimationTracks()) do
 		v:Stop()
 	end
-	Animate.Disabled = false
+	animate.Disabled = false
 end)
 
 addcmd('allowcustomanim', {'allowcustomanimations'}, function(args, speaker)
@@ -10290,9 +10349,9 @@ addcmd('unallowcustomanim', {'unallowcustomanimations'}, function(args, speaker)
 end)
 
 addcmd('loopanimation', {'loopanim'},function(args, speaker)
-	local Char = speaker.Character
-	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
-	for _, v in ipairs(Human.GetPlayingAnimationTracks(Human)) do
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	for _, v in ipairs(hum:GetPlayingAnimationTracks()) do
 		v.Looped = true
 	end
 end)
@@ -10316,6 +10375,7 @@ addcmd('tweentpposition',{'ttppos'},function(args, speaker)
 end)
 
 addcmd("offset", {}, function(args, speaker)
+	if not speaker.Character then return end
     if #args < 3 then return end
     speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
 end)
