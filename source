@@ -12789,6 +12789,117 @@ addcmd("unlistento", {}, function(args, speaker)
 	listentoChar:Disconnect()
 end)
 
+local musicSettings = {
+	sound = nil,
+	volume = 0.5,
+	pitch = 1
+}
+
+local function getSound()
+	if not musicSettings.sound or not musicSettings.sound.Parent then
+		local sound = Instance.new("Sound")
+		sound.Name = randomString()
+		sound.Parent = SoundService
+		musicSettings.sound = sound
+	end
+	return musicSettings.sound
+end
+
+local function playmusic(rawId, loop, savesets)
+	local cleanId = tostring(rawId or ""):gsub("%D", "")
+	if cleanId == "" then return "No valid sound ID provided." end
+
+	local sound = getSound()
+	sound:Stop()
+	sound.SoundId = "rbxassetid://" .. cleanId
+	sound.Looped = loop
+
+	if savesets then
+		sound.Volume = musicSettings.volume
+		sound.PlaybackSpeed = musicSettings.pitch
+	else
+		musicSettings.volume = 0.5
+		musicSettings.pitch = 1
+		sound.Volume = 0.5
+		sound.PlaybackSpeed = 1
+	end
+
+	pcall(function()
+		ContentProvider:PreloadAsync({sound})
+	end)
+
+	if sound.TimeLength > 0 then
+		sound:Play()
+		return "Playing sound: " .. cleanId
+	else
+		return "Sound failed to load or is restricted: " .. cleanId
+	end
+end
+
+local function stopmusic()
+	if musicSettings.sound then
+		musicSettings.sound:Stop()
+		musicSettings.sound:Destroy()
+		musicSettings.sound = nil
+	end
+end
+
+addcmd("playmusic", {"playsong"}, function(args, speaker)
+	if args[1] then
+		local shouldLoop = parseBoolean(args[2], true)
+		local saveSettings = parseBoolean(args[3], true)
+		local msg = playmusic(args[1], shouldLoop, saveSettings)
+		notify("Music Manager", msg)
+	else
+		notify("Music Manager", "Please provide a Sound ID.")
+	end
+end)
+
+addcmd("stopmusic", {"stopsong"}, function(args, speaker)
+	stopmusic()
+	notify("Music Manager", "Ended the music.")
+end)
+
+addcmd("musicvol", {"songvol", "mvol"}, function(args, speaker)
+	local parsed = tonumber(args[1])
+	if args[1] ~= nil and not parsed then
+		return notify("Music Manager", "Invalid volume number.")
+	end
+
+	musicSettings.volume = math.clamp(parsed or 0.5, 0, 10)
+	if musicSettings.sound then
+		musicSettings.sound.Volume = musicSettings.volume
+	end
+	notify("Music Manager", "Volume set to " .. musicSettings.volume)
+end)
+
+addcmd("musicpitch", {"songpitch", "mpitch"}, function(args, speaker)
+	local parsed = tonumber(args[1])
+	if args[1] ~= nil and not parsed then
+		return notify("Music Manager", "Invalid pitch number.")
+	end
+
+	musicSettings.pitch = math.clamp(parsed or 1, 0.1, 10)
+	if musicSettings.sound then
+		musicSettings.sound.PlaybackSpeed = musicSettings.pitch
+	end
+	notify("Music Manager", "Pitch set to " .. musicSettings.pitch)
+end)
+
+addcmd("pausemusic", {"pausesong"}, function(args, speaker)
+	if musicSettings.sound and musicSettings.sound.IsPlaying then
+		musicSettings.sound:Pause()
+		notify("Music Manager", "Music paused.")
+	end
+end)
+
+addcmd("resumemusic", {"unpausemusic", "resumesong"}, function(args, speaker)
+	if musicSettings.sound and not musicSettings.sound.IsPlaying then
+		musicSettings.sound:Resume()
+		notify("Music Manager", "Music resumed.")
+	end
+end)
+
 addcmd("jerk", {}, function(args, speaker)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	local backpack = speaker:FindFirstChildWhichIsA("Backpack")
