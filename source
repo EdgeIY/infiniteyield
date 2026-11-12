@@ -4838,6 +4838,8 @@ CMDs[#CMDs + 1] = {NAME = 'unweaken', DESC = 'Sets your characters CustomPhysica
 CMDs[#CMDs + 1] = {NAME = 'strengthen [num]', DESC = 'Makes your character more dense via CustomPhysicalProperties'}
 CMDs[#CMDs + 1] = {NAME = 'unstrengthen', DESC = 'Sets your characters CustomPhysicalProperties to default'}
 CMDs[#CMDs + 1] = {NAME = 'breakvelocity', DESC = 'Sets your characters velocity to 0'}
+CMDs[#CMDs + 1] = {NAME = 'sprint [speed]', DESC = 'Left shift to go faster; WalkSpeed = [speed]"}
+CMDs[#CMDs + 1] = {NAME = 'unsprint', DESC = 'Remove ability to sprint"}
 CMDs[#CMDs + 1] = {NAME = 'spin [speed]', DESC = 'Spins your character'}
 CMDs[#CMDs + 1] = {NAME = 'unspin', DESC = 'Disables spin'}
 CMDs[#CMDs + 1] = {NAME = 'split', DESC = 'Splits your character in half'}
@@ -9807,6 +9809,52 @@ addcmd("breakvelocity", {}, function(args, speaker)
 			end
 		end
 		wait()
+	end
+end)
+
+local sprintBeganConn, sprintEndedConn, defspeed
+addcmd('sprint', {'shiftsprint'}, function(args, speaker)
+	execCmd("unsprint")
+	local character = speaker.Character or speaker.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+	defspeed = humanoid.WalkSpeed
+	local sprints = tonumber(args[1]) or (defspeed * 2)
+
+	sprintBeganConn = UserInputService.InputBegan:Connect(function(input, processed)
+		if processed then return end
+		if input.KeyCode == Enum.KeyCode.LeftShift then
+			local char = speaker.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if hum then
+				hum.WalkSpeed = sprints
+			end
+		end
+	end)
+
+	sprintEndedConn = UserInputService.InputEnded:Connect(function(input)
+		if input.KeyCode == Enum.KeyCode.LeftShift then
+			local char = speaker.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if hum and hum.WalkSpeed ~= defspeed then
+				hum.WalkSpeed = defspeed
+			end
+		end
+	end)
+end)
+
+addcmd('unsprint', {'unshiftsprint'}, function(args, speaker)
+	if sprintBeganConn then
+		sprintBeganConn:Disconnect()
+		sprintBeganConn = nil
+	end
+	if sprintEndedConn then
+		sprintEndedConn:Disconnect()
+		sprintEndedConn = nil
+	end
+	local hum = speaker.Character and speaker.Character:FindFirstChild("Humanoid")
+	if not hum then return end
+	if defspeed and defspeed ~= hum.WalkSpeed then
+		hum.WalkSpeed = defspeed
 	end
 end)
 
