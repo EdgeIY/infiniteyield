@@ -15,10 +15,10 @@ cloneref = missing("function", cloneref, function(...) return ... end)
 gethui = missing("function", gethui or get_hidden_gui)
 syn = missing("table", syn)
 syn_protect_gui = missing("function", syn and syn.protect_gui)
-sethidden =  missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
-gethidden =  missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
-queueteleport =  missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
-httprequest =  missing("function", request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request))
+sethidden = missing("function", sethiddenproperty or set_hidden_property or set_hidden_prop)
+gethidden = missing("function", gethiddenproperty or get_hidden_property or get_hidden_prop)
+queueteleport = missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
+httprequest = missing("function", request or http_request or (syn and syn.request) or (http and http.request) or (fluxus and fluxus.request))
 everyClipboard = missing("function", setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set))
 firetouchinterest = missing("function", firetouchinterest)
 waxwritefile, waxreadfile = writefile, readfile
@@ -74,6 +74,7 @@ TeleportService = Services.TeleportService
 StarterGui = Services.StarterGui
 GuiService = Services.GuiService
 Lighting = Services.Lighting
+ContentProvider = Services.ContentProvider
 ContextActionService = Services.ContextActionService
 ReplicatedStorage = Services.ReplicatedStorage
 GroupService = Services.GroupService
@@ -81,17 +82,13 @@ PathService = Services.PathfindingService
 SoundService = Services.SoundService
 Teams = Services.Teams
 StarterPlayer = Services.StarterPlayer
-InsertService = Services.InsertService
 ChatService = Services.Chat
 ProximityPromptService = Services.ProximityPromptService
-ContentProvider = Services.ContentProvider
-StatsService = Services.Stats
 MaterialService = Services.MaterialService
 AvatarEditorService = Services.AvatarEditorService
 TextService = Services.TextService
 TextChatService = Services.TextChatService
 CaptureService = Services.CaptureService
-VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
 
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
@@ -208,7 +205,7 @@ TriggerLabel = Instance.new("TextLabel")
 BindTriggerSelect = Instance.new("TextButton")
 Add_2 = Instance.new("TextButton")
 Toggles = Instance.new("ScrollingFrame")
-ClickTP  = Instance.new("TextLabel")
+ClickTP = Instance.new("TextLabel")
 Select = Instance.new("TextButton")
 ClickDelete = Instance.new("TextLabel")
 Select_2 = Instance.new("TextButton")
@@ -772,7 +769,7 @@ Credits.Position = UDim2.new(0, 0, 0.9, 30)
 Credits.Size = UDim2.new(0, 250, 0, 20)
 Credits.Font = Enum.Font.SourceSansLight
 Credits.FontSize = Enum.FontSize.Size14
-Credits.Text = "Edge // Zwolf // Moon // Toon // Peyton // ATP"
+Credits.Text = "Edge // Moon // Zwolf // Sleaze // Toon // Peyton // ATP"
 Credits.TextColor3 = Color3.new(1, 1, 1)
 Credits.ZIndex = 10
 
@@ -2089,6 +2086,14 @@ function getRoot(char)
 	end
 end
 
+function getHum(char)
+	if char and char:FindFirstChildOfClass("Humanoid") then
+		return char:FindFirstChildOfClass("Humanoid")
+	else
+		return nil
+	end
+end
+
 function tools(plr)
 	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass("Tool") or plr.Character:FindFirstChildOfClass("Tool") then
 		return true
@@ -2112,7 +2117,7 @@ end
 
 function toClipboard(txt)
 	if everyClipboard then
-		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so dont call me out for this
+		everyClipboard(tostring(txt)) -- some executor errored without tostring btw so don't call me out for this
 		notify("Clipboard", "Copied to clipboard")
 	else
 		notify("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
@@ -8963,7 +8968,7 @@ addcmd('joindate',{'jd'},function(args, speaker)
 
 		local secondsOld = p.AccountAge * 24 * 60 * 60
 		local now = os.time()
-		local dateJoined  = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
+		local dateJoined = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
 
 		table.insert(dates, dateJoined)
 	end
@@ -8978,7 +8983,7 @@ addcmd('chatjoindate',{'cjd'},function(args, speaker)
 
 		local secondsOld = p.AccountAge * 24 * 60 * 60
 		local now = os.time()
-		local dateJoined  = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
+		local dateJoined = p.Name .. " joined: " .. os.date("%m/%d/%y", now - secondsOld)
 
 		table.insert(dates, dateJoined)
 	end
@@ -9031,11 +9036,9 @@ end)
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
-		notify('Copied ID','Copied creator ID to clipboard')
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
-		notify('Copied ID','Copied creator ID to clipboard')
 	end
 end)
 
@@ -9214,7 +9217,7 @@ addcmd("vehicleclip", {"vclip", "unvnoclip", "unvehiclenoclip"}, function(args, 
 	vnoclipParts = {}
 end)
 
-addcmd("togglevnoclip", {}, function(args, speaker)
+addcmd("togglevnoclip", {"tvnoclip"}, function(args, speaker)
 	execCmd(Clip and "vnoclip" or "vclip")
 end)
 
@@ -9277,29 +9280,33 @@ end)
 
 local walkto = false
 local waypointwalkto = false
-addcmd('walkto',{'follow'},function(args, speaker)
+addcmd('walkto',{'follow'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
+	for i, v in pairs(players) do
+		if Players[v] ~= speaker then
+			if Players[v].Character ~= nil then
+				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
+					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
+					wait(.1)
+				end
+				walkto = true
+				repeat wait()
+					speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
+				until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
 			end
-			walkto = true
-			repeat wait()
-				speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
-			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
+		else
+			notify("Walk To", "You cannot follow yourself")
 		end
 	end
 end)
 
-addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
+addcmd('pathfindwalkto',{'pathfindfollow'}, function(args, speaker)
 	walkto = false
 	wait()
 	local players = getPlayer(args[1], speaker)
 	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
-	for i,v in pairs(players)do
+	for i, v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9329,14 +9336,14 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 	end
 end)
 
-addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
+addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'}, function(args, speaker)
 	waypointwalkto = false
 	wait()
 	local WPName = tostring(getstring(1, args))
 	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
 	local path = PathService:CreatePath()
 	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
+		for i, _ in pairs(WayPoints) do
 			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9365,7 +9372,7 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 				until not speaker.Character or waypointwalkto == false
 			end
 		end
-		for i,_ in pairs(pWayPoints) do
+		for i, _ in pairs(pWayPoints) do
 			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
 				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
 					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9397,7 +9404,7 @@ addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
 	end
 end)
 
-addcmd('unwalkto',{'nowalkto','unfollow','nofollow'},function(args, speaker)
+addcmd('unwalkto', {'nowalkto', 'unfollow', 'nofollow'}, function(args, speaker)
 	walkto = false
 	waypointwalkto = false
 end)
@@ -9408,6 +9415,10 @@ addcmd("orbit", {}, function(args, speaker)
 	local target = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
 	local root = getRoot(speaker.Character)
 	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+
+	if target == speaker then
+		return notify('Orbit', "You cannot orbit around yourself")
+	end
 
 	if target and target.Character and getRoot(target.Character) and root and humanoid then
 		local rotation = 0
@@ -9440,7 +9451,6 @@ addcmd("unorbit", {}, function(args, speaker)
 	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
 
-
 addcmd('freeze',{'fr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
@@ -9455,7 +9465,6 @@ addcmd('freeze',{'fr'},function(args, speaker)
 		end
 	end
 end)
-
 
 addcmd('thaw',{'unfreeze','unfr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
@@ -9481,26 +9490,29 @@ addcmd("unanchor", {}, function(args, speaker)
 end)
 
 oofing = false
-addcmd('loopoof',{},function(args, speaker)
+addcmd('loopoof', {'loopsounds'}, function(args, speaker)
 	oofing = true
 	repeat wait(0.1)
-		for i,v in pairs(Players:GetPlayers()) do
-			if v.Character ~= nil and v.Character:FindFirstChild'Head' then
+		for i, v in pairs(Players:GetPlayers()) do
+			if v.Character ~= nil and v.Character:FindFirstChild('Head') then
 				for _,x in pairs(v.Character.Head:GetChildren()) do
-					if x:IsA'Sound' then x.Playing = true end
+					if x:IsA('Sound') then x.Playing = true end
 				end
 			end
 		end
 	until oofing == false
 end)
 
-addcmd('unloopoof',{},function(args, speaker)
+addcmd('unloopoof', {'unloopsounds'}, function(args, speaker)
 	oofing = false
 end)
 
 local notifiedRespectFiltering = false
 addcmd('muteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true
+		notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9521,7 +9533,10 @@ addcmd('muteboombox',{},function(args, speaker)
 end)
 
 addcmd('unmuteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true
+		notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9796,6 +9811,7 @@ addcmd("unweaken", {"unstrengthen"}, function(args, speaker)
 end)
 
 addcmd("breakvelocity", {}, function(args, speaker)
+	if not speaker.Character then return end
 	local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
 	delay(1, function()
 		BeenASecond = true
@@ -9822,9 +9838,11 @@ addcmd('jpower',{'jumppower','jp'},function(args, speaker)
 end)
 
 addcmd("maxslopeangle", {"msa"}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	local sangle = args[1] or 89
 	if isNumber(sangle) then
-		speaker.Character:FindFirstChildWhichIsA("Humanoid").MaxSlopeAngle = sangle
+		hum.MaxSlopeAngle = sangle
 	end
 end)
 
@@ -9836,13 +9854,17 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 end)
 
 addcmd("hipheight", {"hheight"}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	local hipHeight = args[1] or (r15(speaker) and 2.1 or 0)
 	if isNumber(hipHeight) then
-		speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = hipHeight
+		hum.HipHeight = hipHeight
 	end
 end)
 
 addcmd("dance", {}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
 	pcall(execCmd, "undance")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 	if r15(speaker) then
@@ -9850,7 +9872,7 @@ addcmd("dance", {}, function(args, speaker)
 	end
 	local animation = Instance.new("Animation")
 	animation.AnimationId = "rbxassetid://" .. dances[math.random(1, #dances)]
-	danceTrack = speaker.Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(animation)
+	danceTrack = hum:LoadAnimation(animation)
 	danceTrack.Looped = true
 	danceTrack:Play()
 end)
@@ -9869,6 +9891,7 @@ addcmd("defemote", {}, function(args, speaker)
 end)
 
 addcmd('nolimbs',{'rlimbs'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9893,6 +9916,7 @@ addcmd('nolimbs',{'rlimbs'},function(args, speaker)
 end)
 
 addcmd('noarms',{'rarms'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9913,6 +9937,7 @@ addcmd('noarms',{'rarms'},function(args, speaker)
 end)
 
 addcmd('nolegs',{'rlegs'},function(args, speaker)
+	if not speaker.Character then return end
 	if r15(speaker) then
 		for i,v in pairs(speaker.Character:GetChildren()) do
 			if v:IsA("BasePart") and
@@ -9933,39 +9958,64 @@ addcmd('nolegs',{'rlegs'},function(args, speaker)
 end)
 
 addcmd("sit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").Sit = true
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum.Sit = true
 end)
 
 addcmd("lay", {"laydown"}, function(args, speaker)
-	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	local character = speaker.Character
+	local root = getRoot(character)
+	if not character or not root then return end
+	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	humanoid.Sit = true
 	task.wait(0.1)
-	humanoid.RootPart.CFrame = humanoid.RootPart.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
+	root.CFrame = root.CFrame * CFrame.Angles(math.pi * 0.5, 0, 0)
 	for _, v in ipairs(humanoid:GetPlayingAnimationTracks()) do
 		v:Stop()
 	end
 end)
 
 addcmd("sitwalk", {}, function(args, speaker)
-	local anims = speaker.Character.Animate
-	local sit = anims.sit:FindFirstChildWhichIsA("Animation").AnimationId
-	anims.idle:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.walk:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.run:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	anims.jump:FindFirstChildWhichIsA("Animation").AnimationId = sit
-	speaker.Character:FindFirstChildWhichIsA("Humanoid").HipHeight = not r15(speaker) and -1.5 or 0.5
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	local anims = speaker.Character:FindFirstChild("Animate")
+	if not anims then return end
+
+	local function getAnim(stateName)
+		local folder = anims:FindFirstChild(stateName)
+		return folder and folder:FindFirstChildWhichIsA("Animation")
+	end
+
+	local sitAnim = getAnim("sit")
+	if not sitAnim then return end
+
+	for _, state in ipairs({"idle", "walk", "run", "jump"}) do
+		local anim = getAnim(state)
+		if anim then
+			anim.AnimationId = sitAnim.AnimationId
+		end
+	end
+
+	hum.HipHeight = not r15(speaker) and -1.5 or 0.5
 end)
 
 addcmd("nosit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 end)
 
 addcmd("unnosit", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
-	speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	hum:ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
 local infJump
@@ -10086,6 +10136,7 @@ addcmd("team", {}, function(args, speaker)
 end)
 
 addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
@@ -10094,6 +10145,7 @@ addcmd('nobgui',{'unbgui','nobillboardgui','unbillboardgui','noname','rohg'},fun
 end)
 
 addcmd('loopnobgui',{'loopunbgui','loopnobillboardgui','loopunbillboardgui','loopnoname','looprohg'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants())do
 		if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
 			v:Destroy()
@@ -10176,19 +10228,27 @@ addcmd("emote", {"em"}, function(args, speaker)
 end)
 
 addcmd('noanim',{},function(args, speaker)
+	if not speaker.Character then return end
+	if not speaker.Character:FindFirstChild("Animate") then return end
 	speaker.Character.Animate.Disabled = true
 end)
 
 addcmd('reanim',{},function(args, speaker)
+	if not speaker.Character then return end
+	if not speaker.Character:FindFirstChild("Animate") then return end
 	speaker.Character.Animate.Disabled = false
 end)
 
-addcmd('animspeed',{},function(args, speaker)
-	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+addcmd('animspeed', {}, function(args, speaker)
+	local char = speaker.Character
+	if not char then return end
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
-		v:AdjustSpeed(tonumber(args[1] or 1))
+	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	if not hum then return end
+
+	local speed = tonumber(args[1]) or 1
+	for i, v in next, hum:GetPlayingAnimationTracks() do
+		v:AdjustSpeed(speed)
 	end
 end)
 
@@ -10250,26 +10310,32 @@ addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
 end)
 
 addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
-	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+	local char = speaker.Character
+	if not char then return end
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
+	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	if not hum then return end
+
+	for i,v in next, hum:GetPlayingAnimationTracks() do
 		v:Stop()
 	end
 end)
 
 addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'}, function(args, speaker)
-	local Char = speaker.Character or speaker.CharacterAdded:Wait()
-	local Human = Char and Char:WaitForChild('Humanoid', 15)
-	local Animate = Char and Char:WaitForChild('Animate', 15)
-	if not Human or not Animate then
-		return notify('Refresh Animations', 'Failed to get Animate/Humanoid')
-	end
-	Animate.Disabled = true
-	for _, v in ipairs(Human:GetPlayingAnimationTracks()) do
+	local char = speaker.Character
+	if not char then return end
+
+	local hum = getHum(char)
+	if not hum then return end
+
+	local animate = char:FindFirstChild("Animate")
+	if not animate then return end
+
+	animate.Disabled = true
+	for _, v in ipairs(hum:GetPlayingAnimationTracks()) do
 		v:Stop()
 	end
-	Animate.Disabled = false
+	animate.Disabled = false
 end)
 
 addcmd('allowcustomanim', {'allowcustomanimations'}, function(args, speaker)
@@ -10283,9 +10349,9 @@ addcmd('unallowcustomanim', {'unallowcustomanimations'}, function(args, speaker)
 end)
 
 addcmd('loopanimation', {'loopanim'},function(args, speaker)
-	local Char = speaker.Character
-	local Human = Char and Char.FindFirstChildWhichIsA(Char, "Humanoid")
-	for _, v in ipairs(Human.GetPlayingAnimationTracks(Human)) do
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	for _, v in ipairs(hum:GetPlayingAnimationTracks()) do
 		v.Looped = true
 	end
 end)
@@ -10309,6 +10375,7 @@ addcmd('tweentpposition',{'ttppos'},function(args, speaker)
 end)
 
 addcmd("offset", {}, function(args, speaker)
+	if not speaker.Character then return end
     if #args < 3 then return end
     speaker.Character:TranslateBy(Vector3.new(tonumber(args[1]) or 0, tonumber(args[2]) or 0, tonumber(args[3]) or 0))
 end)
@@ -12268,12 +12335,17 @@ addcmd('walltp',{},function(args, speaker)
 			end
 		end
 	end
+	if walltpTouch then
+		walltpTouch:Disconnect()
+		walltpTouch = nil
+	end
 	walltpTouch = torso.Touched:Connect(touchedFunc)
 end)
 
 addcmd('unwalltp',{'nowalltp'},function(args, speaker)
 	if walltpTouch then
 		walltpTouch:Disconnect()
+		walltpTouch = nil
 	end
 end)
 
@@ -12295,14 +12367,14 @@ addcmd('autoclick',{},function(args, speaker)
 				end
 			end
 		end)
-		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+		notify('Auto Clicker', "Press [backspace] and [=] at the same time to stop (or type 'unautoclick')")
 		repeat wait(clickDelay)
 			mouse1press()
 			wait(releaseDelay)
 			mouse1release()
 		until autoclicking == false
 	else
-		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing mouse1press or mouse1release)")
 	end
 end)
 
@@ -12430,30 +12502,36 @@ addcmd("unhitboxes", {}, function(args, speaker)
     settings():GetService("RenderSettings").ShowBoundingBoxes = false
 end)
 
-addcmd('stareat',{'stare'},function(args, speaker)
+addcmd('stareat', {'stare'}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		if stareLoop then
-			stareLoop:Disconnect()
-		end
-		if not getRoot(Players.LocalPlayer.Character) and getRoot(Players[v].Character) then return end
-		local function stareFunc()
-			if Players.LocalPlayer.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
-				local chrPos=Players.LocalPlayer.Character.PrimaryPart.Position
-				local tPos=getRoot(Players[v].Character).Position
-				local modTPos=Vector3.new(tPos.X,chrPos.Y,tPos.Z)
-				local newCF=CFrame.new(chrPos,modTPos)
-				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
-			elseif not Players:FindFirstChild(v) then
+	for i, v in pairs(players) do
+		if Players[v] ~= speaker then
+			if stareLoop then
 				stareLoop:Disconnect()
 			end
-		end
+			
+			if not getRoot(speaker.Character) and getRoot(Players[v].Character) then return end
+			
+			local function stareFunc()
+				if speaker.Character.PrimaryPart and Players:FindFirstChild(v) and Players[v].Character ~= nil and getRoot(Players[v].Character) then
+					local chrPos = speaker.Character.PrimaryPart.Position
+					local tPos = getRoot(Players[v].Character).Position
+					local modTPos = Vector3.new(tPos.X,chrPos.Y,tPos.Z)
+					local newCF = CFrame.new(chrPos,modTPos)
+					speaker.Character:SetPrimaryPartCFrame(newCF)
+				elseif not Players:FindFirstChild(v) then
+					stareLoop:Disconnect()
+				end
+			end
 
-		stareLoop = RunService.RenderStepped:Connect(stareFunc)
+			stareLoop = RunService.RenderStepped:Connect(stareFunc)
+		else
+			notify('Stare At', 'You cannot stare at yourself.')
+		end
 	end
 end)
 
-addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
+addcmd('unstareat', {'unstare', 'nostare', 'nostareat'}, function(args, speaker)
 	if stareLoop then
 		stareLoop:Disconnect()
 	end
@@ -12687,8 +12765,10 @@ addcmd("trip", {}, function(args, speaker)
 	end
 end)
 
+adblock = false
 addcmd("removeads", {"adblock"}, function(args, speaker)
-	while wait() do
+	adblock = true -- this command is coded like hot ass
+	repeat wait(0.1)
 		pcall(function()
 			for i, v in pairs(workspace:GetDescendants()) do
 				if v:IsA("PackageLink") then
@@ -12701,12 +12781,20 @@ addcmd("removeads", {"adblock"}, function(args, speaker)
 				end
 			end
 		end)
-	end
+	until adblock == false
+end)
+
+addcmd("unremoveads", {"unadblock"}, function(args, speaker)
+	adblock = false
 end)
 
 addcmd("scare", {"spook"}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local oldpos = nil
+	local spooktime = 0.5
+	if args[2] and isNumber(args[2]) then
+		spooktime = args[2]
+	end
 
 	for _, v in pairs(players) do
 		local root = speaker.Character and getRoot(speaker.Character)
@@ -12715,9 +12803,9 @@ addcmd("scare", {"spook"}, function(args, speaker)
 
 		if root and targetRoot and target ~= speaker then
 			oldpos = root.CFrame
-			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.lookVector * 2
+			root.CFrame = targetRoot.CFrame + targetRoot.CFrame.LookVector * 2
 			root.CFrame = CFrame.new(root.Position, targetRoot.Position)
-			task.wait(0.5)
+			task.wait(spooktime)
 			root.CFrame = oldpos
 		end
 	end
@@ -12885,7 +12973,7 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 	if success and canInvite then
 		SocialService:PromptPhoneBook(speaker, "")
 	else
-		notify("Phonebook", "It seems you're not able to call anyone. Sorry!")
+		notify("Phonebook", "It seems you're not able to call anyone.")
 	end
 end)
 
@@ -13090,7 +13178,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notify("Auto Key Press", "Your exploit does not support this command (missing keypress or keyrelease)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing keypress or keyrelease)")
 	end
 end)
 
