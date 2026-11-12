@@ -2963,6 +2963,10 @@ useFactorySettings = function()
 	logsEnabled = false
 	jLogsEnabled = false
 	logsWebhook = nil
+	apiKey = nil
+	aiModel = "openai/gpt-oss-120b"
+	aiProvider = "groq"
+	maxTokens = 200
 	aliases = {}
 	binds = {}
 	WayPoints = {}
@@ -3070,6 +3074,10 @@ function saves()
 					if vtype(json.logsEnabled, "boolean") then logsEnabled = json.logsEnabled else logsEnabled = false end
 					if vtype(json.jLogsEnabled, "boolean") then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
 					if vtype(json.logsWebhook, "string") then logsWebhook = json.logsWebhook else logsWebhook = nil end
+					if vtype(json.apiKey, "string") then apiKey = json.apiKey else apiKey = nil end
+					if vtype(json.aiModel, "string") then aiModel = json.aiModel else aiModel = "openai/gpt-oss-120b" end
+					if vtype(json.aiProvider, "string") then aiProvider = json.aiProvider else aiProvider = "groq" end
+					if vtype(json.maxTokens, "number") then maxTokens = json.maxTokens else maxTokens = 200 end
 					if vtype(json.aliases, "table") then aliases = json.aliases else aliases = {} end
 					if vtype(json.binds, "table") then binds = json.binds else binds = {} end
 					if vtype(json.spawnCmds, "table") then spawnCmds = json.spawnCmds end
@@ -3140,6 +3148,10 @@ function updatesaves()
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
 			logsWebhook = logsWebhook;
+			apiKey = apiKey;
+			aiModel = aiModel;
+			aiProvider = aiProvider;
+			maxTokens = maxTokens;
 			aliases = aliases;
 			binds = binds or {};
 			WayPoints = AllWaypoints;
@@ -4608,7 +4620,12 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
-CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a Discord webhook for chatlogs to go to (provide no URL to disable this)'}
+CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a discord webhook for chatlogs to go to (provide no url to disable this)'}
+CMDs[#CMDs + 1] = {NAME = 'ai / aimode / verity [prompt]', DESC = 'Talk to AI'}
+CMDs[#CMDs + 1] = {NAME = 'apikey / aikey [key]', DESC = 'Sets API key so the AI can function'}
+CMDs[#CMDs + 1] = {NAME = 'aimodel [model]', DESC = 'Sets the AI model'}
+CMDs[#CMDs + 1] = {NAME = 'aiprovider [provider]', DESC = 'Sets the AI provider (claude/deepseek/gemini/groq/openai'}
+CMDs[#CMDs + 1] = {NAME = 'maxtokens [tokens]', DESC = 'Sets the max number of tokens to use for an AI response'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'vsay [text]', DESC = 'Say anything uncensored (CLIENT)'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
@@ -11795,6 +11812,354 @@ addcmd("chatlogswebhook", {"logswebhook"}, function(args, speaker)
 	end
 	logsWebhook = args[1] or nil
 	updatesaves()
+end)
+
+function askAI(prompt)    
+    local url, headers, bodyData
+    
+    if aiProvider == "openai" then
+        url = "https://api.openai.com/v1/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "groq" then
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "deepseek" then
+        url = "https://api.deepseek.com/chat/completions"
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. apiKey }
+    elseif aiProvider == "claude" then
+        url = "https://api.anthropic.com/v1/messages"
+        headers = { 
+            ["Content-Type"] = "application/json", 
+            ["x-api-key"] = apiKey, 
+            ["anthropic-version"] = "2026-10-21" 
+        }
+    elseif aiProvider == "gemini" then
+        url = "https://generativelanguage.googleapis.com/v1beta/models/" .. aiModel .. ":generateContent?key=" .. apiKey
+        headers = { ["Content-Type"] = "application/json" }
+    else
+        return "Error: Unknown provider specified."
+    end
+
+    if aiProvider == "claude" then
+        bodyData = {
+            model = aiModel,
+            max_tokens = maxTokens,
+            messages = { { role = "user", content = prompt } }
+        }
+    elseif aiProvider == "gemini" then
+        bodyData = {
+            contents = { { parts = { { text = prompt } } } },
+            generationConfig = {
+                maxOutputTokens = maxTokens,
+                temperature = 0.7
+            }
+        }
+    elseif aiProvider == "groq" or aiProvider == "deepseek" then
+        bodyData = {
+            model = aiModel,
+            messages = { { role = "user", content = prompt } },
+            temperature = 0.7,
+            max_tokens = maxTokens
+        }
+	elseif aiProvider == "openai" then
+		bodyData = {
+            model = aiModel,
+            messages = { { role = "user", content = prompt } },
+            temperature = 0.7,
+            max_completion_tokens = maxTokens
+        }
+    end
+
+    local success, response = pcall(function()
+        return httprequest({
+            Url = url,
+            Method = "POST",
+            Headers = headers,
+            Body = HttpService:JSONEncode(bodyData)
+        })
+    end)
+
+    if success and response then
+		local data, errno = nil, nil
+		local passed, failed = pcall(function()
+        	data = HttpService:JSONDecode(response.Body)
+    	end)
+
+		if not passed then
+			errno = tostring(failed)
+		end
+
+		if response.Success then
+			if not passed then
+    			return "Error: Invalid JSON from " .. aiProvider.. "\n\nError:\n" .. tostring(errno)
+			end
+        	if aiProvider == "claude" then
+            	if data and data.content and data.content[1] and data.content[1].text then
+                	return data.content[1].text
+            	end
+        	elseif aiProvider == "gemini" then
+            	if data and data.candidates and data.candidates[1] and data.candidates[1].content 
+                	and data.candidates[1].content.parts and data.candidates[1].content.parts[1].text then
+               		return data.candidates[1].content.parts[1].text
+            	end
+        	else
+            	if data and data.choices and data.choices[1] and data.choices[1].message and data.choices[1].message.content then
+                	return data.choices[1].message.content
+				end
+       	 	end
+			return "Error: Unexpected response structure from " .. aiProvider
+		else
+			if data and data.error then
+    			if type(data.error) == "table" then
+        			errno = data.error.message or errno
+    			else
+        			errno = tostring(data.error)
+				end
+    		end
+
+			return "Error: Fail from " .. aiProvider .. ".\n\nBody:\n" .. tostring(response and response.Body) .. "\n\nError:\n" .. tostring(errno or "Unknown API error")
+		end
+    end
+
+	if success and not response then
+    	return "Error: Empty HTTP response from " .. aiProvider
+	end
+
+	if not success then
+    	return "Error: HTTP request failed for " .. aiProvider.. "\n\nError:\n" .. tostring(response)
+	end
+end
+
+local FRAMEAI
+function createAIWindow(aiResponseText)
+	if FRAMEAI then
+		FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
+		task.wait(0.6)
+		FRAMEAI:Destroy()
+	end
+
+	task.spawn(function()
+		FRAMEAI = Instance.new("Frame")
+		local shadow = Instance.new("Frame")
+		local PopupText = Instance.new("TextLabel")
+		local Exit = Instance.new("TextButton")
+		local ExitImage = Instance.new("ImageLabel")
+		local background = Instance.new("Frame")
+		local scrollFrame = Instance.new("ScrollingFrame")
+		local a = Instance.new("TextLabel")
+		local UIListLayout = Instance.new("UIListLayout")
+		local CopyResponse = Instance.new("TextButton")
+
+		FRAMEAI.Name = randomString()
+		FRAMEAI.Parent = ScaledHolder
+		FRAMEAI.Active = true
+		FRAMEAI.BackgroundTransparency = 1
+		FRAMEAI.Position = UDim2.new(0.5, -130, 0, -500)
+		FRAMEAI.Size = UDim2.new(0, 250, 0, 20)
+		FRAMEAI.ZIndex = 10
+		dragGUI(FRAMEAI)
+
+		shadow.Name = "shadow"
+		shadow.Parent = FRAMEAI
+		shadow.BackgroundColor3 = currentShade2
+		shadow.BorderSizePixel = 0
+		shadow.Size = UDim2.new(0, 250, 0, 20)
+		shadow.ZIndex = 11
+		table.insert(shade2, shadow)
+
+		PopupText.Name = "PopupText"
+		PopupText.Parent = shadow
+		PopupText.BackgroundTransparency = 1
+		PopupText.Size = UDim2.new(1, 0, 0.95, 0)
+		PopupText.ZIndex = 12
+		PopupText.Font = Enum.Font.SourceSans
+		PopupText.TextSize = 14
+		PopupText.Text = "AI Response"
+		PopupText.TextColor3 = currentText1
+		PopupText.TextWrapped = true
+		table.insert(text1, PopupText)
+
+		Exit.Name = "Exit"
+		Exit.Parent = shadow
+		Exit.BackgroundTransparency = 1
+		Exit.Position = UDim2.new(1, -20, 0, 0)
+		Exit.Size = UDim2.new(0, 20, 0, 20)
+		Exit.Text = ""
+		Exit.ZIndex = 12
+
+		ExitImage.Parent = Exit
+		ExitImage.BackgroundColor3 = Color3.new(1, 1, 1)
+		ExitImage.BackgroundTransparency = 1
+		ExitImage.Position = UDim2.new(0, 5, 0, 5)
+		ExitImage.Size = UDim2.new(0, 10, 0, 10)
+		ExitImage.Image = getcustomasset("infiniteyield/assets/close.png")
+		ExitImage.ZIndex = 13
+
+		background.Name = "background"
+		background.Parent = FRAMEAI
+		background.Active = true
+		background.BackgroundColor3 = currentShade1
+		background.BorderSizePixel = 0
+		background.Position = UDim2.new(0, 0, 1, 0)
+		background.Size = UDim2.new(0, 250, 0, 250)
+		background.ZIndex = 10
+		table.insert(shade1, background)
+
+		scrollFrame.Name = "ResponseScroller"
+		scrollFrame.Parent = background
+		scrollFrame.Active = true 
+		scrollFrame.ClipsDescendants = true
+		scrollFrame.Selectable = true
+		scrollFrame.ScrollingEnabled = true
+		scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+		scrollFrame.BackgroundTransparency = 1
+		scrollFrame.BorderSizePixel = 0
+		scrollFrame.Position = UDim2.new(0, 5, 0, 10)
+		scrollFrame.Size = UDim2.new(1, -10, 1, -45)
+		scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+		scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		scrollFrame.ScrollBarThickness = 6
+		scrollFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+		scrollFrame.ZIndex = 15
+		table.insert(scroll, scrollFrame)
+
+		a.Name = "a"
+		a.Parent = scrollFrame
+		a.BackgroundTransparency = 1.000
+		a.Size = UDim2.new(1, -5, 0, 0)
+		a.AutomaticSize = Enum.AutomaticSize.Y
+		a.ZIndex = 16
+		a.Font = Enum.Font.SourceSans
+		a.Text = ""
+		a.TextColor3 = Color3.fromRGB(255, 255, 255)
+		a.TextSize = 14.000
+		a.TextStrokeTransparency = 0.800
+		a.TextWrapped = true
+		a.TextXAlignment = Enum.TextXAlignment.Left
+		a.TextYAlignment = Enum.TextYAlignment.Top
+		a.Visible = false
+
+		UIListLayout.Parent = scrollFrame
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.Padding = UDim.new(0, 4)
+
+		CopyResponse.Name = "CopyResponse"
+		CopyResponse.Parent = background
+		CopyResponse.BackgroundColor3 = currentShade2
+		CopyResponse.BorderSizePixel = 0
+		CopyResponse.Position = UDim2.new(0, 5, 1, -25)
+		CopyResponse.Size = UDim2.new(1, -10, 0, 20)
+		CopyResponse.Font = Enum.Font.SourceSans
+		CopyResponse.TextSize = 14
+		CopyResponse.Text = "Copy Entire Response"
+		CopyResponse.TextColor3 = currentText1
+		CopyResponse.ZIndex = 14
+		table.insert(shade2, CopyResponse)
+		table.insert(text1, CopyResponse)
+
+		FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, 100), "InOut", "Quart", 0.5, true, nil)
+		task.wait(0.5)
+
+		local function populateGrid()
+			local script = Instance.new('LocalScript', scrollFrame)
+
+			local function addLabel(txt)
+				if txt == "" or txt:gsub("%s", "") == "" then
+					txt = " "
+				end
+
+				local newLb = script.Parent.a:Clone()
+				newLb.Name = "TextLabel"
+				newLb.Text = txt
+				newLb.Visible = true
+				newLb.Parent = script.Parent
+				table.insert(text1, newLb)
+			end
+
+			local cltext = aiResponseText:gsub("\r\n", "\n") .. "\n"
+			for line in cltext:gmatch("([^\n]*)\n") do
+				addLabel(line)
+			end
+		end
+		coroutine.wrap(populateGrid)()
+
+		CopyResponse.MouseButton1Click:Connect(function()
+			toClipboard(aiResponseText)
+			CopyResponse.Text = "Copied!"
+			task.wait(1)
+			CopyResponse.Text = "Copy Entire Response"
+		end)
+
+		Exit.MouseButton1Click:Connect(function()
+			FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
+			task.wait(0.6)
+			FRAMEAI:Destroy()
+		end)
+	end)
+end
+
+addcmd("ai", {"aimode", "verity", "askai", "gpt"}, function(args, speaker)
+	if not httprequest then
+		return notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+	end
+
+	if not apiKey then 
+		return notify("Please set API key (apikey).")
+	end
+
+	if not aiModel then
+		return notify("Please set AI model (aimodel).")
+	end
+
+	if args[1] then
+		local prompt = getstring(1, args)
+		task.spawn(function()
+			notify("AI Status", "Processing query...", 3)
+			local aiResponse = askAI(prompt)
+			
+			createAIWindow(aiResponse)
+		end)
+	end
+end)
+
+addcmd("apikey", {"aikey"}, function(args, speaker)
+	if args[1] then
+		apiKey = args[1]
+		notify("AI", "API key updated successfully.")
+		updatesaves()
+	else
+		notify("AI", "Please provide a valid API key.")
+	end
+end)
+
+addcmd("aimodel", {}, function(args, speaker)
+	if args[1] then
+		aiModel = table.concat(args, " ")
+		notify("AI", "Model updated to: " .. aiModel)
+		updatesaves()
+	else
+		notify("AI", "Current model: " .. tostring(aiModel))
+	end
+end)
+
+addcmd("aiprovider", {}, function(args, speaker)
+	if args[1] then
+		aiProvider = table.concat(args, " ")
+		notify("AI", "Provider updated to: " .. aiProvider)
+		updatesaves()
+	else
+		notify("AI", "Current provider: " .. tostring(aiProvider))
+	end
+end)
+
+addcmd("maxtokens", {"maxaitokens", "maxapitokens", "aitokens", "apitokens"}, function(args, speaker)
+	if args[1] and isNumber(args[1]) then
+		maxTokens = args[1]
+		notify("AI", "Maximum tokens updated successfully.")
+		updatesaves()
+	else
+		notify("AI", "Current max tokens: " .. tostring(maxTokens))
+	end
 end)
 
 flinging = false
