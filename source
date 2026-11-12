@@ -11930,6 +11930,7 @@ function askAI(prompt)
 	end
 end
 
+local FRAMEAI
 function createAIWindow(aiResponseText)
 	if FRAMEAI then
 		FRAMEAI:TweenPosition(UDim2.new(0.5, -130, 0, -500), "InOut", "Quart", 0.5, true, nil)
