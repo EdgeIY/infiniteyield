@@ -4696,6 +4696,8 @@ CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets a
 CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses all proximity prompts in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
 CMDs[#CMDs + 1] = {NAME = 'uninstantproximityprompts / uninstantpp', DESC = 'Undo the cooldown removal'}
+CMDs[#CMDs + 1] = {NAME = 'disableproximityprompts / disablepp', DESC = 'Disables all proximity prompts'}
+CMDs[#CMDs + 1] = {NAME = 'enableproximityprompts / enablepp', DESC = 'Undoes disableproximityprompts'}
 CMDs[#CMDs + 1] = {NAME = 'tpunanchored / tpua [player]', DESC = 'Teleports unanchored parts to a player'}
 CMDs[#CMDs + 1] = {NAME = 'freezeunanchored / freezeua', DESC = 'Freezes unanchored parts'}
 CMDs[#CMDs + 1] = {NAME = 'thawunanchored / thawua / unfreezeua', DESC = 'Unfreezes unanchored parts'}
@@ -11118,6 +11120,49 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 	if PromptButtonHoldBegan ~= nil then
 		PromptButtonHoldBegan:Disconnect()
 		PromptButtonHoldBegan = nil
+	end
+end)
+
+local promptConnection, disabledPrompts = nil, {}
+
+addcmd('disableproximityprompts', {'disablepp'}, function(args, speaker)
+	execCmd("enableproximityprompts nonotify")
+	table.clear(disabledPrompts)
+
+	for _, inst in Workspace:GetDescendants() do
+		if inst:IsA("ProximityPrompt") and inst.Enabled then
+			inst.Enabled = false
+			disabledPrompts[inst] = true
+		end
+	end
+
+	promptConnection = Workspace.DescendantAdded:Connect(function(inst)
+		if inst:IsA("ProximityPrompt") and inst.Enabled then
+			inst.Enabled = false
+			disabledPrompts[inst] = true
+		end
+	end)
+
+	if args[1] ~= "nonotify" then
+		notify("Proximity Prompts", "All proximity prompts will be disabled.")
+	end
+end)
+
+addcmd('enableproximityprompts', {'enablepp'}, function(args, speaker)
+	if promptConnection then
+		promptConnection:Disconnect()
+		promptConnection = nil
+	end
+
+	for inst in disabledPrompts do
+		if inst.Parent then
+			inst.Enabled = true
+		end
+	end
+	table.clear(disabledPrompts)
+
+	if args[1] ~= "nonotify" then
+		notify("Proximity Prompts", "Proximity prompts enabled.")
 	end
 end)
 
