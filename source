@@ -10156,8 +10156,6 @@ local function anim2track(asset_id)
 	return asset_id
 end
 
-local activeAnims = {}
-
 addcmd("animation", {"anim"}, function(args, speaker)
 	if not args[1] then return end
 	local animid = tostring(args[1])
@@ -10290,7 +10288,6 @@ addcmd('stopanimations', {'stopanims', 'stopanim'}, function(args, speaker)
 	for i, v in next, Hum:GetPlayingAnimationTracks() do
 		v:Stop()
 	end
-	table.clear(activeAnims)
 end)
 
 addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'}, function(args, speaker)
