@@ -11183,20 +11183,31 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 	end
 end)
 
-addcmd('viewbackpack',{'viewbp'},function(args, speaker)
-	local pl = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
+addcmd('viewbackpack', {'viewbp'}, function(args, speaker)
+	local target = getPlayer(args[1], speaker)
+	local pl = target and target[1] and Players:FindFirstChild(target[1])
 	if not pl then return end
-	if not pl.Backpack or not pl.Character then return end
- 	local t, chartool = {}, pl.Character:FindFirstChildOfClass("Tool")
-	for _, v in pl.Backpack:GetChildren() do
-        if v:IsA("Tool") then table.insert(t, tostring(v)) end
-    end
 
-    if chartool then
-    	notify(("%s's tools"):format(tostring(pl)), tostring(chartool).. ", " ..table.concat(t, ", "))
-    else
-        notify(("%s's tools"):format(tostring(pl)), table.concat(t, ", "))
-    end
+	local bp = pl:FindFirstChildOfClass("Backpack")
+	if not bp or not pl.Character then return end
+
+	local t = {}
+	local chartool = pl.Character:FindFirstChildOfClass("Tool")
+	if chartool then -- include the tool the player is holding as well
+		table.insert(t, chartool.Name)
+	end
+
+	for _, v in bp:GetChildren() do
+		if v:IsA("Tool") then
+			table.insert(t, v.Name)
+		end
+	end
+
+	if #t > 0 then
+		notify(("%s's tools"):format(pl.Name), table.concat(t, ", "))
+	else
+		notify(("%s's tools"):format(pl.Name), "No tools.")
+	end
 end)
 
 addcmd('light',{},function(args, speaker)
