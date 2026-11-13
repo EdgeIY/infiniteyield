@@ -4746,6 +4746,7 @@ CMDs[#CMDs + 1] = {NAME = 'pathfindwalkto / pathfindfollow [player]', DESC = 'Fo
 CMDs[#CMDs + 1] = {NAME = 'pathfindwalktowaypoint / pathfindwalktowp [waypoint]', DESC = 'Walk to a waypoint using pathfinding'}
 CMDs[#CMDs + 1] = {NAME = 'unwalkto / unfollow', DESC = 'Stops following a player'}
 CMDs[#CMDs + 1] = {NAME = 'orbit [player] [speed] [distance]', DESC = 'Makes your character orbit around a player with an optional speed and an optional distance'}
+CMDs[#CMDs + 1] = {NAME = 'orbitpos [x y z] [speed] [distance]', DESC = 'Makes your character orbit around a position with an optional speed and an optional distance'}
 CMDs[#CMDs + 1] = {NAME = 'unorbit', DESC = 'Disables orbit'}
 CMDs[#CMDs + 1] = {NAME = 'stareat / stare [player]', DESC = 'Stare / look at a player'}
 CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [player]', DESC = 'Disables stareat'}
@@ -9402,44 +9403,80 @@ addcmd('unwalkto',{'nowalkto','unfollow','nofollow'},function(args, speaker)
 	waypointwalkto = false
 end)
 
+ function orbit(speaker, targ, speed, distance)
+	local root = getRoot(speaker.Character)
+	local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	if not (root and humanoid) then return end
+
+	local rotation = 0
+	local isPlayer = vtype(targ, "Instance")
+
+	orbit1 = RunService.Stepped:Connect(function()
+		local targetPos
+
+		if isPlayer then
+			local targetRoot = targ.Character and getRoot(targ.Character)
+			if not targetRoot then
+				execCmd("unorbit")
+				return
+			end
+			targetPos = targetRoot.Position
+		else
+			targetPos = targ
+		end
+
+		breakVelocity()
+		rotation = rotation + speed
+
+		local orbitPosition = (CFrame.new(targetPos) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)).Position
+		root.CFrame = CFrame.lookAt(orbitPosition, Vector3.new(targetPos.X, orbitPosition.Y, targetPos.Z))
+	end)
+
+	orbit2 = humanoid.Died:Connect(function() execCmd("unorbit") end)
+
+	orbit3 = humanoid.Seated:Connect(function(value)
+		if value then execCmd("unorbit") end
+	end)
+end
+
 addcmd("orbit", {}, function(args, speaker)
 	execCmd("unorbit nonotify")
 
-	local target = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
-	local root = getRoot(speaker.Character)
-	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	local isr = getPlayer(args[1], speaker)[1]
+	local target = isr and Players:FindFirstChild(isr)
 
-	if target and target.Character and getRoot(target.Character) and root and humanoid then
-		local rotation = 0
+	if target and target.Character and getRoot(target.Character) then
 		local speed = tonumber(args[2]) or 0.2
 		local distance = tonumber(args[3]) or 6
 
-		orbit1 = RunService.Stepped:Connect(function()
-			breakVelocity()
-			rotation = rotation + speed
-
-			local targetRoot = getRoot(target.Character).Position
-			local orbitPosition = (CFrame.new(targetRoot) * CFrame.Angles(0, math.rad(rotation), 0) * CFrame.new(distance, 0, 0)).Position
-			root.CFrame = CFrame.lookAt(orbitPosition, Vector3.new(targetRoot.X, orbitPosition.Y, targetRoot.Z))
-		end)
-
-		orbit2 = humanoid.Died:Connect(function() execCmd("unorbit") end)
-
-		orbit3 = humanoid.Seated:Connect(function(value)
-			if value then execCmd("unorbit") end
-		end)
-
 		notify("Orbit", "Started orbiting " .. formatUsername(target))
+		orbit(speaker, target, speed, distance)
 	end
+end)
+
+addcmd("orbitpos", {}, function(args, speaker)
+	execCmd("unorbit nonotify")
+
+	local x, y, z = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+	if not (x and y and z) then
+		notify("Orbit", "X, Y and/or Z coordinates not submitted.")
+		return
+	end
+
+	local targetPos = Vector3.new(x, y, z)
+	local speed = tonumber(args[4]) or 0.2
+	local distance = tonumber(args[5]) or 6
+
+	notify("Orbit", "Started orbiting position")
+	orbit(speaker, targetPos, speed, distance)
 end)
 
 addcmd("unorbit", {}, function(args, speaker)
 	if orbit1 then orbit1:Disconnect() end
 	if orbit2 then orbit2:Disconnect() end
 	if orbit3 then orbit3:Disconnect() end
-	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
+	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting") end
 end)
-
 
 addcmd('freeze',{'fr'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
