@@ -4848,6 +4848,8 @@ CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters Humano
 CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
+CMDs[#CMDs + 1] = {NAME = 'infinity', DESC = 'Makes your tools go in a infinity path'}
+CMDs[#CMDs + 1] = {NAME = 'uninfinity', DESC = 'Stops infinity command'}
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
@@ -12126,6 +12128,48 @@ end)
 addcmd("unteleportwalk", {"untpwalk"}, function(args, speaker)
     tpwalkStack = 0
     tpwalking:Disconnect()
+end)
+
+local infinitypathtool
+addcmd('infinity',{},function(args,speaker)
+    if tools(speaker) then
+        if infinitypathtool then
+            infinitypathtool:Disconnect()
+            infinitypathtool = nil
+        end
+
+        local theta = 0
+
+        local function calculateLemniscate(theta)
+            local x = math.cos(theta) / (.5 + math.sin(theta)^2)
+            local z = math.cos(theta) * math.sin(theta) / (.5 + math.sin(theta)^2)
+            return x, z
+        end
+
+        infinitypathtool = RunService.Heartbeat:Connect(function()
+			if not speaker.Character or not speaker:FindFirstChildOfClass("Backpack") then return end
+            for i, v in pairs(speaker.Character:GetChildren()) do
+                if v:IsA("Tool") then
+                    theta = theta + 0.02
+
+                    local X, Z = calculateLemniscate(theta)
+
+                    v.Grip = CFrame.new(X, Z, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+                    v.Parent = speaker.Backpack
+                    v.Parent = speaker.Character
+                end
+            end
+        end)
+    else
+        notify('Tool Required', 'You need to have an item in your inventory to use this command')
+    end
+end)
+
+addcmd('uninfinity',{},function(args,speaker)
+	if infinitypathtool then
+    	infinitypathtool:Disconnect()
+    	infinitypathtool = nil
+	end
 end)
 
 function bring(speaker,target,fast)
