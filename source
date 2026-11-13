@@ -9851,7 +9851,7 @@ addcmd('unsprint', {'unshiftsprint'}, function(args, speaker)
 		sprintEndedConn:Disconnect()
 		sprintEndedConn = nil
 	end
-	local hum = speaker.Character and speaker.Character:FindFirstChild("Humanoid")
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid")
 	if not hum then return end
 	if defspeed and defspeed ~= hum.WalkSpeed then
 		hum.WalkSpeed = defspeed
