@@ -4625,8 +4625,8 @@ CMDs[#CMDs + 1] = {NAME = 'darkchat', DESC = 'Makes the chat window dark for you
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with voice chat'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
 CMDs[#CMDs + 1] = {NAME = 'playmusic [id] [loop?] [sets]', DESC = 'Play a MusicId. Sets = use saved music settings?'}
-CMDs[#CMDs + 1] = {NAME = 'musicvol', DESC = 'Sets the volume of the music from playmusic'}
-CMDs[#CMDs + 1] = {NAME = 'musicpitch', DESC = 'Sets the pitch of the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'musicvol [number]', DESC = 'Sets the volume of the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'musicpitch [number]', DESC = 'Sets the pitch of the music from playmusic'}
 CMDs[#CMDs + 1] = {NAME = 'pausemusic', DESC = 'Pauses the music from playmusic'}
 CMDs[#CMDs + 1] = {NAME = 'unpausemusic', DESC = 'Unpauses the music from playmusic'}
 CMDs[#CMDs + 1] = {NAME = 'stopmusic', DESC = 'Stop playing music from playmusic'}
