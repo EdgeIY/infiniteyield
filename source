@@ -4624,6 +4624,12 @@ CMDs[#CMDs + 1] = {NAME = 'unchatwindow / nochatwindow', DESC = 'Disables the ch
 CMDs[#CMDs + 1] = {NAME = 'darkchat', DESC = 'Makes the chat window dark for your client'}
 CMDs[#CMDs + 1] = {NAME = 'listento [player]', DESC = 'Listens to the area around a player. Can also eavesdrop with voice chat'}
 CMDs[#CMDs + 1] = {NAME = 'unlistento', DESC = 'Disables listento'}
+CMDs[#CMDs + 1] = {NAME = 'playmusic [id] [loop?] [sets]', DESC = 'Play a MusicId. Sets = use saved music settings?'}
+CMDs[#CMDs + 1] = {NAME = 'musicvol', DESC = 'Sets the volume of the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'musicpitch', DESC = 'Sets the pitch of the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'pausemusic', DESC = 'Pauses the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'unpausemusic', DESC = 'Unpauses the music from playmusic'}
+CMDs[#CMDs + 1] = {NAME = 'stopmusic', DESC = 'Stop playing music from playmusic'}
 CMDs[#CMDs + 1] = {NAME = 'muteallvoices / muteallvcs', DESC = 'Mutes voice chat for all players'}
 CMDs[#CMDs + 1] = {NAME = 'unmuteallvoices / unmuteallvcs', DESC = 'Unmutes voice chat for all players'}
 CMDs[#CMDs + 1] = {NAME = 'mutevc [player]', DESC = 'Mutes the voice chat of a player'}
@@ -12893,7 +12899,7 @@ addcmd("pausemusic", {"pausesong"}, function(args, speaker)
 	end
 end)
 
-addcmd("resumemusic", {"unpausemusic", "resumesong"}, function(args, speaker)
+addcmd("resumemusic", {"unpausemusic", "resumesong", "unpausesong"}, function(args, speaker)
 	if musicSettings.sound and not musicSettings.sound.IsPlaying then
 		musicSettings.sound:Resume()
 		notify("Music Manager", "Music resumed.")
