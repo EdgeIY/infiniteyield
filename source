@@ -11203,10 +11203,11 @@ addcmd('viewbackpack', {'viewbp'}, function(args, speaker)
 		end
 	end
 
+	local title = ("%s's tools"):format(formatUsername(pl))
 	if #t > 0 then
-		notify(("%s's tools"):format(pl.Name), table.concat(t, ", "))
+		notify(title, table.concat(t, ", "))
 	else
-		notify(("%s's tools"):format(pl.Name), "No tools.")
+		notify(title, "No tools.")
 	end
 end)
 
