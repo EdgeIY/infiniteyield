@@ -4853,7 +4853,7 @@ CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
-CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed]', DESC = 'Makes your character perform an animation (must be an animation on the marketplace or by Roblox/StickMasterLuke to replicate)'}
+CMDs[#CMDs + 1] = {NAME = 'animation / anim [ID] [speed] [overlay]', DESC = 'Makes your character perform an animation (must be an animation on the marketplace or by Roblox/StickMasterLuke to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'emote / em [ID] [speed]', DESC = 'Makes your character perform an emote (must be on the marketplace or by Roblox/StickMasterLuke to replicate)'}
 CMDs[#CMDs + 1] = {NAME = 'dance', DESC = 'Makes you  d a n c e'}
 CMDs[#CMDs + 1] = {NAME = 'undance', DESC = 'Stops dance animations'}
@@ -10157,17 +10157,48 @@ local function anim2track(asset_id)
 end
 
 addcmd("animation", {"anim"}, function(args, speaker)
+	if not args[1] then return end
 	local animid = tostring(args[1])
+
+	local character = speaker.Character
+	local humanoid = character and (character:FindFirstChildOfClass("Humanoid") or character:FindFirstChildOfClass("AnimationController"))
+	if not humanoid then return end
+
 	if not animid:find("rbxassetid://") then
 		animid = "rbxassetid://" .. animid
 	end
 	animid = anim2track(animid)
+
+	local speed
+	local overlay = false
+
+	if args[2] then
+		if isNumber(args[2]) then
+			speed = tonumber(args[2])
+			if args[3] then
+				overlay = parseBoolean(args[3], false)
+			end
+		else
+			overlay = parseBoolean(args[2], false)
+		end
+	end
+
+	if not overlay then
+		execCmd("stopanimations")
+	end
+
 	local animation = Instance.new("Animation")
 	animation.AnimationId = animid
-	local anim = speaker.Character:FindFirstChildWhichIsA("Humanoid"):LoadAnimation(animation)
-	anim.Priority = Enum.AnimationPriority.Movement
+
+	local animator = humanoid:FindFirstChildWhichIsA("Animator") or humanoid
+	local anim = animator:LoadAnimation(animation)
+
+	anim.Priority = overlay and Enum.AnimationPriority.Action or Enum.AnimationPriority.Movement
 	anim:Play()
-	if args[2] then anim:AdjustSpeed(tostring(args[2])) end
+
+	if speed then
+		anim:AdjustSpeed(speed)
+	end
 end)
 
 addcmd("emote", {"em"}, function(args, speaker)
@@ -10249,11 +10280,12 @@ addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
 	end
 end)
 
-addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
+addcmd('stopanimations', {'stopanims', 'stopanim'}, function(args, speaker)
 	local Char = speaker.Character
-	local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+	local Hum = Char and (Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController"))
+	if not Hum then return end
 
-	for i,v in next, Hum:GetPlayingAnimationTracks() do
+	for i, v in next, Hum:GetPlayingAnimationTracks() do
 		v:Stop()
 	end
 end)
