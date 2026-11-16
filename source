@@ -7557,14 +7557,16 @@ addcmd('unswim',{'noswim'},function(args, speaker)
 		swimming = false
 		if gravReset then
 			gravReset:Disconnect()
+			gravReset = nil
 		end
-		if swimbeat ~= nil then
+		if swimbeat then
 			swimbeat:Disconnect()
 			swimbeat = nil
 		end
-		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 		local enums = Enum.HumanoidStateType:GetEnumItems()
 		table.remove(enums, table.find(enums, Enum.HumanoidStateType.None))
+		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+		if not Humanoid then return end
 		for i, v in pairs(enums) do
 			Humanoid:SetStateEnabled(v, true)
 		end
@@ -7883,7 +7885,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
-	if deleteGuiInput then deleteGuiInput:Disconnect() end
+	execCmd("unguidelete nonotify")
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
@@ -7895,8 +7897,11 @@ addcmd('guidelete',{},function(args, speaker)
 end)
 
 addcmd('unguidelete',{'noguidelete'},function(args, speaker)
-	if deleteGuiInput then deleteGuiInput:Disconnect() end
-	notify('GUI Delete Disabled','GUI backspace delete has been disabled')
+	if deleteGuiInput then 
+		deleteGuiInput:Disconnect() 
+		deleteGuiInput = nil 
+		if args[1] ~= "nonotify" then notify('GUI Delete Disabled','GUI backspace delete has been disabled') end
+	end
 end)
 
 local wasStayOpen = StayOpen
@@ -7969,7 +7974,7 @@ addcmd("clearerror", {"clearerrors"}, function(args, speaker)
 end)
 
 addcmd("antigameplaypaused", {}, function(args, speaker)
-    pcall(function() networkPaused:Disconnect() end)
+    execCmd("unantigameplaypaused")
     networkPaused = COREGUI.RobloxGui.ChildAdded:Connect(function(obj)
         if obj.Name == "CoreScripts/NetworkPause" then
             obj:Destroy()
@@ -7979,7 +7984,10 @@ addcmd("antigameplaypaused", {}, function(args, speaker)
 end)
 
 addcmd("unantigameplaypaused", {}, function(args, speaker)
-    pcall(function() networkPaused:Disconnect() end)
+    if networkPaused then
+		networkPaused:Disconnect()
+		networkPaused = nil
+	end
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
@@ -8924,6 +8932,8 @@ end)
 
 local antiAfkCon = nil
 addcmd("antiafk", {"antiidle"}, function(args, speaker)
+	if antiAfkCon then return end
+
     if getconnections then
         for _, c in getconnections(speaker.Idled) do
             pcall(function() c:Disable() end) -- supposed to "pause" it
@@ -8931,7 +8941,6 @@ addcmd("antiafk", {"antiidle"}, function(args, speaker)
         end
     end
 
-    pcall(function() antiAfkCon:Disconnect() end)
     antiAfkCon = speaker.Idled:Connect(function()
         local VirtualInputManager = Instance.new("VirtualInputManager")
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
