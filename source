@@ -11679,13 +11679,16 @@ addcmd('unreach', {'noreach', 'unboxreach'}, function(args, speaker)
 end)
 
 addcmd('grippos',{},function(args, speaker)
+	if not speaker.Character then return end
+	local backpack = speaker:FindFirstChildOfClass("Backpack")
+	if not backpack then return end
 	local grx = tonumber(args[1])
 	local gry = tonumber(args[2])
 	local grz = tonumber(args[3])
 	if not (grx and gry and grz) then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Tool") then
-			v.Parent = speaker:FindFirstChildOfClass("Backpack")
+			v.Parent = backpack
 			v.GripPos = Vector3.new(grx, gry, grz)
 			v.Parent = speaker.Character
 		end
