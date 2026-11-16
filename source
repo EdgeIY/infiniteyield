@@ -12788,11 +12788,13 @@ addcmd("alignmentkeys", {}, function(args, speaker)
 end)
 
 addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
-	if type(alignmentKeysEmotes) == "boolean" and alignmentKeysEmotes then
+	if type(alignmentKeysEmotes) == "boolean" then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
+		alignmentKeysEmotes = nil
 	end
 	if alignmentKeys then
 		alignmentKeys:Disconnect()
+		alignmentKeys = nil
 	end
 end)
 
