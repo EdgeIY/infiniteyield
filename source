@@ -12133,10 +12133,7 @@ end)
 local infinitypathtool
 addcmd('infinity',{},function(args,speaker)
     if tools(speaker) then
-        if infinitypathtool then
-            infinitypathtool:Disconnect()
-            infinitypathtool = nil
-        end
+        execCmd("uninfinity")
 
         local theta = 0
 
