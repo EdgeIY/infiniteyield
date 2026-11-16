@@ -9815,8 +9815,10 @@ end)
 local sprintBeganConn, sprintEndedConn, defspeed
 addcmd('sprint', {'shiftsprint'}, function(args, speaker)
 	execCmd("unsprint")
-	local character = speaker.Character or speaker.CharacterAdded:Wait()
-	local humanoid = character:WaitForChild("Humanoid")
+	local character = speaker.Character
+	if not character then return end
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
 	defspeed = humanoid.WalkSpeed
 	local sprints = tonumber(args[1]) or (defspeed * 2)
 
@@ -9852,10 +9854,10 @@ addcmd('unsprint', {'unshiftsprint'}, function(args, speaker)
 		sprintEndedConn = nil
 	end
 	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid")
-	if not hum then return end
-	if defspeed and defspeed ~= hum.WalkSpeed then
+	if hum and defspeed and defspeed ~= hum.WalkSpeed then
 		hum.WalkSpeed = defspeed
 	end
+	defspeed = nil
 end)
 
 addcmd('jpower',{'jumppower','jp'},function(args, speaker)
