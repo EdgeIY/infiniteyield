@@ -6517,7 +6517,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
+		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing readfile/writefile)')
 	end
 end)
 
@@ -7039,7 +7039,7 @@ addcmd("autorejoin", {"autorj"}, function(args, speaker)
 	notify("Auto Rejoin", "Auto rejoin enabled")
 end)
 
-addcmd("serverhop", {"shop"}, function(args, speaker)
+addcmd("serverhop", {"shop", "hop"}, function(args, speaker)
 	-- thanks to Amity for fixing
 	local servers = {}
 	local req = game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true")
@@ -7099,7 +7099,7 @@ addcmd("unnoclip", {"clip"}, function(args, speaker)
     notify("Noclip", "Noclip Disabled")
 end)
 
-addcmd("togglenoclip", {}, function(args, speaker)
+addcmd("togglenoclip", {"tnoclip"}, function(args, speaker)
     execCmd(Clip and "noclip" or "unnoclip")
 end)
 
@@ -7339,7 +7339,7 @@ addcmd('vfly',{'vehiclefly'},function(args, speaker)
 	end
 end)
 
-addcmd('togglevfly',{},function(args, speaker)
+addcmd('togglevfly',{'tvfly'},function(args, speaker)
 	if FLYING then
 		if not IsOnMobile then NOFLY() else unmobilefly(speaker) end
 	else
@@ -7362,7 +7362,7 @@ addcmd('qefly',{'flyqe'},function(args, speaker)
 	end
 end)
 
-addcmd('togglefly',{},function(args, speaker)
+addcmd('togglefly',{'togglefly'},function(args, speaker)
 	if FLYING then
 		if not IsOnMobile then NOFLY() else unmobilefly(speaker) end
 	else
@@ -7372,17 +7372,22 @@ end)
 
 CFspeed = 50
 addcmd('cframefly', {'cfly'}, function(args, speaker)
+	execCmd("uncframefly")
+
+	-- Method by peyton#9148 (apeyton)
 	if args[1] and isNumber(args[1]) then
 		CFspeed = args[1]
 	end
 
-	-- Full credit to peyton#9148 (apeyton)
-	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
-	local Head = speaker.Character:WaitForChild("Head")
+	if not speaker.Character then return end
+	local hum = speaker.Character:FindFirstChildOfClass('Humanoid')
+	local Head = speaker.Character:FindFirstChild("Head")
+	if not hum or not Head then return end
+	hum.PlatformStand = true
 	Head.Anchored = true
-	if CFloop then CFloop:Disconnect() end
+
 	CFloop = RunService.Heartbeat:Connect(function(deltaTime)
-		local moveDirection = speaker.Character:FindFirstChildOfClass('Humanoid').MoveDirection * (CFspeed * deltaTime)
+		local moveDirection = hum.MoveDirection * (CFspeed * deltaTime)
 		local headCFrame = Head.CFrame
 		local camera = workspace.CurrentCamera
 		local cameraCFrame = camera.CFrame
@@ -7394,15 +7399,29 @@ addcmd('cframefly', {'cfly'}, function(args, speaker)
 		local objectSpaceVelocity = CFrame.new(cameraPosition, Vector3.new(headPosition.X, cameraPosition.Y, headPosition.Z)):VectorToObjectSpace(moveDirection)
 		Head.CFrame = CFrame.new(headPosition) * (cameraCFrame - cameraPosition) * CFrame.new(objectSpaceVelocity)
 	end)
+
+	cfded = hum.Died:Connect(function()
+		execCmd("uncframefly")
+	end)
 end)
 
 addcmd('uncframefly',{'uncfly'},function(args, speaker)
 	if CFloop then
 		CFloop:Disconnect()
-		speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
-		local Head = speaker.Character:WaitForChild("Head")
-		Head.Anchored = false
+		CFloop = nil
 	end
+
+	if cfded then
+		cfded:Disconnect()
+		cfded = nil
+	end
+	
+	if not speaker.Character then return end
+	local hum = speaker.Character:FindFirstChildOfClass('Humanoid')
+	local Head = speaker.Character:FindFirstChild("Head")
+	if not hum or not Head then return end
+	hum.PlatformStand = false
+	Head.Anchored = false
 end)
 
 addcmd('cframeflyspeed',{'cflyspeed'},function(args, speaker)
@@ -7508,6 +7527,7 @@ local oldgrav = workspace.Gravity
 local swimbeat = nil
 addcmd('swim',{},function(args, speaker)
 	if not swimming and speaker and speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") then
+		execCmd('unswim nonotify')
 		oldgrav = workspace.Gravity
 		workspace.Gravity = 0
 		local swimDied = function()
@@ -7537,21 +7557,23 @@ addcmd('unswim',{'noswim'},function(args, speaker)
 		swimming = false
 		if gravReset then
 			gravReset:Disconnect()
+			gravReset = nil
 		end
-		if swimbeat ~= nil then
+		if swimbeat then
 			swimbeat:Disconnect()
 			swimbeat = nil
 		end
-		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
 		local enums = Enum.HumanoidStateType:GetEnumItems()
 		table.remove(enums, table.find(enums, Enum.HumanoidStateType.None))
+		local Humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+		if not Humanoid then return end
 		for i, v in pairs(enums) do
 			Humanoid:SetStateEnabled(v, true)
 		end
 	end
 end)
 
-addcmd('toggleswim',{},function(args, speaker)
+addcmd('toggleswim',{'tswim'},function(args, speaker)
 	if swimming then
 		execCmd('unswim')
 	else
@@ -7662,8 +7684,8 @@ end)
 tweenSpeed = 1
 addcmd('tweenspeed',{'tspeed'},function(args, speaker)
 	local newSpeed = args[1] or 1
-	if tonumber(newSpeed) then
-		tweenSpeed = tonumber(newSpeed)
+	if isNumber(newSpeed) then
+		tweenSpeed = newSpeed
 	end
 end)
 
@@ -7863,6 +7885,7 @@ end
 
 local deleteGuiInput
 addcmd('guidelete',{},function(args, speaker)
+	execCmd("unguidelete nonotify")
 	deleteGuiInput = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if not gameProcessedEvent then
 			if input.KeyCode == Enum.KeyCode.Backspace then
@@ -7874,8 +7897,11 @@ addcmd('guidelete',{},function(args, speaker)
 end)
 
 addcmd('unguidelete',{'noguidelete'},function(args, speaker)
-	if deleteGuiInput then deleteGuiInput:Disconnect() end
-	notify('GUI Delete Disabled','GUI backspace delete has been disabled')
+	if deleteGuiInput then 
+		deleteGuiInput:Disconnect() 
+		deleteGuiInput = nil 
+		if args[1] ~= "nonotify" then notify('GUI Delete Disabled','GUI backspace delete has been disabled') end
+	end
 end)
 
 local wasStayOpen = StayOpen
@@ -7907,7 +7933,7 @@ addcmd('rec', {'record'}, function(args, speaker)
 	return COREGUI:ToggleRecording()
 end)
 
-addcmd('screenshot', {'scrnshot'}, function(args, speaker)
+addcmd('screenshot', {'scrnshot', 'ss'}, function(args, speaker)
 	return COREGUI:TakeScreenshot()
 end)
 
@@ -7922,13 +7948,24 @@ addcmd('inspect', {'examine'}, function(args, speaker)
 	end
 end)
 
-addcmd("savegame", {"saveplace"}, function(args, speaker)
+addcmd("savegame", {"saveplace", "saveinstance"}, function(args, speaker)
 	if saveinstance then
 		notify("Loading", "Downloading game. This will take a while")
 		saveinstance()
-		notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+		notify("Game Saved", "Saved place to the workspace folder within your exploit folder")
 	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+		if writefileExploit() then
+			local synsaveinstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/saveinstance.luau", true), "saveinstance")()
+			if synsaveinstance then
+				notify("Loading", "Downloading game via USSI. This will take a while.")
+				synsaveinstance({})
+				notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+			else
+				notify("Unable to Save Game", "Unable to load USSI.")
+			end
+		else
+			notify("Unable to Save Game", "Place cannot be saved (missing writefile).")
+		end
 	end
 end)
 
@@ -7937,7 +7974,7 @@ addcmd("clearerror", {"clearerrors"}, function(args, speaker)
 end)
 
 addcmd("antigameplaypaused", {}, function(args, speaker)
-    pcall(function() networkPaused:Disconnect() end)
+    execCmd("unantigameplaypaused")
     networkPaused = COREGUI.RobloxGui.ChildAdded:Connect(function(obj)
         if obj.Name == "CoreScripts/NetworkPause" then
             obj:Destroy()
@@ -7947,7 +7984,10 @@ addcmd("antigameplaypaused", {}, function(args, speaker)
 end)
 
 addcmd("unantigameplaypaused", {}, function(args, speaker)
-    networkPaused:Disconnect()
+    if networkPaused then
+		networkPaused:Disconnect()
+		networkPaused = nil
+	end
 end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
@@ -7979,7 +8019,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	end
 
 	local oldTp; oldTp = hookfunction(TeleportService.Teleport, newcclosure(function(self, placeId, player, _teleportData, customLoadingScreen)
-		if checkcaller() or (allow_rj and placeId == game.PlaceId) then
+		if checkcaller() or (allow_rj and placeId == PlaceId) then
 			return oldTp(self, placeId, player, _teleportData, customLoadingScreen)
 		end
 		if self ~= TeleportService then
@@ -7989,7 +8029,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 			error("Argument 1 missing or nil", 2)
 		end
 		if typeof(placeId) ~= "number" and placeId ~= true then
-			error(`Unable to cast {typeof(placeId)} to int64`, 2)
+			error("Unable to cast " .. typeof(placeId) .. " to int64", 2)
 		elseif placeId == true then
 			-- somehow raise raiseTeleportInitFailedEvent
 			return
@@ -8014,7 +8054,7 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	local oldNamecall; oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
 		local nmc = getnamecallmethod()
 		if select(1, ...) == TeleportService and nmc == "teleport" or nmc == "Teleport" or nmc == "TeleportToPlaceInstance" or nmc == "TeleportAsync" then
-			if checkcaller() or (allow_rj and select(2, ...) == game.PlaceId) then
+			if checkcaller() or (allow_rj and select(2, ...) == PlaceId) then
 				return oldNamecall(...)
 			end
 			return
@@ -8027,14 +8067,13 @@ end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	allow_rj = not allow_rj
-	notify("Client AntiTP", `Scripts now may{allow_rj and "" or " not"} make you rejoin the server`)
 end)
 
 addcmd("cancelteleport", {"canceltp"}, function(args, speaker)
 	TeleportService:TeleportCancel()
 end)
 
-addcmd("volume",{ "vol"}, function(args, speaker)
+addcmd("volume", {"vol"}, function(args, speaker)
 	UserSettings():GetService("UserGameSettings").MasterVolume = args[1]/10
 end)
 
@@ -8081,6 +8120,10 @@ addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
 			end
 		end)
 	end)
+end)
+
+addcmd("unantilag", {"unboostfps", "unlowgraphics"}, function(args, speaker)
+	return "You must rejoin the server to undo antilag!"
 end)
 
 addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
@@ -8205,9 +8248,11 @@ addcmd('partesp',{},function(args, speaker)
 			end
 		end
 	end
-	if partEspTrigger == nil then
-		partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
+	if partEspTrigger then 
+		partEspTrigger:Disconnect() 
+		partEspTrigger = nil
 	end
+	partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
 end)
 
 addcmd('unpartesp',{'nopartesp'},function(args, speaker)
@@ -8287,29 +8332,27 @@ end)
 viewing = nil
 addcmd('view',{'spectate'},function(args, speaker)
 	StopFreecam()
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		if viewDied then
-			viewDied:Disconnect()
-			viewChanged:Disconnect()
-		end
-		viewing = Players[v]
+	local v = getPlayer(args[1], speaker)[1]
+	if not v then return end
+	execCmd("unview nonotify")
+	viewing = Players[v]
+	workspace.CurrentCamera.CameraSubject = viewing.Character
+	notify('Spectate','Viewing ' .. Players[v].Name)
+
+	local function viewDiedFunc()
+		repeat wait() until Players[v].Character ~= nil and getRoot(Players[v].Character)
 		workspace.CurrentCamera.CameraSubject = viewing.Character
-		notify('Spectate','Viewing ' .. Players[v].Name)
-		local function viewDiedFunc()
-			repeat wait() until Players[v].Character ~= nil and getRoot(Players[v].Character)
-			workspace.CurrentCamera.CameraSubject = viewing.Character
-		end
-		viewDied = Players[v].CharacterAdded:Connect(viewDiedFunc)
-		local function viewChangedFunc()
-			workspace.CurrentCamera.CameraSubject = viewing.Character
-		end
-		viewChanged = workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(viewChangedFunc)
 	end
+	viewDied = Players[v].CharacterAdded:Connect(viewDiedFunc)
+
+	local function viewChangedFunc()
+		workspace.CurrentCamera.CameraSubject = viewing.Character
+	end
+	viewChanged = workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(viewChangedFunc)
 end)
 
 addcmd('viewpart',{'viewp'},function(args, speaker)
-	StopFreecam()
+	execCmd("unview")
 	if args[1] then
 		for i,v in pairs(workspace:GetDescendants()) do
 			if v.Name:lower() == getstring(1, args):lower() and v:IsA("BasePart") then
@@ -8324,15 +8367,16 @@ addcmd('unview',{'unspectate'},function(args, speaker)
 	StopFreecam()
 	if viewing ~= nil then
 		viewing = nil
-		notify('Spectate','View turned off')
+		if args[1] ~= "nonotify" then notify('Spectate','View turned off') end
 	end
 	if viewDied then
-		viewDied:Disconnect()
-		viewChanged:Disconnect()
+		viewDied:Disconnect() viewDied = nil
 	end
-	workspace.CurrentCamera.CameraSubject = speaker.Character
+	if viewChanged then
+		viewChanged:Disconnect() viewChanged = nil
+	end
+	if speaker.Character then workspace.CurrentCamera.CameraSubject = speaker.Character end
 end)
-
 
 fcRunning = false
 local Camera = workspace.CurrentCamera
@@ -8725,24 +8769,40 @@ addcmd('thirdp',{},function(args, speaker)
 	speaker.CameraMode = "Classic"
 end)
 
-addcmd('noclipcam', {'nccam'}, function(args, speaker)
+local cnoclip = false
+function noclipcam(state, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
 	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
+		return notify("Incompatible Exploit", 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
 	end
 	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
 	for _, v in pairs(getgc()) do
 		if type(v) == 'function' and getfenv(v).script == pop then
 			for i, v1 in pairs(gc(v)) do
-				if tonumber(v1) == .25 then
+				if state == true and tonumber(v1) == .25 then
 					sc(v, i, 0)
-				elseif tonumber(v1) == 0 then
+				elseif state == false and tonumber(v1) == 0 then
 					sc(v, i, .25)
 				end
 			end
 		end
 	end
+	cnoclip = state
+end
+
+addcmd('noclipcam', {'nccam'}, function(args, speaker)
+	if cnoclip then return end
+	noclipcam(true, speaker)
+end)
+
+addcmd('unnoclipcam', {'unnccam', 'clipcam'}, function(args, speaker)
+	if not cnoclip then return end
+	noclipcam(false, speaker)
+end)
+
+addcmd('togglenoclipcam', {'tnccam'}, function(args, speaker)
+	execCmd(cnoclip and "clipcam" or "nccam")
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
@@ -8872,6 +8932,8 @@ end)
 
 local antiAfkCon = nil
 addcmd("antiafk", {"antiidle"}, function(args, speaker)
+	if antiAfkCon then return end
+
     if getconnections then
         for _, c in getconnections(speaker.Idled) do
             pcall(function() c:Disable() end) -- supposed to "pause" it
@@ -8879,7 +8941,6 @@ addcmd("antiafk", {"antiidle"}, function(args, speaker)
         end
     end
 
-    pcall(function() antiAfkCon:Disconnect() end)
     antiAfkCon = speaker.Idled:Connect(function()
         local VirtualInputManager = Instance.new("VirtualInputManager")
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
@@ -9434,9 +9495,9 @@ addcmd("orbit", {}, function(args, speaker)
 end)
 
 addcmd("unorbit", {}, function(args, speaker)
-	if orbit1 then orbit1:Disconnect() end
-	if orbit2 then orbit2:Disconnect() end
-	if orbit3 then orbit3:Disconnect() end
+	if orbit1 then orbit1:Disconnect() orbit1 = nil end
+	if orbit2 then orbit2:Disconnect() orbit2 = nil end
+	if orbit3 then orbit3:Disconnect() orbit3 = nil end
 	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
 
@@ -9971,7 +10032,7 @@ end)
 local infJump
 infJumpDebounce = false
 addcmd("infjump", {"infinitejump"}, function(args, speaker)
-	if infJump then infJump:Disconnect() end
+	execCmd("uninfjump")
 	infJumpDebounce = false
 	infJump = UserInputService.JumpRequest:Connect(function()
 		if not infJumpDebounce then
@@ -9984,20 +10045,20 @@ addcmd("infjump", {"infinitejump"}, function(args, speaker)
 end)
 
 addcmd("uninfjump", {"uninfinitejump", "noinfjump", "noinfinitejump"}, function(args, speaker)
-	if infJump then infJump:Disconnect() end
+	if infJump then infJump:Disconnect() infJump = nil end
 	infJumpDebounce = false
 end)
 
 local flyjump
 addcmd("flyjump", {}, function(args, speaker)
-	if flyjump then flyjump:Disconnect() end
+	execCmd("unflyjump")
 	flyjump = UserInputService.JumpRequest:Connect(function()
 		speaker.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 	end)
 end)
 
 addcmd("unflyjump", {"noflyjump"}, function(args, speaker)
-	if flyjump then flyjump:Disconnect() end
+	if flyjump then flyjump:Disconnect() flyjump = nil end
 end)
 
 local HumanModCons = {}
@@ -10111,6 +10172,7 @@ end)
 addcmd('unloopnobgui',{'unloopunbgui','unloopnobillboardgui','unloopunbillboardgui','unloopnoname','unlooprohg'},function(args, speaker)
 	if charPartTrigger then
 		charPartTrigger:Disconnect()
+		charPartTrigger = nil
 	end
 end)
 
@@ -10660,17 +10722,24 @@ addcmd('unloopgoto',{'noloopgoto'},function(args, speaker)
 end)
 
 addcmd('headsit',{},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	if headSit then headSit:Disconnect() end
-	for i,v in pairs(players)do
-		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
-		headSit = RunService.Heartbeat:Connect(function()
-			if Players:FindFirstChild(Players[v].Name) and Players[v].Character ~= nil and getRoot(Players[v].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
-				getRoot(speaker.Character).CFrame = getRoot(Players[v].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
-			else
-				headSit:Disconnect()
-			end
-		end)
+	local plr = getPlayer(args[1], speaker)[1]
+	if not plr then return end
+	execCmd("unheadsit")
+	if not speaker.Character or not speaker.Character:FindFirstChildOfClass('Humanoid') then return end
+	speaker.Character:FindFirstChildOfClass('Humanoid').Sit = true
+	headSit = RunService.Heartbeat:Connect(function()
+		if Players:FindFirstChild(Players[plr].Name) and Players[plr].Character ~= nil and getRoot(Players[plr].Character) and getRoot(speaker.Character) and speaker.Character:FindFirstChildOfClass('Humanoid').Sit == true then
+			getRoot(speaker.Character).CFrame = getRoot(Players[plr].Character).CFrame * CFrame.Angles(0,math.rad(0),0)* CFrame.new(0,1.6,0.4)
+		else
+			execCmd("unheadsit")
+		end
+	end)
+end)
+
+addcmd('unheadsit',{},function(args, speaker)
+	if headSit then headSit:Disconnect() headSit = nil end
+	if speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid') then
+		speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
 	end
 end)
 
@@ -10860,10 +10929,7 @@ addcmd("bang", {"rape"}, function(args, speaker)
 	bang:Play(0.1, 1, 1)
 	bang:AdjustSpeed(args[2] or 3)
 	bangDied = humanoid.Died:Connect(function()
-		bang:Stop()
-		bangAnim:Destroy()
-		bangDied:Disconnect()
-		bangLoop:Disconnect()
+		execCmd("unbang")
 	end)
 	if args[1] then
 		local players = getPlayer(args[1], speaker)
@@ -10884,9 +10950,11 @@ end)
 addcmd("unbang", {"unrape"}, function(args, speaker)
 	if bangDied then
 		bangDied:Disconnect()
+		bangDied = nil
 		bang:Stop()
 		bangAnim:Destroy()
 		bangLoop:Disconnect()
+		bangLoop = nil
 	end
 end)
 
@@ -10901,11 +10969,8 @@ addcmd('carpet',{},function(args, speaker)
 			carpet = speaker.Character:FindFirstChildOfClass('Humanoid'):LoadAnimation(carpetAnim)
 			carpet:Play(.1, 1, 1)
 			local carpetplr = Players[v].Name
-			carpetDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
-				carpetLoop:Disconnect()
-				carpet:Stop()
-				carpetAnim:Destroy()
-				carpetDied:Disconnect()
+			carpetDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
+				execCmd("uncarpet")
 			end)
 			carpetLoop = RunService.Heartbeat:Connect(function()
 				pcall(function()
@@ -10921,7 +10986,9 @@ end)
 addcmd('uncarpet',{'nocarpet'},function(args, speaker)
 	if carpetLoop then
 		carpetLoop:Disconnect()
+		carpetLoop = nil
 		carpetDied:Disconnect()
+		carpetDied = nil
 		carpet:Stop()
 		carpetAnim:Destroy()
 	end
@@ -11115,7 +11182,7 @@ addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
 end)
 
 addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
-	if PromptButtonHoldBegan ~= nil then
+	if PromptButtonHoldBegan then
 		PromptButtonHoldBegan:Disconnect()
 		PromptButtonHoldBegan = nil
 	end
@@ -11133,9 +11200,7 @@ addcmd('grabtools', {}, function(args, speaker)
 		end
 	end
 
-	if grabtoolsFunc then 
-		grabtoolsFunc:Disconnect() 
-	end
+	execCmd("nograbtools nonotify")
 
 	grabtoolsFunc = workspace.ChildAdded:Connect(function(child)
 		if speaker.Character and child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
@@ -11149,9 +11214,10 @@ end)
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
 	if grabtoolsFunc then 
 		grabtoolsFunc:Disconnect() 
+		grabtoolsFunc = nil
 	end
 
-	notify("Grabtools", "Grabtools has been disabled")
+	if args[1] ~= "nonotify" then notify("Grabtools", "Grabtools has been disabled") end
 end)
 
 local specifictoolremoval = {}
@@ -11286,7 +11352,9 @@ end)
 addcmd('unhatspin',{'unspinhats'},function(args, speaker)
 	if spinhats then
 		spinhats:Disconnect()
+		spinhats = nil
 	end
+	if not speaker.Character then return end
 	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
 		v.Parent = workspace
 		for i,c in pairs(v.Handle) do
@@ -11512,9 +11580,7 @@ addcmd('fullbright',{'fb','fullbrightness'},function(args, speaker)
 end)
 
 addcmd('loopfullbright',{'loopfb'},function(args, speaker)
-	if brightLoop then
-		brightLoop:Disconnect()
-	end
+	execCmd("unloopfullbright")
 	local function brightFunc()
 		Lighting.Brightness = 2
 		Lighting.ClockTime = 14
@@ -11529,6 +11595,7 @@ end)
 addcmd('unloopfullbright',{'unloopfb'},function(args, speaker)
 	if brightLoop then
 		brightLoop:Disconnect()
+		brightLoop = nil
 	end
 end)
 
@@ -11833,7 +11900,7 @@ end)
 
 addcmd('unfling',{'nofling'},function(args, speaker)
 	execCmd('clip nonotify')
-	if flingDied then flingDied:Disconnect() end
+	if flingDied then flingDied:Disconnect() flingDied = nil end
 	flinging = false
 	task.wait(.1)
 	local speakerChar = speaker.Character
@@ -11983,10 +12050,7 @@ addcmd("clicktype", {}, function(args, speaker)
 end)
 
 addcmd("antifling", {}, function(args, speaker)
-	if antifling then
-		antifling:Disconnect()
-		antifling = nil
-	end
+	execCmd("unantifling")
 	antifling = RunService.Stepped:Connect(function()
 		for _, player in pairs(Players:GetPlayers()) do
 			if player ~= speaker and player.Character then
@@ -12114,6 +12178,7 @@ addcmd("teleportwalk", {"tpwalk"}, function(args, speaker)
     tpwalking = RunService.Heartbeat:Connect(function(delta)
         if not (character and humanoid and humanoid.Parent) then
             tpwalking:Disconnect()
+			tpwalking = nil
             return
         end
 
@@ -12126,6 +12191,7 @@ end)
 addcmd("unteleportwalk", {"untpwalk"}, function(args, speaker)
     tpwalkStack = 0
     tpwalking:Disconnect()
+	tpwalking = nil
 end)
 
 function bring(speaker,target,fast)
@@ -12236,7 +12302,7 @@ addcmd("togglexray", {}, function(args, speaker)
 end)
 
 addcmd("loopxray", {}, function(args, speaker)
-	pcall(function() xrayLoop:Disconnect() end)
+	execCmd("unloopxray")
 	xrayLoop = RunService.RenderStepped:Connect(function()
 		xrayEnabled = true
 		xray()
@@ -12244,7 +12310,10 @@ addcmd("loopxray", {}, function(args, speaker)
 end)
 
 addcmd("unloopxray", {}, function(args, speaker)
-	pcall(function() xrayLoop:Disconnect() end)
+	if xrayLoop then
+		xrayLoop:Disconnect()
+		xrayLoop = nil
+	end
 	xrayEnabled = false
 	xray()
 end)
@@ -12274,6 +12343,7 @@ end)
 addcmd('unwalltp',{'nowalltp'},function(args, speaker)
 	if walltpTouch then
 		walltpTouch:Disconnect()
+		walltpTouch = nil
 	end
 end)
 
@@ -12290,8 +12360,7 @@ addcmd('autoclick',{},function(args, speaker)
 		cancelAutoClick = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				if (input.KeyCode == Enum.KeyCode.Backspace and UserInputService:IsKeyDown(Enum.KeyCode.Equals)) or (input.KeyCode == Enum.KeyCode.Equals and UserInputService:IsKeyDown(Enum.KeyCode.Backspace)) then
-					autoclicking = false
-					cancelAutoClick:Disconnect()
+					execCmd("unautoclick")
 				end
 			end
 		end)
@@ -12308,7 +12377,7 @@ end)
 
 addcmd('unautoclick',{'noautoclick'},function(args, speaker)
 	autoclicking = false
-	if cancelAutoClick then cancelAutoClick:Disconnect() end
+	if cancelAutoClick then cancelAutoClick:Disconnect() cancelAutoClick = nil end
 end)
 
 addcmd('mousesensitivity',{'ms'},function(args, speaker)
@@ -12376,6 +12445,7 @@ end)
 addcmd('unhovername',{'nohovername'},function(args, speaker)
 	if nbUpdateFunc then
 		nbUpdateFunc:Disconnect()
+		nbUpdateFunc = nil
 		nameBox:Destroy()
 		nbSelection:Destroy()
 	end
@@ -12435,6 +12505,7 @@ addcmd('stareat',{'stare'},function(args, speaker)
 	for i,v in pairs(players) do
 		if stareLoop then
 			stareLoop:Disconnect()
+			stareLoop = nil
 		end
 		if not getRoot(Players.LocalPlayer.Character) and getRoot(Players[v].Character) then return end
 		local function stareFunc()
@@ -12446,6 +12517,7 @@ addcmd('stareat',{'stare'},function(args, speaker)
 				Players.LocalPlayer.Character:SetPrimaryPartCFrame(newCF)
 			elseif not Players:FindFirstChild(v) then
 				stareLoop:Disconnect()
+				stareLoop = nil
 			end
 		end
 
@@ -12456,6 +12528,7 @@ end)
 addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
 	if stareLoop then
 		stareLoop:Disconnect()
+		stareLoop = nil
 	end
 end)
 
@@ -12513,9 +12586,7 @@ getStaffRole = function(player)
 end
 
 addcmd("staffwatch", {}, function(args, speaker)
-	if staffwatchjoin then
-		staffwatchjoin:Disconnect()
-	end
+	execCmd("unstaffwatch nonotify")
 	if game.CreatorType == Enum.CreatorType.Group then
 		local found = {}
 		staffwatchjoin = Players.PlayerAdded:Connect(function(player)
@@ -12543,8 +12614,9 @@ end)
 addcmd("unstaffwatch", {}, function(args, speaker)
 	if staffwatchjoin then
 		staffwatchjoin:Disconnect()
+		staffwatchjoin = nil
 	end
-	notify("Staffwatch", "Disabled")
+	if args[1] ~= "nonotify" then notify("Staffwatch", "Disabled") end
 end)
 
 local function playerGroups()
@@ -12650,13 +12722,15 @@ addcmd("antivoid", {}, function(args, speaker)
 			root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
 		end
 	end)
-	if args[1] ~= "nonotify" then notify("antivoid", "Enabled") end
+	if args[1] ~= "nonotify" then notify("Antivoid", "Enabled") end
 end)
 
 addcmd("unantivoid", {"noantivoid"}, function(args, speaker)
-	pcall(function() antivoidloop:Disconnect() end)
-	antivoidloop = nil
-	if args[1] ~= "nonotify" then notify("antivoid", "Disabled") end
+	if antivoidloop then
+		antivoidloop:Disconnect()
+		antivoidloop = nil
+	end
+	if args[1] ~= "nonotify" then notify("Antivoid", "Disabled") end
 end)
 
 antivoidWasEnabled = false
@@ -12724,6 +12798,7 @@ addcmd("scare", {"spook"}, function(args, speaker)
 end)
 
 addcmd("alignmentkeys", {}, function(args, speaker)
+	execCmd("unalignmentkeys")
 	alignmentKeys = UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		if gameProcessed then return end
 		if input.KeyCode == Enum.KeyCode.Comma then workspace.CurrentCamera:PanUnits(-1) end
@@ -12736,8 +12811,12 @@ end)
 addcmd("unalignmentkeys", {"noalignmentkeys"}, function(args, speaker)
 	if type(alignmentKeysEmotes) == "boolean" then
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, alignmentKeysEmotes)
+		alignmentKeysEmotes = nil
 	end
-	alignmentKeys:Disconnect()
+	if alignmentKeys then
+		alignmentKeys:Disconnect()
+		alignmentKeys = nil
+	end
 end)
 
 addcmd("ctrllock", {}, function(args, speaker)
@@ -12786,7 +12865,10 @@ end)
 
 addcmd("unlistento", {}, function(args, speaker)
 	SoundService:SetListener(Enum.ListenerType.Camera)
-	listentoChar:Disconnect()
+	if listentoChar then
+		listentoChar:Disconnect()
+		listentoChar = nil
+	end
 end)
 
 addcmd("jerk", {}, function(args, speaker)
