@@ -9164,15 +9164,13 @@ addcmd('vehiclenoclip',{'vnoclip'},function(args, speaker)
 	local seat = humanoid.SeatPart
 	if not seat then return end
 
+	local vehicleModel = seat:FindFirstAncestorOfClass("Model")
+	if not vehicleModel then return end
+
 	vnoclipParts = {}
-	local vehicleModel = seat.Parent
-	repeat
-		if vehicleModel.ClassName ~= "Model" then
-			vehicleModel = vehicleModel.Parent
-		end
-	until vehicleModel.ClassName == "Model"
 	task.wait(0.1)
 	execCmd('noclip')
+
 	for i,v in pairs(vehicleModel:GetDescendants()) do
 		if v:IsA("BasePart") and v.CanCollide then
 			table.insert(vnoclipParts,v)
@@ -9184,7 +9182,9 @@ end)
 addcmd("vehicleclip", {"vclip", "unvnoclip", "unvehiclenoclip"}, function(args, speaker)
 	execCmd("clip")
 	for i, v in pairs(vnoclipParts) do
-		v.CanCollide = true
+		if v and v.Parent then
+			v.CanCollide = true
+		end
 	end
 	vnoclipParts = {}
 end)
