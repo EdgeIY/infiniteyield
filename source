@@ -7354,6 +7354,30 @@ addcmd('vflyspeed',{'vflysp','vehicleflyspeed','vehicleflysp'},function(args, sp
 	end
 end)
 
+vehicleloopspeed = nil
+addcmd('vspeed',{'vehiclespeed'},function(args, speaker)
+	execCmd("unvspeed")
+	local intens = tonumber(args[1]) or 50
+	 
+	vehicleloopspeed = RunService.Heartbeat:Connect(function()
+		local Humanoid = workspace.CurrentCamera.CameraSubject
+		if not Humanoid then return end
+
+		if Humanoid:IsA("Humanoid") and Humanoid.SeatPart then
+			Humanoid.SeatPart:ApplyImpulse(Humanoid.SeatPart.CFrame.LookVector * Vector3.new(intens, intens, intens))
+		elseif Humanoid:IsA("BasePart") then
+			Humanoid:ApplyImpulse(Humanoid.CFrame.LookVector * Vector3.new(intens, intens, intens))
+		end
+	end)
+end)
+
+addcmd('unvspeed',{'unvehiclespeed'},function(args, speaker)
+	if vehicleloopspeed then
+        vehicleloopspeed:Disconnect()
+    	vehicleloopspeed = nil
+    end
+end)
+
 addcmd('qefly',{'flyqe'},function(args, speaker)
 	if args[1] == 'false' then
 		QEfly = false
