@@ -8646,27 +8646,35 @@ addcmd('fov',{},function(args, speaker)
 	end
 end)
 
-addcmd('loopfov',{},function(args, speaker)
-	local fov = args[1] or 70
-	if isNumber(fov) then
-		fov = tonumber(fov)
-		if loopingFov then
-			loopingFov:Disconnect()
-			loopingFov = nil
-		end
-		local function lfv()
-			if workspace.CurrentCamera.FieldOfView ~= fov then
-				workspace.CurrentCamera.FieldOfView = fov
+fovConn, camConn = nil, nil
+addcmd("loopfov", {"lfov"}, function(args, speaker)
+	local fov = tonumber(args[1]) or 70
+	fov = math.clamp(fov, 1, 120)
+
+	execCmd("unloopfov")
+
+	local function lockCam(cam)
+		if not cam then return end
+		if fovConn then fovConn:Disconnect() end
+		cam.FieldOfView = fov
+		fovConn = cam:GetPropertyChangedSignal("FieldOfView"):Connect(function()
+			if cam.FieldOfView ~= fov then
+				cam.FieldOfView = fov
 			end
-		end
-		loopingFov = RunService.RenderStepped:Connect(lfv)
+		end)
 	end
+
+	lockCam(workspace.CurrentCamera)
+	camConn = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+		lockCam(workspace.CurrentCamera)
+	end)
 end)
 
-addcmd('unloopfov',{},function(args, speaker)
-	if loopingFov then
-		loopingFov:Disconnect()
-		loopingFov = nil
+addcmd("unloopfov", {"unlfov"}, function(args, speaker)
+	if fovConn then fovConn:Disconnect() fovConn = nil end
+	if camConn then camConn:Disconnect() camConn = nil end
+	if workspace.CurrentCamera then
+		workspace.CurrentCamera.FieldOfView = 70
 	end
 end)
 
