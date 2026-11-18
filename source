@@ -10574,17 +10574,18 @@ addcmd("console", {}, function(args, speaker)
 end)
 
 addcmd("clrconsole", {"clearconsole"}, function(args, speaker)
-	if not StarterGui:GetCore("DevConsoleVisible") then
-		execCmd("console") -- console must be opened at least once for cmd to work
-		task.wait()
-		StarterGui:SetCore("DevConsoleVisible", false)
+	local suc, err = pcall(function()
+		local conbye = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.ClientLog
+		for i, v in pairs(conbye:GetChildren()) do
+    		if tonumber(v.Name) then
+        		v:Destroy()
+        	end
+    	end
+	end)
+
+	if not suc then
+		return "Open console at least once and make sure it is on the Client tab."
 	end
-	local conbye = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.ClientLog
-    for i, v in pairs(conbye:GetChildren()) do
-    	if tonumber(v.Name) then
-        	v:Destroy()
-        end
-    end
 end)
 
 addcmd('oldconsole',{},function(args, speaker)
