@@ -9445,7 +9445,7 @@ addcmd("orbit", {}, function(args, speaker)
 	local isr = getPlayer(args[1], speaker)[1]
 	local target = isr and Players:FindFirstChild(isr)
 
-	if target and target.Character and getRoot(target.Character) then
+	if target and target.Character and getRoot(target.Character) and target ~= speaker then
 		local speed = tonumber(args[2]) or 0.2
 		local distance = tonumber(args[3]) or 6
 
