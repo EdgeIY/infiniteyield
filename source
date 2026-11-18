@@ -11416,12 +11416,14 @@ local function GetHandleTools(p)
 end
 addcmd('dupetools', {'clonetools'}, function(args, speaker)
 	local LOOP_NUM = tonumber(args[1]) or 1
-	local OrigPos = speaker.Character.Humanoid.RootPart.Position
-	local Tools, TempPos = {}, Vector3.new(math.random(-2e5, 2e5), 2e5, math.random(-2e5, 2e5))
+	if not getRoot(speaker.Character) then return end
+	local OrigPos = getRoot(speaker.Character).Position
+	local Tools, TempPos = {}, Vector3.new(math.random(-2e3, 2e3), 2e3, math.random(-2e3, 2e3))
 	for i = 1, LOOP_NUM do
 		local Human = speaker.Character:WaitForChild("Humanoid")
-		wait(.1, Human.Parent:MoveTo(TempPos))
-		Human.RootPart.Anchored = speaker:ClearCharacterAppearance(wait(.1)) or true
+		task.wait(0.1)
+		Human.Parent:MoveTo(TempPos)
+		Human.RootPart.Anchored = true
 		local t = GetHandleTools(speaker)
 		while #t > 0 do
 			for _, v in ipairs(t) do
@@ -11437,12 +11439,16 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 				end)
 			end
 			t = GetHandleTools(speaker)
+			task.wait()
 		end
-		wait(.1)
-		speaker.Character = speaker.Character:Destroy()
-		speaker.CharacterAdded:Wait():WaitForChild("Humanoid").Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos, wait(.1))
+		task.wait(0.1)
+		Human:ChangeState(Enum.HumanoidStateType.Dead)
+		speaker.CharacterAdded:Wait()
+		Human = speaker.Character:WaitForChild("Humanoid")
+		task.wait(0.1)
+		Human.Parent:MoveTo(LOOP_NUM == i and OrigPos or TempPos)
 		if i == LOOP_NUM or i % 5 == 0 then
-			local HRP = speaker.Character.Humanoid.RootPart
+			local HRP = speaker.Character:WaitForChild("HumanoidRootPart")
 			if type(firetouchinterest) == "function" then
 				for _, v in ipairs(Tools) do
 					v.Anchored = not firetouchinterest(v, HRP, 1, firetouchinterest(v, HRP, 0)) and false or false
