@@ -10690,6 +10690,8 @@ end)
 
 addcmd('unparrot',{},function(args, speaker)
 	parroting = false
+end)
+
 addcmd("vsay", {}, function(args, speaker)
 	if speaker.Character and speaker.Character:FindFirstChild("Head") then
 		game.Chat:Chat(speaker.Character.Head, getstring(1, args), Enum.ChatColor.White)
