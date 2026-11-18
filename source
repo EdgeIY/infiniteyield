@@ -8721,18 +8721,24 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 end)
 
 addcmd('maxzoom',{},function(args, speaker)
+	if not isNumber(args[1]) then return end
 	speaker.CameraMaxZoomDistance = args[1]
 end)
 
 addcmd('minzoom',{},function(args, speaker)
+	if not isNumber(args[1]) then return end
 	speaker.CameraMinZoomDistance = args[1]
 end)
 
 addcmd('camdistance',{},function(args, speaker)
+	if not isNumber(args[1]) then return end
 	local camMax = speaker.CameraMaxZoomDistance
 	local camMin = speaker.CameraMinZoomDistance
 	if camMax < tonumber(args[1]) then
 		camMax = args[1]
+	end
+	if camMin > tonumber(args[1]) then
+		camMin = args[1]
 	end
 	speaker.CameraMaxZoomDistance = args[1]
 	speaker.CameraMinZoomDistance = args[1]
@@ -8776,6 +8782,7 @@ addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},fu
 end)
 
 addcmd('chardelete',{'charremove','cd'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v.Name:lower() == getstring(1, args):lower() then
 			v:Destroy()
@@ -8785,6 +8792,7 @@ addcmd('chardelete',{'charremove','cd'},function(args, speaker)
 end)
 
 addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremoveclassname','cdc'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v.ClassName:lower() == getstring(1, args):lower() then
 			v:Destroy()
@@ -8828,36 +8836,29 @@ addcmd('uninvisibleparts',{'uninvisparts'},function(args, speaker)
 	shownParts = {}
 end)
 
-addcmd('hidechar',{},function(args, speaker)
-    local plr = getPlayer(args[1], speaker)
-    for i, x in pairs(plr) do
+function charhid(plrs, trn)
+	for i, x in pairs(plrs) do
         local plrvi = Players:FindFirstChild(x)
         if plrvi and plrvi.Character then
             for _, v in pairs(plrvi.Character:GetDescendants()) do
                 if v:IsA("BasePart") or v:IsA("Decal") then
                     if v.Name ~= "HumanoidRootPart" then
-                        v.Transparency = 1
+                        v.Transparency = trn
                     end
                 end
             end
         end
     end
+end
+
+addcmd('hidechar',{},function(args, speaker)
+    local plrs = getPlayer(args[1], speaker)
+    if plrs then charhid(plrs, 1) end
 end)
 
 addcmd('unhidechar',{'showchar'},function(args, speaker)
-    local plr = getPlayer(args[1], speaker)
-    for i, x in pairs(plr) do
-        local plrvi = Players:FindFirstChild(x)
-        if plrvi and plrvi.Character then
-            for _, v in pairs(plrvi.Character:GetDescendants()) do
-                if v:IsA("BasePart") or v:IsA("Decal") then
-                    if v.Name ~= "HumanoidRootPart" then
-                        v.Transparency = 0
-                    end
-                end
-            end
-        end
-    end
+    local plrs = getPlayer(args[1], speaker)
+    if plrs then charhid(plrs, 0) end
 end)
 
 addcmd("btools", {}, function(args, speaker)
