@@ -9976,6 +9976,7 @@ addcmd("lay", {"laydown"}, function(args, speaker)
 	end
 end)
 
+sitWalkBackups = {}
 addcmd("sitwalk", {}, function(args, speaker)
 	local hum = getHum(speaker.Character)
 	if not hum then return end
@@ -9990,6 +9991,19 @@ addcmd("sitwalk", {}, function(args, speaker)
 	local sitAnim = getAnim("sit")
 	if not sitAnim then return end
 
+	if not sitWalkBackups[speaker] then
+		sitWalkBackups[speaker] = {
+			hipHeight = hum.HipHeight,
+			anims = {}
+		}
+		for _, state in ipairs({"idle", "walk", "run", "jump"}) do
+			local anim = getAnim(state)
+			if anim then
+				sitWalkBackups[speaker].anims[state] = anim.AnimationId
+			end
+		end
+	end
+
 	for _, state in ipairs({"idle", "walk", "run", "jump"}) do
 		local anim = getAnim(state)
 		if anim then
@@ -9998,6 +10012,34 @@ addcmd("sitwalk", {}, function(args, speaker)
 	end
 
 	hum.HipHeight = not r15(speaker) and -1.5 or 0.5
+end)
+
+addcmd("unsitwalk", {}, function(args, speaker)
+	local hum = getHum(speaker.Character)
+	if not hum then return end
+	local anims = speaker.Character:FindFirstChild("Animate")
+	if not anims then return end
+
+	local backup = sitWalkBackups[speaker]
+	if backup then
+		hum.HipHeight = backup.hipHeight
+
+		for state, oldId in pairs(backup.anims) do
+			local folder = anims:FindFirstChild(state)
+			local anim = folder and folder:FindFirstChildWhichIsA("Animation")
+			if anim then
+				anim.AnimationId = oldId
+			end
+		end
+
+		sitWalkBackups[speaker] = nil
+	else
+		hum.HipHeight = not r15(speaker) and 0 or 2
+	end
+
+	anims.Disabled = true
+	task.wait()
+	anims.Disabled = false
 end)
 
 addcmd("nosit", {}, function(args, speaker)
