@@ -4483,6 +4483,7 @@ CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio log
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
+CMDs[#CMDs + 1] = {NAME = 'joinjobid [jobid]', DESC = 'Joins a server using its JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj [reposition]', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'inviteprompt [player]', DESC = 'Prompts the user of your choice that they had invited you. Requires a rejoin to function.'}
 CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
@@ -6959,7 +6960,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 	end)
 end)
 
-addcmd("jobid", {}, function(args, speaker)
+addcmd("jobid", {"copyjobid"}, function(args, speaker)
 	toClipboard("roblox://placeId=" .. PlaceId .. "&gameInstanceId=" .. JobId)
 end)
 
@@ -6967,11 +6968,25 @@ addcmd('notifyjobid',{},function(args, speaker)
 	notify('JobId / PlaceId',JobId..' / '..PlaceId)
 end)
 
+addcmd("joinjobid", {"jjid", "jid"}, function(args, speaker)
+	if not args[1] then return notify("Join JobId", "You must provide a JobId.") end
+	local success, err = pcall(function()
+		TeleportService:TeleportToPlaceInstance(PlaceId, args[1], Players.LocalPlayer)
+	end)
+
+    if success then
+        notify("Join JobId", "Attempting to join server...")
+    else
+        notify("Join JobId Error", tostring(err))
+    end
+end)
+
 addcmd('breakloops',{'break'},function(args, speaker)
 	lastBreakTime = tick()
 end)
 
 addcmd('gametp',{'gameteleport'},function(args, speaker)
+	if not args[1] then return end
 	TeleportService:Teleport(args[1])
 end)
 
