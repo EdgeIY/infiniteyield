@@ -9124,8 +9124,9 @@ end)
 
 plrtweening = nil
 addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
-    local character = speaker and speaker.Character
-    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+	if not getRoot(speaker.Character) then return end
+    local character = speaker.Character
+    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid then return end
 
     local plr = getPlayer(args[1], speaker)[1]
