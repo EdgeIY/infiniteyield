@@ -4819,6 +4819,8 @@ CMDs[#CMDs + 1] = {NAME = 'unloopnobgui / unloopnoname', DESC = 'Disables loopno
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
+CMDs[#CMDs + 1] = {NAME = 'nohead', DESC = 'Hides your head'}
+CMDs[#CMDs + 1] = {NAME = 'rehead', DESC = 'Shows your head'}
 CMDs[#CMDs + 1] = {NAME = 'naked (CLIENT)', DESC = 'Removes your clothing'}
 CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
 CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
@@ -9932,6 +9934,26 @@ addcmd('nolegs',{'rlegs'},function(args, speaker)
 	end
 end)
 
+function hlgiver(speaker, pis)
+	local char = speaker.Character
+    local head = char and char:FindFirstChild("Head")
+    if head then
+        head.Transparency = (pis and 1) or 0
+        local face = head:FindFirstChildOfClass("Decal")
+        if face then
+            face.Transparency = (pis and 1) or 0
+        end
+    end
+end
+
+addcmd('nohead',{'headless'},function(args, speaker)
+    hlgiver(speaker, true)
+end)
+
+addcmd('rehead',{'unheadless'},function(args, speaker)
+	hlgiver(speaker, false)
+end)
+
 addcmd("sit", {}, function(args, speaker)
 	speaker.Character:FindFirstChildWhichIsA("Humanoid").Sit = true
 end)
@@ -11230,6 +11252,7 @@ addcmd('naked',{},function(args, speaker)
 end)
 
 addcmd('noface',{'removeface'},function(args, speaker)
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA("Decal") and v.Name == 'face' then
 			v:Destroy()
