@@ -9129,7 +9129,7 @@ addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
     local humanoid = character:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid then return end
 
-    local plr = getPlayer(args[1], speaker)[1]
+    local plr = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
 	if not plr then return end
     if not getRoot(plr.Character) then return end
 
