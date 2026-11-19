@@ -11209,7 +11209,7 @@ addcmd('unlight', {'nolight'}, function(args, speaker)
 	end
 end)
 
-addcmd('deletelighting', {'dlighting'}, function(args, speaker)
+addcmd('deletelighting', {'dlighting', 'removelighting'}, function(args, speaker)
 	for _, v in ipairs(workspace:GetDescendants()) do
 		if (v:IsA("Light") and v.Name ~= "AdminLight") or v:IsA("Beam") then
 			v:Destroy()
