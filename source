@@ -4719,6 +4719,7 @@ CMDs[#CMDs + 1] = {NAME = 'unglobalshadows / ungshadows (CLIENT)', DESC = 'Disab
 CMDs[#CMDs + 1] = {NAME = 'restorelighting / rlighting', DESC = 'Restores Lighting properties'}
 CMDs[#CMDs + 1] = {NAME = 'light [radius] [brightness] (CLIENT)', DESC = 'Gives your player dynamic light'}
 CMDs[#CMDs + 1] = {NAME = 'nolight / unlight', DESC = 'Removes dynamic light from your player'}
+CMDs[#CMDs + 1] = {NAME = 'deletelighting / dlighting', DESC = 'Deletes Lighting properties'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'inspect / examine [player]', DESC = 'Opens InspectMenu for a certain player'}
 CMDs[#CMDs + 1] = {NAME = 'age [player]', DESC = 'Tells you the age of a player'}
@@ -11188,21 +11189,29 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 	end
 end)
 
-addcmd('light',{},function(args, speaker)
+addcmd('light', {}, function(args, speaker)
+	local root = getRoot(speaker.Character)
+	if not root then return end
+
 	local light = Instance.new("PointLight")
-	light.Parent = getRoot(speaker.Character)
-	light.Range = 30
-	if args[1] then
-		light.Brightness = args[2]
-		light.Range = args[1]
-	else
-		light.Brightness = 5
+	light.Name = "AdminLight"
+	light.Brightness = tonumber(args[2]) or 5
+	light.Range = tonumber(args[1]) or 30
+	light.Parent = root
+end)
+
+addcmd('unlight', {'nolight'}, function(args, speaker)
+	if not speaker.Character then return end
+	for _, v in pairs(speaker.Character:GetDescendants()) do
+		if v:IsA("PointLight") and v.Name == "AdminLight" then
+			v:Destroy()
+		end
 	end
 end)
 
-addcmd('unlight',{'nolight'},function(args, speaker)
-	for i,v in pairs(speaker.Character:GetDescendants()) do
-		if v.ClassName == "PointLight" then
+addcmd('deletelighting', {'dlighting'}, function(args, speaker)
+	for _, v in ipairs(workspace:GetDescendants()) do
+		if (v:IsA("Light") and v.Name ~= "AdminLight") or v:IsA("Beam") then
 			v:Destroy()
 		end
 	end
