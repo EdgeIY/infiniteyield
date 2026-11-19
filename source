@@ -11109,23 +11109,21 @@ addcmd('noproximitypromptlimits',{'nopplimits','removepplimits'},function(args, 
 end)
 
 addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
-	if fireproximityprompt then
-		if args[1] then
-			local name = getstring(1, args)
-			for _, descendant in ipairs(workspace:GetDescendants()) do
-				if descendant:IsA("ProximityPrompt") and descendant.Name == name or descendant.Parent.Name == name then
-					fireproximityprompt(descendant)
-				end
-			end
-		else
-			for _, descendant in ipairs(workspace:GetDescendants()) do
-				if descendant:IsA("ProximityPrompt") then
-					fireproximityprompt(descendant)
-				end
+	if not fireproximityprompt then 
+		return notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
+	end
+
+	local proxiname
+	if args[1] then
+		proxiname = getstring(1, args):lower()
+	end
+	
+	for _, descendant in ipairs(workspace:GetDescendants()) do
+		if descendant:IsA("ProximityPrompt") then
+			if not proxiname or (descendant.Name:lower() == proxiname or descendant.Parent.Name:lower() == proxiname) then
+				fireproximityprompt(descendant)
 			end
 		end
-	else
-		notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
 	end
 end)
 
@@ -11146,6 +11144,41 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 	if PromptButtonHoldBegan ~= nil then
 		PromptButtonHoldBegan:Disconnect()
 		PromptButtonHoldBegan = nil
+	end
+end)
+
+
+addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
+	if not firetouchinterest then
+		return notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
+	end
+
+	if not speaker.Character then return end
+	local Root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
+	if not Root then return end
+
+	local function Touch(x)
+		x = x:FindFirstAncestorWhichIsA("BasePart")
+		if x then
+			return task.spawn(function()
+				firetouchinterest(x, Root, 0)
+				task.wait()
+				firetouchinterest(x, Root, 1)
+			end)
+		end
+	end
+
+	local transname
+	if args[1] then
+		transname = getstring(1, args):lower()
+	end
+
+	for _, v in ipairs(workspace:GetDescendants()) do
+		if v:IsA("TouchTransmitter") then
+			if not transname or (v.Name:lower() == transname or v.Parent.Name:lower() == transname) then
+				Touch(v)
+			end
+		end
 	end
 end)
 
@@ -11493,40 +11526,6 @@ addcmd('dupetools', {'clonetools'}, function(args, speaker)
 			Tools = {}
 		end
 		TempPos = TempPos + Vector3.new(10, math.random(-5, 5), 0)
-	end
-end)
-
-addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
-	if not firetouchinterest then
-		return notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
-	end
-
-	if not speaker.Character then return end
-	local Root = getRoot(speaker.Character) or speaker.Character:FindFirstChildWhichIsA("BasePart")
-	if not Root then return end
-
-	local function Touch(x)
-		x = x:FindFirstAncestorWhichIsA("BasePart")
-		if x then
-			return task.spawn(function()
-				firetouchinterest(x, Root, 0)
-				task.wait()
-				firetouchinterest(x, Root, 1)
-			end)
-		end
-	end
-
-	local transname
-	if args[1] then
-		transname = getstring(1, args):lower()
-	end
-
-	for _, v in ipairs(workspace:GetDescendants()) do
-		if v:IsA("TouchTransmitter") then
-			if not transname or (v.Name:lower() == transname or v.Parent.Name:lower() == transname) then
-				Touch(v)
-			end
-		end
 	end
 end)
 
