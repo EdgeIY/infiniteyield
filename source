@@ -4718,7 +4718,7 @@ CMDs[#CMDs + 1] = {NAME = 'globalshadows / gshadows (CLIENT)', DESC = 'Enables g
 CMDs[#CMDs + 1] = {NAME = 'unglobalshadows / ungshadows (CLIENT)', DESC = 'Disables global shadows'}
 CMDs[#CMDs + 1] = {NAME = 'restorelighting / rlighting', DESC = 'Restores Lighting properties'}
 CMDs[#CMDs + 1] = {NAME = 'light [radius] [brightness] (CLIENT)', DESC = 'Gives your player dynamic light'}
-CMDs[#CMDs + 1] = {NAME = 'nolight / unlight [true/false]', DESC = 'Removes dynamic lights from your character. If true, removes all PointLights.'}
+CMDs[#CMDs + 1] = {NAME = 'nolight / unlight [all]', DESC = 'Removes dynamic lights from your character. If true, removes all PointLights'}
 CMDs[#CMDs + 1] = {NAME = 'deletelighting / dlighting', DESC = 'Deletes Lighting properties'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'inspect / examine [player]', DESC = 'Opens InspectMenu for a certain player'}
