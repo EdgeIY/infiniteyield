@@ -9148,13 +9148,13 @@ addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
         })
     plrtweening:Play()
 
-    plrtweening.Completed:Once(function()
-        breakVelocity()
-
-    	if oldState then
-        	humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+	plrtweening.Completed:Once(function()
+    	breakVelocity()
+    	if humanoid and type(oldState) == "boolean" then
+        	humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, oldState)
     	end
-    end)
+	end)
+
 end)
 
 addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
