@@ -11624,8 +11624,7 @@ addcmd('droppabletools',{},function(args, speaker)
 	end
 end)
 
-local curtoolsize, curgrippos
-
+curtoolsize, curgrippos = nil, nil
 function updreach(speaker, sizeX, sizeY, sizeZ)
 	execCmd('unreach')
 	task.wait()
