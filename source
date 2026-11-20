@@ -11517,8 +11517,7 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 	end
 end)
 
-local oldfbsets, isfbac = nil, false
-
+oldfbsets, isfbac = nil, false
 addcmd('fullbright', {'fb', 'fullbrightness'}, function(args, speaker)
 	if not isfbac then
 		oldfbsets = {
