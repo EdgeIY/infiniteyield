@@ -4770,10 +4770,6 @@ CMDs[#CMDs + 1] = {NAME = 'loopoof', DESC = 'Loops everyones character sounds (e
 CMDs[#CMDs + 1] = {NAME = 'unloopoof', DESC = 'Stops the oof chaos'}
 CMDs[#CMDs + 1] = {NAME = 'muteboombox [player]', DESC = 'Mutes someones boombox'}
 CMDs[#CMDs + 1] = {NAME = 'unmuteboombox [player]', DESC = 'Unmutes someones boombox'}
-CMDs[#CMDs + 1] = {NAME = 'killsounds', DESC = 'Destroys all sounds'}
-CMDs[#CMDs + 1] = {NAME = 'stopsounds', DESC = 'Stops all sounds'}
-CMDs[#CMDs + 1] = {NAME = 'pausesounds', DESC = 'Pauses all sounds'}
-CMDs[#CMDs + 1] = {NAME = 'playsounds', DESC = 'Plays all sounds'}
 CMDs[#CMDs + 1] = {NAME = 'hitboxes', DESC = 'Shows all rendered bounding boxes'}
 CMDs[#CMDs + 1] = {NAME = 'unhitboxes', DESC = 'Stops showing all rendered bounding boxes'}
 CMDs[#CMDs + 1] = {NAME = 'hitbox [player] [size] [transparency]', DESC = 'Expands the hitbox for players HumanoidRootPart (default is 1)'}
@@ -9555,42 +9551,6 @@ addcmd('unmuteboombox',{},function(args, speaker)
 					end
 				end
 			end)
-		end
-	end
-end)
-
-addcmd('killsounds',{'destroysounds', 'nosounds'},function(args, speaker)
-	check_nrf()
-	for _, sound in next, game:GetDescendants() do
-		if sound:IsA("Sound") then
-			sound:Destroy()
-		end
-	end
-end)
-
-addcmd('stopsounds',{},function(args, speaker)
-	check_nrf()
-	for _, sound in next, game:GetDescendants() do
-		if sound:IsA("Sound") then
-			sound:Stop()
-		end
-	end
-end)
-
-addcmd('pausesounds',{},function(args, speaker)
-	check_nrf()
-	for _, sound in next, game:GetDescendants() do
-		if sound:IsA("Sound") then
-			sound:Pause()
-		end
-	end
-end)
-
-addcmd('playsounds',{},function(args, speaker)
-	check_nrf()
-	for _, sound in next, game:GetDescendants() do
-		if sound:IsA("Sound") then
-			sound:Play()
 		end
 	end
 end)
