@@ -4732,6 +4732,7 @@ CMDs[#CMDs + 1] = {NAME = 'copygameid / gameid', DESC = 'Copies the current Game
 CMDs[#CMDs + 1] = {NAME = 'copyuserid / copyid [player]', DESC = 'Copies a players UserId to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'appearanceid / aid [player]', DESC = 'Notifies a players AppearanceId'}
 CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a players AppearanceId to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'plrhealth / health [player]', DESC = 'Notifies a players Health'}
 CMDs[#CMDs + 1] = {NAME = 'bang [player] [speed]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
@@ -9066,6 +9067,17 @@ addcmd('copyappearanceid',{'caid'},function(args, speaker)
 	end
 end)
 
+addcmd('plrhealth', {'phealth', 'health'}, function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for _, v in pairs(players) do
+		local plr = Players:FindFirstChild(v)
+		local human = plr and plr.Character and plr.Character:FindFirstChildWhichIsA("Humanoid")
+		if human then
+			notify(plr.Name .. "'s Health", math.floor(human.Health) .. " / " .. math.floor(human.MaxHealth))
+		end
+	end
+end)
+
 addcmd('norender',{},function(args, speaker)
 	RunService:Set3dRenderingEnabled(false)
 end)
@@ -9499,8 +9511,15 @@ addcmd('unloopoof',{},function(args, speaker)
 end)
 
 local notifiedRespectFiltering = false
+function check_nrf()
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then 
+		notifiedRespectFiltering = true 
+		notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') 
+	end
+end
+
 addcmd('muteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	check_nrf()
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9521,7 +9540,7 @@ addcmd('muteboombox',{},function(args, speaker)
 end)
 
 addcmd('unmuteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	check_nrf()
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
