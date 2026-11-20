@@ -4819,8 +4819,8 @@ CMDs[#CMDs + 1] = {NAME = 'unloopnobgui / unloopnoname', DESC = 'Disables loopno
 CMDs[#CMDs + 1] = {NAME = 'noarms', DESC = 'Removes your arms'}
 CMDs[#CMDs + 1] = {NAME = 'nolegs', DESC = 'Removes your legs'}
 CMDs[#CMDs + 1] = {NAME = 'nolimbs', DESC = 'Removes your limbs'}
-CMDs[#CMDs + 1] = {NAME = 'nohead', DESC = 'Hides your head'}
-CMDs[#CMDs + 1] = {NAME = 'rehead', DESC = 'Shows your head'}
+CMDs[#CMDs + 1] = {NAME = 'nohead (CLIENT)', DESC = 'Hides your head'}
+CMDs[#CMDs + 1] = {NAME = 'rehead (CLIENT)', DESC = 'Shows your head'}
 CMDs[#CMDs + 1] = {NAME = 'naked (CLIENT)', DESC = 'Removes your clothing'}
 CMDs[#CMDs + 1] = {NAME = 'noface / removeface', DESC = 'Removes your face'}
 CMDs[#CMDs + 1] = {NAME = 'blockhead', DESC = 'Turns your head into a block'}
