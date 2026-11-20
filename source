@@ -11184,7 +11184,7 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 	end
 end)
 
-addcmd('viewbackpack', {'viewbp', 'checktools', 'viewtools', "seetools"}, function(args, speaker)
+addcmd('viewbackpack', {'viewbp', 'checktools', 'viewtools', 'toolview', 'seetools'}, function(args, speaker)
 	local target = getPlayer(args[1], speaker)
 	local pl = target and target[1] and Players:FindFirstChild(target[1])
 	if not pl then return end
