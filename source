@@ -7028,8 +7028,8 @@ addcmd("exit", {"shutdown", "leave"}, function(args, speaker)
 	game:Shutdown()
 end)
 
-local noclipConnection = nil
-local noclipParts = {}
+noclipConnection = nil
+noclipParts = {}
 
 addcmd("noclip", {}, function(args, speaker)
     execCmd("unnoclip nonotify")
