@@ -7036,7 +7036,7 @@ addcmd("noclip", {}, function(args, speaker)
 
     noclipConnection = RunService.Stepped:Connect(function()
         local character = speaker.Character
-        if character == nil then return end
+        if not character then return end
 
         for _, part in character:GetDescendants() do
             if part:IsA("BasePart") and part.CanCollide == true and part.Name ~= floatName then
