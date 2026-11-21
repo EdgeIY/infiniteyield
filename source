@@ -9155,7 +9155,7 @@ addcmd('pulsetp',{'ptp'},function(args, speaker)
 	execCmd('breakvelocity')
 end)
 
-local vnoclipParts = {}
+vnoclipParts = {}
 addcmd('vehiclenoclip',{'vnoclip'},function(args, speaker)
 	local character = speaker.Character
 	local humanoid = character and character:FindFirstChildOfClass('Humanoid')
