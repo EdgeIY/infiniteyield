@@ -4624,7 +4624,7 @@ CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a D
 CMDs[#CMDs + 1] = {NAME = 'ai / aimode / verity [prompt]', DESC = 'Talk to AI'}
 CMDs[#CMDs + 1] = {NAME = 'apikey / aikey [key]', DESC = 'Sets API key so the AI can function'}
 CMDs[#CMDs + 1] = {NAME = 'aimodel [model]', DESC = 'Sets the AI model'}
-CMDs[#CMDs + 1] = {NAME = 'aiprovider [provider]', DESC = 'Sets the AI provider (claude/deepseek/gemini/groq/openai'}
+CMDs[#CMDs + 1] = {NAME = 'aiprovider [provider]', DESC = 'Sets the AI provider (claude/deepseek/gemini/groq/openai)'}
 CMDs[#CMDs + 1] = {NAME = 'maxtokens [tokens]', DESC = 'Sets the max number of tokens to use for an AI response'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'vsay [text]', DESC = 'Say anything uncensored (CLIENT)'}
