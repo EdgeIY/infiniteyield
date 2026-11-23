@@ -9881,6 +9881,7 @@ addcmd("undance", {"nodance"}, function(args, speaker)
 	if danceTrack then
 		danceTrack:Stop()
 		danceTrack:Destroy()
+		danceTrack = nil
 	end
 end)
 
