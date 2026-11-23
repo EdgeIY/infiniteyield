@@ -5807,7 +5807,12 @@ function ESP(plr, logic, esp_type, isLocate)
 			end
 
 			local function refresh()
-				local wasActive = isLocate and (ESPholder.Parent ~= nil) or (ESPMode ~= nil)
+				local wasActive
+				if isLocate then
+					wasActive = ESPholder.Parent ~= nil
+				else
+					wasActive = ESPMode ~= nil
+				end
 				if espLoopFunc then espLoopFunc:Disconnect() end
 				if teamChange then teamChange:Disconnect() end
 				if addedFunc then addedFunc:Disconnect() end
@@ -8031,8 +8036,10 @@ function partAdded(part)
 			a.Color = BrickColor.new("Lime green")
 		end
 	else
-		partEspTrigger:Disconnect()
-		partEspTrigger = nil
+		if partEspTrigger then
+			partEspTrigger:Disconnect()
+			partEspTrigger = nil
+		end
 	end
 end
 
@@ -8054,7 +8061,7 @@ addcmd('partesp',{},function(args, speaker)
 			end
 		end
 	end
-	if partEspTrigger == nil then
+	if not partEspTrigger then
 		partEspTrigger = workspace.DescendantAdded:Connect(partAdded)
 	end
 end)
