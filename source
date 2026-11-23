@@ -10087,12 +10087,9 @@ end)
 
 addcmd('spasm', {}, function(args, speaker)
 	if not r15(speaker) then
+		execCmd("unspasm")
 		local pchar = speaker.Character
 		local AnimationId = "33796059"
-		if SpasmAnim then
-			SpasmAnim:Destroy()
-			Spasm:Stop()
-		end
 		SpasmAnim = Instance.new("Animation")
 		SpasmAnim.AnimationId = "rbxassetid://"..AnimationId
 		Spasm = pchar:FindFirstChildOfClass('Humanoid'):LoadAnimation(SpasmAnim)
@@ -10103,12 +10100,18 @@ addcmd('spasm', {}, function(args, speaker)
 	end
 end)
 
-addcmd('unspasm',{'nospasm'}, function(args, speaker)
+addcmd('unspasm', {'nospasm'}, function(args, speaker)
+	if Spasm then
+		Spasm:Stop()
+		Spasm:Destroy()
+		Spasm = nil
+	end
 	if SpasmAnim then
 		SpasmAnim:Destroy()
-		Spasm:Stop()
+		SpasmAnim = nil
 	end
 end)
+
 addcmd('headthrow',{},function(args, speaker)
 	if not r15(speaker) then
 		local AnimationId = "35154961"
@@ -10150,7 +10153,6 @@ addcmd("emote", {"em"}, function(args, speaker)
 	local anim = humanoid:PlayEmoteAndGetAnimTrackById(args[1])
 	if args[2] then anim:AdjustSpeed(tostring(args[2])) end
 end)
-
 
 addcmd('noanim',{},function(args, speaker)
 	speaker.Character.Animate.Disabled = true
