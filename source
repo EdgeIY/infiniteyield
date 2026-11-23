@@ -11143,9 +11143,7 @@ addcmd('disableproximityprompts', {'disablepp'}, function(args, speaker)
 		end
 	end)
 
-	if args[1] ~= "nonotify" then
-		notify("Proximity Prompts", "All proximity prompts will be disabled.")
-	end
+	return "All proximity prompts will be disabled."
 end)
 
 addcmd('enableproximityprompts', {'enablepp'}, function(args, speaker)
@@ -11161,9 +11159,7 @@ addcmd('enableproximityprompts', {'enablepp'}, function(args, speaker)
 	end
 	table.clear(disabledPrompts)
 
-	if args[1] ~= "nonotify" then
-		notify("Proximity Prompts", "Proximity prompts enabled.")
-	end
+	return "Proximity prompts enabled."
 end)
 
 addcmd('notifyping',{'ping'},function(args, speaker)
