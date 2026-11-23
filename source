@@ -7726,64 +7726,54 @@ addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
 	if not pwork then return "Failed to move to waypoint." end	
 end)
 
-addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(args, speaker)
-	for i,v in pairs(WayPoints) do
-		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
-			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
-			table.remove(WayPoints, i)
-		end
-	end
-	if AllWaypoints ~= nil and #AllWaypoints > 0 then
-		for i,v in pairs(AllWaypoints) do
-			if v.NAME:lower() == tostring(getstring(1, args)):lower() then
-				if not v.GAME or v.GAME == PlaceId then
-					table.remove(AllWaypoints, i)
+function remove_waypoints(tbl, wpna: string, rmmode: boolean, shouldNotify: boolean)
+	if not tbl then return end
+	for i = #tbl, 1, -1 do
+		local v = tbl[i]
+		if rmmode then
+			if v.GAME == PlaceId then
+				table.remove(tbl, i)
+			end
+		elseif v.NAME:lower() == wpna then
+			if not v.GAME or v.GAME == PlaceId then
+				if shouldNotify then
+					notify('Modified Waypoints', "Deleted waypoint: " .. v.NAME)
 				end
+				table.remove(tbl, i)
 			end
 		end
 	end
-	for i,v in pairs(pWayPoints) do
-		if v.NAME:lower() == tostring(getstring(1, args)):lower() then
-			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
-			table.remove(pWayPoints, i)
-		end
-	end
+end
+
+function wprm(wpna: string?, rmmode: boolean)
+	local targetName = wpna and wpna:lower() or ""
+	
+	remove_waypoints(WayPoints, targetName, rmmode, not rmmode)
+	remove_waypoints(AllWaypoints, targetName, rmmode, false)
+	remove_waypoints(pWayPoints, targetName, rmmode, not rmmode)
+
 	refreshwaypoints()
 	updatesaves()
+end
+
+addcmd('deletewaypoint', {'dwp','dpos','deleteposition','deletepos'}, function(args, speaker)
+	local passdin = getstring(1, args)
+	wprm(tostring(passdin), false)
 end)
 
-addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'},function(args, speaker)
+addcmd('clearwaypoints', {'cwp','clearpositions','cpos','clearpos'}, function(args, speaker)
 	WayPoints = {}
 	pWayPoints = {}
-	refreshwaypoints()
-	updatesaves()
 	AllWaypoints = {}
-	notify('Modified Waypoints','Removed all waypoints')
-end)
-
-addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
-	for i,v in pairs(WayPoints) do
-		if v.GAME == PlaceId then
-			table.remove(WayPoints, i)
-		end
-	end
-	if AllWaypoints ~= nil and #AllWaypoints > 0 then
-		for i,v in pairs(AllWaypoints) do
-			if v.GAME == PlaceId then
-				table.remove(AllWaypoints, i)
-			end
-		end
-	end
-	for i,v in pairs(pWayPoints) do
-		if v.GAME == PlaceId then
-			table.remove(pWayPoints, i)
-		end
-	end
 	refreshwaypoints()
 	updatesaves()
-	notify('Modified Waypoints','Deleted game waypoints')
+	notify('Modified Waypoints', 'Removed all waypoints')
 end)
 
+addcmd('cleargamewaypoints', {'cgamewp'}, function(args, speaker)
+	wprm(nil, true)
+	notify('Modified Waypoints', 'Deleted game waypoints')
+end)
 
 local coreGuiTypeNames = {
 	-- predefined aliases
