@@ -9305,7 +9305,7 @@ end)
 
 addcmd('clientbring',{'cbring'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i,v in pairs(players) do
 		if Players[v].Character ~= nil then
 			if Players[v].Character:FindFirstChildOfClass('Humanoid') then
 				Players[v].Character:FindFirstChildOfClass('Humanoid').Sit = false
@@ -9319,7 +9319,7 @@ end)
 local bringT = {}
 addcmd('loopbring',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
+	for i,v in pairs(players) do
 		task.spawn(function()
 			if Players[v].Name ~= speaker.Name and not FindInTable(bringT, Players[v].Name) then
 				table.insert(bringT, Players[v].Name)
@@ -9360,56 +9360,109 @@ addcmd('unloopbring',{'noloopbring'},function(args, speaker)
 	end
 end)
 
-addcmd('walkto',{'follow'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
-			end
-			walkto = true
-			repeat wait()
-				speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
-			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
-		end
+addcmd('walkto', {'follow'}, function(args, speaker)
+	local wpchr = speaker.Character
+	if not wpchr then return end
+	local wproot = getRoot(wpchr)
+	local wphuman = wpchr:FindFirstChildOfClass('Humanoid')
+	if not wproot or not wphuman then return end
+
+	walkto = false
+	stopwpping(wphuman, wproot)
+	task.wait()
+
+	local fwtname = getPlayer(args[1], speaker)[1]
+	local wt_target = fwtname and Players:FindFirstChild(fwtname)
+	if not wt_target or not wt_target.Character then return end
+
+	if wphuman.SeatPart then
+		wphuman.Sit = false
+		task.wait(0.1)
 	end
+
+	walkto = true
+
+	task.spawn(function()
+		while walkto and speaker.Character and wphuman.Parent and wproot.Parent do
+			local wtchr = wt_target.Character
+			local wtroot = wtchr and getRoot(wtchr)
+			if not wtroot then break end
+
+			wphuman:MoveTo(wtroot.Position)
+			task.wait()
+		end
+		walkto = false
+	end)
 end)
 
-addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
+addcmd('pathfindwalkto', {'pathfindfollow'}, function(args, speaker)
+	local wpchr = speaker.Character
+	if not wpchr then return end
+	local wproot = getRoot(wpchr)
+	local wphuman = wpchr:FindFirstChildOfClass('Humanoid')
+	if not wproot or not wphuman then return end
+
 	walkto = false
-	wait()
-	local players = getPlayer(args[1], speaker)
-	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-	local path = PathService:CreatePath()
-	for i,v in pairs(players)do
-		if Players[v].Character ~= nil then
-			if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-				speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-				wait(.1)
-			end
-			walkto = true
-			repeat wait()
-				local success, response = pcall(function()
-					path:ComputeAsync(getRoot(speaker.Character).Position, getRoot(Players[v].Character).Position)
-					local waypoints = path:GetWaypoints()
-					local distance 
-					for waypointIndex, waypoint in pairs(waypoints) do
-						local waypointPosition = waypoint.Position
-						hum:MoveTo(waypointPosition)
-						repeat 
-							distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
-							wait()
-						until
-						distance <= 5
-					end	 
-				end)
-				if not success then
-					speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
-				end
-			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
-		end
+	stopwpping(wphuman, wproot)
+	task.wait()
+
+	local fpfwtarget = getPlayer(args[1], speaker)[1]
+	local pfwtarget = fpfwtarget and Players:FindFirstChild(fpfwtarget)
+	if not pfwtarget or not pfwtarget.Character then return end
+
+	if wphuman.SeatPart then
+		wphuman.Sit = false
+		task.wait(0.1)
 	end
+
+	local path = PathService:CreatePath()
+	walkto = true
+
+	task.spawn(function()
+		while walkto and speaker.Character and wphuman.Parent and wproot.Parent do
+			local pfwchr = pfwtarget.Character
+			local pfwroot = pfwchr and getRoot(pfwchr)
+			if not pfwroot then break end
+
+			local pfwpos = pfwroot.Position
+
+			if (pfwpos - wproot.Position).Magnitude <= 5 then
+				task.wait(0.1)
+				continue
+			end
+
+			local success = pcall(function()
+				path:ComputeAsync(wproot.Position, pfwpos)
+			end)
+
+			if success and path.Status == Enum.PathStatus.Success then
+				local waypoints = path:GetWaypoints()
+				for waypointIndex = 2, #waypoints do
+					if not walkto or not wphuman.Parent or not wproot.Parent then break end
+					
+					if not pfwroot.Parent or (pfwroot.Position - pfwpos).Magnitude > 15 then
+						break
+					end
+
+					local waypoint = waypoints[waypointIndex]
+					if waypoint.Action == Enum.PathWaypointAction.Jump then
+						wphuman.Jump = true
+					end
+					wphuman:MoveTo(waypoint.Position)
+
+					local timeout = os.clock() + 3
+					while walkto and wphuman.Parent and wproot.Parent and (waypoint.Position - wproot.Position).Magnitude > 5 and os.clock() < timeout do
+						task.wait()
+					end
+				end
+			else
+				wphuman:MoveTo(pfwpos)
+				task.wait(0.25)
+			end
+			task.wait()
+		end
+		walkto = false
+	end)
 end)
 
 addcmd('unwalkto',{'nowalkto','unfollow','nofollow'},function(args, speaker)
