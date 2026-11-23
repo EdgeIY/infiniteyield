@@ -4894,6 +4894,7 @@ CMDs[#CMDs + 1] = {NAME = 'deleteselectedtool / dst', DESC = 'Removes any curren
 CMDs[#CMDs + 1] = {NAME = 'grabtools', DESC = 'Automatically get tools that are dropped'}
 CMDs[#CMDs + 1] = {NAME = 'ungrabtools / nograbtools', DESC = 'Disables grabtools'}
 CMDs[#CMDs + 1] = {NAME = 'copytools [player] (CLIENT)', DESC = 'Copies a players tools'}
+CMDs[#CMDs + 1] = {NAME = 'viewbackpack / viewbp [player]', DESC = 'View the tools in a players backpack'}
 CMDs[#CMDs + 1] = {NAME = 'dupetools / clonetools [num]', DESC = 'Duplicates your inventory tools a set amount of times'}
 CMDs[#CMDs + 1] = {NAME = 'droptools', DESC = 'Drops your tools'}
 CMDs[#CMDs + 1] = {NAME = 'droppabletools', DESC = 'Makes your tools droppable'}
@@ -11187,6 +11188,34 @@ addcmd('clearremovespecifictool',{},function(args, speaker)
 	for obj in pairs(specifictoolremoval) do
 		specifictoolremoval[obj]:Disconnect()
 		specifictoolremoval[obj] = nil
+	end
+end)
+
+addcmd('viewbackpack', {'viewbp', 'checktools', 'viewtools', 'toolview', 'seetools'}, function(args, speaker)
+	local target = getPlayer(args[1], speaker)
+	local pl = target and target[1] and Players:FindFirstChild(target[1])
+	if not pl then return end
+
+	local bp = pl:FindFirstChildOfClass("Backpack")
+	if not bp or not pl.Character then return end
+
+	local t = {}
+	local chartool = pl.Character:FindFirstChildOfClass("Tool")
+	if chartool then -- include the tool the player is holding as well
+		table.insert(t, chartool.Name)
+	end
+
+	for _, v in bp:GetChildren() do
+		if v:IsA("Tool") then
+			table.insert(t, v.Name)
+		end
+	end
+
+	local title = ("%s's tools"):format(formatUsername(pl))
+	if #t > 0 then
+		notify(title, table.concat(t, ", "))
+	else
+		notify(title, "No tools.")
 	end
 end)
 
