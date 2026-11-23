@@ -7578,8 +7578,8 @@ end)
 addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypointpos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 
-	local x, y, z = args[2], args[3], args[4]
-	if not tonumber(x) or not tonumber(y) or not tonumber(z) then
+	local x, y, z = tonumber(args[2]), tonumber(args[3]), tonumber(args[4])
+	if not x or not y or not z then
 		return notify("Unable to Create Waypoint", "You must give a position in the format X Y Z.")
 	end
 
@@ -7629,7 +7629,11 @@ addcmd('showwaypoints',{'showwp','showwps'},function(args, speaker)
 		view.Size = part.Size
 		view.Parent = part
 	end
+
+	local pwppos
 	for i,v in pairs(pWayPoints) do
+		pwppos = pWayPoints[i].COORD[1] 
+		if not pwppos or not pwppos.Parent then continue end
 		local view = Instance.new("BoxHandleAdornment")
 		view.Adornee = pWayPoints[i].COORD[1]
 		view.AlwaysOnTop = true
