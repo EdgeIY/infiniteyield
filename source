@@ -9865,7 +9865,7 @@ end)
 addcmd("dance", {}, function(args, speaker)
 	local hum = getHum(speaker.Character)
 	if not hum then return end
-	pcall(execCmd, "undance")
+	execCmd("undance")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
 	if r15(speaker) then
 		dances = {"3333432454", "4555808220", "4049037604", "4555782893", "10214311282", "10714010337", "10713981723", "10714372526", "10714076981", "10714392151", "11444443576"}
@@ -9878,8 +9878,10 @@ addcmd("dance", {}, function(args, speaker)
 end)
 
 addcmd("undance", {"nodance"}, function(args, speaker)
-	danceTrack:Stop()
-	danceTrack:Destroy()
+	if danceTrack then
+		danceTrack:Stop()
+		danceTrack:Destroy()
+	end
 end)
 
 addcmd("defemote", {}, function(args, speaker)
