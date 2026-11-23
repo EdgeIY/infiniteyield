@@ -7575,7 +7575,7 @@ addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(ar
 	updatesaves()
 end)
 
-addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'},function(args, speaker)
+addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypointpos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	if getRoot(speaker.Character) then
 		notify('Modified Waypoints',"Created waypoint: "..getstring(1, args))
