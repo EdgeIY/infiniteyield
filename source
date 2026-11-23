@@ -7651,51 +7651,123 @@ addcmd('hidewaypoints',{'hidewp','hidewps'},function(args, speaker)
 	waypointParts = {}
 end)
 
+local walkto = false
+local waypointwalkto = false
+WPactiveTween = nil
+
+function stopwpping(wphuman, wproot)
+	waypointwalkto = false
+	if WPactiveTween then
+		WPactiveTween:Cancel()
+		WPactiveTween = nil
+	end
+	if wphuman then wphuman.WalkToPoint = wproot.Position end
+end
+
 function waypointmover(WPName: string, mode: string, speaker: Player)
 	local wpchr = speaker.Character 
 	if not wpchr then return false end
 	local wproot = getRoot(wpchr)
 	if not wproot then return false end
 	local wphuman = wpchr:FindFirstChildOfClass('Humanoid')
-	if not wphuman and mode == "walkto" then return false end
+	if not wphuman and (mode == "walkto" or mode == "pathfind") then return false end
 
+	stopwpping(wphuman, wproot)
 	local wpname_lc = tostring(WPName):lower()
-	for i,_ in pairs(WayPoints) do
+
+	local function runPathfind(targetPos: Vector3, targetPart: BasePart?)
+		task.wait()
+		if wphuman.SeatPart then
+			wphuman.Sit = false
+			task.wait(.1)
+		end
+
+		local path = PathService:CreatePath()
+		waypointwalkto = true
+
+		task.spawn(function()
+			while waypointwalkto and speaker.Character and wphuman.Parent and wproot.Parent do
+				if targetPart then
+					if not targetPart.Parent then break end
+					targetPos = targetPart.Position
+				end
+
+				if (targetPos - wproot.Position).Magnitude <= 5 then
+					break
+				end
+
+				local success = pcall(function()
+					path:ComputeAsync(wproot.Position, targetPos)
+				end)
+
+				if success and path.Status == Enum.PathStatus.Success then
+					local waypoints = path:GetWaypoints()
+					for waypointIndex = 2, #waypoints do
+						if not waypointwalkto or not wphuman.Parent or not wproot.Parent then break end
+						local waypoint = waypoints[waypointIndex]
+						if waypoint.Action == Enum.PathWaypointAction.Jump then
+							wphuman.Jump = true
+						end
+						wphuman:MoveTo(waypoint.Position)
+
+						local timeout = os.clock() + 3
+						while waypointwalkto and wphuman.Parent and wproot.Parent and (waypoint.Position - wproot.Position).Magnitude > 5 and os.clock() < timeout do
+							task.wait()
+						end
+					end
+				else
+					wphuman:MoveTo(targetPos)
+					task.wait(0.25)
+				end
+				task.wait()
+			end
+			waypointwalkto = false
+		end)
+	end
+
+	for i, _ in pairs(WayPoints) do
 		if tostring(WayPoints[i].NAME):lower() == wpname_lc then
 			local x = WayPoints[i].COORD[1]
 			local y = WayPoints[i].COORD[2]
 			local z = WayPoints[i].COORD[3]
-				
+			local TrueCoords = Vector3.new(x, y, z)
+
 			if mode == "default" then
-				wproot.CFrame = CFrame.new(x,y,z)
+				wproot.CFrame = CFrame.new(TrueCoords)
 			elseif mode == "tween" then
-				TweenService:Create(wproot, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x,y,z)}):Play()
+				WPactiveTween = TweenService:Create(wproot, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(TrueCoords)})
+				WPactiveTween:Play()
 			elseif mode == "walkto" then
 				if wphuman.SeatPart then
 					wphuman.Sit = false
 					task.wait(.1)
 				end
-				wphuman.WalkToPoint = Vector3.new(x,y,z)
+				wphuman.WalkToPoint = TrueCoords
+			elseif mode == "pathfind" then
+				runPathfind(TrueCoords, nil)
 			end
 			return true
 		end
 	end
 
-	local pwppos
-	for i,_ in pairs(pWayPoints) do
+	for i, _ in pairs(pWayPoints) do
 		if tostring(pWayPoints[i].NAME):lower() == wpname_lc then
-			pwppos = pWayPoints[i].COORD[1] 
+			local pwppos = pWayPoints[i].COORD[1]
 			if not pwppos or not pwppos.Parent then continue end
+
 			if mode == "default" then
 				wproot.CFrame = CFrame.new(pwppos.Position)
 			elseif mode == "tween" then
-				TweenService:Create(wproot, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pwppos.Position)}):Play()
+				WPactiveTween = TweenService:Create(wproot, TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pwppos.Position)})
+				WPactiveTween:Play()
 			elseif mode == "walkto" then
 				if wphuman.SeatPart then
 					wphuman.Sit = false
 					task.wait(.1)
 				end
 				wphuman.WalkToPoint = pwppos.Position
+			elseif mode == "pathfind" then
+				runPathfind(pwppos.Position, pwppos)
 			end
 			return true
 		end
@@ -7727,6 +7799,12 @@ end)
 addcmd('walktowaypoint',{'wtwp'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	local pwork = waypointmover(WPName, "walkto", speaker)
+	if not pwork then return "Failed to move to waypoint." end	
+end)
+
+addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
+	local WPName = tostring(getstring(1, args))
+	local pwork = waypointmover(WPName, "pathfind", speaker)
 	if not pwork then return "Failed to move to waypoint." end	
 end)
 
@@ -9282,8 +9360,6 @@ addcmd('unloopbring',{'noloopbring'},function(args, speaker)
 	end
 end)
 
-local walkto = false
-local waypointwalkto = false
 addcmd('walkto',{'follow'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
@@ -9332,74 +9408,6 @@ addcmd('pathfindwalkto',{'pathfindfollow'},function(args, speaker)
 					speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(getRoot(Players[v].Character).Position)
 				end
 			until Players[v].Character == nil or not getRoot(Players[v].Character) or walkto == false
-		end
-	end
-end)
-
-addcmd('pathfindwalktowaypoint',{'pathfindwalktowp'},function(args, speaker)
-	waypointwalkto = false
-	wait()
-	local WPName = tostring(getstring(1, args))
-	local hum = Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-	local path = PathService:CreatePath()
-	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
-			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-					wait(.1)
-				end
-				local TrueCoords = Vector3.new(WayPoints[i].COORD[1], WayPoints[i].COORD[2], WayPoints[i].COORD[3])
-				waypointwalkto = true
-				repeat wait()
-					local success, response = pcall(function()
-						path:ComputeAsync(getRoot(speaker.Character).Position, TrueCoords)
-						local waypoints = path:GetWaypoints()
-						local distance 
-						for waypointIndex, waypoint in pairs(waypoints) do
-							local waypointPosition = waypoint.Position
-							hum:MoveTo(waypointPosition)
-							repeat 
-								distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
-								wait()
-							until
-							distance <= 5
-						end
-					end)
-					if not success then
-						speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(TrueCoords)
-					end
-				until not speaker.Character or waypointwalkto == false
-			end
-		end
-		for i,_ in pairs(pWayPoints) do
-			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				if speaker.Character:FindFirstChildOfClass('Humanoid') and speaker.Character:FindFirstChildOfClass('Humanoid').SeatPart then
-					speaker.Character:FindFirstChildOfClass('Humanoid').Sit = false
-					wait(.1)
-				end
-				local TrueCoords = pWayPoints[i].COORD[1].Position
-				waypointwalkto = true
-				repeat wait()
-					local success, response = pcall(function()
-						path:ComputeAsync(getRoot(speaker.Character).Position, TrueCoords)
-						local waypoints = path:GetWaypoints()
-						local distance 
-						for waypointIndex, waypoint in pairs(waypoints) do
-							local waypointPosition = waypoint.Position
-							hum:MoveTo(waypointPosition)
-							repeat 
-								distance = (waypointPosition - hum.Parent.PrimaryPart.Position).magnitude
-								wait()
-							until
-							distance <= 5
-						end
-					end)
-					if not success then
-						speaker.Character:FindFirstChildOfClass('Humanoid'):MoveTo(TrueCoords)
-					end
-				until not speaker.Character or waypointwalkto == false
-			end
 		end
 	end
 end)
