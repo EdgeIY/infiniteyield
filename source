@@ -5314,7 +5314,7 @@ SpecialPlayerCases = {
 		end
 		return plrs
 	end,
-	["me"] = function(speaker)return {speaker} end,
+	["me"] = function(speaker) return {speaker} end,
 	["#(%d+)"] = function(speaker,args,currentList)
 		local returns = {}
 		local randAmount = tonumber(args[1])
@@ -5329,8 +5329,8 @@ SpecialPlayerCases = {
 	end,
 	["random"] = function(speaker,args,currentList)
 		local players = Players:GetPlayers()
-		local localplayer = Players.LocalPlayer
-		table.remove(players, table.find(players, localplayer))
+		table.remove(players, table.find(players, speaker))
+		if #players == 0 then return {speaker} end -- me when i choose between 1 and 0 and it crashes
 		return {players[math.random(1,#players)]}
 	end,
 	["%%(.+)"] = function(speaker,args)
@@ -5401,7 +5401,7 @@ SpecialPlayerCases = {
 		end
 		return returns
 	end,
-	["guests"] = function(speaker,args)
+	--[[ ["guests"] = function(speaker,args)
 		local returns = {}
 		for _,plr in pairs(Players:GetPlayers()) do
 			if plr.Guest then
@@ -5409,11 +5409,11 @@ SpecialPlayerCases = {
 			end
 		end
 		return returns
-	end,
+	end, ]]
 	["bacons"] = function(speaker,args)
 		local returns = {}
 		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Character:FindFirstChild('Pal Hair') or plr.Character:FindFirstChild('Kate Hair') then
+			if plr.Character and (plr.Character:FindFirstChild('Pal Hair') or plr.Character:FindFirstChild('Kate Hair')) then
 				table.insert(returns,plr)
 			end
 		end
@@ -5422,7 +5422,7 @@ SpecialPlayerCases = {
 	["age(%d+)"] = function(speaker,args)
 		local returns = {}
 		local age = tonumber(args[1])
-		if not age == nil then return end
+		if not age then return end
 		for _,plr in pairs(Players:GetPlayers()) do
 			if plr.AccountAge <= age then
 				table.insert(returns,plr)
