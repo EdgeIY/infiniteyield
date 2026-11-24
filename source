@@ -8596,8 +8596,9 @@ addcmd("freecam", {"fcam", "fc"},function(args, speaker)
 end)
 
 addcmd("freecampos", {"fcpos", "fcp", "freecamposition", "fcposition"},function(args, speaker)
-    if not args[1] then return end
-    local freecamPos = CFrame.new(args[1], args[2], args[3])
+    local fx, fy, fz = tonumber(args[1]), tonumber(args[2]), tonumber(args[3])
+	if not fx or not fy or not fz then return end
+    local freecamPos = CFrame.new(fx, fy, fz)
     StartFreecam(freecamPos)
 end)
 
@@ -8621,9 +8622,11 @@ addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
 end)
 
 addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		StartFreecam(getRoot(Players[v].Character).CFrame)
+	local fcplrt = getPlayer(args[1], speaker)[1]
+	local fcplr = fcplrt and Players:FindFirstChild(fcplrt)
+	local root = fcplr and fcplr.Character and getRoot(fcplr.Character)
+	if root then
+		StartFreecam(root.CFrame)
 	end
 end)
 
@@ -8640,7 +8643,7 @@ end)
 
 addcmd('notifyfreecamposition',{'notifyfcpos'},function(args, speaker)
 	if fcRunning then
-		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
+		local X, Y, Z = workspace.CurrentCamera.CFrame.Position.X, workspace.CurrentCamera.CFrame.Position.Y, workspace.CurrentCamera.CFrame.Position.Z
 		local Format, Round = string.format, math.round
 		notify("Current Position", Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
 	end
@@ -8648,7 +8651,7 @@ end)
 
 addcmd('copyfreecamposition',{'copyfcpos'},function(args, speaker)
 	if fcRunning then
-		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
+		local X, Y, Z = workspace.CurrentCamera.CFrame.Position.X, workspace.CurrentCamera.CFrame.Position.Y, workspace.CurrentCamera.CFrame.Position.Z
 		local Format, Round = string.format, math.round
 		toClipboard(Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
 	end
