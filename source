@@ -4787,7 +4787,6 @@ CMDs[#CMDs + 1] = {NAME = 'loopjumppower / loopjp [num]', DESC = 'Loops your jum
 CMDs[#CMDs + 1] = {NAME = 'unloopjumppower / unloopjp', DESC = 'Turns off loopjumppower'}
 CMDs[#CMDs + 1] = {NAME = 'maxslopeangle / msa [num]', DESC = 'Adjusts MaxSlopeAngle'}
 CMDs[#CMDs + 1] = {NAME = 'gravity / grav [num] (CLIENT)', DESC = 'Change your gravity'}
-CMDs[#CMDs + 1] = {NAME = 'setsimrad [num]', DESC = 'Sets how far physics around you gets simulated'}
 CMDs[#CMDs + 1] = {NAME = 'setfflag [flag] [value]', DESC = 'Changes the value of a FastFlag'}
 CMDs[#CMDs + 1] = {NAME = 'raknetdesync / rnd', DESC = 'Enables RakNet desync'}
 CMDs[#CMDs + 1] = {NAME = 'unraknetdesync / unrnd', DESC = 'Disables RakNet desync'}
@@ -9808,16 +9807,6 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 	local grav = args[1] or oldgrav
 	if isNumber(grav) then
 		workspace.Gravity = grav
-	end
-end)
-
-addcmd("setsimrad", {"setsimradius", "setsimulationradius"}, function(args, speaker)
-	local ssrc = setsimulationradius or set_simulation_radius
-	if not ssrc then return notify("Incompatible Exploit", "Your exploit does not support this command (missing setsimulationradius)") end
-	local ssr = args[1] or 1000
-	if isNumber(ssr) then
-		ssr = tonumber(ssr)
-		ssrc(ssr, ssr)
 	end
 end)
 
