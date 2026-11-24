@@ -5734,7 +5734,7 @@ function round(num, numDecimalPlaces)
 	return math.floor(num * mult + 0.5) / mult
 end
 
-function ESP(plr, logic, esp_type, isLocate)
+function ESP(plr: Player, logic: boolean, esp_type: string, isLocate: boolean?)
 	task.spawn(function()
 		local suffix = isLocate and '_LC' or '_ESP'
 		for _, v in COREGUI:GetChildren() do
