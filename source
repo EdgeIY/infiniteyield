@@ -12905,7 +12905,6 @@ addcmd("bangtool", {}, function(args, speaker)
 		btrack:Play(0.1, 1, 1)
 		btrack:AdjustSpeed(3)
 
-		task.wait(0.1)
 		while btrack and btrack.TimePosition < (not isR15 and 0.65 or 0.7) do task.wait(0.1) end
 		if btrack then
 			btrack:Stop()
