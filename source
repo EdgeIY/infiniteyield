@@ -4610,7 +4610,9 @@ CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whi
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a Discord webhook for chatlogs to go to (provide no URL to disable this)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
-CMDs[#CMDs + 1] = {NAME = 'vsay [text]', DESC = 'Say anything uncensored (CLIENT)'}
+CMDs[#CMDs + 1] = {NAME = 'vsay [text] (CLIENT)', DESC = 'Say anything uncensored'}
+CMDs[#CMDs + 1] = {NAME = 'morse [text]', DESC = 'Sends your message translated into Morse code'}
+CMDs[#CMDs + 1] = {NAME = 'unmorse [text]', DESC = 'Translates Morse code into normal text and notifies it'}
 CMDs[#CMDs + 1] = {NAME = 'spam [text]', DESC = 'Makes you spam the chat'}
 CMDs[#CMDs + 1] = {NAME = 'unspam / nospam', DESC = 'Turns off spam'}
 CMDs[#CMDs + 1] = {NAME = 'whisper / pm [player] [text]', DESC = 'Makes you whisper a string to someone (possible mute bypass)'}
@@ -10684,6 +10686,69 @@ end)
 addcmd("vsay", {}, function(args, speaker)
 	if speaker.Character and speaker.Character:FindFirstChild("Head") then
 		game.Chat:Chat(speaker.Character.Head, getstring(1, args), Enum.ChatColor.White)
+	end
+end)
+
+morsecodes = {
+		a = ".-", b = "-...", c = "-.-.", d = "-..", e = ".", f = "..-.",
+		g = "--.", h = "....", i = "..", j = ".---", k = "-.-", l = ".-..",
+		m = "--", n = "-.", o = "---", p = ".--.", q = "--.-", r = ".-.",
+		s = "...", t = "-", u = "..-", v = "...-", w = ".--", x = "-..-",
+		y = "-.--", z = "--..",
+		["0"] = "-----", ["1"] = ".----", ["2"] = "..---", ["3"] = "...--",
+		["4"] = "....-", ["5"] = ".....", ["6"] = "-....", ["7"] = "--...",
+		["8"] = "---..", ["9"] = "----.",
+		["."] = ".-.-.-", [","] = "--..--", ["?"] = "..--..", ["!"] = "-.-.--",
+		["'"] = ".----.", ['"'] = ".-..-.", ["/"] = "-..-.", ["-"] = "-....-",
+		["("] = "-.--.", [")"] = "-.--.-", [":"] = "---...", [";"] = "-.-.-.",
+		["="] = "-...-", ["+"] = ".-.-.", ["@"] = ".--.-.", ["&"] = ".-...",
+		["_"] = "..--.-", ["$"] = "...-..-",
+}
+
+reverseMorse = {}
+for char, code in pairs(morsecodes) do
+	reverseMorse[code] = char
+end
+
+function toMorse(text)
+	local result = {}
+	for char in string.lower(text):gmatch(".") do
+		if char == " " then
+			table.insert(result, "/")
+		elseif morsecodes[char] then
+			table.insert(result, morsecodes[char])
+		end
+	end
+	return table.concat(result, " ")
+end
+
+function fromMorse(morseText)
+	local result = {}
+	for token in morseText:gmatch("%S+") do
+		if token == "/" then
+			table.insert(result, " ")
+		elseif reverseMorse[token] then
+			table.insert(result, reverseMorse[token])
+		else
+			table.insert(result, "?")
+		end
+	end
+	return table.concat(result)
+end
+
+addcmd("morse", {"morsechat"}, function(args, speaker)
+	local cString = getstring(1, args)
+	if cString and cString ~= "" then
+		local morseString = toMorse(cString)
+		chatMessage(morseString)
+	end
+end)
+
+addcmd("unmorse", {"demorse", "readmorse"}, function(args, speaker)
+	local cString = getstring(1, args)
+	if cString and cString ~= "" then
+		local decodedString = fromMorse(cString)
+		notify("Morse Decoded", decodedString)
 	end
 end)
 
