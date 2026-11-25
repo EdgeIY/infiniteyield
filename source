@@ -4737,6 +4737,7 @@ CMDs[#CMDs + 1] = {NAME = 'copyappearanceid / caid [player]', DESC = 'Copies a p
 CMDs[#CMDs + 1] = {NAME = 'bang [player] [speed]', DESC = 'owo'}
 CMDs[#CMDs + 1] = {NAME = 'unbang', DESC = 'uwu'}
 CMDs[#CMDs + 1] = {NAME = 'jerk', DESC = 'Makes you jork it'}
+CMDs[#CMDs + 1] = {NAME = 'bangtool', DESC = 'bang, but as a tool'}
 CMDs[#CMDs + 1] = {NAME = 'scare / spook [player]', DESC = 'Teleports in front of a player for half a second'}
 CMDs[#CMDs + 1] = {NAME = 'carpet [player]', DESC = 'Be someones carpet'}
 CMDs[#CMDs + 1] = {NAME = 'uncarpet', DESC = 'Undoes carpet'}
@@ -12864,6 +12865,57 @@ addcmd("jerk", {}, function(args, speaker)
 		end
 	end
 end)
+
+addcmd("bangtool", {}, function(args, speaker)
+	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	local backpack = speaker:FindFirstChildWhichIsA("Backpack")
+	if not humanoid or not backpack then return end
+
+	local tool = Instance.new("Tool")
+	tool.Name = "Bang Tool"
+	tool.ToolTip = "jit."
+	tool.RequiresHandle = false
+	tool.Parent = backpack
+
+	local bangin = false
+	local btrack = nil
+
+	local function stopTomfoolery()
+		bangin = false
+		if btrack then
+			btrack:Stop()
+			btrack = nil
+		end
+	end
+
+	tool.Equipped:Connect(function() bangin = true end)
+	tool.Unequipped:Connect(stopTomfoolery)
+	humanoid.Died:Connect(stopTomfoolery)
+
+	while task.wait() do
+		if not bangin then continue end
+
+		local isR15 = r15(speaker)
+		if not btrack then
+			local bangAnim = Instance.new("Animation")
+			bangAnim.AnimationId = not isR15 and "rbxassetid://148840371" or "rbxassetid://5918726674"
+			btrack = humanoid:LoadAnimation(bangAnim)
+		end
+
+		btrack:Play(0.1, 1, 1)
+		btrack:AdjustSpeed(3)
+
+		task.wait(0.1)
+		while btrack and btrack.TimePosition < (not isR15 and 0.65 or 0.7) do task.wait(0.1) end
+		if btrack then
+			btrack:Stop()
+			btrack = nil
+		end
+	end
+end)
+
+
+
 
 addcmd("guiscale", {}, function(args, speaker)
 	if args[1] and isNumber(args[1]) then
