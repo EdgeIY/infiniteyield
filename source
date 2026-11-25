@@ -12917,6 +12917,43 @@ addcmd("phonebook", {"call"}, function(args, speaker)
 	end
 end)
 
+-- all standard magic 8 ball answers
+ballAnswers = {
+'As I see it, yes.',
+'Ask again later.',
+'Better not tell you now.',
+'Cannot predict now.',
+'Concentrate and ask again.',
+'Do not count on it.',
+'It is certain.',
+'It is decidedly so.',
+'Most likely.',
+'My reply is no.',
+'My sources say no.',
+'Outlook not so good.',
+'Outlook good.',
+'Reply hazy, try again.',
+'Signs point to yes.',
+'Very doubtful.',
+'Without a doubt.',
+'Yes.',
+'Yes - definitely.',
+'You may rely on it.',
+}
+
+addcmd("randomnum", {"randomnumber", "rnumber", "rannum", "randnum"}, function(args, speaker)
+	local lbrn = tonumber(args[1]) or 1
+	local hbrn = tonumber(args[2]) or 6
+	if lbrn > hbrn then return "Lower bound cannot exceed higher bound." end
+	local chosen = math.random(lbrn, hbrn)
+	execCmd("say ".. chosen)
+end)
+
+addcmd("8ball", {"magic8"}, function(args, speaker)
+	local magreply = ballAnswers[math.random(1, #ballAnswers)]
+	execCmd("say ".. magreply)
+end)
+
 local freezingua = nil
 frozenParts = {}
 addcmd('freezeunanchored',{'freezeua'},function(args, speaker)
