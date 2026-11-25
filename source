@@ -4520,7 +4520,9 @@ CMDs[#CMDs + 1] = {NAME = 'allowrejoin / allowrj (CLIENT)', DESC = 'Toggles if a
 CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports in progress'}
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality in an attempt to boost FPS'}
+CMDs[#CMDs + 1] = {NAME = 'unantilag / unboostfps / highgraphics', DESC = '(Partially) disables antilag"}
 CMDs[#CMDs + 1] = {NAME = 'setfpscap / fpscap / maxfps', DESC = 'Sets FPS cap'}
+CMDs[#CMDs + 1] = {NAME = 'removefpscap', DESC = 'Sets FPS cap to 1000'}
 CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts Roblox recorder'}
 CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
@@ -8041,78 +8043,88 @@ addcmd("volume",{ "vol"}, function(args, speaker)
 end)
 
 addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
+	execCmd("unantilag")
+
 	local Terrain = workspace:FindFirstChildWhichIsA("Terrain")
-	Terrain.WaterWaveSize = 0
-	Terrain.WaterWaveSpeed = 0
-	Terrain.WaterReflectance = 0
-	Terrain.WaterTransparency = 1
+	if Terrain then 
+		Terrain.WaterWaveSize = 0
+		Terrain.WaterWaveSpeed = 0
+		Terrain.WaterReflectance = 0
+		Terrain.WaterTransparency = 1
+	end
+
 	Lighting.GlobalShadows = false
 	Lighting.FogEnd = 9e9
 	Lighting.FogStart = 9e9
-	settings().Rendering.QualityLevel = 1
-	for _, v in pairs(game:GetDescendants()) do
+
+	settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+
+	for _, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("BasePart") then
 			v.CastShadow = false
-			v.Material = "Plastic"
+			v.Material = Enum.Material.Plastic
 			v.Reflectance = 0
-			v.BackSurface = "SmoothNoOutlines"
-			v.BottomSurface = "SmoothNoOutlines"
-			v.FrontSurface = "SmoothNoOutlines"
-			v.LeftSurface = "SmoothNoOutlines"
-			v.RightSurface = "SmoothNoOutlines"
-			v.TopSurface = "SmoothNoOutlines"
-		elseif v:IsA("Decal") then
+		elseif v:IsA("Decal") or v:IsA("Texture") then
 			v.Transparency = 1
-			v.Texture = ""
 		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-			v.Lifetime = NumberRange.new(0)
+			v.Enabled = false
+		elseif v:IsA("Sparkles") or v:IsA("Smoke") or v:IsA("Fire") then
+			v.Enabled = false
 		end
 	end
-	for _, v in pairs(Lighting:GetDescendants()) do
+
+	for _, v in ipairs(Lighting:GetDescendants()) do
 		if v:IsA("PostEffect") then
 			v.Enabled = false
 		end
 	end
-	workspace.DescendantAdded:Connect(function(child)
+
+	antiLagConn = workspace.DescendantAdded:Connect(function(child)
 		task.spawn(function()
 			if child:IsA("ForceField") or child:IsA("Sparkles") or child:IsA("Smoke") or child:IsA("Fire") or child:IsA("Beam") then
 				RunService.Heartbeat:Wait()
 				child:Destroy()
 			elseif child:IsA("BasePart") then
 				child.CastShadow = false
+				child.Material = Enum.Material.Plastic
 			end
 		end)
 	end)
 end)
 
-addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
-	if fpscaploop then
-		task.cancel(fpscaploop)
-		fpscaploop = nil
+addcmd("unantilag", {"unboostfps", "unlowgraphics", "highgraphics"}, function(args, speaker)
+	if antiLagConn then
+		antiLagConn:Disconnect()
+		antiLagConn = nil
 	end
+end)
 
-	local fpsCap = 60
-	local num = tonumber(args[1]) or 1e6
-	if num == "none" then
-		return
-	elseif num > 0 then
-		fpsCap = num
-	else
-		return notify("Invalid argument", "Please provide a number above 0 or 'none'.")
+addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
+	execCmd("removefpscap")
+
+	if args[1] and args[1]:lower() == "none" then return end
+	local fpsCap = tonumber(args[1]) or 100000
+	if fpsCap <= 0 then
+		return notify("Invalid argument", "FPS Cap must be greater than 0.")
 	end
 
 	if setfpscap and type(setfpscap) == "function" then
 		setfpscap(fpsCap)
 	else
-		fpscaploop = task.spawn(function()
-			local timer = os.clock()
-			while true do
-				if os.clock() >= timer + 1 / fpsCap then
-					timer = os.clock()
-					task.wait()
-				end
-			end
+		local targetFrameTime = 1 / fpsCap
+		local lastFrame = os.clock()
+
+		fpscaploop = RunService.RenderStepped:Connect(function()
+			while os.clock() - lastFrame < targetFrameTime do end
+			lastFrame = os.clock()
 		end)
+	end
+end)
+
+addcmd("removefpscap", {"unfpscap"}, function(args, speaker)
+	if fpscaploop then fpscaploop:Disconnect() fpscaploop = nil end
+	if setfpscap and type(setfpscap) == "function" then 
+		setfpscap(1000) -- this command only exists because of fpscaploop
 	end
 end)
 
