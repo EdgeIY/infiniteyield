@@ -8690,28 +8690,34 @@ addcmd("freecampos", {"fcpos", "fcp", "freecamposition", "fcposition"},function(
 end)
 
 addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
-	local WPName = tostring(getstring(1, args))
-	if speaker.Character then
-		for i,_ in pairs(WayPoints) do
-			local x = WayPoints[i].COORD[1]
-			local y = WayPoints[i].COORD[2]
-			local z = WayPoints[i].COORD[3]
-			if tostring(WayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				StartFreecam(CFrame.new(x,y,z))
-			end
+	local WPName = tostring(getstring(1, args)):lower()
+	if not speaker.Character then return end
+	
+	for i, _ in pairs(WayPoints) do
+		local x = WayPoints[i].COORD[1]
+		local y = WayPoints[i].COORD[2]
+		local z = WayPoints[i].COORD[3]
+		if tostring(WayPoints[i].NAME):lower() == WPName then
+			StartFreecam(CFrame.new(x,y,z))
 		end
-		for i,_ in pairs(pWayPoints) do
-			if tostring(pWayPoints[i].NAME):lower() == tostring(WPName):lower() then
-				StartFreecam(CFrame.new(pWayPoints[i].COORD[1].Position))
-			end
+	end
+		
+	for i, _ in pairs(pWayPoints) do
+		if tostring(pWayPoints[i].NAME):lower() == WPName then
+			local pwppos = pWayPoints[i].COORD[1]
+			if not pwppos or not pwppos.Parent then continue end
+			StartFreecam(CFrame.new(pwppos.Position))
 		end
 	end
 end)
 
 addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for i,v in pairs(players) do
-		StartFreecam(getRoot(Players[v].Character).CFrame)
+	local fcgplr = getPlayer(args[1], speaker)[1]
+	local fcplr_targ = fcgplr and Players:FindFirstChild(fcgplr)
+	if not fcplr_targ or not fcplr_targ.Character then return end
+	local fcplr_root = getRoot(fcplr_targ.Character) or nil
+	if fcplr_root then
+		StartFreecam(fcplr_root.CFrame)
 	end
 end)
 
