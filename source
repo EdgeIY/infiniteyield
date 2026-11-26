@@ -6,6 +6,8 @@ end
 pcall(function() getgenv().IY_LOADED = true end)
 if not game:IsLoaded() then game.Loaded:Wait() end
 
+currentVersion = "6.4.2"
+
 function missing(t, f, fallback)
 	if type(f) == t then return f end
 	return fallback
@@ -139,7 +141,7 @@ local function getcustomasset(asset)
 end
 
 if makefolder and isfolder and writefile and isfile then
-	pcall(function() -- good executor trust
+	pcall(function() -- current executors have a bad filesystem don't blame me
 		local assets = "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/"
 		for _, folder in {"infiniteyield", "infiniteyield/assets"} do
 			if not isfolder(folder) then
@@ -151,12 +153,10 @@ if makefolder and isfolder and writefile and isfile then
 				writefile(path, game:HttpGet((path:gsub("infiniteyield/", assets))))
 			end
 		end
-		-- honestly just blame your phone if the assets appear in your gallery
+		-- certain phones still have the assets appear in your gallery regardless of a .nomedia file
 		if IsOnMobile then writefile("infiniteyield/assets/.nomedia", "") end
 	end)
 end
-
-currentVersion = "6.4.2"
 
 ScaledHolder = Instance.new("Frame")
 Scale = Instance.new("UIScale")
