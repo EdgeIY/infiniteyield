@@ -7833,14 +7833,6 @@ addcmd('waypoint',{'wp','lpos','loadposition','loadpos'},function(args, speaker)
 	if not pwork then return notify("Waypoint Error", "Failed to move to waypoint.") end
 end)
 
-tweenSpeed = 1
-addcmd('tweenspeed',{'tspeed'},function(args, speaker)
-	local newSpeed = tonumber(args[1]) or 1
-	if newSpeed > 0 then
-		tweenSpeed = newSpeed
-	end
-end)
-
 addcmd('tweenwaypoint',{'twp'},function(args, speaker)
 	local WPName = tostring(getstring(1, args))
 	local pwork = waypointmover(WPName, "tween", speaker)
