@@ -11281,7 +11281,7 @@ end)
 
 addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	if firetouchinterest then
-		local Player = speaker
+		local Player = Players.LocalPlayer
 		local Character = Player.Character
 		local Old = getRoot(Character).CFrame
 		local Hats = {}
