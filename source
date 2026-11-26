@@ -11310,7 +11310,7 @@ addcmd('hatspin',{'spinhats'}, function(args, speaker)
 		keep.D = 50
 		spinhats = RunService.Stepped:Connect(function()
 			pcall(function()
-				keep.Position = speaker.Character.Head.Position
+				keep.Position = Players.LocalPlayer.Character.Head.Position
 			end)
 		end)
 	end
