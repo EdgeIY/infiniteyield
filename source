@@ -12334,6 +12334,7 @@ addcmd('walltp',{},function(args, speaker)
 			end
 		end
 	end
+	execCmd("unwalltp")
 	walltpTouch = torso.Touched:Connect(touchedFunc)
 end)
 
