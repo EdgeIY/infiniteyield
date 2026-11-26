@@ -4717,6 +4717,7 @@ CMDs[#CMDs + 1] = {NAME = 'unfullbright / unfb (CLIENT)', DESC = 'Undoes fullbri
 CMDs[#CMDs + 1] = {NAME = 'loopfullbright / loopfb (CLIENT)', DESC = 'Makes the map brighter / more visible but looped'}
 CMDs[#CMDs + 1] = {NAME = 'unloopfullbright / unloopfb', DESC = 'Unloops and undoes fullbright'}
 CMDs[#CMDs + 1] = {NAME = 'ambient [num] [num] [num] (CLIENT)', DESC = 'Changes ambient'}
+CMDs[#CMDs + 1] = {NAME = 'unambient (CLIENT)', DESC = 'Undoes ambient'}
 CMDs[#CMDs + 1] = {NAME = 'day (CLIENT)', DESC = 'Changes the time to day for the client'}
 CMDs[#CMDs + 1] = {NAME = 'night (CLIENT)', DESC = 'Changes the time to night for the client'}
 CMDs[#CMDs + 1] = {NAME = 'time [num] (CLIENT)', DESC = 'Sets the time of day to (num) for the client'}
@@ -11817,9 +11818,32 @@ addcmd('unloopfullbright',{'unloopfb', 'unfb', 'unfullbright', 'unfullbrightness
 	end
 end)
 
-addcmd('ambient',{},function(args, speaker)
-	Lighting.Ambient = Color3.new(args[1],args[2],args[3])
-	Lighting.OutdoorAmbient = Color3.new(args[1],args[2],args[3])
+orig_ambient, orig_outdoor_ambient = nil, nil
+addcmd("ambient", {}, function(args, speaker)
+	if not args[1] or not args[2] or not args[3] then return end
+
+	if not orig_ambient then
+		orig_ambient = Lighting.Ambient
+		orig_outdoor_ambient = Lighting.OutdoorAmbient
+	end
+
+	local r = tonumber(args[1]) or 0
+	local g = tonumber(args[2]) or 0
+	local b = tonumber(args[3]) or 0
+
+	local newcol = Color3.fromRGB(r, g, b)
+	Lighting.Ambient = newcol
+	Lighting.OutdoorAmbient = newcol
+end)
+
+addcmd("unambient", {}, function(args, speaker)
+	if orig_ambient and orig_outdoor_ambient then
+		Lighting.Ambient = orig_ambient
+		Lighting.OutdoorAmbient = orig_outdoor_ambient
+
+		orig_ambient = nil
+		orig_outdoor_ambient = nil
+	end
 end)
 
 addcmd('day',{},function(args, speaker)
