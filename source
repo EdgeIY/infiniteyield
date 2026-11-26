@@ -93,6 +93,7 @@ TextChatService = Services.TextChatService
 CaptureService = Services.CaptureService
 VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
+LogService = Services.LogService
 
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
 COREGUI = Services.CoreGui or PlayerGui
@@ -4608,6 +4609,7 @@ CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
 CMDs[#CMDs + 1] = {NAME = 'joinlogs / jlogs', DESC = 'Log when people join'}
+CMDs[#CMDs + 1] = {NAME = 'savelogs', DESC = 'Saves all logs/text in console'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogswebhook / logswebhook [url]', DESC = 'Set a Discord webhook for chatlogs to go to (provide no URL to disable this)'}
 CMDs[#CMDs + 1] = {NAME = 'chat / say [text]', DESC = 'Makes you chat a string (possible mute bypass)'}
 CMDs[#CMDs + 1] = {NAME = 'vsay [text]', DESC = 'Say anything uncensored (CLIENT)'}
@@ -7932,6 +7934,45 @@ addcmd("savegame", {"saveplace"}, function(args, speaker)
 	else
 		notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
 	end
+end)
+
+addcmd("savelogs", {"saveclogs", "saveconsolelogs"}, function(args, speaker)
+    local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
+    local writelogs = '-- Infinite Yield console logs for "'..placeName..'"\n'
+    local getLogMessages = LogService:GetLogHistory()
+    local array = {}
+    local writelogsFile
+
+    if not writefileExploit() then
+		return notify('Incompatible Exploit','Your exploit does not support read/writefile.')
+	end
+
+    notify("Loading",'Hold on a sec')
+    for i, v in ipairs(getLogMessages) do
+        local logMessage = v.message
+        local logMessageName = v.messageType.Name
+        local logMessageType = logMessageName:gsub('Message', '')
+        local logMessageTimestamp = os.date('%H:%M:%S', v.timestamp)
+        local formattedString = string.format('%s [%s] %s', logMessageTimestamp, logMessageType, logMessage).."\n"
+        array[i] = formattedString
+    end
+
+	writelogsFile = writelogs..'\n'..table.concat(array)
+
+	local fileext = 0
+    local function nameFile()
+    	local file
+   		pcall(function() file = readfile(placeName..' Console Logs ('..fileext..').txt') end)
+    	if file then
+    		fileext += 1
+        	nameFile()
+    	else
+        	writefileCooldown(placeName..' Console Logs ('..fileext..').txt', writelogsFile)
+    	end
+	end
+        
+	nameFile()
+    notify('Success','Saved console logs to the workspace within your exploit folder.')
 end)
 
 addcmd("clearerror", {"clearerrors"}, function(args, speaker)
