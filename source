@@ -4608,6 +4608,7 @@ CMDs[#CMDs + 1] = {NAME = 'flashback / diedtp', DESC = 'Teleports you to where y
 CMDs[#CMDs + 1] = {NAME = 'walltp', DESC = 'Teleports you above/over any wall you run into'}
 CMDs[#CMDs + 1] = {NAME = 'nowalltp / unwalltp', DESC = 'Disables walltp'}
 CMDs[#CMDs + 1] = {NAME = 'teleporttool / tptool', DESC = 'Gives you a teleport tool'}
+CMDs[#CMDs + 1] = {NAME = 'tweentptool / tweenteleporttool', DESC = 'Gives you a tween teleport tool'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'logs', DESC = 'Opens the logs GUI'}
 CMDs[#CMDs + 1] = {NAME = 'chatlogs / clogs', DESC = 'Log what people say or whisper'}
@@ -9302,30 +9303,39 @@ addcmd("goto", {"to"}, function(args, speaker)
 	end
 end)
 
+plrtweening = nil
 addcmd("tweengoto", {"tgoto", "tto", "tweento"}, function(args, speaker)
-    local character = speaker and speaker.Character
-    local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+	if not getRoot(speaker.Character) then return end
+    local character = speaker.Character
+    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+	if not humanoid then return end
 
-    local oldState = humanoid and humanoid:GetStateEnabled(Enum.HumanoidStateType.Seated)
-    if humanoid then humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false) end
+    local plr = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
+	if not plr then return end
+    if not getRoot(plr.Character) then return end
 
-    local players = getPlayer(args[1], speaker)
-    for _, v in pairs(players) do
-        if Players[v].Character ~= nil then
-            if humanoid and humanoid.SeatPart then
-                humanoid.Sit = false
-                task.wait(0.1)
-            end
-            TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {
-                CFrame = getRoot(Players[v].Character):GetPivot() + Vector3.new(3, 1, 0)
-            }):Play()
-        end
+    local oldState = humanoid:GetStateEnabled(Enum.HumanoidStateType.Seated)
+    if oldState then humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false) end
+
+ 	if plrtweening then plrtweening:Cancel() end
+
+    if humanoid and humanoid.SeatPart then
+            humanoid.Sit = false
+            task.wait(0.1)
     end
-    execCmd("breakvelocity")
 
-    if type(oldState) == "boolean" then
-        humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, oldState)
-    end
+	plrtweening = TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed or 1, Enum.EasingStyle.Linear), {
+            CFrame = getRoot(plr.Character):GetPivot() + Vector3.new(3, 1, 0)
+        })
+    plrtweening:Play()
+
+	plrtweening.Completed:Once(function()
+    	breakVelocity()
+    	if humanoid and type(oldState) == "boolean" then
+        	humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, oldState)
+    	end
+	end)
+
 end)
 
 addcmd("vehiclegoto", {"vgoto", "vtp", "vehicletp"}, function(args, speaker)
@@ -10725,6 +10735,49 @@ addcmd("tptool", {"teleporttool"}, function(args, speaker)
         if not root or not pos then return end
         root.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z, select(4, root.CFrame:components()))
         breakVelocity()
+    end)
+end)
+
+addcmd("tweentptool", {"tweenteleporttool", "ttptool", "twtptool"}, function(args, speaker)
+    local TpTool = Instance.new("Tool")
+    TpTool.Name = "Tween Teleport Tool"
+    TpTool.RequiresHandle = false
+    TpTool.Parent = speaker:FindFirstChildOfClass("Backpack")
+
+    local activeTween = nil
+
+    TpTool.Activated:Connect(function()
+        local character = speaker and speaker.Character
+        local root = getRoot(character)
+        local humanoid = character and character:FindFirstChildWhichIsA("Humanoid")
+        local pos = IYMouse.Hit
+
+        if not root or not pos then return end
+
+        if activeTween then activeTween:Cancel() end
+
+        local oldState = humanoid and humanoid:GetStateEnabled(Enum.HumanoidStateType.Seated)
+        if humanoid then
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            if humanoid.SeatPart then
+                humanoid.Sit = false
+                task.wait(0.1)
+            end
+        end
+
+        local targetCFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z, select(4, root.CFrame:components()))
+
+        activeTween = TweenService:Create(root, TweenInfo.new(tweenSpeed or 1, Enum.EasingStyle.Linear), {
+            CFrame = targetCFrame
+        })
+        activeTween:Play()
+
+        activeTween.Completed:Once(function()
+            breakVelocity()
+            if humanoid and type(oldState) == "boolean" then
+                humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, oldState)
+            end
+        end)
     end)
 end)
 
