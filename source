@@ -12645,63 +12645,6 @@ addcmd("toggleantifling", {}, function(args, speaker)
 	execCmd(antifling and "unantifling" or "antifling")
 end)
 
-function attach(speaker,target)
-	if tools(speaker) then
-		local char = speaker.Character
-		local tchar = target.Character
-		local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
-		local hrp = getRoot(speaker.Character)
-		local hrp2 = getRoot(target.Character)
-		hum.Name = "1"
-		local newHum = hum:Clone()
-		newHum.Parent = char
-		newHum.Name = "Humanoid"
-		wait()
-		hum:Destroy()
-		workspace.CurrentCamera.CameraSubject = char
-		newHum.DisplayDistanceType = "None"
-		local tool = speaker:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass("Tool") or speaker.Character:FindFirstChildOfClass("Tool")
-		tool.Parent = char
-		hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-100, 100)/200,math.random(-100, 100)/200,math.random(-100, 100)/200)
-		local n = 0
-		repeat
-			wait(.1)
-			n = n + 1
-			hrp.CFrame = hrp2.CFrame
-		until (tool.Parent ~= char or not hrp or not hrp2 or not hrp.Parent or not hrp2.Parent or n > 250) and n > 2
-	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
-	end
-end
-
-function kill(speaker,target,fast)
-	if tools(speaker) then
-		if target ~= nil then
-			local NormPos = getRoot(speaker.Character).CFrame
-			if not fast then
-				refresh(speaker)
-				wait()
-				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
-				wait(0.3)
-			end
-			local hrp = getRoot(speaker.Character)
-			attach(speaker,target)
-			repeat
-				wait()
-				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5,999999)
-			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			local char = speaker.CharacterAdded:Wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			end
-			humanoid.RootPart.CFrame = NormPos
-		end
-	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
-	end
-end
-
 addcmd("handlekill", {"hkill"}, function(args, speaker)
 	if not firetouchinterest then
 		return notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
@@ -12715,12 +12658,16 @@ addcmd("handlekill", {"hkill"}, function(args, speaker)
 	local range = tonumber(args[2]) or math.huge
 	if range ~= math.huge then notify("Handle Kill", ("Started!\nRadius: %s"):format(tostring(range):upper())) end
 
-	while task.wait() and speaker.Character and tool.Parent and tool.Parent == speaker.Character do
-		for _, plr in next, getPlayer(args[1], speaker) do
-			plr = Players[plr]
-			if plr ~= speaker and plr.Character then
-				local hum = plr.Character:FindFirstChildWhichIsA("Humanoid")
-				local root = hum and getRoot(plr.Character)
+	local totlplrs = getPlayer(args[1], speaker)
+	while true do
+		task.wait()
+		if not speaker.Character or tool.Parent ~= speaker.Character then break end
+
+		for _, plr in pairs(totlplrs) do
+			local isrealplr = plr and Players:FindFirstChild(plr)
+			if isrealplr and isrealplr ~= speaker and isrealplr.Character then
+				local hum = isrealplr.Character:FindFirstChildWhichIsA("Humanoid")
+				local root = hum and getRoot(isrealplr.Character)
 
 				if root and hum.Health > 0 and hum:GetState() ~= Enum.HumanoidStateType.Dead and speaker:DistanceFromCharacter(root.Position) <= range then
 					firetouchinterest(handle, root, 1)
@@ -12761,64 +12708,6 @@ addcmd("unteleportwalk", {"untpwalk"}, function(args, speaker)
     tpwalkStack = 0
     tpwalking:Disconnect()
 end)
-
-function bring(speaker,target,fast)
-	if tools(speaker) then
-		if target ~= nil then
-			local NormPos = getRoot(speaker.Character).CFrame
-			if not fast then
-				refresh(speaker)
-				wait()
-				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
-				wait(0.3)
-			end
-			local hrp = getRoot(speaker.Character)
-			attach(speaker,target)
-			repeat
-				wait()
-				hrp.CFrame = NormPos
-			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			local char = speaker.CharacterAdded:Wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			end
-			humanoid.RootPart.CFrame = NormPos
-		end
-	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
-	end
-end
-
-function teleport(speaker,target,target2,fast)
-	if tools(speaker) then
-		if target ~= nil then
-			local NormPos = getRoot(speaker.Character).CFrame
-			if not fast then
-				refresh(speaker)
-				wait()
-				repeat wait() until speaker.Character ~= nil and getRoot(speaker.Character)
-				wait(0.3)
-			end
-			local hrp = getRoot(speaker.Character)
-			local hrp2 = getRoot(target2.Character)
-			attach(speaker,target)
-			repeat
-				wait()
-				hrp.CFrame = hrp2.CFrame
-			until not getRoot(target.Character) or not getRoot(speaker.Character)
-			wait(1)
-			local char = speaker.CharacterAdded:Wait()
-			local humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			while not humanoid:IsA("Humanoid") do
-				humanoid = char:FindFirstChildOfClass("Humanoid") or char.ChildAdded:Wait()
-			end
-			humanoid.RootPart.CFrame = NormPos
-		end
-	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
-	end
-end
 
 addcmd('spin',{},function(args, speaker)
 	local spinSpeed = 20
