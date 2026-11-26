@@ -7064,11 +7064,11 @@ addcmd('execinfo', {'identifyexec', 'iexec', 'identifyexecutor', 'expinfo', 'exp
     end)
 end)
 
-addcmd("jobid", {}, function(args, speaker)
+addcmd("jobid", {"copyjobid"}, function(args, speaker)
 	toClipboard("roblox://placeId=" .. PlaceId .. "&gameInstanceId=" .. JobId)
 end)
 
-addcmd('notifyjobid',{'copyjobid'},function(args, speaker)
+addcmd('notifyjobid',{},function(args, speaker)
 	notify('JobId / PlaceId',JobId..' / '..PlaceId)
 end)
 
