@@ -8712,12 +8712,9 @@ addcmd('freecamwaypoint',{'fcwp'},function(args, speaker)
 end)
 
 addcmd('freecamgoto',{'fcgoto','freecamtp','fctp'},function(args, speaker)
-	local fcgplr = getPlayer(args[1], speaker)[1]
-	local fcplr_targ = fcgplr and Players:FindFirstChild(fcgplr)
-	if not fcplr_targ or not fcplr_targ.Character then return end
-	local fcplr_root = getRoot(fcplr_targ.Character) or nil
-	if fcplr_root then
-		StartFreecam(fcplr_root.CFrame)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		StartFreecam(getRoot(Players[v].Character).CFrame)
 	end
 end)
 
