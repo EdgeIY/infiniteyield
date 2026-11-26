@@ -11049,9 +11049,9 @@ addcmd('audiologger',{'alogger'},function(args, speaker)
 	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
 end)
 
-addcmd('animationlogger',{'animlogger'},function(args, speaker)
-	notify("Loading",'Hold on a sec')
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/luarsky/animationlogger/master/source.luau"))()
+addcmd("animationlogger", {"animlogger"}, function(args, speaker)
+	notify("Loading", "Hold on a sec")
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/animationlogger.lua"))()
 end)
 
 local loopgoto = nil
