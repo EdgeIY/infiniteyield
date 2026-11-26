@@ -11988,12 +11988,16 @@ addcmd('invisfling', {}, function(args, speaker)
 	end
 	root.Transparency = 0
 	root.Color = Color3.new(1, 1, 1)
-	local invisflingStepped
+	if invisflingStepped then 
+		invisflingStepped:Disconnect()
+		invisflingStepped = nil
+	end
 	invisflingStepped = RunService.Stepped:Connect(function()
 		if speaker.Character and getRoot(speaker.Character) then
 			getRoot(speaker.Character).CanCollide = false
 		else
 			invisflingStepped:Disconnect()
+			invisflingStepped = nil
 		end
 	end)
 	sFLY()
