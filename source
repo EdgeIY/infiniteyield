@@ -9086,8 +9086,9 @@ end)
 
 addcmd('agecheck',{},function(args, speaker)
 	local plr = getPlayer(args[1], speaker)[1]
-	if plr then
-		local z = (plr.AgeChecked == Enum.AgeCheckStatus.Checked)
+	local target = plr and Players:FindFirstChild(plr)	
+	if target then
+		local z = (target.AgeChecked == Enum.AgeCheckStatus.Checked)
 		if z then
 			notify("Age Check", plr .. " did age verification.")
 		else
