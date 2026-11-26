@@ -4846,7 +4846,7 @@ CMDs[#CMDs + 1] = {NAME = 'blocktool', DESC = 'Turns the currently selected tool
 CMDs[#CMDs + 1] = {NAME = 'creeper', DESC = 'Makes you look like a creeper'}
 CMDs[#CMDs + 1] = {NAME = 'drophats', DESC = 'Drops your hats'}
 CMDs[#CMDs + 1] = {NAME = 'nohats / deletehats / rhats', DESC = 'Deletes your hats'}
-CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats', DESC = 'Spins your characters accessories'}
+CMDs[#CMDs + 1] = {NAME = 'hatspin / spinhats [speed]', DESC = 'Spins your characters accessories'}
 CMDs[#CMDs + 1] = {NAME = 'unhatspin / unspinhats', DESC = 'Undoes spinhats'}
 CMDs[#CMDs + 1] = {NAME = 'clearhats / cleanhats', DESC = 'Clears hats in the workspace'}
 CMDs[#CMDs + 1] = {NAME = 'chardelete / cd [instance name]', DESC = 'Removes any part with a certain name from your character'}
@@ -11520,37 +11520,60 @@ addcmd('flashback',{'diedtp'},function(args, speaker)
 	end
 end)
 
+spinhats = nil
 addcmd('hatspin',{'spinhats'},function(args, speaker)
+	local humanspin = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+	if not humanspin then return end
+
+	local hatspinsp = tonumber(args[1]) or 100
+
 	execCmd('unhatspin')
-	wait(.5)
-	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
-		local keep = Instance.new("BodyPosition") keep.Name = randomString() keep.Parent = v.Handle
-		local spin = Instance.new("BodyAngularVelocity") spin.Name = randomString() spin.Parent = v.Handle
-		v.Handle:FindFirstChildOfClass("Weld"):Destroy()
-		if args[1] then
-			spin.AngularVelocity = Vector3.new(0, args[1], 0)
-			spin.MaxTorque = Vector3.new(0, args[1] * 2, 0)
-		else
-			spin.AngularVelocity = Vector3.new(0, 100, 0)
-			spin.MaxTorque = Vector3.new(0, 200, 0)
-		end
+	task.wait(.5)
+
+	local tbofhats = {}
+	for _,v in pairs(humanspin:GetAccessories()) do
+		if not v:FindFirstChild("Handle") then continue end
+		local keep = Instance.new("BodyPosition") 
+		keep.Name = randomString()
+		keep.Parent = v.Handle
+
+		local spin = Instance.new("BodyAngularVelocity") 
+		spin.Name = randomString() 
+		spin.Parent = v.Handle
+		
+		local desny = v.Handle:FindFirstChildOfClass("Weld")
+		if desny then desny:Destroy() end
+
+		spin.AngularVelocity = Vector3.new(0, hatspinsp, 0)
+		spin.MaxTorque = Vector3.new(0, hatspinsp * 2, 0)
+
 		keep.P = 30000
 		keep.D = 50
-		spinhats = RunService.Stepped:Connect(function()
-			pcall(function()
-				keep.Position = Players.LocalPlayer.Character.Head.Position
-			end)
-		end)
+
+		table.insert(tbofhats, keep)
 	end
+
+	spinhats = RunService.Stepped:Connect(function()
+		if not speaker.Character or not speaker.Character:FindFirstChild('Head') then return end
+		for _, ke in pairs(tbofhats) do
+			ke.Position = speaker.Character.Head.Position
+		end
+	end)
 end)
 
 addcmd('unhatspin',{'unspinhats'},function(args, speaker)
 	if spinhats then
 		spinhats:Disconnect()
+		spinhats = nil
 	end
-	for _,v in pairs(speaker.Character:FindFirstChildOfClass('Humanoid'):GetAccessories()) do
+
+	local humster = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+	if not humster then return end
+
+	for _,v in pairs(humster:GetAccessories()) do
+		if not v:FindFirstChild("Handle") then continue end
 		v.Parent = workspace
-		for i,c in pairs(v.Handle) do
+		for i,c in pairs(v.Handle:GetChildren()) do
 			if c:IsA("BodyPosition") or c:IsA("BodyAngularVelocity") then
 				c:Destroy()
 			end
@@ -11562,9 +11585,14 @@ end)
 
 addcmd('clearhats',{'cleanhats'},function(args, speaker)
 	if firetouchinterest then
-		local Player = Players.LocalPlayer
-		local Character = Player.Character
-		local Old = getRoot(Character).CFrame
+		local hattercatter = speaker.Character
+		if not hattercatter then return end
+
+		local Human = hattercatter:FindFirstChildOfClass("Humanoid")
+		if not Human then return end
+
+		if not getRoot(hattercatter) then return end
+		local Old = getRoot(hattercatter).CFrame
 		local Hats = {}
 
 		for _, child in ipairs(workspace:GetChildren()) do
@@ -11573,27 +11601,26 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 			end
 		end
 
-		for _, accessory in ipairs(Character:FindFirstChildOfClass("Humanoid"):GetAccessories()) do
+		for _, accessory in ipairs(Human:GetAccessories()) do
 			accessory:Destroy()
 		end
 
 		for i = 1, #Hats do
-			repeat RunService.Heartbeat:wait() until Hats[i]
-			firetouchinterest(Hats[i].Handle,getRoot(Character),0)
-			repeat RunService.Heartbeat:wait() until Character:FindFirstChildOfClass("Accessory")
-			Character:FindFirstChildOfClass("Accessory"):Destroy()
-			repeat RunService.Heartbeat:wait() until not Character:FindFirstChildOfClass("Accessory")
+			repeat RunService.Heartbeat:Wait() until Hats[i]
+			firetouchinterest(Hats[i].Handle,getRoot(hattercatter),0)
+			repeat RunService.Heartbeat:Wait() until hattercatter:FindFirstChildOfClass("Accessory")
+			hattercatter:FindFirstChildOfClass("Accessory"):Destroy()
+			repeat RunService.Heartbeat:Wait() until not hattercatter:FindFirstChildOfClass("Accessory")
 		end
 
 		execCmd("reset")
 
-		Player.CharacterAdded:Wait()
-
+		hattercatter = speaker.CharacterAdded:Wait()
+		
 		for i = 1,20 do 
 			RunService.Heartbeat:Wait()
-			if getRoot(Player.Character) then
-				getRoot(Player.Character).Humanoid.RootPart.CFrame = Old
-			end
+			local htroot = getRoot(hattercatter)
+			if htroot then htroot.CFrame = Old end
 		end
 	else
 		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
@@ -11971,13 +11998,13 @@ addcmd('deletehats',{'nohats','rhats'},function(args, speaker)
 end)
 
 addcmd('droptools',{'droptool'},function(args, speaker)
-	for i,v in pairs(Players.LocalPlayer.Backpack:GetChildren()) do
+	for i,v in pairs(speaker.Backpack:GetChildren()) do
 		if v:IsA("Tool") then
-			v.Parent = Players.LocalPlayer.Character
+			v.Parent = speaker.Character
 		end
 	end
 	wait()
-	for i,v in pairs(Players.LocalPlayer.Character:GetChildren()) do
+	for i,v in pairs(speaker.Character:GetChildren()) do
 		if v:IsA("Tool") then
 			v.Parent = workspace
 		end
