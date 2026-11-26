@@ -10460,23 +10460,23 @@ addcmd('headthrow',{},function(args, speaker)
 	end
 end)
 
-addcmd('hug', {}, function(args, speaker)
+addcmd("hug", {}, function(args, speaker)
 	if not r15(speaker) then
 		local Anim = Instance.new("Animation")
 		Anim.AnimationId = "rbxassetid://27432686"
-		local hummer = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid') 
-		if not hummer then return end
-		local k = hummer:LoadAnimation(Anim)
+		local Humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid") 
+		if not Humanoid then return end
+		local k = Humanoid:LoadAnimation(Anim)
 		k:Play(0.1, 1, 1)
 		task.wait(0.8)
 		k:AdjustSpeed(0)
 	else
-		notify('R6 Required', 'This command requires the r6 rig type')
+		notify("R6 Required", "This command requires the r6 rig type")
 	end
 end)
 
-addcmd('unhug', {}, function(args, speaker)
-	local Humanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+addcmd("unhug", {}, function(args, speaker)
+	local Humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
 		for _, v in ipairs(Humanoid:GetPlayingAnimationTracks()) do
 			if v.Animation.AnimationId == "rbxassetid://27432686" then
@@ -10486,7 +10486,7 @@ addcmd('unhug', {}, function(args, speaker)
 	end
 end)
 
-local function anim2track(asset_id)
+function anim2track(asset_id)
 	local objs = game:GetObjects(asset_id)
 	for i = 1, #objs do
 		if objs[i]:IsA("Animation") then
