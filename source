@@ -5355,7 +5355,7 @@ SpecialPlayerCases = {
 	["random"] = function(speaker,args,currentList)
 		local players = Players:GetPlayers()
 		table.remove(players, table.find(players, speaker))
-		if #players == 0 then return {speaker} end -- me when i choose between 1 and 0 and it crashes
+		if #players == 0 then return {speaker} end
 		return {players[math.random(1,#players)]}
 	end,
 	["%%(.+)"] = function(speaker,args)
@@ -5426,15 +5426,6 @@ SpecialPlayerCases = {
 		end
 		return returns
 	end,
-	--[[ ["guests"] = function(speaker,args)
-		local returns = {}
-		for _,plr in pairs(Players:GetPlayers()) do
-			if plr.Guest then
-				table.insert(returns,plr)
-			end
-		end
-		return returns
-	end, ]]
 	["bacons"] = function(speaker,args)
 		local returns = {}
 		for _,plr in pairs(Players:GetPlayers()) do
