@@ -10574,17 +10574,17 @@ addcmd("console", {}, function(args, speaker)
 end)
 
 addcmd("clrconsole", {"clearconsole"}, function(args, speaker)
-	local suc, err = pcall(function()
-		local conbye = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.ClientLog
-		for i, v in pairs(conbye:GetChildren()) do
-    		if tonumber(v.Name) then
-        		v:Destroy()
-        	end
-    	end
-	end)
+	local dev_console = COREGUI:FindFirstChild("DevConsoleMaster")
+	local client_log = dev_console and dev_console:FindFirstChild("ClientLog", true)
 
-	if not suc then
+	if not client_log then
 		return "Open console at least once and make sure it is on the Client tab."
+	end
+
+	for _, v in ipairs(client_log:GetChildren()) do
+		if tonumber(v.Name) then
+			v:Destroy()
+		end
 	end
 end)
 
