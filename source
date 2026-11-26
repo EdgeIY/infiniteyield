@@ -2086,6 +2086,7 @@ function getRoot(char)
 	end
 end
 
+-- unused
 function getHum(char)
 	if char and char:FindFirstChildOfClass("Humanoid") then
 		return char:FindFirstChildOfClass("Humanoid")
@@ -9838,7 +9839,7 @@ addcmd('jpower',{'jumppower','jp'},function(args, speaker)
 end)
 
 addcmd("maxslopeangle", {"msa"}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	local sangle = args[1] or 89
 	if isNumber(sangle) then
@@ -9854,7 +9855,7 @@ addcmd("gravity", {"grav"}, function(args, speaker)
 end)
 
 addcmd("hipheight", {"hheight"}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	local hipHeight = args[1] or (r15(speaker) and 2.1 or 0)
 	if isNumber(hipHeight) then
@@ -9863,7 +9864,7 @@ addcmd("hipheight", {"hheight"}, function(args, speaker)
 end)
 
 addcmd("dance", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	execCmd("undance")
 	local dances = {"27789359", "30196114", "248263260", "45834924", "33796059", "28488254", "52155728"}
@@ -9961,7 +9962,7 @@ addcmd('nolegs',{'rlegs'},function(args, speaker)
 end)
 
 addcmd("sit", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	hum.Sit = true
 end)
@@ -9981,7 +9982,7 @@ end)
 
 sitWalkBackups = {}
 addcmd("sitwalk", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	local anims = speaker.Character:FindFirstChild("Animate")
 	if not anims then return end
@@ -10018,7 +10019,7 @@ addcmd("sitwalk", {}, function(args, speaker)
 end)
 
 addcmd("unsitwalk", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	local anims = speaker.Character:FindFirstChild("Animate")
 	if not anims then return end
@@ -10046,19 +10047,19 @@ addcmd("unsitwalk", {}, function(args, speaker)
 end)
 
 addcmd("nosit", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 end)
 
 addcmd("unnosit", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	hum:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 end)
 
 addcmd("jump", {}, function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	hum:ChangeState(Enum.HumanoidStateType.Jumping)
 end)
@@ -10288,7 +10289,7 @@ addcmd('animspeed', {}, function(args, speaker)
 	local char = speaker.Character
 	if not char then return end
 
-	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	local hum = char:FindFirstChildOfClass("AnimationController") or (speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid'))
 	if not hum then return end
 
 	local speed = tonumber(args[1]) or 1
@@ -10358,7 +10359,7 @@ addcmd('stopanimations',{'stopanims','stopanim'},function(args, speaker)
 	local char = speaker.Character
 	if not char then return end
 
-	local hum = char:FindFirstChildOfClass("AnimationController") or getHum(char)
+	local hum = char:FindFirstChildOfClass("AnimationController") or (speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid'))
 	if not hum then return end
 
 	for i,v in next, hum:GetPlayingAnimationTracks() do
@@ -10370,7 +10371,7 @@ addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'},
 	local char = speaker.Character
 	if not char then return end
 
-	local hum = getHum(char)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 
 	local animate = char:FindFirstChild("Animate")
@@ -10394,7 +10395,7 @@ addcmd('unallowcustomanim', {'unallowcustomanimations'}, function(args, speaker)
 end)
 
 addcmd('loopanimation', {'loopanim'},function(args, speaker)
-	local hum = getHum(speaker.Character)
+	local hum = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
 	if not hum then return end
 	for _, v in ipairs(hum:GetPlayingAnimationTracks()) do
 		v.Looped = true
