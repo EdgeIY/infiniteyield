@@ -12741,7 +12741,7 @@ end
 
 addcmd("trip", {}, function(args, speaker)
 	local tripster = args[1] or 30
-	local nonvolatile = args[2] or false
+	local volatile = args[2] or false
 	if isNumber(tripster) then
 		tripov(speaker, tripster, volatile)
 	end
