@@ -4701,6 +4701,8 @@ CMDs[#CMDs + 1] = {NAME = 'bringpartclass / bpc [class name] (CLIENT)', DESC = '
 CMDs[#CMDs + 1] = {NAME = 'noclickdetectorlimits / nocdlimits', DESC = 'Sets all click detectors MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'fireclickdetectors / firecd [name]', DESC = 'Uses all click detectors in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'firetouchinterests / touchinterests [name]', DESC = 'Uses all touchinterests in a game or uses the optional name'}
+CMDs[#CMDs + 1] = {NAME = 'antitouch', DESC = 'Stops your character from using TouchTransmitters'}
+CMDs[#CMDs + 1] = {NAME = 'unantitouch', DESC = 'Disables antitouch'}
 CMDs[#CMDs + 1] = {NAME = 'noproximitypromptlimits / nopplimits', DESC = 'Sets all proximity prompts MaxActivationDistance to math.huge'}
 CMDs[#CMDs + 1] = {NAME = 'fireproximityprompts / firepp [name]', DESC = 'Uses all proximity prompts in a game or uses the optional name'}
 CMDs[#CMDs + 1] = {NAME = 'instantproximityprompts / instantpp', DESC = 'Disable the cooldown for proximity prompts'}
@@ -12047,6 +12049,61 @@ addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinter
 			end
 		end
 	end
+end)
+
+anti_touched = {}
+addcmd('antitouch', {'notouch'}, function(args, speaker)
+	execCmd("unantitouch")
+
+	local function atbeg(char)
+		if tiantiDesc then
+			tiantiDesc:Disconnect()
+		end
+
+		table.clear(anti_touched)
+
+		for _, v in ipairs(char:GetDescendants()) do
+			if v:IsA("BasePart") and v.CanTouch and not v:FindFirstAncestorWhichIsA("Tool") then
+				v.CanTouch = false
+				table.insert(anti_touched, v)
+			end
+		end
+
+		tiantiDesc = char.DescendantAdded:Connect(function(v)
+			if v:IsA("BasePart") and v.CanTouch and not v:FindFirstAncestorWhichIsA("Tool") then
+				v.CanTouch = false
+				table.insert(anti_touched, v)
+			end
+		end)
+	end
+
+	if speaker.Character then
+		atbeg(speaker.Character)
+	end
+
+	tianti = speaker.CharacterAdded:Connect(atbeg)
+end)
+
+addcmd('unantitouch', {'retouch'}, function(args, speaker)
+	if tianti then
+		tianti:Disconnect()
+		tianti = nil
+	end
+
+	if tiantiDesc then
+		tiantiDesc:Disconnect()
+		tiantiDesc = nil
+	end
+
+	if speaker.Character then
+		for _, v in ipairs(speaker.Character:GetDescendants()) do
+			if v:IsA("BasePart") and table.find(anti_touched, v) then
+				v.CanTouch = true
+			end
+		end
+	end
+
+	table.clear(anti_touched)
 end)
 
 oldfbsets, isfbac = nil, false
