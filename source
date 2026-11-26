@@ -10061,8 +10061,10 @@ addcmd('autojump',{'ajump'},function(args, speaker)
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
 	local function autoJump()
 		if Char and Human then
-			local check1 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position-Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
-			local check2 = workspace:FindPartOnRay(Ray.new(Human.RootPart.Position+Vector3.new(0,1.5,0), Human.RootPart.CFrame.lookVector*3), Human.Parent)
+			local adroot = getRoot(Char)
+			if not adroot then return end
+			local check1 = workspace:FindPartOnRay(Ray.new(adroot.Position-Vector3.new(0,1.5,0), adroot.CFrame.lookVector*3), Human.Parent)
+			local check2 = workspace:FindPartOnRay(Ray.new(adroot.Position+Vector3.new(0,1.5,0), adroot.CFrame.lookVector*3), Human.Parent)
 			if check1 or check2 then
 				Human.Jump = true
 			end
@@ -10093,11 +10095,14 @@ addcmd('edgejump',{'ejump'},function(args, speaker)
 		if Char and Human then
 			laststate = state
 			state = Human:GetState()
-			if laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping then
-				Char.Humanoid.RootPart.CFrame = lastcf
-				Char.Humanoid.RootPart.Velocity = Vector3.new(Char.Humanoid.RootPart.Velocity.X, Human.JumpPower or Human.JumpHeight, Char.Humanoid.RootPart.Velocity.Z)
+			local edroot = getRoot(Char)
+			if not edroot then return end
+			if laststate ~= state and state == Enum.HumanoidStateType.Freefall and laststate ~= Enum.HumanoidStateType.Jumping and lastcf then
+				edroot.CFrame = lastcf
+				local jutype = Human.UseJumpPower and Human.JumpPower or math.sqrt(2 * workspace.Gravity * Human.JumpHeight)
+				edroot.Velocity = Vector3.new(edroot.Velocity.X, jutype, edroot.Velocity.Z)
 			end
-			lastcf = Char.Humanoid.RootPart.CFrame
+			lastcf = edroot.CFrame
 		end
 	end
 	edgejump()
