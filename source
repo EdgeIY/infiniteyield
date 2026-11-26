@@ -6670,11 +6670,13 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		local maxplayers = Instance.new("TextLabel")
 		local name = Instance.new("TextLabel")
 		local placeid = Instance.new("TextLabel")
+		local jobid = Instance.new("TextLabel")
 		local playerid = Instance.new("TextLabel")
 		local players = Instance.new("TextLabel")
 		local CopyApp = Instance.new("TextButton")
 		local CopyPlrID = Instance.new("TextButton")
 		local CopyPlcID = Instance.new("TextButton")
+		local CopyJobID = Instance.new("TextButton")
 		local CopyPlcName = Instance.new("TextButton")
 
 		FRAME.Name = randomString()
@@ -6728,7 +6730,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		background.BackgroundColor3 = currentShade1
 		background.BorderSizePixel = 0
 		background.Position = UDim2.new(0, 0, 1, 0)
-		background.Size = UDim2.new(0, 250, 0, 250)
+		background.Size = UDim2.new(0, 250, 0, 275)
 		background.ZIndex = 10
 		table.insert(shade1,background)
 
@@ -6846,6 +6848,20 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		placeid.TextXAlignment = Enum.TextXAlignment.Left
 		table.insert(text1,placeid)
 
+		jobid.Name = "jobid"
+		jobid.Parent = background
+		jobid.BackgroundTransparency = 1
+		jobid.BorderSizePixel = 0
+		jobid.Position = UDim2.new(0, 5, 0, 230)
+		jobid.Size = UDim2.new(0, 200, 0, 20)
+		jobid.ZIndex = 10
+		jobid.Font = Enum.Font.SourceSans
+		jobid.FontSize = Enum.FontSize.Size14
+		jobid.Text = "Job ID: " .. game.JobId
+		jobid.TextColor3 = currentText1
+		jobid.TextXAlignment = Enum.TextXAlignment.Left
+		table.insert(text1, jobid)
+
 		playerid.Name = "playerid"
 		playerid.Parent = background
 		playerid.BackgroundTransparency = 1
@@ -6916,6 +6932,20 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		table.insert(shade2,CopyPlcID)
 		table.insert(text1,CopyPlcID)
 
+		CopyJobID.Name = "CopyJobID"
+		CopyJobID.Parent = background
+		CopyJobID.BackgroundColor3 = currentShade2
+		CopyJobID.BorderSizePixel = 0
+		CopyJobID.Position = UDim2.new(0, 210, 0, 235)
+		CopyJobID.Size = UDim2.new(0, 35, 0, 20)
+		CopyJobID.Font = Enum.Font.SourceSans
+		CopyJobID.TextSize = 14
+		CopyJobID.Text = "Copy"
+		CopyJobID.TextColor3 = currentText1
+		CopyJobID.ZIndex = 10
+		table.insert(shade2, CopyJobID)
+		table.insert(text1, CopyJobID)
+
 		CopyPlcName.Name = "CopyPlcName"
 		CopyPlcName.Parent = background
 		CopyPlcName.BackgroundColor3 = currentShade2
@@ -6953,6 +6983,9 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		end)
 		CopyPlcID.MouseButton1Click:Connect(function()
 			toClipboard(PlaceId)
+		end)
+		CopyJobID.MouseButton1Click:Connect(function()
+    		toClipboard(JobId)
 		end)
 		CopyPlcName.MouseButton1Click:Connect(function()
 			toClipboard(Asset.Name)
