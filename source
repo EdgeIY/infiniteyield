@@ -7254,22 +7254,20 @@ end
 
 local velocityHandlerName = randomString()
 local gyroHandlerName = randomString()
-local mfly1
-local mfly2
+local mobileflyhand = nil
 
-local unmobilefly = function(speaker)
+function unmobilefly(speaker)
 	pcall(function()
 		FLYING = false
 		local root = getRoot(speaker.Character)
 		root:FindFirstChild(velocityHandlerName):Destroy()
 		root:FindFirstChild(gyroHandlerName):Destroy()
 		speaker.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
-		mfly1:Disconnect()
-		mfly2:Disconnect()
+		mobileflyhand:Disconnect()
 	end)
 end
 
-local mobilefly = function(speaker, vfly)
+function mobilefly(speaker, vfly)
 	unmobilefly(speaker)
 	FLYING = true
 
@@ -7293,22 +7291,7 @@ local mobilefly = function(speaker, vfly)
 	bg.P = 1000
 	bg.D = 50
 
-	mfly1 = speaker.CharacterAdded:Connect(function()
-		local bv = Instance.new("BodyVelocity")
-		bv.Name = velocityHandlerName
-		bv.Parent = root
-		bv.MaxForce = v3zero
-		bv.Velocity = v3zero
-
-		local bg = Instance.new("BodyGyro")
-		bg.Name = gyroHandlerName
-		bg.Parent = root
-		bg.MaxTorque = v3inf
-		bg.P = 1000
-		bg.D = 50
-	end)
-
-	mfly2 = RunService.RenderStepped:Connect(function()
+	mobileflyhand = RunService.RenderStepped:Connect(function()
 		root = getRoot(speaker.Character)
 		camera = workspace.CurrentCamera
 		if speaker.Character:FindFirstChildWhichIsA("Humanoid") and root and root:FindFirstChild(velocityHandlerName) and root:FindFirstChild(gyroHandlerName) then
