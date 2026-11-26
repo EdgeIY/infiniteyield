@@ -4521,7 +4521,7 @@ CMDs[#CMDs + 1] = {NAME = 'cancelteleport / canceltp', DESC = 'Cancels teleports
 CMDs[#CMDs + 1] = {NAME = 'volume / vol [0-10]', DESC = 'Adjusts your game volume on a scale of 0 to 10'}
 CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers game quality in an attempt to boost FPS'}
 CMDs[#CMDs + 1] = {NAME = 'unantilag / unboostfps / highgraphics', DESC = '(Partially) disables antilag"}
-CMDs[#CMDs + 1] = {NAME = 'setfpscap / fpscap / maxfps', DESC = 'Sets FPS cap'}
+CMDs[#CMDs + 1] = {NAME = 'setfpscap / fpscap [num]', DESC = 'Sets FPS cap'}
 CMDs[#CMDs + 1] = {NAME = 'removefpscap', DESC = 'Sets FPS cap to 1000'}
 CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts Roblox recorder'}
 CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
