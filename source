@@ -11988,7 +11988,6 @@ addcmd('invisfling', {}, function(args, speaker)
 	end
 	root.Transparency = 0
 	root.Color = Color3.new(1, 1, 1)
-	if invisflingStepped then invisflingStepped:Disconnect() end
 	local invisflingStepped
 	invisflingStepped = RunService.Stepped:Connect(function()
 		if speaker.Character and getRoot(speaker.Character) then
@@ -12303,9 +12302,6 @@ addcmd('walltp',{},function(args, speaker)
 				Root.CFrame = hit.CFrame * CFrame.new(Root.CFrame.lookVector.X,hit.Size.Y/2 + speaker.Character:FindFirstChildOfClass('Humanoid').HipHeight,Root.CFrame.lookVector.Z)
 			end
 		end
-	end
-	if walltpTouch then
-		walltpTouch:Disconnect()
 	end
 	walltpTouch = torso.Touched:Connect(touchedFunc)
 end)
