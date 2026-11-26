@@ -7892,43 +7892,44 @@ addcmd('cleargamewaypoints', {'cgamewp'}, function(args, speaker)
 	notify('Modified Waypoints', 'Deleted game waypoints')
 end)
 
-local coreGuiTypeNames = {
-	-- predefined aliases
+coreGuiTypeNames = {
 	["inventory"] = Enum.CoreGuiType.Backpack,
 	["leaderboard"] = Enum.CoreGuiType.PlayerList,
 	["emotes"] = Enum.CoreGuiType.EmotesMenu
 }
 
--- Load the full list of enums
 for _, enumItem in ipairs(Enum.CoreGuiType:GetEnumItems()) do
 	coreGuiTypeNames[enumItem.Name:lower()] = enumItem
+end
+
+function coreguiupd(upw, ttdt)
+	if upw == "reset" then
+		StarterGui:SetCore("ResetButtonCallback", ttdt)
+	else
+		local coreGuiType = coreGuiTypeNames[upw]
+		if coreGuiType then
+			StarterGui:SetCoreGuiEnabled(coreGuiType, ttdt)
+		else 
+			notify("Invalid CoreGui", "Could not find CoreGui type: ".. upw)
+		end
+	end
 end
 
 addcmd('enable',{},function(args, speaker)
 	local input = args[1] and args[1]:lower()
 	if input then
-		if input == "reset" then
-			StarterGui:SetCore("ResetButtonCallback", true)
-		else
-			local coreGuiType = coreGuiTypeNames[input]
-			if coreGuiType then
-				StarterGui:SetCoreGuiEnabled(coreGuiType, true)
-			end
-		end
+		coreguiupd(input, true)
+	else
+		notify("Missing CoreGui", "Please enter the CoreGui item to enable.")
 	end
 end)
 
 addcmd('disable',{},function(args, speaker)
 	local input = args[1] and args[1]:lower()
 	if input then
-		if input == "reset" then
-			StarterGui:SetCore("ResetButtonCallback", false)
-		else
-			local coreGuiType = coreGuiTypeNames[input]
-			if coreGuiType then
-				StarterGui:SetCoreGuiEnabled(coreGuiType, false)
-			end
-		end
+		coreguiupd(input, false)
+	else
+		notify("Missing CoreGui", "Please enter the CoreGui item to disable.")
 	end
 end)
 
