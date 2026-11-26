@@ -4852,8 +4852,7 @@ CMDs[#CMDs + 1] = {NAME = 'replaceroot', DESC = 'Replaces your characters Humano
 CMDs[#CMDs + 1] = {NAME = 'clearcharappearance / clearchar / clrchar', DESC = 'Removes all accessory, shirt, pants, charactermesh, and bodycolors'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
-CMDs[#CMDs + 1] = {NAME = 'trip [num]', DESC = 'Makes your character fall over (higher num = more velocity/force)'}
-CMDs[#CMDs + 1] = {NAME = 'btrip [num]', DESC = 'trip but more volatile (higher num = more velocity/force)'}
+CMDs[#CMDs + 1] = {NAME = 'trip [num] [volatile]', DESC = 'Makes your character fall over (higher num = more velocity/force)'}
 CMDs[#CMDs + 1] = {NAME = 'wallwalk / walkonwalls', DESC = 'Walk on walls'}
 CMDs[#CMDs + 1] = {NAME = 'promptr6', DESC = 'Prompts the game to switch your rig type to R6'}
 CMDs[#CMDs + 1] = {NAME = 'promptr15', DESC = 'Prompts the game to switch your rig type to R15'}
@@ -12726,7 +12725,7 @@ function tripov(speaker, tri, state)
 	local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	local root = speaker.Character and getRoot(speaker.Character)
 	if not humanoid or not root then return end
-	if state then
+	if not state then
 		humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
 		root.AssemblyLinearVelocity = root.CFrame.LookVector * tri
 	else
@@ -12742,15 +12741,9 @@ end
 
 addcmd("trip", {}, function(args, speaker)
 	local tripster = args[1] or 30
+	local nonvolatile = args[2] or false
 	if isNumber(tripster) then
-		tripov(speaker, tripster, true)
-	end
-end)
-
-addcmd("btrip", {}, function(args, speaker)
-	local tripster = args[1] or 30
-	if isNumber(tripster) then
-		tripov(speaker, tripster, false)
+		tripov(speaker, tripster, volatile)
 	end
 end)
 
