@@ -8123,10 +8123,6 @@ addcmd("antilag", {"boostfps", "lowgraphics"}, function(args, speaker)
 	end)
 end)
 
-addcmd("unantilag", {"unboostfps", "unlowgraphics"}, function(args, speaker)
-	return "You must rejoin the server to undo antilag!"
-end)
-
 addcmd("setfpscap", {"fpscap", "maxfps"}, function(args, speaker)
 	if fpscaploop then
 		task.cancel(fpscaploop)
