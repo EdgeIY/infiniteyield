@@ -7068,7 +7068,7 @@ addcmd("jobid", {}, function(args, speaker)
 	toClipboard("roblox://placeId=" .. PlaceId .. "&gameInstanceId=" .. JobId)
 end)
 
-addcmd('notifyjobid',{},function(args, speaker)
+addcmd('notifyjobid',{'copyjobid'},function(args, speaker)
 	notify('JobId / PlaceId',JobId..' / '..PlaceId)
 end)
 
