@@ -10622,33 +10622,6 @@ addcmd('audiologger',{'alogger'},function(args, speaker)
 	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
 end)
 
-addcmd('sunc', {}, function(args, speaker)
-	if PlaceId == 133609342474444 then -- geek
-		notify("Loading", "Hold on a sec")
-		getgenv().sUNCDebug = {
-    		["printcheckpoints"] = false,
-    		["delaybetweentests"] = 0,
-   			["printtesttimetaken"] = false,
-		}
-		tryLoading("https://script.sunc.io/")
-	else
-		notify('Unable to Load', 'You are not in the sUNC testing game. Find it at https://sunc.io/ to run the test.')
-	end
-end)
-
-addcmd('debunc', {}, function(args, speaker)
-	tryLoading("https://raw.githubusercontent.com/alyssagithub/debUNC/refs/heads/main/debUNC.luau")
-end)
-
-addcmd('myriad', {}, function(args, speaker)
-	if PlaceId == 79035306837882 then -- geek
-		notify("Loading", "Hold on a sec")
-		tryLoadingAsync("https://github.com/Standard-2/Myriad/releases/latest/download/myriad.luau")
-	else
-		notify('Unable to Load', 'You are not in the Myriad testing game. Find it at https://myriad.tools/ to run the test.')
-	end
-end)
-
 local loopgoto = nil
 addcmd('loopgoto', {}, function(args, speaker)
 	local players = getPlayer(args[1], speaker)
