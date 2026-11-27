@@ -10953,33 +10953,31 @@ addcmd('unloopjumppower',{'unloopjp','unloopjpower'},function(args, speaker)
 end)
 
 addcmd('tools',{'gears'},function(args, speaker)
+	local Backpack = speaker and speaker:FindFirstChildOfClass("Backpack")
+	if not Backpack then return end
 	local function copy(instance)
-		for i,c in pairs(instance:GetChildren())do
+		for i, c in pairs(instance:GetChildren()) do
 			if c:IsA('Tool') or c:IsA('HopperBin') then
-				c:Clone().Parent = speaker:FindFirstChildOfClass("Backpack")
+				c:Clone().Parent = Backpack
 			end
 			copy(c)
 		end
 	end
 	copy(Lighting)
-	local function copy(instance)
-		for i,c in pairs(instance:GetChildren())do
-			if c:IsA('Tool') or c:IsA('HopperBin') then
-				c:Clone().Parent = speaker:FindFirstChildOfClass("Backpack")
-			end
-			copy(c)
-		end
-	end
 	copy(ReplicatedStorage)
 	notify('Tools','Copied tools from ReplicatedStorage and Lighting')
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},function(args, speaker)
-	for i,v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetDescendants()) do
-		if v:IsA('Tool') or v:IsA('HopperBin') then
-			v:Destroy()
+	local Backpack = speaker and speaker:FindFirstChildOfClass("Backpack")
+	if Backpack then
+		for i,v in pairs(Backpack:GetDescendants()) do
+			if v:IsA('Tool') or v:IsA('HopperBin') then
+				v:Destroy()
+			end
 		end
 	end
+	if not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:Destroy()
@@ -10988,6 +10986,7 @@ addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},func
 end)
 
 addcmd('deleteselectedtool',{'dst'},function(args, speaker)
+	if not speaker or not speaker.Character then return end
 	for i,v in pairs(speaker.Character:GetDescendants()) do
 		if v:IsA('Tool') or v:IsA('HopperBin') then
 			v:Destroy()
