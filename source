@@ -8110,7 +8110,14 @@ addcmd('locate', {}, function(args, speaker)
 	end
 end)
 
-addcmd('unlocate', {'nolocate'}, function(args, speaker)
+addcmd('locchams', {'locatechams'}, function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for _, v in players do
+		ESP(Players[v], false, "CHMS", true)
+	end
+end)
+
+addcmd('unlocate', {'nolocate', 'unlocchams', 'nolocchams'}, function(args, speaker)
 	if args[1] then
 		local players = getPlayer(args[1], speaker)
 		for _, v in players do
@@ -8123,13 +8130,6 @@ addcmd('unlocate', {'nolocate'}, function(args, speaker)
 				c:Destroy()
 			end
 		end
-	end
-end)
-
-addcmd('locchams', {'locatechams'}, function(args, speaker)
-	local players = getPlayer(args[1], speaker)
-	for _, v in players do
-		ESP(Players[v], false, "CHMS", true)
 	end
 end)
 
