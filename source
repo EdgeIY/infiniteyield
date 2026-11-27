@@ -4929,7 +4929,7 @@ CMDs[#CMDs + 1] = {NAME = 'unequiptools', DESC = 'Unequips every tool you are cu
 CMDs[#CMDs + 1] = {NAME = 'removespecifictool [name]', DESC = 'Automatically remove a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'unremovespecifictool [name]', DESC = 'Stops removing a specific tool from your inventory'}
 CMDs[#CMDs + 1] = {NAME = 'clearremovespecifictool', DESC = 'Stop removing all specific tools from your inventory'}
-CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool (X-axis only)'}
+CMDs[#CMDs + 1] = {NAME = 'reach [num]', DESC = 'Increases the hitbox of your held tool (Z-axis only)'}
 CMDs[#CMDs + 1] = {NAME = 'boxreach [X Y Z]', DESC = 'Increases the hitbox of your held tool (all axes, if only X provided Y and Z will equal X)'}
 CMDs[#CMDs + 1] = {NAME = 'unreach / noreach / unboxreach', DESC = 'Turns off reach'}
 CMDs[#CMDs + 1] = {NAME = 'grippos [X Y Z]', DESC = 'Changes your current tools grip position'}
