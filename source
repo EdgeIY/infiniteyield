@@ -9817,16 +9817,14 @@ addcmd("setfflag", {"fflag", "setflag"}, function(args, speaker)
 		return notify("FastFlag Error", "You must give the flag and value")
 	end
 
-	local fflag = args[1]:gsub("^FFlag", "")
 	local val = args[2]
 
-	local ok, err = pcall(fflagset, fflag, val)
-	if ok then return notify("FastFlag Updated", fflag .. " = " .. tostring(val)) end
-			
-	local ok2, err2 = pcall(fflagset, args[1], val)
-	if ok2 then return notify("FastFlag Updated", args[1] .. " = " .. tostring(val)) end
-			
-	notify("FastFlag Error", tostring(err2))
+	local ok, err = pcall(fflagset, args[1], val)
+	if ok then
+		return notify("FastFlag Updated", args[1] .. " = " .. tostring(val))
+	end
+
+	notify("FastFlag Error", tostring(err))
 end)
 
 addcmd("raknetdesync", {"rnd"}, function(args, speaker)
