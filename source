@@ -10963,6 +10963,28 @@ morphParts = {
 	"RightUpperLeg", "RightLowerLeg", "RightFoot",
 }
 
+function attachAccessory(sourceAccessory, char, hum)
+	local accessory = sourceAccessory:Clone()
+	local handle = accessory:FindFirstChild("Handle")
+
+	if handle and handle:IsA("BasePart") then
+		local attachment = handle:FindFirstChildOfClass("Attachment")
+		if attachment then
+			local targetAttachment = char:FindFirstChild(attachment.Name, true)
+			if targetAttachment and targetAttachment:IsA("Attachment") and targetAttachment.Parent and targetAttachment.Parent:IsA("BasePart") then
+				handle.CFrame = targetAttachment.Parent.CFrame * targetAttachment.CFrame * attachment.CFrame:Inverse()
+			end
+		end
+
+		if hum and hum.AddAccessory then
+			hum:AddAccessory(accessory)
+			return
+		end
+	end
+
+	accessory.Parent = char
+end
+
 function applyDescription(desc, speaker)
 	local char = speaker.Character
 	local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -10991,7 +11013,9 @@ function applyDescription(desc, speaker)
 	end
 
 	for _, child in rig:GetChildren() do
-		if child:IsA("Accessory") or child:IsA("Clothing") or child:IsA("ShirtGraphic") or child:IsA("BodyColors") then
+		if child:IsA("Accessory") then
+			attachAccessory(child, char, hum)
+		elseif child:IsA("Clothing") or child:IsA("ShirtGraphic") or child:IsA("BodyColors") then
 			child:Clone().Parent = char
 		end
 	end
