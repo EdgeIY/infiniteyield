@@ -10968,18 +10968,48 @@ function attachAccessory(sourceAccessory, char, hum)
 	local handle = accessory:FindFirstChild("Handle")
 
 	if handle and handle:IsA("BasePart") then
+		handle.Anchored = false
+
+		for _, obj in ipairs(handle:GetDescendants()) do
+			if obj:IsA("Weld") or obj:IsA("WeldConstraint") or obj:IsA("ManualWeld") then
+				obj:Destroy()
+			end
+		end
+
+		local targetPart = char:FindFirstChild("Head") or char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
 		local attachment = handle:FindFirstChildOfClass("Attachment")
+		local targetAttachment
+
 		if attachment then
-			local targetAttachment = char:FindFirstChild(attachment.Name, true)
+			targetAttachment = char:FindFirstChild(attachment.Name, true)
 			if targetAttachment and targetAttachment:IsA("Attachment") and targetAttachment.Parent and targetAttachment.Parent:IsA("BasePart") then
+				targetPart = targetAttachment.Parent
 				handle.CFrame = targetAttachment.Parent.CFrame * targetAttachment.CFrame * attachment.CFrame:Inverse()
 			end
 		end
 
 		if hum and hum.AddAccessory then
 			hum:AddAccessory(accessory)
-			return
+		else
+			accessory.Parent = char
 		end
+
+		if targetPart and not handle:FindFirstChildWhichIsA("WeldBase", true) then
+			local weld = Instance.new("Weld")
+			weld.Name = "AccessoryWeld"
+			weld.Part0 = handle
+			weld.Part1 = targetPart
+			if attachment and targetAttachment then
+				weld.C0 = attachment.CFrame
+				weld.C1 = targetAttachment.CFrame
+			else
+				weld.C0 = CFrame.new()
+				weld.C1 = targetPart.CFrame:ToObjectSpace(handle.CFrame)
+			end
+			weld.Parent = handle
+		end
+
+		return
 	end
 
 	accessory.Parent = char
