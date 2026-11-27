@@ -4634,15 +4634,16 @@ CMDs[#CMDs + 1] = {NAME = 'unmutevc [player]', DESC = 'Unmutes the voice chat of
 CMDs[#CMDs + 1] = {NAME = 'phonebook / call', DESC = 'Prompts the Roblox phonebook UI to let you call your friends. Needs voice chat enabled'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'esp', DESC = 'View all players and their status'}
-CMDs[#CMDs + 1] = {NAME = 'espteam', DESC = 'ESP but teammates are green and bad guys are red'}
+CMDs[#CMDs + 1] = {NAME = 'espteam', DESC = 'ESP but teammates are green and enemies are red'}
 CMDs[#CMDs + 1] = {NAME = 'noesp / unesp / unespteam', DESC = 'Removes ESP'}
 CMDs[#CMDs + 1] = {NAME = 'esptransparency [number]', DESC = 'Changes the transparency of ESP related commands'}
 CMDs[#CMDs + 1] = {NAME = 'locate [player]', DESC = 'View a single player and their status'}
 CMDs[#CMDs + 1] = {NAME = 'unlocate / nolocate [player]', DESC = 'Removes locate'}
 CMDs[#CMDs + 1] = {NAME = 'partesp [part name]', DESC = 'Highlights a part'}
 CMDs[#CMDs + 1] = {NAME = 'unpartesp / nopartesp [part name]', DESC = 'Removes partesp'}
+CMDs[#CMDs + 1] = {NAME = 'partespcolor [color]', DESC = 'Sets the BrickColor to be used for partesp'}
 CMDs[#CMDs + 1] = {NAME = 'chams', DESC = 'ESP but without text in the way'}
-CMDs[#CMDs + 1] = {NAME = 'chamsteam', DESC = 'Chams but teammates are green and bad guys are red'}
+CMDs[#CMDs + 1] = {NAME = 'chamsteam', DESC = 'Chams but teammates are green and enemies are red'}
 CMDs[#CMDs + 1] = {NAME = 'locchams [player]', DESC = 'Locate but without text in the way'}
 CMDs[#CMDs + 1] = {NAME = 'nochams / unchams', DESC = 'Removes chams'}
 CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
@@ -8022,9 +8023,10 @@ end)
 
 local espParts = {}
 local partEspTrigger = nil
+pecolor = "Lime green"
 function partAdded(part)
 	if #espParts > 0 then
-		if FindInTable(espParts,part.Name:lower()) then
+		if part:IsA("BasePart") and FindInTable(espParts,part.Name:lower()) then
 			local a = Instance.new("BoxHandleAdornment")
 			a.Name = part.Name:lower().."_PESP"
 			a.Parent = part
@@ -8033,7 +8035,7 @@ function partAdded(part)
 			a.ZIndex = 0
 			a.Size = part.Size
 			a.Transparency = espTransparency
-			a.Color = BrickColor.new("Lime green")
+			a.Color = BrickColor.new(pecolor)
 		end
 	else
 		if partEspTrigger then
@@ -8057,7 +8059,7 @@ addcmd('partesp',{},function(args, speaker)
 				a.ZIndex = 0
 				a.Size = v.Size
 				a.Transparency = espTransparency
-				a.Color = BrickColor.new("Lime green")
+				a.Color = BrickColor.new(pecolor)
 			end
 		end
 	end
@@ -8088,6 +8090,20 @@ addcmd('unpartesp',{'nopartesp'},function(args, speaker)
 				v:Destroy()
 			end
 		end
+	end
+end)
+
+addcmd('partespcolor',{},function(args, speaker)
+	if args[1] then
+		local tarco = getstring(1, args)
+		local is_real_color = BrickColor.new(tarco)
+		if is_real_color.Name:lower() == tarco:lower() then
+			pecolor = is_real_color.Name
+		else
+			notify('Part ESP', 'Invalid BrickColor: ' .. tarco)
+		end
+	else
+		pecolor = "Lime green"
 	end
 end)
 
