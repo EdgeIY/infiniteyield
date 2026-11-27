@@ -9812,7 +9812,9 @@ addcmd("breakvelocity", {}, function(args, speaker)
 	end
 end)
 
-local sprintBeganConn, sprintEndedConn, defspeed
+sprintBeganConn = nil
+sprintEndedConn = nil
+defspeed = nil
 addcmd('sprint', {'shiftsprint'}, function(args, speaker)
 	execCmd("unsprint")
 	local character = speaker.Character
