@@ -9403,7 +9403,7 @@ addcmd('unwalkto',{'nowalkto','unfollow','nofollow'},function(args, speaker)
 	waypointwalkto = false
 end)
 
- function orbit(speaker, targ, speed, distance)
+function orbit(speaker, targ, speed, distance)
 	local root = getRoot(speaker.Character)
 	local humanoid = speaker.Character and speaker.Character:FindFirstChildWhichIsA("Humanoid")
 	if not (root and humanoid) then return end
@@ -9472,9 +9472,9 @@ addcmd("orbitpos", {}, function(args, speaker)
 end)
 
 addcmd("unorbit", {}, function(args, speaker)
-	if orbit1 then orbit1:Disconnect() end
-	if orbit2 then orbit2:Disconnect() end
-	if orbit3 then orbit3:Disconnect() end
+	if orbit1 then orbit1:Disconnect() orbit1 = nil end
+	if orbit2 then orbit2:Disconnect() orbit2 = nil end
+	if orbit3 then orbit3:Disconnect() orbit3 = nil end
 	if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting") end
 end)
 
