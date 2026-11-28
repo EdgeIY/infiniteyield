@@ -7582,29 +7582,51 @@ addcmd('toggleswim',{},function(args, speaker)
 	end
 end)
 
+function find_duplicate_wps(wpname_lc)
+	for i = #WayPoints, 1, -1 do
+		if tostring(WayPoints[i].NAME):lower() == wpname_lc then
+			table.remove(WayPoints, i)
+		end
+	end
+	if AllWaypoints ~= nil then
+		for i = #AllWaypoints, 1, -1 do
+			if tostring(AllWaypoints[i].NAME):lower() == wpname_lc and AllWaypoints[i].GAME == PlaceId then
+				table.remove(AllWaypoints, i)
+			end
+		end
+	end
+end
+
 addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(args, speaker)
 	local WPName = tostring(getstring(1, args)) or ""
-	if getRoot(speaker.Character) then
-		notify('Modified Waypoints',"Created waypoint: "..getstring(1, args))
-		local torso = getRoot(speaker.Character)
-		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
-		if AllWaypoints ~= nil then
-			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
-		end
-	end	
+	local wpname_lc = WPName:lower()
+	local torso = getRoot(speaker.Character)
+	if not torso then return end
+
+	find_duplicate_wps(wpname_lc)
+
+	notify('Modified Waypoints',"Created waypoint: "..WPName)
+	local coords = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}
+	WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = coords, GAME = PlaceId}
+	if AllWaypoints ~= nil then
+		AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = coords, GAME = PlaceId}
+	end
 	refreshwaypoints()
 	updatesaves()
 end)
 
 addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypointpos'},function(args, speaker)
-	local WPName = tostring(getstring(1, args))
+	local WPName = tostring(getstring(1, args)) or ""
+	local wpname_lc = WPName:lower()
 
 	local x, y, z = tonumber(args[2]), tonumber(args[3]), tonumber(args[4])
 	if not x or not y or not z then
 		return notify("Unable to Create Waypoint", "You must give a position in the format X Y Z.")
 	end
 
-	notify('Modified Waypoints',"Created waypoint: "..getstring(1, args))
+	find_duplicate_wps(wpname_lc)
+
+	notify('Modified Waypoints',"Created waypoint: "..WPName)
 	WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {x, y, z}, GAME = PlaceId}
 	if AllWaypoints ~= nil then
 		AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {x, y, z}, GAME = PlaceId}
@@ -7677,12 +7699,15 @@ local waypointwalkto = false
 WPactiveTween = nil
 
 function stopwpping(wphuman, wproot)
+	local wasWalking = waypointwalkto
 	waypointwalkto = false
 	if WPactiveTween then
 		WPactiveTween:Cancel()
 		WPactiveTween = nil
 	end
-	if wphuman then wphuman.WalkToPoint = wproot.Position end
+	if wphuman and wasWalking then
+		wphuman.WalkToPoint = wproot.Position
+	end
 end
 
 function waypointmover(WPName: string, mode: string, speaker: Player)
@@ -7763,6 +7788,7 @@ function waypointmover(WPName: string, mode: string, speaker: Player)
 					wphuman.Sit = false
 					task.wait(.1)
 				end
+				waypointwalkto = true
 				wphuman.WalkToPoint = TrueCoords
 			elseif mode == "pathfind" then
 				runPathfind(TrueCoords, nil)
@@ -7786,6 +7812,7 @@ function waypointmover(WPName: string, mode: string, speaker: Player)
 					wphuman.Sit = false
 					task.wait(.1)
 				end
+				waypointwalkto = true
 				wphuman.WalkToPoint = pwppos.Position
 			elseif mode == "pathfind" then
 				runPathfind(pwppos.Position, pwppos)
