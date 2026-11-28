@@ -2,7 +2,7 @@
 
 The best command line script for roblox.
 
-[![Discord](https://invidget.switchblade.xyz/78ZuWSq)](https://discord.gg/78ZuWSq)
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/78ZuWSq)](https://discord.gg/78ZuWSq)
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
